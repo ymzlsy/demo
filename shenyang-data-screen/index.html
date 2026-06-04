@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设备数据分析</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: #050d24;
+    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    color: #fff;
+  }
+  #scaler-wrap { width: 100vw; height: 100vh; overflow: hidden; }
+  #screen {
+    width: 1920px; height: 1080px;
+    position: relative;
+    transform-origin: top left;
+    background:
+      linear-gradient(rgba(10,24,56,0.0), rgba(10,24,56,0.0)),
+      repeating-linear-gradient(0deg, rgba(40,103,205,0.05) 0, rgba(40,103,205,0.05) 1px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(90deg, rgba(40,103,205,0.05) 0, rgba(40,103,205,0.05) 1px, transparent 1px, transparent 40px),
+      radial-gradient(ellipse at 50% 0%, #0d1b46 0%, #0a1838 55%, #061029 100%);
+  }
+
+  /* ===== 顶部标题栏 ===== */
+  .header {
+    position: absolute; top: 0; left: 0; width: 1920px; height: 72px;
+    background:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'></svg>"),
+      linear-gradient(to bottom, rgba(20,50,110,0.55), rgba(10,24,56,0));
+  }
+  .header-title {
+    position: absolute; left: 50%; top: 6px; transform: translateX(-50%);
+    font-size: 36px; font-weight: 700; letter-spacing: 8px;
+    color: #fff;
+    text-shadow: 0 0 18px rgba(71,255,255,0.55), 0 0 4px rgba(0,195,255,0.8);
+    background: linear-gradient(to bottom, #ffffff 30%, #8fd6ff 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .header-deco {
+    position: absolute; left: 50%; top: 56px; transform: translateX(-50%);
+    width: 760px; height: 14px;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='760' height='14'><polygon points='0,7 360,7 380,0 760,0' fill='none' stroke='%2303e6f1' stroke-width='1' opacity='0.4'/><polygon points='760,7 400,7 380,14 0,14' fill='none' stroke='%2303e6f1' stroke-width='1' opacity='0.4'/></svg>") no-repeat center;
+  }
+  .header-time {
+    position: absolute; right: 28px; top: 18px; text-align: right;
+  }
+  .header-time .t { font-size: 26px; color: #47ffff; font-weight: 600; letter-spacing: 2px; text-shadow: 0 0 10px rgba(71,255,255,0.5); }
+  .header-time .d { font-size: 13px; color: #9fb6d6; margin-top: 2px; }
+
+  /* ===== 通用面板 ===== */
+  .panel {
+    position: absolute;
+    background: rgba(17, 24, 70, 0.2);
+    border: 1px solid rgba(40,103,205,0.35);
+    box-shadow: inset 0 0 24px rgba(10,40,90,0.4);
+  }
+  .panel-head {
+    position: relative; height: 38px; line-height: 38px;
+    padding-left: 22px; font-size: 18px; font-weight: 600; color: #fff;
+    background: linear-gradient(to right, #2866cd, #2867cd27);
+  }
+  .panel-head::before {
+    content: ""; position: absolute; left: 8px; top: 9px;
+    width: 4px; height: 20px; background: #03e6f1;
+    clip-path: polygon(30% 0, 100% 0, 70% 100%, 0% 100%);
+    box-shadow: 0 0 8px #03e6f1;
+  }
+  .panel-head .more {
+    position: absolute; right: 12px; top: 0; color: #2fa9e6; font-size: 14px; letter-spacing: -2px;
+  }
+  .panel-body { position: absolute; top: 38px; left: 0; right: 0; bottom: 0; }
+
+  .opt-tag {
+    display: inline-block; margin-left: 10px; vertical-align: 2px;
+    font-size: 12px; font-weight: 600; color: #2b2200;
+    background: linear-gradient(to bottom, #ffe98a, #f7d24b);
+    border-radius: 3px; padding: 1px 8px; letter-spacing: 0;
+    box-shadow: 0 0 10px rgba(247,210,75,0.6);
+  }
+
+  /* ===== 左上：今日实训数据情况 数字卡 ===== */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 18px; height: 100%; }
+  .stat-card {
+    position: relative; padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(0,80,160,0.25), rgba(0,40,100,0.1));
+    border: 1px solid rgba(0,195,255,0.25);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .stat-card .ic {
+    width: 46px; height: 46px; flex: none; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,195,255,0.35), rgba(0,195,255,0.02));
+    border: 1px solid rgba(0,195,255,0.5);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+  }
+  .stat-card .num { font-size: 30px; font-weight: 700; color: #47ffff; line-height: 1; font-family: "DIN", Arial; text-shadow: 0 0 10px rgba(71,255,255,0.4); }
+  .stat-card .num small { font-size: 13px; color: #9fb6d6; font-weight: 400; margin-left: 4px; }
+  .stat-card .lbl { font-size: 14px; color: #c9dcf2; margin-top: 6px; }
+
+  /* ===== 中上：累计使用时长 翻牌器 ===== */
+  .flip-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+  .flip-row { display: flex; gap: 6px; margin: 8px 0 22px; }
+  .flip-cell {
+    width: 58px; height: 78px; border-radius: 6px;
+    background: linear-gradient(to bottom, #0a2c5c, #061a3a);
+    border: 1px solid rgba(0,195,255,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px; font-weight: 700; color: #47ffff;
+    font-family: "DIN", Consolas, monospace;
+    text-shadow: 0 0 14px rgba(71,255,255,0.8);
+    box-shadow: inset 0 0 18px rgba(0,120,255,0.3);
+    position: relative;
+  }
+  .flip-cell::after { content:""; position:absolute; left:4px; right:4px; top:50%; height:1px; background:rgba(0,0,0,0.5); }
+  .flip-foot { display: flex; gap: 70px; }
+  .flip-foot .it { text-align: center; }
+  .flip-foot .it .v { font-size: 26px; font-weight: 700; color: #00c3ff; text-shadow: 0 0 10px rgba(0,195,255,0.5); }
+  .flip-foot .it .v small { font-size: 13px; color: #9fb6d6; font-weight: 400; }
+  .flip-foot .it .k { font-size: 14px; color: #c9dcf2; margin-top: 4px; }
+
+  /* ===== 右上：实时使用情况 列表 ===== */
+  .rt-list { padding: 6px 14px; height: 100%; overflow: hidden; }
+  .rt-row { display: flex; align-items: center; height: 46px; border-bottom: 1px dashed rgba(40,103,205,0.3); font-size: 14px; }
+  .rt-row .nm { flex: 1; color: #c9dcf2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rt-row .st { width: 70px; text-align: center; }
+  .rt-row .st.on { color: #47ffff; }
+  .rt-row .st.off { color: #6c84a6; }
+  .rt-row .pp { width: 64px; text-align: right; color: #ffd24b; font-weight: 600; }
+  .dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px; }
+  .dot.on{ background:#47ffff; box-shadow:0 0 6px #47ffff;} .dot.off{ background:#5a7196;}
+
+  /* ===== 左中：设备使用情况概览 图标行 ===== */
+  .ov-grid { display: grid; grid-template-columns: repeat(4, 1fr); height: 100%; align-items: center; padding: 0 10px; }
+  .ov-item { text-align: center; }
+  .ov-item .ic {
+    width: 60px; height: 60px; margin: 0 auto 8px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,195,255,0.3), rgba(0,195,255,0.02));
+    border: 1px solid rgba(0,195,255,0.45); display: flex; align-items: center; justify-content: center; font-size: 26px;
+  }
+  .ov-item .v { font-size: 22px; font-weight: 700; color: #47ffff; }
+  .ov-item .k { font-size: 13px; color: #b9cce6; margin-top: 3px; }
+
+  /* ===== charts ===== */
+  .chart { width: 100%; height: 100%; }
+
+  /* ===== 阈值输入条 ===== */
+  .thresh-bar {
+    position: absolute; right: 14px; top: 7px; height: 24px;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: #ffe98a; z-index: 5;
+  }
+  .thresh-bar input {
+    width: 46px; height: 22px; text-align: center;
+    background: rgba(0,30,70,0.7); border: 1px solid #f7d24b; border-radius: 3px;
+    color: #ffe98a; font-size: 14px; font-weight: 700; outline: none;
+  }
+
+  /* ===== 右下：设备利用率横向条形图（HTML，固定 footprint 内滚动）===== */
+  .util-wrap {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    padding: 8px 16px 10px; overflow-y: auto; overflow-x: hidden;
+  }
+  .util-wrap::-webkit-scrollbar { width: 7px; }
+  .util-wrap::-webkit-scrollbar-thumb { background: rgba(0,195,255,0.4); border-radius: 4px; }
+  .util-wrap::-webkit-scrollbar-track { background: rgba(0,30,70,0.4); }
+  .util-axis { font-size: 12px; color: #9fb6d6; margin: 2px 0 8px; }
+  .util-row {
+    display: flex; align-items: center; height: 38px;
+  }
+  .util-row .lab {
+    width: 132px; flex: none; text-align: right; padding-right: 12px; line-height: 1.15;
+  }
+  .util-row .lab .nm { font-size: 13px; font-weight: 600; color: #dbe9fb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .util-row .lab .ar { font-size: 11px; color: #7f97ba; }
+  .util-row.low .lab .nm { color: #ffb38a; }
+  .util-track {
+    flex: 1; position: relative; height: 14px;
+    background: rgba(40,103,205,0.12); border-radius: 0 4px 4px 0;
+  }
+  .util-bar {
+    position: absolute; left: 0; top: 0; height: 100%; border-radius: 0 4px 4px 0;
+    background: linear-gradient(to right, rgba(0,195,255,0.95), rgba(0,195,255,0.25));
+    transition: width .4s ease;
+  }
+  .util-row.low .util-bar {
+    background: linear-gradient(to right, #FF6B35, rgba(255,107,53,0.35));
+    box-shadow: 0 0 8px rgba(255,107,53,0.5);
+  }
+  .util-row.low { background: rgba(255,107,53,0.10); border-radius: 4px; }
+  .util-pct {
+    width: 56px; flex: none; text-align: right; padding-left: 8px;
+    font-size: 12px; font-weight: 600; color: #cfe6ff;
+  }
+  .util-row.low .util-pct { color: #FF6B35; }
+</style>
+</head>
+<body>
+<div id="scaler-wrap">
+  <div id="screen">
+    <!-- 顶部 -->
+    <div class="header">
+      <div class="header-title">设备数据分析</div>
+      <div class="header-deco"></div>
+      <div class="header-time">
+        <div class="t" id="clock">09:18:11</div>
+        <div class="d" id="date">2026-06-01 星期一</div>
+      </div>
+    </div>
+
+    <!-- 左上：今日实训数据情况 -->
+    <div class="panel" style="left:14px; top:84px; width:600px; height:300px;">
+      <div class="panel-head">今日实训数据情况<span class="more">&laquo;&laquo;&laquo;</span></div>
+      <div class="panel-body">
+        <div class="stat-grid">
+          <div class="stat-card"><div class="ic">🚆</div><div><div class="num">12<small>个</small></div><div class="lbl">启动任务数</div></div></div>
+          <div class="stat-card"><div class="ic">👥</div><div><div class="num">386<small>人</small></div><div class="lbl">参与人数</div></div></div>
+          <div class="stat-card"><div class="ic">🔁</div><div><div class="num">1,254<small>人次</small></div><div class="lbl">参与人次</div></div></div>
+          <div class="stat-card"><div class="ic">⏱️</div><div><div class="num">528<small>小时</small></div><div class="lbl">今日实训时长</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 中上：设备累计使用时长 翻牌器 -->
+    <div class="panel" style="left:626px; top:84px; width:600px; height:300px;">
+      <div class="panel-head">设备累计使用时长<span class="more">&laquo;&laquo;&laquo;</span></div>
+      <div class="panel-body">
+        <div class="flip-wrap">
+          <div class="flip-row" id="flipRow"></div>
+          <div class="flip-foot">
+            <div class="it"><div class="v">7,558<small> 人次</small></div><div class="k">累计总人次</div></div>
+            <div class="it"><div class="v">7,099<small> 小时</small></div><div class="k">累计使用时长</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右上：实时使用情况 -->
+    <div class="panel" style="left:1238px; top:84px; width:668px; height:300px;">
+      <div class="panel-head">实时使用情况<span class="more">&laquo;&laquo;&laquo;</span></div>
+      <div class="panel-body"><div class="rt-list" id="rtList"></div></div>
+    </div>
+
+    <!-- 左中：设备使用情况概览 -->
+    <div class="panel" style="left:14px; top:396px; width:600px; height:166px;">
+      <div class="panel-head">设备使用情况概览<span class="more">&laquo;&laquo;&laquo;</span></div>
+      <div class="panel-body">
+        <div class="ov-grid">
+          <div class="ov-item"><div class="ic">🚄</div><div class="v">8</div><div class="k">CR400 动车组</div></div>
+          <div class="ov-item"><div class="ic">🚈</div><div class="v">6</div><div class="k">城轨列车</div></div>
+          <div class="ov-item"><div class="ic">🚦</div><div class="v">9</div><div class="k">接发列车</div></div>
+          <div class="ov-item"><div class="ic">🧯</div><div class="v">4</div><div class="k">消防实训</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 左下：实训产品启用设备情况 环形图 -->
+    <div class="panel" style="left:14px; top:574px; width:600px; height:494px;">
+      <div class="panel-head">实训产品启用设备情况<span class="more">&laquo;&laquo;&laquo;</span></div>
+      <div class="panel-body"><div id="ringChart" class="chart"></div></div>
+    </div>
+
+    <!-- 中下：设备月度使用走势 折线图 -->
+    <div class="panel" style="left:626px; top:396px; width:600px; height:672px;">
+      <div class="panel-head">设备月度使用走势<span class="more">&laquo;&laquo;&laquo;</span></div>
+      <div class="panel-body"><div id="lineChart" class="chart"></div></div>
+    </div>
+
+    <!-- 右下：设备利用率对比分析 ← 本次优化 -->
+    <div class="panel" style="left:1238px; top:396px; width:668px; height:672px;">
+      <div class="panel-head">
+        设备利用率对比分析
+        <span class="opt-tag">🔧 本次优化</span>
+        <div class="thresh-bar">
+          预警阈值：<input id="threshInput" type="number" min="0" max="100" step="0.1" value="5">%
+        </div>
+      </div>
+      <div class="panel-body"><div id="utilWrap" class="util-wrap"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========== 缩放适配 ========== */
+function fit(){
+  const s = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+  const el = document.getElementById('screen');
+  el.style.transform = 'scale('+s+')';
+  document.getElementById('scaler-wrap').style.cssText +=
+    ';display:flex;align-items:center;justify-content:center;';
+}
+window.addEventListener('resize', fit); fit();
+
+/* ========== 时钟 ========== */
+function pad(n){return n<10?'0'+n:n;}
+function tick(){
+  const d=new Date();
+  document.getElementById('clock').textContent = pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  const wk=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][d.getDay()];
+  document.getElementById('date').textContent = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+wk;
+}
+setInterval(tick,1000); tick();
+
+/* ========== 翻牌器 00007558 ========== */
+(function(){
+  const v='00007558';
+  document.getElementById('flipRow').innerHTML =
+    v.split('').map(c=>'<div class="flip-cell">'+c+'</div>').join('');
+})();
+
+/* ========== 实时使用情况列表 ========== */
+(function(){
+  const rows=[
+    ['25# 铁路接发列车 / B区域','使用中',1,'72.4%'],
+    ['CR400BF-GS / C区域','使用中',1,'45.0%'],
+    ['CR200J / F区域','使用中',1,'38.2%'],
+    ['消防实训室 / E区域','空闲',0,'4.1%'],
+    ['急救实训区 / H区域','使用中',1,'23.0%'],
+    ['MR实训区 / I区域','空闲',0,'2.5%'],
+    ['保洁实训区 / G区域','空闲',0,'1.8%'],
+  ];
+  document.getElementById('rtList').innerHTML = rows.map(r=>
+    '<div class="rt-row"><div class="nm">'+r[0]+'</div>'+
+    '<div class="st '+(r[2]?'on':'off')+'"><span class="dot '+(r[2]?'on':'off')+'"></span>'+r[1]+'</div>'+
+    '<div class="pp">'+r[3]+'</div></div>'
+  ).join('');
+})();
+
+/* ========== 环形图 111 ========== */
+(function(){
+  const ch=echarts.init(document.getElementById('ringChart'));
+  ch.setOption({
+    color:['#00c3ff','#47ffff','#2e8bff','#1f5fc0','#0c3a78'],
+    title:{text:'111',subtext:'启用设备总数',left:'30%',top:'40%',textAlign:'center',
+      textStyle:{color:'#47ffff',fontSize:42,fontWeight:700},subtextStyle:{color:'#9fb6d6',fontSize:13}},
+    tooltip:{trigger:'item',formatter:'{b}: {c} ({d}%)'},
+    legend:{orient:'vertical',right:18,top:'center',textStyle:{color:'#c9dcf2',fontSize:13},
+      itemWidth:12,itemHeight:12,formatter:n=>n},
+    series:[{type:'pie',radius:['52%','72%'],center:['32%','50%'],avoidLabelOverlap:false,
+      label:{show:false},labelLine:{show:false},
+      data:[
+        {value:38,name:'动车组实训 34.2%'},
+        {value:30,name:'城轨实训 27.0%'},
+        {value:22,name:'接发列车 19.8%'},
+        {value:13,name:'消防急救 11.7%'},
+        {value:8,name:'其他实训 7.3%'},
+      ]}]
+  });
+})();
+
+/* ========== 折线图 月度走势 ========== */
+(function(){
+  const ch=echarts.init(document.getElementById('lineChart'));
+  const months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  ch.setOption({
+    tooltip:{trigger:'axis'},
+    legend:{data:['使用人次','使用时长(h)'],top:8,textStyle:{color:'#c9dcf2'}},
+    grid:{left:48,right:24,top:50,bottom:36},
+    xAxis:{type:'category',data:months,axisLine:{lineStyle:{color:'#2f5a99'}},
+      axisLabel:{color:'#9fb6d6'}},
+    yAxis:{type:'value',splitLine:{lineStyle:{color:'rgba(47,90,153,0.25)'}},
+      axisLabel:{color:'#9fb6d6'}},
+    series:[
+      {name:'使用人次',type:'line',smooth:true,symbol:'circle',symbolSize:7,
+        data:[420,560,610,540,720,680,760,690,810,740,880,920],
+        itemStyle:{color:'#47ffff'},lineStyle:{color:'#47ffff',width:2},
+        areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[
+          {offset:0,color:'rgba(71,255,255,0.4)'},{offset:1,color:'rgba(71,255,255,0.02)'}])}},
+      {name:'使用时长(h)',type:'line',smooth:true,symbol:'circle',symbolSize:7,
+        data:[380,500,540,480,650,600,690,640,720,680,790,830],
+        itemStyle:{color:'#ffd24b'},lineStyle:{color:'#ffd24b',width:2}}
+    ]
+  });
+})();
+
+/* ========== 右下：设备利用率对比分析（横向条形图 · 固定 footprint 内滚动）========== */
+(function(){
+  const wrap = document.getElementById('utilWrap');
+
+  // mock：设备名拆成 名称/区域 两字段；约 14 台，4-5 台 <5%
+  const rawData = [
+    {name:'保洁实训区',  area:'G区域', rate:1.8},
+    {name:'MR实训区',    area:'I区域', rate:2.5},
+    {name:'消防实训室',  area:'E区域', rate:4.1},
+    {name:'急救实训区',  area:'H区域', rate:3.2},
+    {name:'形体训练区',  area:'二层',  rate:4.6},
+    {name:'美妆实训区',  area:'二层',  rate:12.0},
+    {name:'GC220地铁',   area:'D区域', rate:18.5},
+    {name:'JZW-4信号',   area:'A区域', rate:23.0},
+    {name:'WD320接触网', area:'A区域', rate:31.4},
+    {name:'城轨进路控制',area:'D区域', rate:38.2},
+    {name:'CR400BF-GS',  area:'C区域', rate:45.0},
+    {name:'CR200J',      area:'F区域', rate:56.8},
+    {name:'动集动车组',  area:'C区域', rate:67.3},
+    {name:'25# 铁路接发列车', area:'B区域', rate:88.0},
+  ];
+
+  const esc = s => String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+  function render(threshold){
+    // 升序：利用率从低到高（低的在最上面）
+    const data = rawData.slice().sort((a,b)=>a.rate-b.rate);
+    const html = ['<div class="util-axis">单位：% · 共 '+data.length+' 台 · 按利用率升序</div>'];
+    data.forEach(d=>{
+      const low = d.rate < threshold;
+      html.push(
+        '<div class="util-row'+(low?' low':'')+'">'+
+          '<div class="lab"><div class="nm">'+esc(d.name)+(low?' ⚠️':'')+'</div>'+
+            '<div class="ar">'+esc(d.area)+'</div></div>'+
+          '<div class="util-track"><div class="util-bar" style="width:'+d.rate+'%"></div></div>'+
+          '<div class="util-pct">'+d.rate.toFixed(1)+'%</div>'+
+        '</div>'
+      );
+    });
+    wrap.innerHTML = html.join('');
+  }
+
+  let threshold = 5;
+  render(threshold);
+
+  const input = document.getElementById('threshInput');
+  function apply(){
+    let v = parseFloat(input.value);
+    if(isNaN(v)||v<0) v=0; if(v>100) v=100;
+    threshold = v; render(threshold);
+  }
+  input.addEventListener('input', apply);
+  input.addEventListener('change', apply);
+})();
+</script>
+</body>
+</html>

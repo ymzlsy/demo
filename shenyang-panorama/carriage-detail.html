@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实训室/教室全景管控 - 沈阳客运智慧管控平台</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:100%; height:100%; overflow:hidden; background:#05102a; font-family:"Microsoft YaHei","PingFang SC",sans-serif; }
+  #stage {
+    position:absolute; top:0; left:0; width:1920px; height:1080px;
+    transform-origin:top left;
+    background:linear-gradient(135deg,#0a1838 0%,#0d1b46 100%);
+    color:#fff;
+  }
+  #stage::before {
+    content:""; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(40,102,205,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(40,102,205,0.08) 1px, transparent 1px);
+    background-size:48px 48px; pointer-events:none;
+  }
+  /* ===== header ===== */
+  .header-band {
+    position:absolute; top:0; left:0; width:100%; height:72px;
+    background:linear-gradient(to bottom,rgba(8,28,72,0.9),rgba(8,28,72,0));
+    border-bottom:1px solid rgba(3,230,241,0.15); z-index:10;
+  }
+  .header .title {
+    position:absolute; left:50%; top:8px; transform:translateX(-50%);
+    font-size:38px; font-weight:700; letter-spacing:6px;
+    background:linear-gradient(to bottom,#fff,#7fd4ff);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    text-shadow:0 0 20px rgba(0,195,255,0.4); padding:0 80px; z-index:11;
+  }
+  .header .title::before, .header .title::after {
+    content:""; position:absolute; top:28px; width:60px; height:3px;
+    background:linear-gradient(to right,transparent,#03e6f1);
+  }
+  .header .title::before { left:0; }
+  .header .title::after { right:0; transform:scaleX(-1); }
+  .topright { position:absolute; top:20px; right:36px; display:flex; align-items:center; gap:14px; z-index:12; }
+  .hbtn {
+    font-size:15px; color:#7fe6ff; cursor:pointer; padding:7px 20px;
+    border:1px solid rgba(3,230,241,0.5);
+    background:linear-gradient(to bottom,rgba(3,230,241,0.12),rgba(3,230,241,0.02));
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+    transition:.2s; text-decoration:none; display:inline-block;
+  }
+  .hbtn:hover { background:linear-gradient(to bottom,rgba(3,230,241,0.35),rgba(3,230,241,0.1)); color:#fff; box-shadow:0 0 14px rgba(3,230,241,0.4); }
+  .topdate { position:absolute; top:18px; left:40px; text-align:left; font-size:14px; color:#9db4d8; z-index:12; }
+  .topdate .t { font-size:20px; color:#fff; font-weight:600; }
+
+  /* ===== panels ===== */
+  .panel {
+    position:absolute;
+    background:rgba(17,24,70,0.2);
+    border:1px solid rgba(40,102,205,0.35);
+    backdrop-filter:blur(2px);
+  }
+  .panel-hd {
+    height:38px; line-height:38px; padding-left:18px;
+    font-size:18px; font-weight:600; color:#fff;
+    background:linear-gradient(to right,#2866cd,#2867cd27); position:relative;
+  }
+  .panel-hd::before { content:""; position:absolute; left:0; top:0; width:4px; height:100%; background:#03e6f1; }
+  .panel-bd { padding:14px 16px; }
+
+  /* number stat cards */
+  .num-cards { display:flex; gap:12px; }
+  .ncard {
+    flex:1; text-align:center; padding:12px 4px;
+    background:linear-gradient(to bottom,rgba(0,195,255,0.1),rgba(0,195,255,0.02));
+    border:1px solid rgba(40,102,205,0.4);
+  }
+  .ncard .n { font-size:30px; font-weight:700; color:#47ffff; text-shadow:0 0 8px rgba(71,255,255,0.4); }
+  .ncard.busy .n { color:#ffc24d; }
+  .ncard.idle .n { color:#2ecc71; }
+  .ncard.off  .n { color:#95a5a6; }
+  .ncard .l { font-size:12px; color:#9db4d8; margin-top:6px; }
+
+  .kv { font-size:14px; }
+  .kv .row { display:flex; justify-content:space-between; padding:8px 4px; border-bottom:1px dashed rgba(40,102,205,0.25); }
+  .kv .row .k { color:#9db4d8; }
+  .kv .row .v { color:#47ffff; font-weight:600; }
+
+  .selrow { margin-bottom:12px; }
+  .selrow label { font-size:13px; color:#9db4d8; margin-right:8px; }
+  .selrow select {
+    background:rgba(6,20,52,0.8); color:#fff; border:1px solid rgba(3,230,241,0.5);
+    padding:6px 12px; font-size:14px; outline:none; min-width:200px;
+  }
+
+  /* ===== center main view ===== */
+  .mainview {
+    position:absolute; left:430px; top:96px; right:430px; bottom:24px;
+    background:#06122e; border:1px solid rgba(40,102,205,0.5);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .mainview .feed {
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:repeating-linear-gradient(45deg,#0a1838,#0a1838 18px,#0c1d44 18px,#0c1d44 36px);
+  }
+  .mainview .feed::after {
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(ellipse at center,rgba(0,80,160,0.25),transparent 70%);
+  }
+  .mainview .feed .big { font-size:34px; font-weight:700; color:#47ffff; text-shadow:0 0 14px rgba(71,255,255,0.5); z-index:1; }
+  .mainview .feed .sub { font-size:16px; color:#9db4d8; margin-top:12px; z-index:1; }
+  .mainview .hd-strip { position:absolute; top:0; left:0; right:0; height:34px; line-height:34px;
+    background:linear-gradient(to right,#2866cd,#2867cd27); font-size:16px; font-weight:600; padding-left:16px; z-index:2; }
+  .mainview .ovl { position:absolute; bottom:12px; left:16px; font-size:14px; color:#fff; background:rgba(0,0,0,0.5); padding:4px 12px; border-radius:3px; z-index:2; }
+  .mainview .rec { position:absolute; top:44px; right:16px; font-size:14px; color:#ff5b5b; display:flex; align-items:center; gap:6px; z-index:2; }
+  .mainview .rec i { width:10px; height:10px; background:#ff5b5b; border-radius:50%; display:inline-block; animation:blink 1s infinite; }
+  @keyframes blink { 50% { opacity:.2; } }
+
+  /* ===== right: video monitor list ===== */
+  .moncard {
+    height:118px; position:relative; cursor:pointer; flex-shrink:0; margin-bottom:12px;
+    background:repeating-linear-gradient(45deg,#0a1838,#0a1838 12px,#0c1d44 12px,#0c1d44 24px);
+    border:1px solid rgba(40,102,205,0.5);
+    transition:transform .5s cubic-bezier(.2,.7,.3,1), border-color .3s, box-shadow .3s;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .moncard::after { content:""; position:absolute; inset:0; background:radial-gradient(ellipse at center,rgba(0,80,160,0.2),transparent 70%); }
+  .moncard:hover { border-color:#47ffff; }
+  .moncard.active { border-color:#47ffff; box-shadow:0 0 14px rgba(71,255,255,0.5); }
+  .moncard .ci { font-size:14px; color:#7fd4ff; z-index:1; }
+  .moncard .name { position:absolute; bottom:8px; left:10px; font-size:12px; color:#cfe0ff; z-index:1; }
+  .moncard .tag { position:absolute; top:8px; left:10px; font-size:11px; color:#9db4d8; background:rgba(0,0,0,0.4); padding:2px 6px; border-radius:2px; z-index:1; }
+  .moncard .hot { position:absolute; top:6px; right:8px; font-size:18px; opacity:0; transform:scale(.4); transition:.3s; z-index:1; }
+  .moncard.ishot { border-color:#ff7a3c; box-shadow:0 0 16px rgba(255,122,60,0.45); }
+  .moncard.ishot .hot { opacity:1; transform:scale(1); }
+
+  /* ===== F2 camera modal ===== */
+  #camModal {
+    position:absolute; inset:0; z-index:40; display:none;
+    background:rgba(3,10,28,0.7); align-items:center; justify-content:center;
+  }
+  .cam-dialog {
+    width:820px; height:560px; background:#0a1838; border:1px solid #03e6f1;
+    box-shadow:0 0 40px rgba(3,230,241,0.4); position:relative;
+  }
+  .cam-dialog .hd { height:42px; line-height:42px; padding:0 16px; font-size:17px; font-weight:600;
+    background:linear-gradient(to right,#2866cd,#2867cd27); }
+  .cam-dialog .x { position:absolute; right:14px; top:10px; cursor:pointer; font-size:20px; color:#9db4d8; }
+  .cam-dialog .x:hover { color:#fff; }
+  .floorplan {
+    position:absolute; top:54px; left:20px; right:20px; bottom:44px;
+    background:#06122e center/contain no-repeat;
+    border:1px solid rgba(3,230,241,0.3);
+  }
+  .fp-cap {
+    position:absolute; left:20px; right:20px; bottom:16px; height:22px;
+    font-size:12px; color:#7fa8d8; display:flex; justify-content:space-between;
+  }
+  .fp-cap .lg { color:#9db4d8; }
+  .fp-cap .lg b { color:#47ffff; }
+  .campt {
+    position:absolute; width:42px; height:42px; margin:-21px 0 0 -21px;
+    display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer;
+    background:rgba(0,195,255,0.2); border:1px solid #47ffff; border-radius:50%; transition:.2s;
+  }
+  .campt:hover { background:rgba(71,255,255,0.5); box-shadow:0 0 16px rgba(71,255,255,0.8); transform:scale(1.15); }
+  .campt .pin { position:absolute; bottom:46px; left:50%; transform:translateX(-50%); white-space:nowrap;
+    font-size:12px; color:#fff; background:rgba(6,20,52,0.9); border:1px solid #03e6f1; padding:2px 8px; border-radius:3px; }
+
+  /* ===== F-tags ===== */
+  .ftag {
+    position:absolute; z-index:30; font-size:12px; font-weight:700; color:#1a1a1a;
+    background:#ffe24d; padding:3px 9px; border-radius:3px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.4); white-space:nowrap; border:1px solid #ffcf00;
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- header -->
+  <div class="header-band"></div>
+  <div class="header"><div class="title">实训室/教室全景管控</div></div>
+  <div class="topdate">
+    <div class="t" id="clock">2026-06-01 10:24:36</div>
+    <div id="weekday">星期一 · 晴 13℃</div>
+  </div>
+  <div class="topright">
+    <a class="hbtn" href="index.html">← 返回</a>
+    <span class="hbtn" id="fsBtn">退出全屏</span>
+  </div>
+
+  <!-- LEFT column: usage detail -->
+  <div class="panel" style="left:30px; top:96px; width:380px;">
+    <div class="panel-hd">实训室/教室使用详情</div>
+    <div class="panel-bd">
+      <div class="num-cards">
+        <div class="ncard"><div class="n">12</div><div class="l">实训设备数量</div></div>
+        <div class="ncard busy"><div class="n">7</div><div class="l">培训中设备</div></div>
+      </div>
+      <div class="num-cards" style="margin-top:12px;">
+        <div class="ncard idle"><div class="n">4</div><div class="l">空闲设备</div></div>
+        <div class="ncard off"><div class="n">1</div><div class="l">不可交互设备</div></div>
+      </div>
+      <div class="kv" style="margin-top:14px;">
+        <div class="row"><span class="k">实训室名称</span><span class="v" id="roomName">动车组乘务实训室</span></div>
+        <div class="row"><span class="k">班级名称</span><span class="v">2026春-动车乘务01班</span></div>
+        <div class="row"><span class="k">课程名称</span><span class="v" id="courseName">乘务作业实训</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEFT column: online student detail -->
+  <div class="panel" style="left:30px; top:466px; width:380px;">
+    <div class="panel-hd">在线实训学生详情</div>
+    <div class="panel-bd">
+      <div class="selrow">
+        <label>选择设备</label>
+        <select id="devSel">
+          <option>01 号实训工位</option>
+          <option>02 号实训工位</option>
+          <option>03 号实训工位</option>
+          <option>04 号实训工位</option>
+        </select>
+      </div>
+      <div class="kv">
+        <div class="row"><span class="k">培训状态</span><span class="v" style="color:#2ecc71;">● 实训中</span></div>
+        <div class="row"><span class="k">今日在线时长</span><span class="v">3 小时 42 分</span></div>
+        <div class="row"><span class="k">班级</span><span class="v">2026春-动车乘务01班</span></div>
+        <div class="row"><span class="k">学员</span><span class="v">张 文 博</span></div>
+        <div class="row"><span class="k">授课教师</span><span class="v">李 国 强</span></div>
+        <div class="row"><span class="k">培训课程</span><span class="v" id="courseName2">乘务作业实训</span></div>
+        <div class="row"><span class="k">实训任务</span><span class="v">接发列车标准化作业</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER main view -->
+  <div class="mainview">
+    <div class="feed">
+      <div class="big" id="feedName">监控画面 · 实训区主视角</div>
+      <div class="sub" id="feedDesc">CAM-01 · 1080P 实时</div>
+    </div>
+    <div class="hd-strip">实训画面</div>
+    <div class="ovl" id="mainOvl">CAM-01 实训区主视角</div>
+    <div class="rec"><i></i>REC</div>
+    <div class="ftag" style="left:16px; top:44px;">🔧 本次优化 F2 · 摄像头点位</div>
+  </div>
+
+  <!-- RIGHT column: video monitor -->
+  <div class="panel" style="right:30px; top:96px; width:380px; bottom:24px;">
+    <div class="panel-hd" style="display:flex; align-items:center; justify-content:space-between; padding-right:10px;">
+      <span>视频监控 · 摄像头分布图</span>
+      <span class="hbtn" id="camBtn" style="font-size:13px; padding:4px 12px;">📷 摄像头点位</span>
+    </div>
+    <div class="panel-bd" style="position:relative;">
+      <div class="ftag" style="right:8px; top:8px;">🔧 本次优化 F3 · 热区自动排序</div>
+      <div id="monList" style="margin-top:26px;"></div>
+    </div>
+  </div>
+
+  <!-- F2 camera modal -->
+  <div id="camModal">
+    <div class="cam-dialog">
+      <div class="hd"><span id="camTitle">车体实景底图 — 摄像头点位</span><span class="x" id="camClose">✕</span></div>
+      <div class="floorplan" id="floorplan"></div>
+      <div class="fp-cap">
+        <span class="lg">底图：<b id="capCar">CR400BF-GS 型动车组</b> 车体实景</span>
+        <span>📷 点击摄像头图标 → 中间画面切换至该机位</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== scale to fit ===== */
+function fit(){
+  var s = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+  document.getElementById('stage').style.transform = 'scale('+s+')';
+}
+window.addEventListener('resize', fit); fit();
+
+/* ===== clock ===== */
+function tick(){
+  var d=new Date();
+  var p=n=>String(n).padStart(2,'0');
+  document.getElementById('clock').textContent =
+    d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+}
+setInterval(tick,1000); tick();
+
+/* ===== fullscreen toggle ===== */
+document.getElementById('fsBtn').addEventListener('click', function(){
+  if(document.fullscreenElement){ document.exitFullscreen(); this.textContent='进入全屏'; }
+  else { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); this.textContent='退出全屏'; }
+});
+
+/* ===== carriage name from URL ===== */
+var CAR_NAMES = {
+  '普速列车':'普速列车乘务演练实训',
+  'CR400BF-GS':'CR400BF-GS 型动车组乘务实训',
+  'CR400BF-G·CRH380BG':'CR400BF-G / CRH380BG 型动车组乘务实训',
+  'CR200J·CRH5G':'CR200J / CRH5G 型动车组乘务实训'
+};
+/* 车型 → 车体实景底图 + 底图说明（图片来自 refs/实训场地信息/，已 downscale 进 assets/） */
+var CAR_IMG = {
+  '普速列车':            {img:'assets/car-puske.png',     cap:'普速 25 型客车'},
+  'CR400BF-GS':          {img:'assets/car-cr400bfgs.png', cap:'CR400BF-GS 型动车组'},
+  'CR400BF-G·CRH380BG':  {img:'assets/car-cr400bfg.png',  cap:'CR400BF-G / CRH380BG 型动车组'},
+  'CR200J·CRH5G':        {img:'assets/car-cr200j.png',    cap:'CR200J / CRH5G 型动车组'}
+};
+var params = new URLSearchParams(location.search);
+var car = params.get('car') || 'CR400BF-GS';
+var courseName = CAR_NAMES[car] || car;
+document.getElementById('roomName').textContent = car + ' 乘务实训室';
+document.getElementById('courseName').textContent = courseName;
+document.getElementById('courseName2').textContent = courseName;
+document.title = car + ' · 实训室全景管控';
+/* 设置摄像头 modal 的车体底图 */
+var carImg = CAR_IMG[car] || CAR_IMG['CR400BF-GS'];
+document.getElementById('floorplan').style.backgroundImage = "url('"+carImg.img+"')";
+document.getElementById('capCar').textContent = carImg.cap;
+
+/* ===== F3 monitor list with hot-zone auto sort ===== */
+var MONS = [
+  {id:'CAM-01', name:'实训区主视角', tag:'作业实训区', hot:false},
+  {id:'CAM-02', name:'车厢内部', tag:'车厢主体', hot:false},
+  {id:'CAM-03', name:'操作台区域', tag:'调度演练区', hot:false},
+  {id:'CAM-04', name:'设备检修位', tag:'设备检修区', hot:false}
+];
+function renderMonitors(){
+  var hot = MONS.filter(m=>m.hot);
+  var cold = MONS.filter(m=>!m.hot);
+  var order = hot.concat(cold);
+  var box = document.getElementById('monList');
+  order.forEach(function(m){
+    var card = document.getElementById('card-'+m.id);
+    if(!card){
+      card = document.createElement('div');
+      card.className='moncard'; card.id='card-'+m.id;
+      card.innerHTML='<div class="tag">'+m.tag+'</div><div class="ci">📹 '+m.id+'</div><div class="name">'+m.name+'</div><div class="hot">🔥</div>';
+      card.addEventListener('click', function(){ setMainFeed(m); setActive(m.id); });
+    }
+    card.classList.toggle('ishot', m.hot);
+    box.appendChild(card);
+  });
+}
+function setActive(id){
+  document.querySelectorAll('.moncard').forEach(c=>c.classList.remove('active'));
+  var c=document.getElementById('card-'+id); if(c) c.classList.add('active');
+}
+function setMainFeed(m){
+  document.getElementById('feedName').textContent='监控画面 · '+m.name;
+  document.getElementById('feedDesc').textContent=m.id+' · 1080P 实时';
+  document.getElementById('mainOvl').textContent=m.id+' '+m.name+(m.hot?' 🔥热区':'');
+}
+renderMonitors();
+setMainFeed(MONS[0]); setActive(MONS[0].id);
+
+setInterval(function(){
+  var flips = 1 + Math.floor(Math.random()*2);
+  for(var k=0;k<flips;k++){
+    var idx = Math.floor(Math.random()*MONS.length);
+    MONS[idx].hot = Math.random() > 0.45;
+  }
+  renderMonitors();
+}, 5000);
+
+/* ===== F2 camera modal ===== */
+var camModal=document.getElementById('camModal');
+/* 沿车体横向铺开（Demo 示意位置，可任意调整） */
+var CAM_POINTS=[
+  {x:'16%',y:'40%',label:'CAM-01 实训区主视角'},
+  {x:'40%',y:'58%',label:'CAM-04 设备检修位'},
+  {x:'62%',y:'40%',label:'CAM-02 车厢内部'},
+  {x:'85%',y:'58%',label:'CAM-03 操作台区域'}
+];
+(function initCamPoints(){
+  var fp=document.getElementById('floorplan');
+  CAM_POINTS.forEach(function(p){
+    var el=document.createElement('div');
+    el.className='campt'; el.style.left=p.x; el.style.top=p.y;
+    el.innerHTML='📷<span class="pin">'+p.label+'</span>';
+    el.addEventListener('click', function(){
+      var id=p.label.split(' ')[0];
+      var m=MONS.find(x=>x.id===id) || {id:id,name:p.label.substring(7),hot:false};
+      setMainFeed(m); setActive(m.id);
+      camModal.style.display='none';
+    });
+    fp.appendChild(el);
+  });
+})();
+document.getElementById('camBtn').addEventListener('click', function(){ camModal.style.display='flex'; });
+/* 深链：?autocam 直接打开摄像头点位（演示用，可直达此视图） */
+if(new URLSearchParams(location.search).has('autocam')){ camModal.style.display='flex'; }
+document.getElementById('camClose').addEventListener('click', function(){ camModal.style.display='none'; });
+camModal.addEventListener('click', function(e){ if(e.target===camModal) camModal.style.display='none'; });
+</script>
+</body>
+</html>
