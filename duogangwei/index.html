@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>多岗位协同演练 · AI 数字人大屏 Demo</title>
+<title>多岗位协同演练 · 道岔挤岔应急处置实训</title>
 <style>
   :root{
     --dispatch:#e11d48; --station:#d97706; --driver:#2563eb; --signal:#16a34a;
@@ -86,7 +86,7 @@
   @keyframes floatin{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
   /* 上半身人像：坐落在气泡上方、再大1.1倍 */
   .dh-float .df-fig{width:180px;height:189px;object-fit:cover;object-position:top center;flex:0 0 auto;
-    background:transparent;filter:drop-shadow(0 5px 10px rgba(30,50,90,.3));margin:0 0 -14px 14px;position:relative;z-index:2}
+    background:transparent;filter:drop-shadow(0 5px 10px rgba(30,50,90,.3));margin:0 0 2px 14px;position:relative;z-index:2}
   /* 气泡（文本框） */
   .dh-float .df-main{min-width:0;width:min(264px,28vw);background:var(--panel);border:1px solid var(--line);
     border-left:3px solid var(--accent);border-radius:12px;padding:11px 13px;box-shadow:0 14px 34px rgba(30,50,90,.24)}
@@ -218,11 +218,11 @@
   .report .total .lab{color:var(--sub);font-size:clamp(11px,.9vw,14px)}
   .report .total .grade{margin-left:auto;font-size:clamp(13px,1.1vw,18px);font-weight:800;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:6px 14px}
   .rscore{margin-bottom:14px}
-  .rscore .row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-  .rscore .nm{flex:0 0 78px;font-weight:700;font-size:clamp(10px,.85vw,13px)}
-  .rscore .bar{flex:1;height:9px;border-radius:5px;background:var(--line);overflow:hidden}
-  .rscore .bar>i{display:block;height:100%;border-radius:5px}
-  .rscore .vv{flex:0 0 34px;text-align:right;font-weight:800;font-size:clamp(10px,.85vw,13px)}
+  .rscore .row{display:flex;align-items:center;gap:11px;margin-bottom:13px}
+  .rscore .nm{flex:0 0 80px;font-weight:700;font-size:clamp(10px,.85vw,13px)}
+  .rscore .bar{flex:1;height:14px;border-radius:7px;background:#eef2f7;overflow:hidden}
+  .rscore .bar>i{display:block;height:100%;border-radius:7px}
+  .rscore .vv{flex:0 0 36px;text-align:right;font-weight:800;font-size:clamp(11px,.9vw,14px)}
   .rcomment{background:#f3f7ff;border:1px solid #d7e3fb;border-left:3px solid var(--accent);border-radius:8px;
     padding:10px 13px;font-size:clamp(11px,.9vw,14px);line-height:1.6;color:var(--ink);margin-bottom:14px}
   .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
@@ -269,12 +269,19 @@
   .dbox .btn{margin:0 auto}
 
   /* 开场流程示意图 */
-  .opening .fig{flex-direction:column;align-items:stretch;gap:13px;max-width:1120px;width:100%}
-  .opening .ohead{display:flex;align-items:center;gap:24px}
-  .opening .ohead .hero{width:clamp(180px,18vw,270px)}
-  .opening h1{margin:0 0 8px;font-size:clamp(19px,2.1vw,36px)}
+  .opening .fig{flex-direction:column;align-items:center;gap:16px;max-width:1180px;width:100%;padding-bottom:60px}
+  .opening .ohead{display:flex;align-items:center;justify-content:center;gap:30px}
+  .opening .ohead .hero{width:clamp(196px,19vw,286px)}
+  .opening .ohead .copy{flex:0 1 auto}
+  .opening .kicker{font-size:clamp(11px,1.05vw,16px)}
+  .opening h1{margin:0 0 6px;font-size:clamp(26px,2.9vw,50px)}
   .opening .sub{margin-bottom:0}
   .opening .narr{min-height:auto}
+  /* 按钮移到屏幕底部、弱化 */
+  .opening .acts{position:absolute;left:0;right:0;bottom:20px;margin:0;justify-content:center;gap:14px}
+  .opening .acts .btn{height:34px;padding:0 16px;font-size:clamp(11px,.85vw,13px);background:transparent;
+    border-color:var(--line);color:var(--muted);box-shadow:none}
+  .opening .acts .btn:hover{color:var(--accent);border-color:var(--accent)}
   .omap{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;
     display:none;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s}
   .omap.show{display:block;opacity:1;transform:none}
@@ -301,7 +308,7 @@
   <div class="bigscreen" id="bigscreen">
 
     <div class="topbar">
-      <div class="ttl">城轨 <b>多岗位协同演练</b> · AI 数字人观摩大屏</div>
+      <div class="ttl">城轨 <b>多岗位协同演练</b> · 道岔挤岔应急处置实训</div>
       <div class="meta">
         <span class="pill">科目：中间站道岔挤岔应急处置</span>
         <span class="pill live">● 联动在线</span>
@@ -361,7 +368,7 @@
           <img class="hero" src="assets/avatar.png" alt="数字人">
           <div class="copy">
             <div class="kicker">JIEAN · 城轨大联合 × AI 数字人</div>
-            <h1>多岗位协同演练 · <span>道岔挤岔应急处置</span> 观摩演示</h1>
+            <h1>多岗位协同演练 · <span>道岔挤岔应急处置</span> 实训</h1>
           </div>
         </div>
         <div class="vwake" id="vwake">
@@ -709,7 +716,8 @@ function showReport(){
     ? `本次道岔挤岔应急处置演练，四岗协同基本顺畅，整体${grade}。在 ${[...new Set(weak.map(w=>ROLES[w.role].name))].join('、')} 环节发现 ${weak.length} 处不规范操作，已在演练中逐项纠正，建议针对性补强后再次演练巩固。`
     : '本次道岔挤岔应急处置演练，四岗协同顺畅，联控用语规范，控制权交接与现场处置完整，整体表现优秀，建议作为标准化范本沉淀复用。');
   const col={dispatch:'var(--dispatch)',station:'var(--station)',driver:'var(--driver)',signal:'var(--signal)'};
-  $('rScore').innerHTML=ROLE_ORDER.map(r=>`<div class="row"><span class="nm" style="color:${col[r]}">${ROLES[r].name}</span><span class="bar"><i style="width:${base[r]}%;background:${col[r]}"></i></span><span class="vv">${base[r]}</span></div>`).join('');
+  const barcol={dispatch:'#e7909f',station:'#e3b277',driver:'#93b0e2',signal:'#80c79c'};  // 降饱和柔和色
+  $('rScore').innerHTML=ROLE_ORDER.map(r=>`<div class="row"><span class="nm" style="color:${col[r]}">${ROLES[r].name}</span><span class="bar"><i style="width:${base[r]}%;background:${barcol[r]}"></i></span><span class="vv">${base[r]}</span></div>`).join('');
   $('rPoints').innerHTML=ASSESS_POINTS.map(p=>`<li>${p}</li>`).join('');
   // 学员能力趋势 + 个人提升建议
   $('rTrend').innerHTML='<h4>学员能力趋势 · 个人提升建议（近 5 次本任务得分）</h4><div class="tgrid">'+ROLE_ORDER.map(r=>{
@@ -767,8 +775,21 @@ function enterStandby(){
   speak(STANDBY_TXT,()=>{startListen();},'standby');
 }
 function dispatchTask(){
-  stopListen();$('dispatch').classList.remove('show');
-  speak(CONFIRM_TXT,()=>{if(bi<0)goBeat(0);},'confirm');
+  stopListen();$('dispatch').classList.remove('show');$('opening').classList.add('hide');
+  // 下发指令时数字人先出镜说这句，再开始走流程（不空屏）
+  showHostSay('总控数字人 · 小安',CONFIRM_TXT);
+  speak(CONFIRM_TXT,()=>{hideFloat();if(bi<0)goBeat(0);},'confirm');
+}
+/* 总控数字人居中出镜（开场下发/收尾等场景） */
+function showHostSay(name,text){
+  const f=$('dhFloat');f.className='dh-float mentor show';
+  f.querySelector('.df-name').textContent=name;
+  f.querySelector('.df-body').textContent=text;
+  const bs=$('bigscreen').getBoundingClientRect();
+  f.style.left='-9999px';f.style.top='0';f.classList.add('show');
+  const fw=f.offsetWidth,fh=f.offsetHeight;
+  f.style.left=Math.max(24,bs.width*0.30-fw/2)+'px';
+  f.style.top=Math.max(60,bs.height*0.36-fh/2)+'px';
 }
 
 /* ===== 全局共享语音识别器：一次授权、持续监听，切换场景只换处理器、不重启（避免反复弹权限） ===== */
@@ -810,15 +831,16 @@ function startOpenVoice(){
   if(!ok){$('vwState').textContent='⚠ 当前浏览器不支持语音，请点「手动开始」';$('vwMic').classList.remove('listening');return;}
   $('vwMic').classList.add('listening');
   vrSet(t=>{if(aiSpeaking)return;$('vwHeard').textContent='识别：'+t;
-    if(openState==='idle'&&/小安|晓安|小爱|消安|想安/.test(t))wakeUp();
-    else if(openState==='awake'&&/开始|演练|出发|启动|训练/.test(t)){openState='started';vrSet(null);runOpening();}});
+    // 加一点反应时间，等用户说完再应答
+    if(openState==='idle'&&/小安|晓安|小爱|消安|想安/.test(t)){openState='waking';setTimeout(()=>{if(openState==='waking')wakeUp();},650);}
+    else if(openState==='awake'&&/开始|演练|出发|启动|训练/.test(t)){openState='starting';setTimeout(()=>{if(openState==='starting'){openState='started';vrSet(null);runOpening();}},520);}});
 }
 function wakeUp(){
-  if(openState!=='idle')return;openState='awake';
+  openState='awake';
   document.querySelector('.opening .hero').classList.add('awake');
   $('vwake').classList.add('awake');$('vwState').textContent='✅ 已唤醒 · 请下达指令';
   $('openNarr').innerHTML='';
-  speak('在呢，收到。请下达您的指令。',null,'wake');
+  speak('在的，请指示。',null,'wake');
 }
 function stopOpenVoice(){openState='started';vrSet(null);$('vwMic').classList.remove('listening');}
 
