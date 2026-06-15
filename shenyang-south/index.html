@@ -178,7 +178,20 @@
         </div>
 
         <div class="card">
-          <h2 style="margin-bottom:6px">④ <span id="curLevelName">站段级</span>的计划列表 <span class="sub" id="curLevelSrc">来自2026年度计划表</span></h2>
+          <h2>④ 各层字段不一样（上层粗·下层细）<span class="sub">共性字段都有；各层另有特有字段</span></h2>
+          <div class="tt-wrap"><table class="field-cmp">
+            <tr><th>字段类</th><th>站段级</th><th>车间级</th><th>班组级</th></tr>
+            <tr><td class="fc-k">共性</td><td colspan="3" style="text-align:center">名称 · 培训对象 · 时间 · 创建人 · 状态（各层都有）</td></tr>
+            <tr><td class="fc-k">立项字段</td><td class="fc-y">项目编号sydcd · 培训性质 · 实施季度 · 主办部门</td><td class="fc-h">承接段编号</td><td class="fc-h">承接</td></tr>
+            <tr><td class="fc-k">组织字段</td><td class="fc-n">—</td><td class="fc-y">班组 · 工长 · 业务辅导员 · 岗位人数 · 周次 · 常规/临时</td><td class="fc-y">同左（到本班组）</td></tr>
+            <tr><td class="fc-k">执行字段</td><td class="fc-n">只到"培训班/人数"</td><td class="fc-h">到"学啥内容"</td><td class="fc-y">题库范围 · 实作项目 · 参训人员(到人)</td></tr>
+            <tr><td class="fc-k">颗粒度</td><td>办哪个培训班(870人这种)</td><td>哪个班组哪周学啥</td><td>哪个人学哪几道题</td></tr>
+          </table></div>
+        </div>
+
+        <div class="card">
+          <h2 style="margin-bottom:6px">⑤ 计划列表 <span class="sub" id="curLevelSrc">来自2026年度计划表</span> · <span id="curLevelName" style="color:var(--primary)">站段级</span></h2>
+          <div class="scope-tabs" id="planScopeTabs" style="margin-bottom:10px"></div>
           <div class="cat-tabs" id="planCatTabs" style="margin-bottom:12px"></div>
           <div class="tt-wrap">
             <table class="plan-table">

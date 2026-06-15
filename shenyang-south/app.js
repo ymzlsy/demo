@@ -175,6 +175,7 @@ const CAT_BY_LEVEL={
   班组:[{cat:'专项',label:'专项培训（承接上级）'},{cat:'日常',sub:'每周一学',label:'日常·每周一学'},{cat:'日常',sub:'每月一练',label:'日常·每月一练'}],
 };
 let planFilterCat='';// 类型筛选
+let planScope='level';// level=只看本层 / all=全部层级总览
 const ST_PLAN={'编制中':'#8c8c8c','待审核':'#faad14','已下达':'#1677ff','执行中':'#52c41a','已完成':'#13c2c2'};
 let curPlanLevel='站段',planRole='段职培科专职';
 
@@ -480,20 +481,32 @@ function renderPlanLevel(){
   document.getElementById('pyrInfo').innerHTML=`<b>${py.full}</b>：由 <b>${py.who}</b> 创建；管的是「${py.manage}」；单位量级：${py.unit}`;
   document.getElementById('curLevelName').textContent=py.full;
   document.getElementById('curLevelSrc').textContent={站段:'来自 2026 年度培训计划表（真实）',车间:'来自 沈北所 8 月培训计划（真实·勾博文编）',班组:'来自 班组每周一学/每月一练（真实）',国铁:'脑图未展开',集团:'脑图未展开'}[curPlanLevel];
-  // 类型筛选 Tab
+  // 视图范围切换（本层 / 全部）+ 类型筛选 Tab
+  const scopeEl=document.getElementById('planScopeTabs');
+  if(scopeEl)scopeEl.innerHTML=`<span class="scope-tab ${planScope==='level'?'on':''}" onclick="setPlanScope('level')">只看本层（${py.full}）</span><span class="scope-tab ${planScope==='all'?'on':''}" onclick="setPlanScope('all')">📊 看全部层级（总览）</span>`;
   const tabEl=document.getElementById('planCatTabs');
-  if(tabEl&&!lv.placeholder){
-    const cats=[{v:'',t:'全部'},{v:'专项',t:'专项培训'},{v:'日常',t:'日常培训(每周一学/每月一练)'}];
+  if(tabEl){
+    const cats=[{v:'',t:'全部类型'},{v:'专项',t:'专项培训'},{v:'日常',t:'日常培训(每周一学/每月一练)'}];
     tabEl.innerHTML=cats.map(c=>`<span class="cat-tab ${planFilterCat===c.v?'on':''}" onclick="setPlanCat('${c.v}')">${c.t}</span>`).join('')
-      +`<button class="btn primary sm" style="margin-left:auto" onclick="openCreatePlan()">＋ 新建${py.full}计划</button>`;
-  } else if(tabEl){tabEl.innerHTML='';}
-  let data=(PLAN_DATA[curPlanLevel]||[]);
-  if(planFilterCat)data=data.filter(p=>p.cat===planFilterCat);
+      +`<button class="btn primary sm" style="margin-left:auto" onclick="openCreatePlan()">＋ 新建${planScope==='all'?'计划':py.full+'计划'}</button>`;
+  }
+  // 组装数据
+  let rows=[];
+  if(planScope==='all'){
+    ['站段','车间','班组'].forEach(k=>{(PLAN_DATA[k]||[]).forEach(p=>rows.push({...p,_lv:k}));});
+    document.getElementById('curLevelName').textContent='全部层级';
+    document.getElementById('curLevelSrc').textContent='站段+车间+班组合并总览，可按层级颜色区分';
+  } else {
+    rows=(PLAN_DATA[curPlanLevel]||[]).map(p=>({...p,_lv:curPlanLevel}));
+    document.getElementById('curLevelName').textContent=py.full;
+  }
+  if(planFilterCat)rows=rows.filter(p=>p.cat===planFilterCat);
   const body=document.getElementById('planTbody');
-  if(lv.placeholder){body.innerHTML=`<tr><td colspan="11" class="empty-state">${lv.full}计划由上级职教部门创建，脑图未展开字段——本层为只读占位，字段待向甲方确认。</td></tr>`;return;}
-  if(!data.length){body.innerHTML=`<tr><td colspan="11" class="empty-state">本层级该类型暂无计划，点右上「新建」创建</td></tr>`;return;}
-  body.innerHTML=data.map((p,idx)=>`<tr>
-    <td>${p.no}</td>
+  if(planScope==='level'&&lv.placeholder){body.innerHTML=`<tr><td colspan="11" class="empty-state">${lv.full}计划由上级职教部门创建，脑图未展开字段——本层为只读占位，字段待向甲方确认。</td></tr>`;return;}
+  if(!rows.length){body.innerHTML=`<tr><td colspan="11" class="empty-state">暂无计划，点右上「新建」创建</td></tr>`;return;}
+  const lvColor={站段:'#1677ff',车间:'#13c2c2',班组:'#52c41a'};
+  body.innerHTML=rows.map((p,idx)=>`<tr>
+    <td>${planScope==='all'?`<span class="lv-badge" style="background:${lvColor[p._lv]}">${p._lv}</span>`:p.no}</td>
     <td><span class="cat-badge ${p.cat==='专项'?'zx':'rc'}">${p.cat}${p.sub?'·'+p.sub:''}</span><br><b>${p.name}</b>${p.detail?`<br><span class="muted" style="font-size:11px">${p.detail}</span>`:''}</td>
     <td>${p.code}</td>
     <td>${p.form}/${p.xz}</td>
@@ -503,10 +516,12 @@ function renderPlanLevel(){
     <td>${p.q}</td>
     <td style="font-size:11px">${p.dept}</td>
     <td><span class="plan-st" style="background:${ST_PLAN[p.st]}22;color:${ST_PLAN[p.st]}">${p.st}</span></td>
-    <td><span class="link-a" onclick="editPlan(${idx})">编辑</span> · <span class="link-a" onclick="planDrill('${p.name}',${p.courses})">课程(${p.courses})</span></td>
+    <td><span class="link-a" onclick="editPlanByLv('${p._lv}',${p.no},'${p.cat}')">编辑</span> · <span class="link-a" onclick="planDrill('${p.name.replace(/'/g,'')}',${p.courses})">课程(${p.courses})</span></td>
   </tr>`).join('');
 }
 function setPlanCat(v){planFilterCat=v;renderPlanLevel();}
+function setPlanScope(s){planScope=s;renderPlanLevel();}
+function editPlanByLv(lv,no,cat){curPlanLevel=lv;const p=(PLAN_DATA[lv]||[]).find(x=>x.no===no&&x.cat===cat);openCreatePlan(p);}
 
 /* 新建/编辑计划：先选类型 → 动态表单 */
 function openCreatePlan(editData){

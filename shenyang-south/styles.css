@@ -395,3 +395,18 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:
 .form-tag{font-size:12px;padding:6px 12px;border-radius:6px;margin-bottom:12px}
 .form-tag.zx{background:var(--primary-bg);color:var(--primary-dark)}
 .form-tag.rc{background:var(--success-bg);color:#389e0d}
+
+/* 视图范围切换 */
+.scope-tabs{display:flex;gap:8px}
+.scope-tab{padding:7px 16px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;background:#fff}
+.scope-tab:hover{border-color:var(--primary)}
+.scope-tab.on{background:var(--primary-bg);border-color:var(--primary);color:var(--primary);font-weight:600}
+.lv-badge{font-size:11px;color:#fff;padding:2px 8px;border-radius:10px;white-space:nowrap}
+/* 字段对照表 */
+.field-cmp{width:100%;border-collapse:collapse;font-size:12.5px;min-width:680px}
+.field-cmp th,.field-cmp td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+.field-cmp th{background:#fafafa;font-weight:600}
+.field-cmp .fc-k{background:#fafafa;font-weight:600;white-space:nowrap}
+.field-cmp .fc-y{background:var(--success-bg);color:#389e0d}
+.field-cmp .fc-h{background:var(--warning-bg);color:#874d00}
+.field-cmp .fc-n{background:#fafafa;color:var(--text-3)}
