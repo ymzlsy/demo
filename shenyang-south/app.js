@@ -139,10 +139,21 @@ function openRoom(name){go('twin-train');selectRoom(name);}
 /* ---------- 4.5 数据看板 ---------- */
 const DASH={年度:{kpi:[['年度参培','12,480','人次'],['考核完成','86%','up'],['考试合格率','92.4%','up'],['设备利用率','61%',''],['计划兑现率','78%','warn']],
   campus:[['沈南校区',7200],['沈北校区',3100],['长春所',1400],['大连所',780]],
-  hot:[['受电弓检修台',420],['J5救援联挂',360],['VR 工位',310],['CRH5主控台',250],['万用表台',180]]},
+  hot:[['受电弓检修台',420],['J5救援联挂',360],['VR 工位',310],['CRH5主控台',250],['万用表台',180]],
+  prog:[['培训班计划','plan',82],['日常培训','daily',74],['考试人数完成','plan',91]],
+  util:[['CR400BF实训室',68,'480分/天'],['CRH5实训室',55,'480分/天'],['救援联挂室',47,'480分/天'],['段库理论教室',38,'分母按段库层级取值'],['异地理论教室',26,'分母按异地层级取值']]},
   月度:{kpi:[['月度参培','1,180','人次'],['考核完成','73%','warn'],['考试合格率','90.1%','up'],['设备利用率','58%',''],['计划兑现率','69%','warn']],
   campus:[['沈南校区',640],['沈北校区',300],['长春所',150],['大连所',90]],
-  hot:[['受电弓检修台',48],['VR 工位',41],['J5救援联挂',36],['CRH5主控台',28],['万用表台',19]]}};
+  hot:[['受电弓检修台',48],['VR 工位',41],['J5救援联挂',36],['CRH5主控台',28],['万用表台',19]],
+  prog:[['培训班计划','plan',69],['日常培训','daily',61],['考试人数完成','plan',77]],
+  util:[['CR400BF实训室',63,'480分/天'],['CRH5实训室',51,'480分/天'],['救援联挂室',44,'480分/天'],['段库理论教室',35,'分母按段库层级取值'],['异地理论教室',22,'分母按异地层级取值']]}};
+// 座位级占用：教室 → 座位数组（0空 1有人 2电脑占用）
+const SEATS={
+  '理论教室 1':[2,2,1,2,0,1,2,2, 1,2,2,0,1,2,2,1, 0,1,2,2,1,0,2,1],
+  '理论教室 2':[1,1,0,1,1,0,0,1, 0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,0],
+  '综合教室':[2,1,2,1,2,0,1,2, 0,1,0,1,2,0,1,0, 0,0,1,0,1,0,0,1],
+  '段库 教室 A':[2,2,2,2,1,1,2,2, 2,2,1,2,2,1,2,2, 1,2,2,1,2,2,1,2],
+};
 let dashCur='年度';
 function dashScope(btn,s){document.querySelectorAll('[data-view="twin-dash"] .seg button').forEach(b=>b.classList.toggle('on',b===btn));dashCur=s;renderDash();}
 function renderDash(){
@@ -152,6 +163,18 @@ function renderDash(){
   document.getElementById('barCampus').innerHTML=d.campus.map(c=>`<div class="bar"><span class="bn">${c[0]}</span><span class="bt"><span class="bf" style="width:${c[1]/mx*100}%"></span></span><span class="bv">${c[1]}</span></div>`).join('');
   const mh=Math.max(...d.hot.map(c=>c[1]));
   document.getElementById('barHot').innerHTML=d.hot.map(c=>`<div class="bar"><span class="bn">${c[0]}</span><span class="bt"><span class="bf hot" style="width:${c[1]/mh*100}%"></span></span><span class="bv">${c[1]}h</span></div>`).join('');
+  // 进度（区分培训班计划/日常培训）
+  document.getElementById('progRow').innerHTML=d.prog.map(p=>`<div class="prog"><div class="ph"><span class="pt">${p[0]}<span class="ty ${p[1]}">${p[1]==='plan'?'培训班计划':'日常培训'}</span></span><span class="muted">${p[2]}%</span></div><div class="pbar"><span class="pf ${p[1]}" style="width:${p[2]}%"></span></div></div>`).join('');
+  // 利用率（分母480/分层）
+  document.getElementById('barUtil').innerHTML=d.util.map(c=>`<div class="bar"><span class="bn">${c[0]}</span><span class="bt"><span class="bf" style="width:${c[1]}%"></span></span><span class="bv">${c[1]}%</span><span class="muted" style="width:140px;font-size:11px">${c[2]}</span></div>`).join('');
+}
+function renderSeats(){
+  const rooms=Object.keys(SEATS);const sel=document.getElementById('seatRoom');
+  if(!sel.options.length)sel.innerHTML=rooms.map(r=>`<option>${r}</option>`).join('');
+  const room=sel.value||rooms[0];const seats=SEATS[room];
+  document.getElementById('seatGrid').innerHTML=seats.map((s,i)=>{
+    const cls=s===2?'pc':s===1?'occ':'';const pc=s===2?'<span class="pcdot">💻</span>':'';
+    return `<div class="seat ${cls}">${pc}${i+1}</div>`;}).join('');
 }
 
 /* ---------- 4.5 实训场地 ---------- */
@@ -170,7 +193,7 @@ function renderDevGrid(hlTask){
       <span class="led"></span><div class="nm">${d.nm}</div><div class="meta">容量 ${d.cap}<br>${d.time}</div><span class="st">${ST_LABEL[d.st]}</span></div>`;}).join('');
 }
 function highlightByTask(){const t=document.getElementById('taskHL').value;renderDevGrid(t);if(t)toast(`已高亮「${t}」关联的设备（任务→硬设关系→设备亮起）`,'🔗');}
-function remoteCtl(lvl){const map={'设备':'已下发：单台设备远程关机指令','实训室':'已下发：'+curRoom+' 统一关机','校区':'已下发：沈南校区统一关机','上电':'已下发：远程上电'};toast(map[lvl]+'（演示）','🔌');}
+function remoteCtl(lvl){const map={'设备':'已下发：单台设备远程关机指令','实训室':'已下发：'+curRoom+' 统一关机','校区':'已下发：沈南校区总开关关机','上电':'已下发：远程上电'};toast(map[lvl]+'（车间级管理员权限·演示）','🔌');}
 
 function openDev(d,room){
   const tree=DEV_TREE[d.nm];
@@ -340,7 +363,7 @@ function tickClock(){const d=new Date();document.getElementById('clock').textCon
 
 /* ---------- init ---------- */
 renderNav();go('twin-home');
-renderTree();renderDash();renderRoomList();selectRoom('CR400BF 综合实训室');renderClassrooms();
+renderTree();renderDash();renderRoomList();selectRoom('CR400BF 综合实训室');renderClassrooms();renderSeats();
 fillDevOpts();renderCourseList();renderSteps();renderTable('smTable',Array.from({length:4},()=>Array.from({length:5},()=>null)),true,true);
 initFilters();renderBoard();renderManual();
 renderPeople();renderBook('monthBook','monthAxis',[3,4,9]);renderBook('personBook','personAxis',[5,6,7,12,13]);renderWeek();

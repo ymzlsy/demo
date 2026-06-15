@@ -54,13 +54,23 @@
         <div class="page-head">
           <div class="crumb">数字孪生实训管控 / 段·车间数据看板</div>
           <h1>段 / 车间级数据看板</h1>
-          <span class="tagline">★ 对齐手册：段级地图入口 + 年度/月度统计（参培人数、考核进度、合格率、设备利用率、热度排行）</span>
+          <span class="tagline">★ 全景整天汇总（非实时）；课节/考试进度区分培训班计划与日常培训；利用率分母按层级取值</span>
         </div>
         <div class="seg" style="margin-bottom:14px"><button class="on" onclick="dashScope(this,'年度')">年度</button><button onclick="dashScope(this,'月度')">月度</button></div>
+        <div class="note" style="margin-bottom:12px">📊 会议记录口径：本看板为<b>整天汇总</b>（汇总所有教室级原始数据，非实时当时值）。</div>
         <div class="kpi-row" id="kpiRow"></div>
+        <div class="card">
+          <h2>培训进度 <span class="sub">★ 区分「培训班计划」与「日常培训」两类</span></h2>
+          <div id="progRow"></div>
+        </div>
         <div class="row">
           <div class="card" style="flex:1;min-width:300px"><h2>各校区/车间参培人次</h2><div id="barCampus"></div></div>
           <div class="card" style="flex:1;min-width:300px"><h2>实训设备热度排行 <span class="sub">使用时长 Top</span></h2><div id="barHot"></div></div>
+        </div>
+        <div class="card">
+          <h2>实训室 / 教室利用率 <span class="sub">★ 分母=480分钟/天(8h)，分子=使用时长；教室分母按层级取值</span></h2>
+          <div id="barUtil"></div>
+          <div class="hint">利用率 = 使用时长 ÷ 可用时长。实训室分母固定 480 分钟/天；教室为避免各地数据过低，分母按"段库/校区/异地"层级分别取值。</div>
         </div>
       </div>
 
@@ -78,14 +88,15 @@
               <select class="input" id="taskHL" onchange="highlightByTask()"><option value="">— 不筛选，显示全部 —</option></select>
             </div>
             <div>
-              <label class="muted">远程控制</label><br>
+              <label class="muted">远程控制 <span class="perm-badge">需车间级管理员以上</span></label><br>
               <button class="btn sm" onclick="remoteCtl('设备')">单台关机</button>
               <button class="btn sm" onclick="remoteCtl('实训室')">本室统一关机</button>
-              <button class="btn sm" onclick="remoteCtl('校区')">校区统一关机</button>
+              <button class="btn sm" onclick="remoteCtl('校区')">校区总开关</button>
               <button class="btn sm" onclick="remoteCtl('上电')">远程上电</button>
             </div>
           </div>
-          <div class="note" style="margin:12px 0 0">⚙️ 自动关机规则：设备预约时间 <b>10 分钟内无人签到</b> → 系统查课表 <b>未来 1 小时无课程</b> → <b>自动关机</b>。（来自实操考试组织流程图）</div>
+          <div class="note" style="margin:12px 0 0">⚙️ 自动关机规则：设备预约时间 <b>10 分钟内无人签到</b> → 系统查课表 <b>未来 1 小时无课程</b> → <b>自动关机</b>。</div>
+          <div class="note" style="margin:8px 0 0;background:var(--primary-bg);border-color:#91caff;color:var(--primary-dark)">🔌 远程开关机约束（会议记录）：只需<b>当地最大的总开关</b>；需支持<b>异地</b>；目前<b>仅沈南硬件全部支持</b>（含理论教室），沈北/长春/大连待硬件到位。<b>车间级管理员以上</b>才可见此操作区。</div>
         </div>
         <div class="row">
           <div class="card" style="flex:0 0 220px"><h2>选择实训室</h2><div id="roomList"></div></div>
@@ -110,6 +121,15 @@
         <div class="card">
           <h2>段库 / 各车间教室实时态 <span class="sub">绿=上课中（可点开点名），灰=空闲（可点开模拟开课）</span></h2>
           <div class="cls-grid" id="clsGrid"></div>
+        </div>
+        <div class="card">
+          <h2>座位级占用 <span class="sub">★ 会议记录：教室级 + 座位级；含电脑的座位通过装检测软件采集占用</span></h2>
+          <div class="row" style="align-items:center;gap:12px;margin-bottom:10px">
+            <select class="input" style="width:200px" id="seatRoom" onchange="renderSeats()"></select>
+            <div class="legend"><span><i style="background:var(--success)"></i>有人(在座)</span><span><i style="background:var(--primary)"></i>电脑占用(软件检测)</span><span><i style="background:var(--idle)"></i>空位</span></div>
+          </div>
+          <div class="seat-room" id="seatGrid"></div>
+          <div class="hint">含计算机的座位：通过教室电脑安装的检测软件判断是否占用；无计算机的座位：通过工位传感器/就座识别判断。</div>
         </div>
       </div>
 
