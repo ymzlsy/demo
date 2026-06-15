@@ -103,7 +103,7 @@ const WEEKLY=[
   {t:'安全规章日测',p:'5题/已答3',min:6},
 ];
 
-const DEV_OPTS=['受电弓检修台','图罩开关设备','电环路系统台','HMI 操作台','VR 工位','J5 救援联挂主机','探伤检测台','万用表实操台','理论教室1','理论教室2'];
+const DEV_OPTS=['受电弓检修台','图罩开关设备','电环路系统台','HMI 操作台','VR 工位','J5 救援联挂主机','探伤检测台','万用表实操台','理论教室1','理论教室2','限车/限场（现场真车·离线）'];
 const DAYS=['周一 11/10','周二 11/11','周三 11/12','周四 11/13','周五 11/14'];
 const SLOTS=[{t:'第1-2节',h:'08:00-10:00'},{t:'第3-4节',h:'10:00-12:00'},{t:'第5-6节',h:'14:00-16:00'},{t:'第7-8节',h:'16:00-18:00'}];
 const BOARD=[
@@ -134,8 +134,15 @@ const NAV={
     {v:'sched-smart',ic:'⚡',t:'智能排课（专项）'},
     {v:'sched-board',ic:'📅',t:'课表总览'},
     {v:'sched-manual',ic:'🧩',t:'手动排课（层级筛选）'},
-    {v:'sched-flex',ic:'🙋',t:'弹性预约（月/周/个人）'}]
+    {v:'sched-flex',ic:'🙋',t:'弹性预约（月/周/个人）'},
+    {v:'sched-grab',ic:'🙋‍♂️',t:'师资抢单'}]
 };
+// 师资抢单数据（脑图img2：预约排课管理→师资抢单）
+const GRAB_ORDERS=[
+  {course:'受电弓检查',place:'CR400BF·受电弓检修台',time:'11/12 周二 8-10节',ban:'第5期轮训班',need:'CR400BF 资质',status:'待接单'},
+  {course:'救援连挂作业',place:'救援联挂室·J5主机',time:'11/13 周三 1-2节',ban:'地勤资格性班',status:'待接单'},
+  {course:'安全规章',place:'理论教室2',time:'11/12 周二 3-4节',ban:'地勤资格性班',status:'已接单·李红'},
+];
 let curMod='twin',curView='twin-home';
 function renderNav(){document.getElementById('sidenav').innerHTML=NAV[curMod].map(n=>n.g?`<div class="group">${n.g}</div>`:`<a data-v="${n.v}" class="${n.v===curView?'active':''}" onclick="go('${n.v}')"><span class="ic">${n.ic}</span>${n.t}</a>`).join('');}
 function go(v){curView=v;document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.sidenav a').forEach(a=>a.classList.toggle('active',a.dataset.v===v));document.getElementById('main').scrollTop=0;}
@@ -207,6 +214,8 @@ function renderDevGrid(hlTask){
 }
 function highlightByTask(){const t=document.getElementById('taskHL').value;renderDevGrid(t);if(t)toast(`已高亮「${t}」关联的设备（任务→硬设关系→设备亮起）`,'🔗');}
 function remoteCtl(lvl){const map={'设备':'已下发：单台设备远程关机指令','实训室':'已下发：'+curRoom+' 统一关机','校区':'已下发：沈南校区总开关关机','上电':'已下发：远程上电'};toast(map[lvl]+'（车间级管理员权限·演示）','🔌');}
+function applyRole(){const r=document.getElementById('roleSel').value;document.getElementById('ctlBtns').style.display=r==='admin'?'block':'none';document.getElementById('ctlHidden').style.display=r==='admin'?'none':'block';}
+function dispatchHint(){const v=document.getElementById('smDispatch').value;const m={same:'同级=群发该层级下面所有直接下级单位；班组业务辅导员则指派到学员。',one:'指定下级=只发给选中的某一个下级单位。',peer:'平级科室=仅"段职培科专职"可向平级科室(如安全科/技术科)派发，再由平级科室向下转派，其上级可夺回。'};document.getElementById('dispHint').textContent=m[v];}
 
 function openDev(d,room){
   const tree=DEV_TREE[d.nm];
@@ -270,10 +279,10 @@ function startTrain(){const t=new Date();const ts=`REC-${String(t.getHours()).pa
 let courses=[],smStep=1;
 function renderSteps(){const labels=['建计划','添加课程','一键排课','选老师'];document.getElementById('smSteps').innerHTML=labels.map((l,i)=>`<div class="stp ${smStep>i+1?'done':smStep===i+1?'cur':''}"><span class="n">${i+1}</span>${l}</div>`).join('');}
 function fillDevOpts(){document.getElementById('smDev').innerHTML=DEV_OPTS.map(d=>`<option>${d}</option>`).join('');}
-function addCourse(){const dev=document.getElementById('smDev').value;const nm=document.getElementById('smCourse').value.trim()||'(未命名)';const form=document.getElementById('smForm').value;const dur=+document.getElementById('smDur').value;courses.push({dev,nm,form,dur});document.getElementById('smCourse').value='';smStep=2;renderCourseList();renderSteps();}
+function addCourse(){const dev=document.getElementById('smDev').value;const nm=document.getElementById('smCourse').value.trim()||'(未命名)';const form=document.getElementById('smForm').value;const dur=+document.getElementById('smDur').value;const offline=dev.includes('限车');courses.push({dev,nm,form,dur,offline});document.getElementById('smCourse').value='';smStep=2;renderCourseList();renderSteps();if(offline)toast('限车/限场=离线设备：不占在线排课资源，靠平板下载任务→现场考核→事后同步','🚃');}
 function renderCourseList(){document.getElementById('smCount').textContent=courses.length+' 门';const el=document.getElementById('smList');if(!courses.length){el.innerHTML='<div class="empty-state">尚未添加课程</div>';return;}
   // 标签：同一设备重复添加用 #1 #2
-  const seen={};el.innerHTML=courses.map((c,i)=>{seen[c.dev]=(seen[c.dev]||0)+1;const tag=courses.filter(x=>x.dev===c.dev).length>1?` 标签#${seen[c.dev]}`:'';return `<div class="pk"><span class="tag">${c.dev}${tag}</span><span class="nm">${c.nm}</span><span class="du">${c.form}·${c.dur}学时</span><span class="rm" style="cursor:pointer" onclick="rmCourse(${i})">✕</span></div>`;}).join('');}
+  const seen={};el.innerHTML=courses.map((c,i)=>{seen[c.dev]=(seen[c.dev]||0)+1;const tag=courses.filter(x=>x.dev===c.dev).length>1?` 标签#${seen[c.dev]}`:'';const off=c.offline?' <span class="off-tag">离线</span>':'';return `<div class="pk"><span class="tag">${c.dev}${tag}</span><span class="nm">${c.nm}${off}</span><span class="du">${c.form}·${c.dur}学时</span><span class="rm" style="cursor:pointer" onclick="rmCourse(${i})">✕</span></div>`;}).join('');}
 function rmCourse(i){courses.splice(i,1);renderCourseList();}
 // 按岗位自动算人数（脑图：计划培训人数按培训对象岗位自动算并回显）
 const POST_HEAD={'轨道车司机':157,'地勤机械师':92,'随车机械师':128,'车辆钳工':64,'电力钳工':45};
@@ -371,6 +380,35 @@ function renderWeek(){document.getElementById('weekList').innerHTML=WEEKLY.map(w
 let wkMin=36;
 function weekLearn(){wkMin=Math.min(60,wkMin+12);document.getElementById('weekMin').textContent=wkMin;document.getElementById('weekRing').style.background=`conic-gradient(var(--primary) ${wkMin/60*360}deg,#f0f2f5 0)`;document.getElementById('weekRing').firstElementChild.textContent=Math.round(wkMin/60*100)+'%';if(wkMin>=60)toast('本周一学已达 1 学时，任务完成','🎉');else toast('+12 分钟','📖');}
 
+/* ---------- 师资抢单 ---------- */
+function renderGrab(){
+  const el=document.getElementById('grabList');if(!el)return;
+  el.innerHTML=GRAB_ORDERS.map((o,i)=>`<div class="grab-card ${o.status.startsWith('已')?'taken':''}">
+    <div class="gc-main"><div class="gc-course">${o.course}</div><div class="gc-meta">${o.place} · ${o.time} · ${o.ban}${o.need?' · 需'+o.need:''}</div></div>
+    <div class="gc-act">${o.status.startsWith('已')?`<span class="gc-done">${o.status}</span>`:`<button class="btn sm primary" onclick="grabOrder(${i})">抢单接单</button>`}</div></div>`).join('');
+}
+function grabOrder(i){GRAB_ORDERS[i].status='已接单·我（当前教员）';renderGrab();toast('已接单——进入我的课表，等管理人员确认','🙋‍♂️');}
+
+/* ---------- 整天汇总（4.5）---------- */
+const TODAY_SUMMARY={
+  classes:[
+    {ban:'第5期轨道车司机轮训班',type:'plan',xz:'适应性',report:'45/45',plan:100,jie:'8/12节',exam:'—'},
+    {ban:'地勤机械师资格性培训班',type:'plan',xz:'资格性',report:'30/30',plan:100,jie:'6/8节',exam:'90%'},
+    {ban:'检修车间·每月一练(探伤板更换)',type:'daily',xz:'日常',report:'12/15人',plan:80,jie:'实时',exam:'8/15'},
+  ]
+};
+function renderTodaySummary(){
+  const el=document.getElementById('todaySummary');if(!el)return;
+  el.innerHTML=TODAY_SUMMARY.classes.map(c=>`
+    <div class="sum-card">
+      <div class="sum-h"><span class="ty ${c.type}">${c.type==='plan'?'培训班计划':'日常培训'}</span><span class="xz">${c.xz}</span></div>
+      <div class="sum-ban">${c.ban}</div>
+      <div class="sum-row"><span>报到</span><b>${c.report}</b></div>
+      <div class="sum-prog"><span>计划 ${c.plan}%</span><div class="pbar"><span class="pf plan" style="width:${c.plan}%"></span></div></div>
+      <div class="sum-row"><span>课节进度</span><b>${c.jie}</b><span style="margin-left:auto">考试 ${c.exam}</span></div>
+    </div>`).join('');
+}
+
 /* ---------- 通用 ---------- */
 function openModal(title,html){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=html;document.getElementById('modalMask').classList.add('open');}
 function closeModal(){document.getElementById('modalMask').classList.remove('open');}
@@ -383,4 +421,5 @@ renderTree();renderDash();renderRoomList();selectRoom('CR400BF 综合实训室')
 fillDevOpts();renderCourseList();renderSteps();renderTable('smTable',Array.from({length:4},()=>Array.from({length:5},()=>null)),true,true);
 initFilters();renderBoard();renderManual();
 renderPeople();renderBook('monthBook','monthAxis',[3,4,9]);renderBook('personBook','personAxis',[5,6,7,12,13]);renderWeek();
+renderGrab();renderTodaySummary();
 tickClock();setInterval(tickClock,30000);

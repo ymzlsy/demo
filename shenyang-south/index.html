@@ -60,6 +60,10 @@
         <div class="note" style="margin-bottom:12px">📊 会议记录口径：本看板为<b>整天汇总</b>（汇总所有教室级原始数据，非实时当时值）。</div>
         <div class="kpi-row" id="kpiRow"></div>
         <div class="card">
+          <h2>今日全场地使用汇总 <span class="sub">★ 录音：今天开的班/报到人次/课节·考试进度，区分培训班计划与日常培训；数据从智能课表 schedule 抓取</span></h2>
+          <div class="sum-grid" id="todaySummary"></div>
+        </div>
+        <div class="card">
           <h2>培训进度 <span class="sub">★ 区分「培训班计划」与「日常培训」两类</span></h2>
           <div id="progRow"></div>
         </div>
@@ -88,11 +92,16 @@
               <select class="input" id="taskHL" onchange="highlightByTask()"><option value="">— 不筛选，显示全部 —</option></select>
             </div>
             <div>
-              <label class="muted">远程控制 <span class="perm-badge">需车间级管理员以上</span></label><br>
-              <button class="btn sm" onclick="remoteCtl('设备')">单台关机</button>
-              <button class="btn sm" onclick="remoteCtl('实训室')">本室统一关机</button>
-              <button class="btn sm" onclick="remoteCtl('校区')">校区总开关</button>
-              <button class="btn sm" onclick="remoteCtl('上电')">远程上电</button>
+              <label class="muted">当前角色（演示权限）：
+                <select class="input" id="roleSel" style="width:auto;display:inline-block;padding:3px 8px" onchange="applyRole()"><option value="admin">车间级管理员</option><option value="user">普通用户/学员</option></select>
+                <span class="perm-badge">设备控制需车间级管理员以上</span></label>
+              <div id="ctlBtns" style="margin-top:6px">
+                <button class="btn sm" onclick="remoteCtl('设备')">单台关机</button>
+                <button class="btn sm" onclick="remoteCtl('实训室')">本室统一关机</button>
+                <button class="btn sm" onclick="remoteCtl('校区')">校区总开关</button>
+                <button class="btn sm" onclick="remoteCtl('上电')">远程上电</button>
+              </div>
+              <div id="ctlHidden" style="display:none;margin-top:6px" class="muted">（普通用户/学员无设备控制权限，操作区已隐藏）</div>
             </div>
           </div>
           <div class="note" style="margin:12px 0 0">⚙️ 自动关机规则：设备预约时间 <b>10 分钟内无人签到</b> → 系统查课表 <b>未来 1 小时无课程</b> → <b>自动关机</b>。</div>
@@ -169,6 +178,16 @@
             <div class="field"><label>实施时间（季度·多选，最少1，须指定年份）<span class="req">*</span></label>
               <div class="seg"><button class="on">2026 一季度</button><button>二季度</button><button>三季度</button><button>四季度</button></div>
               <div class="hint">校验：下发后排课时，课程周期必须落在所选季度内。</div></div>
+            <div class="field"><label>派发对象（向下/平级派发）<span class="req">*</span></label>
+              <div class="row" style="gap:8px">
+                <select class="input" style="flex:1" id="smDispatch" onchange="dispatchHint()">
+                  <option value="same">同级（下面所有下级单位）</option>
+                  <option value="one">指定下级（选某一个）</option>
+                  <option value="peer">平级科室（仅段职培科专职可，再由其下转）</option>
+                </select>
+                <select class="input" style="flex:1"><option>检修车间</option><option>乘务车间</option><option>沈北所</option><option>安全科(平级)</option></select>
+              </div>
+              <div class="hint" id="dispHint">同级=群发全部直接下级；班组业务辅导员则指派到学员。仅"段职培科专职"可向平级科室派发，平级再向下转、其上级可夺回。</div></div>
             <div class="field"><label>可排时段限制</label>
               <input type="hidden" id="smPeriod" value="本季度"><div class="seg"><button class="on">上午 8-12</button><button class="on">下午 14-18</button><button>晚上 19-22</button></div></div>
             <h2 style="margin-top:18px">② 添加课程/设备（含标签）<span class="req">*</span></h2>
@@ -176,7 +195,7 @@
               <div class="field" style="flex:1;margin:0"><label>设备/教室</label><select class="input" id="smDev"></select></div>
               <div class="field" style="flex:1;margin:0"><label>课程名(标签)</label><input class="input" id="smCourse" placeholder="如：受电弓检查"/></div>
               <div class="field" style="margin:0"><label>形式</label><select class="input" id="smForm"><option>实作</option><option>理论</option></select></div>
-              <div class="field" style="width:110px;margin:0"><label>时长</label><select class="input" id="smDur"><option value="1">1学时</option><option value="2">2学时</option><option value="3">3学时</option></select></div>
+              <div class="field" style="width:150px;margin:0"><label>单课时长<span class="muted">默认50分/1学时</span></label><select class="input" id="smDur"><option value="1">1学时(50分·默认)</option><option value="2">2学时</option><option value="3">3学时</option><option value="4">4学时</option></select></div>
               <button class="btn primary" onclick="addCourse()">+ 添加</button>
             </div>
           </div>
@@ -232,7 +251,10 @@
           </div>
           <div class="card" style="flex:1;min-width:300px">
             <h2>并发与两段式说明</h2>
-            <div class="note" style="margin-bottom:10px"><b>计划层（粗）</b>：选周期+课程时不查占用，仅"某天全部设备教室占满"才阻止建计划。<br><b>排课层（细）</b>：选到具体地点才查占用——即左侧逐层筛。</div>
+            <div class="note" style="margin-bottom:10px"><b>计划层（粗）</b>：选周期+课程时不查占用。唯一阻止条件——<b>该时间段内"至少有一天"全部设备+教室都被占满</b>，才不许建该计划。<br><b>排课层（细）</b>：选到具体地点才查占用——即左侧逐层筛。</div>
+            <div style="margin-bottom:10px"><span class="muted">计划层逐日扫描示意（绿=有空位可建，红=全占满阻止）：</span>
+              <div class="dayscan"><span class="ds ok">周一</span><span class="ds ok">周二</span><span class="ds full">周三<br>全满</span><span class="ds ok">周四</span><span class="ds ok">周五</span></div>
+              <div class="hint">本周三全部设备+教室占满 → 若计划周期含周三，系统提示"周三无任何空场，建议调整周期"。</div></div>
             <div class="note" style="background:var(--error-bg);border-color:#ffccc7;color:#a8071a"><b>并发锁</b>：两人同时未保存可能都选到同一设备同时段；保存(落库)时按 (地点,日期,节次) 加锁校验谁先落库，后者提示"已被占用，请重选"，杜绝真交叉。</div>
           </div>
         </div>
@@ -253,11 +275,14 @@
 
         <!-- 每月一练 -->
         <div class="flex-pane" data-pane="month">
-          <div class="flow"><span class="step">选任务</span><span class="arr">→</span><span class="step">选参练人员</span><span class="arr">→</span><span class="step">选设备</span><span class="arr">→</span><span class="step">查空闲时段预约</span></div>
+          <div class="note">★ 任务来源两种：① <b>上级派发</b>（车间级发现某班组好做法/风险，建任务下发到多个班组）② <b>本级自建</b>（班组业务辅导员自己建）。预约者一定先"选任务"，任务最终落到单级计划。</div>
+          <div class="flow"><span class="step">选任务来源</span><span class="arr">→</span><span class="step">选参练人员</span><span class="arr">→</span><span class="step">选设备</span><span class="arr">→</span><span class="step">查空闲时段预约</span></div>
           <div class="row">
             <div class="card" style="flex:1;min-width:340px">
               <h2>① 任务 & 人员</h2>
-              <div class="field"><label>每月一练任务<span class="req">*</span></label><select class="input"><option>探伤板更换（实作考核）</option><option>受电弓碳滑板更换</option></select></div>
+              <div class="field"><label>任务来源</label>
+                <div class="seg"><button class="on">上级派发（车间级下发）</button><button>本级自建</button></div></div>
+              <div class="field"><label>每月一练任务<span class="req">*</span></label><select class="input"><option>探伤板更换（实作考核）· 沈南所检修车间下发</option><option>受电弓碳滑板更换 · 本班组自建</option></select></div>
               <div class="field"><label>从本班组选参练人员（共45人，本任务需15人）<span class="req">*</span></label>
                 <div class="people-pick" id="peoplePick"></div>
                 <div class="hint">已选 <b id="pcount">0</b> 人 · 预计时长 <b id="ptime">0</b> 分钟（每人 15 分钟）。人多将跨天，未考完下次接着考、通过的不再参加。</div></div>
@@ -306,6 +331,20 @@
               <button class="btn primary lg" style="margin-top:14px;justify-content:center" onclick="bookToast()">提交个人预约</button>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- 师资抢单 -->
+      <div class="view" data-view="sched-grab">
+        <div class="page-head">
+          <div class="crumb">预约排课管理 / 师资抢单</div>
+          <h1>师资抢单</h1>
+          <span class="tagline">★ 脑图 img2：预约排课管理子模块。排好课但未定老师的，发布为"待接单"，兼职师资可抢单；超时无人接→升级派单→车间指派</span>
+        </div>
+        <div class="note">与"选/通知老师"的区别：选老师是管理人员主动指派；师资抢单是<b>老师主动接单</b>。派单升级链路：属地师资库站内信(72h)→动车段师资库(48h)→车间指派非师资库人员。</div>
+        <div class="card">
+          <h2>待接单 / 已接单课程</h2>
+          <div id="grabList"></div>
         </div>
       </div>
 
