@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>沈阳南数智动车培训管控平台 · 需求原型 Demo</title>
+<link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+<div class="app">
+  <!-- TOP -->
+  <div class="topbar">
+    <div class="logo"><span class="dot"></span>沈阳南·数智动车培训管控平台</div>
+    <div class="modswitch">
+      <button data-mod="twin" class="active">4.5 数字孪生实训管控</button>
+      <button data-mod="sched">4.8 预约排课管理</button>
+    </div>
+    <div class="spacer"></div>
+    <span class="tag">需求确认原型 · 非正式系统</span>
+    <span class="clock" id="clock">09:30</span>
+  </div>
+
+  <div class="body">
+    <!-- SIDE NAV -->
+    <div class="sidenav" id="sidenav"></div>
+
+    <!-- MAIN -->
+    <div class="main" id="main">
+
+      <!-- ============ 4.5 数字孪生 ============ -->
+      <!-- V: 首页 -->
+      <div class="view" data-view="twin-home">
+        <div class="page-head">
+          <div class="crumb">数字孪生实训管控 / 总览首页</div>
+          <h1>实训基地总览</h1>
+          <div class="desc">大屏首页按「实训场地 / 培训场地」两大类进入，再逐级下钻到校区→车间→具体场地。</div>
+          <span class="tagline">★ 对齐勾老师：一级先分实训/培训两类，不从校区往下拆；展示只体现地点不体现行政级别</span>
+        </div>
+        <div class="entry-row">
+          <div class="entry train" onclick="go('twin-train')">
+            <div class="en">Training Equipment</div>
+            <h3>实训场地</h3>
+            <div class="stat">
+              <div><span>实训室</span><strong>5</strong></div>
+              <div><span>设备总数</span><strong>18</strong></div>
+              <div><span>使用中</span><strong>7</strong></div>
+            </div>
+            <div class="ico">⚙️</div>
+          </div>
+          <div class="entry classroom" onclick="go('twin-class')">
+            <div class="en">Training Classroom</div>
+            <h3>培训场地（教室）</h3>
+            <div class="stat">
+              <div><span>教室</span><strong>12</strong></div>
+              <div><span>上课中</span><strong>4</strong></div>
+              <div><span>空闲</span><strong>8</strong></div>
+            </div>
+            <div class="ico">🏫</div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>场地层级树 <span class="sub">集团公司级 → 校区 → 车间 → 实训室/教室（待与老师共建字典）</span></h2>
+          <div class="tree" id="placeTree"></div>
+        </div>
+      </div>
+
+      <!-- V: 实训场地（设备级） -->
+      <div class="view" data-view="twin-train">
+        <div class="page-head">
+          <div class="crumb">数字孪生实训管控 / 实训场地 / <span id="trainRoomName">CR400BF 综合实训室</span></div>
+          <h1>实训场地 · 设备级态势</h1>
+          <span class="tagline">★ 对齐勾老师：占用要精确到「单台设备」(蓝点/绿点)，不是整间房；点设备看视频+历史</span>
+        </div>
+        <div class="row">
+          <div class="card" style="flex:0 0 240px">
+            <h2>选择实训室</h2>
+            <div id="roomList"></div>
+          </div>
+          <div class="card" style="flex:1;min-width:340px">
+            <div class="room-head">
+              <h2 style="margin:0" id="roomTitle">CR400BF 综合实训室</h2>
+              <div class="legend">
+                <span><i style="background:var(--success)"></i>使用中</span>
+                <span><i style="background:var(--warning)"></i>已预约</span>
+                <span><i style="background:var(--error)"></i>故障</span>
+                <span><i style="background:var(--idle)"></i>空闲</span>
+              </div>
+            </div>
+            <div class="dev-grid" id="devGrid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- V: 教室管控 -->
+      <div class="view" data-view="twin-class">
+        <div class="page-head">
+          <div class="crumb">数字孪生实训管控 / 培训场地 / 教室管控</div>
+          <h1>教室管控</h1>
+          <span class="tagline">★ 对齐勾老师：新增页面。教员端登录上课→纯网信息反馈→显示谁在哪个教室上课（当前孪生）</span>
+        </div>
+        <div class="note">数据源：教员端工卡登录 → 选地点 → 点「开始上课」 → 该教室在大屏亮起；无人上课则灰显，无需上电信息。</div>
+        <div class="card">
+          <h2>段库 / 各车间教室实时态 <span class="sub">绿色=正在上课，灰色=空闲</span></h2>
+          <div class="cls-grid" id="clsGrid"></div>
+        </div>
+      </div>
+
+      <!-- ============ 4.8 预约排课 ============ -->
+      <!-- V: 智能排课 -->
+      <div class="view" data-view="sched-smart">
+        <div class="page-head">
+          <div class="crumb">预约排课管理 / 智能排课（专项培训）</div>
+          <h1>智能排课 · 一键排课</h1>
+          <span class="tagline">★ 对齐勾老师：选周期+课程+设备(可重复打标签)+时长 → 一键排「周几/几点」，系统自动避冲突</span>
+        </div>
+        <div class="note"><b>"一键"只负责排「周几+几点」</b>；课程/形式/设备/大周期四要素必须人工指定。同一批学生、周期性批量课才用得上。</div>
+        <div class="row">
+          <div class="card" style="flex:1;min-width:360px">
+            <h2>① 配置培训计划</h2>
+            <div class="field"><label>训练周期（大周期）<span class="req">*</span></label>
+              <select class="input" id="smPeriod"><option>本周（11/10 – 11/14）</option><option>本月（11月）</option><option>本季度（Q4）</option></select></div>
+            <div class="field"><label>培训班 / 学员批次<span class="req">*</span></label>
+              <select class="input"><option>第5期轨道车司机轮训班（45人）</option><option>地勤机械师资格性培训班（30人）</option></select></div>
+            <div class="field"><label>可排时段限制</label>
+              <div class="seg"><button class="on">上午 8-12</button><button class="on">下午 14-18</button><button>晚上 19-22</button></div></div>
+            <div class="field"><label>添加课程 / 设备（同一设备可重复添加，打不同标签）<span class="req">*</span></label>
+              <div class="row" style="gap:8px">
+                <select class="input" id="smDev" style="flex:1"></select>
+                <input class="input" id="smCourse" style="flex:1" placeholder="课程名，如：受电弓检查"/>
+                <select class="input" id="smDur" style="width:120px"><option value="1">1 学时</option><option value="2">2 学时</option><option value="3">3 学时</option></select>
+                <button class="btn primary" onclick="addCourse()">+ 添加</button>
+              </div>
+              <div class="hint">提示：VR/同台设备的不同课程（换插板、换工装）请重复添加并区分课程名，系统会按"同一设备不可同时占用"处理。</div>
+            </div>
+          </div>
+          <div class="card" style="flex:0 0 340px">
+            <h2>② 待排课程清单 <span class="sub" id="smCount">0 门</span></h2>
+            <div class="picked-list" id="smList"><div class="empty-state">尚未添加课程</div></div>
+            <button class="btn primary lg" style="width:100%;margin-top:10px;justify-content:center" onclick="oneClick()">⚡ 一键智能排课</button>
+            <div class="hint">排课人=管理干部（职培科/车间/支配主任）。排完进入课表，等待选/通知老师。</div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>③ 排课结果（周课表）<span class="sub">可拖动浅蓝色块调整时间；红色=冲突</span></h2>
+          <div class="tt-wrap"><table class="tt" id="smTable"></table></div>
+        </div>
+      </div>
+
+      <!-- V: 课表总览 -->
+      <div class="view" data-view="sched-board">
+        <div class="page-head">
+          <div class="crumb">预约排课管理 / 课表总览</div>
+          <h1>课表总览</h1>
+          <span class="tagline">★ 对齐勾老师：日期×节次二维表，四维筛选(班级/课程/老师/教室或设备)，冲突标红，共享可视化</span>
+        </div>
+        <div class="card">
+          <div class="filters">
+            <span class="muted">筛选维度：</span>
+            <select class="input" id="fBan"><option value="">全部班级</option></select>
+            <select class="input" id="fCourse"><option value="">全部课程</option></select>
+            <select class="input" id="fTeacher"><option value="">全部老师</option></select>
+            <select class="input" id="fPlace"><option value="">全部教室/设备</option></select>
+            <button class="btn sm" onclick="resetFilter()">重置</button>
+            <span class="muted" style="margin-left:auto">推送状态：<b style="color:var(--success)">已同步至电子班牌（朗星）</b></span>
+          </div>
+          <div class="tt-wrap"><table class="tt" id="boardTable"></table></div>
+        </div>
+      </div>
+
+      <!-- V: 每月一练 -->
+      <div class="view" data-view="sched-month">
+        <div class="page-head">
+          <div class="crumb">预约排课管理 / 每月一练（弹性预约·组队）</div>
+          <h1>每月一练 · 组队预约</h1>
+          <span class="tagline">★ 对齐勾老师：班组业务辅导员给班组成员预约；时长=15分钟×人数；任务驱动、自下而上</span>
+        </div>
+        <div class="flow">
+          <span class="step">选任务（每月一练项目）</span><span class="arr">→</span>
+          <span class="step">选参练人员</span><span class="arr">→</span>
+          <span class="step">选设备</span><span class="arr">→</span>
+          <span class="step">查空闲时段预约</span>
+        </div>
+        <div class="row">
+          <div class="card" style="flex:1;min-width:340px">
+            <h2>① 任务 & 人员</h2>
+            <div class="field"><label>每月一练任务<span class="req">*</span></label>
+              <select class="input"><option>探伤板更换（实作考核）</option><option>受电弓碳滑板更换</option></select></div>
+            <div class="field"><label>从本班组选择参练人员（共45人，本任务需15人）<span class="req">*</span></label>
+              <div class="people-pick" id="peoplePick"></div>
+              <div class="hint">已选 <b id="pcount">0</b> 人 · 预计时长 <b id="ptime">0</b> 分钟（每人 15 分钟）</div>
+            </div>
+            <div class="field"><label>目标设备</label>
+              <select class="input"><option>探伤检测台 #1（救援联挂实训室）</option></select></div>
+          </div>
+          <div class="card" style="flex:0 0 380px">
+            <h2>② 预约时段</h2>
+            <div class="hint" style="margin-bottom:8px">绿色可约，红色已占用。点击连续格完成预约（可跨多格/跨天）。</div>
+            <div class="muted" style="margin:8px 0 4px">周三 11/12 · 19:00 – 23:00</div>
+            <div class="book-day" id="monthBook"></div>
+            <div class="book-axis" id="monthAxis"></div>
+            <button class="btn primary lg" style="width:100%;margin-top:14px;justify-content:center" onclick="bookToast()">提交组队预约</button>
+            <div class="hint">现场模式：没考完的人员，下一次接着考；已通过的不再参加。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- V: 个人预约 -->
+      <div class="view" data-view="sched-person">
+        <div class="page-head">
+          <div class="crumb">预约排课管理 / 个人练功（弹性预约·单人）</div>
+          <h1>个人练功预约</h1>
+          <span class="tagline">★ 对齐勾老师：像挂号——知道练什么/用什么设备，时间不定→查课表自助约；最小15分钟，到点强制下机</span>
+        </div>
+        <div class="row">
+          <div class="card" style="flex:0 0 320px">
+            <h2>① 选择项目与设备</h2>
+            <div class="field"><label>练习项目<span class="req">*</span></label>
+              <select class="input"><option>受电弓检查</option><option>HMI 屏操作复位</option></select></div>
+            <div class="field"><label>关联设备（项目自动带出）</label>
+              <input class="input" value="受电弓检修台 · CR400BF综合实训室" readonly/></div>
+            <div class="field"><label>时长粒度</label>
+              <div class="seg"><button class="on">15分</button><button>30分</button><button>45分</button><button>60分</button></div></div>
+          </div>
+          <div class="card" style="flex:1;min-width:340px">
+            <h2>② 选择空闲时段 <span class="sub">最细 15 分钟一格</span></h2>
+            <div class="muted" style="margin:6px 0 4px">今日 · 08:00 – 12:00（每格 15 分钟）</div>
+            <div class="book-day" id="personBook"></div>
+            <div class="book-axis" id="personAxis"></div>
+            <button class="btn primary lg" style="margin-top:14px;justify-content:center" onclick="bookToast()">提交个人预约</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Drawer -->
+<div class="drawer-mask" id="drawerMask" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="dh"><h3 id="drawerTitle">设备详情</h3><span class="x" onclick="closeDrawer()">×</span></div>
+  <div class="dc" id="drawerBody"></div>
+</div>
+
+<div class="toast" id="toast"><span>✅</span><span id="toastMsg">已提交</span></div>
+
+<script src="./app.js"></script>
+</body>
+</html>
