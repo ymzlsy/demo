@@ -523,19 +523,35 @@ function setPlanCat(v){planFilterCat=v;renderPlanLevel();}
 function setPlanScope(s){planScope=s;renderPlanLevel();}
 function editPlanByLv(lv,no,cat){curPlanLevel=lv;const p=(PLAN_DATA[lv]||[]).find(x=>x.no===no&&x.cat===cat);openCreatePlan(p);}
 
-/* 新建/编辑计划：先选类型 → 动态表单 */
+/* 新建/编辑计划：先选层级 → 层级决定可建类型 → 动态表单 */
+let createLevel='站段';
 function openCreatePlan(editData){
-  const py=PYRAMID.find(l=>l.k===curPlanLevel);
-  const cats=CAT_BY_LEVEL[curPlanLevel]||[];
-  const title=editData?`编辑计划 · ${py.full}`:`新建计划 · ${py.full}`;
-  openModal(title,`
-    <div class="note">本层(${py.full})由 <b>${py.who}</b> 创建。先选培训类型，表单字段随之变化——这就是"专项 vs 日常"的区别。</div>
-    <div class="field"><label>培训类型<span class="req">*</span></label>
-      <div class="seg" id="catSeg">${cats.map((c,i)=>`<button class="${i===0?'on':''}" onclick="planTypeForm('${c.cat}','${c.sub||''}')">${c.label}</button>`).join('')}</div></div>
+  createLevel=(editData&&editData._lv)||curPlanLevel;
+  if(!['站段','车间','班组'].includes(createLevel))createLevel='站段';
+  const isEdit=!!editData;
+  openModal(isEdit?'编辑计划':'新建计划',`
+    <div class="note">★ <b>先选计划层级</b>——层级决定能建什么类型（站段级只能建专项；车间级＝专项+每月一练；班组级最全）。再选类型，表单字段随之变化。</div>
+    <div class="field"><label>计划层级<span class="req">*</span> ${isEdit?'<span class="muted">（编辑时不可改层级）</span>':''}</label>
+      <div class="seg" id="createLvSeg"></div></div>
+    <div class="field"><label>培训类型<span class="req">*</span> <span class="muted" id="catHint"></span></label>
+      <div class="seg" id="catSeg"></div></div>
     <div id="planForm"></div>
     <div style="display:flex;gap:10px;margin-top:14px">
-      <button class="btn primary" onclick="savePlan()">${editData?'保存修改':'保存计划'}</button>
+      <button class="btn primary" onclick="savePlan()">${isEdit?'保存修改':'保存计划'}</button>
       <button class="btn" onclick="closeModal()">取消</button></div>`);
+  renderCreateLvSeg(isEdit);
+  renderCreateCats();
+}
+function renderCreateLvSeg(disabled){
+  const lvs=[{k:'站段',t:'站段级'},{k:'车间',t:'车间级'},{k:'班组',t:'班组级'}];
+  document.getElementById('createLvSeg').innerHTML=lvs.map(l=>`<button class="${l.k===createLevel?'on':''}" ${disabled?'disabled style="opacity:.5"':`onclick="changeCreateLevel('${l.k}')"`}>${l.t}</button>`).join('');
+}
+function changeCreateLevel(lv){createLevel=lv;renderCreateLvSeg(false);renderCreateCats();}
+function renderCreateCats(){
+  const py=PYRAMID.find(l=>l.k===createLevel);
+  const cats=CAT_BY_LEVEL[createLevel]||[];
+  document.getElementById('catHint').textContent=`（${py.full}由 ${py.who} 创建，可建：${cats.map(c=>c.label.replace(/（.*?）/,'')).join(' / ')}）`;
+  document.getElementById('catSeg').innerHTML=cats.map((c,i)=>`<button class="${i===0?'on':''}" onclick="planTypeForm('${c.cat}','${c.sub||''}')">${c.label}</button>`).join('');
   const c0=cats[0]||{cat:'专项'};
   planTypeForm(c0.cat,c0.sub||'');
 }
