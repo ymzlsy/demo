@@ -150,26 +150,31 @@ const PLAN_LEVELS=[
 // 站段级：真实取自 20260226 沈阳动车段2026年职工业务培训计划
 const PLAN_DATA={
   站段:[
-    {no:1,name:'沈阳动车段2026年春运培训班',code:'sydcd-2026-001',form:'非脱产',xz:'适应性',obj:'重点行车岗位',plan:870,real:862,h:2,q:'一季度',dept:'职培科',st:'执行中',courses:3},
-    {no:6,name:'地勤机械师（运用）岗位轮训班',code:'sydcd-2026-006',form:'脱产',xz:'适应性',obj:'重点行车岗位',plan:972,real:0,h:16,q:'一~四季度',dept:'职培科',st:'已下达',courses:0},
-    {no:10,name:'钳工岗位轮训班',code:'sydcd-2026-010',form:'脱产',xz:'适应性',obj:'钳工',plan:157,real:0,h:16,q:'二·三季度',dept:'职培科',st:'已下达',courses:0},
-    {no:12,name:'2026上半年劳动安全再培训',code:'sydcd-2026-012',form:'非脱产',xz:'适应性',obj:'在岗操作技能人员',plan:3300,real:0,h:4,q:'二季度',dept:'职培科',st:'编制中',courses:0},
-    {no:16,name:'动力分散动车组司机岗前轮训班',code:'sydcd-2026-015',form:'脱产',xz:'适应性',obj:'动车组司机',plan:16,real:0,h:450,q:'一季度',dept:'职培科',st:'已下达',courses:0},
-    {no:17,name:'动车组冬季运行安全防控措施培训班',code:'sydcd-2026-016',form:'非脱产',xz:'适应性',obj:'机械师/值班员/动态检车员',plan:2170,real:0,h:3,q:'四季度',dept:'职培科',st:'编制中',courses:0},
+    {no:1,cat:'专项',name:'沈阳动车段2026年春运培训班',code:'sydcd-2026-001',form:'非脱产',xz:'适应性',obj:'重点行车岗位',plan:870,real:862,h:2,q:'一季度',dept:'职培科',st:'执行中',courses:3},
+    {no:6,cat:'专项',name:'地勤机械师（运用）岗位轮训班',code:'sydcd-2026-006',form:'脱产',xz:'适应性',obj:'重点行车岗位',plan:972,real:0,h:16,q:'一~四季度',dept:'职培科',st:'已下达',courses:0},
+    {no:10,cat:'专项',name:'钳工岗位轮训班',code:'sydcd-2026-010',form:'脱产',xz:'适应性',obj:'钳工',plan:157,real:0,h:16,q:'二·三季度',dept:'职培科',st:'已下达',courses:0},
+    {no:12,cat:'专项',name:'2026上半年劳动安全再培训',code:'sydcd-2026-012',form:'非脱产',xz:'适应性',obj:'在岗操作技能人员',plan:3300,real:0,h:4,q:'二季度',dept:'职培科',st:'编制中',courses:0},
+    {no:16,cat:'专项',name:'动力分散动车组司机岗前轮训班',code:'sydcd-2026-015',form:'脱产',xz:'适应性',obj:'动车组司机',plan:16,real:0,h:450,q:'一季度',dept:'职培科',st:'已下达',courses:0},
   ],
   // 车间级：真实取自 沈阳北动车所8月技术业务培训计划（编制 勾博文 / 审核 牟广利）
   车间:[
-    {no:1,name:'8月每周一学·必知必会题库(一级修)101-200题',code:'分4周·常规性',form:'非脱产',xz:'适应性',obj:'一级修各班组岗位',plan:0,real:0,h:'每周1学时',q:'8月',dept:'沈北所·勾博文编/牟广利审',st:'执行中',courses:4,detail:'按班组×岗位逐周：第1周101-125·第2周126-150·第3周151-175·第4周176-200'},
-    {no:2,name:'8月每月一练·基本技能实作演练 CR400',code:'第三周',form:'脱产',xz:'适应性',obj:'地勤机械师各班组',plan:0,real:0,h:'实作',q:'8月第3周',dept:'沈北所·勾博文编',st:'执行中',courses:1,detail:'各班组：CR400基本技能实作 / 库外看车巡视 / 接触网供断电操作 / 空泵站巡检'},
-    {no:3,name:'地勤机械师轮训（二级修）第1、2期',code:'临时性',form:'脱产',xz:'适应性',obj:'二级修综合/车下/探伤班组',plan:0,real:0,h:'专项',q:'8月第2周',dept:'沈北所·承接段下达',st:'已下达',courses:2},
+    {no:1,cat:'专项',name:'地勤机械师轮训（二级修）第1、2期',code:'承接段sydcd-2026-006',form:'脱产',xz:'适应性',obj:'二级修综合/车下/探伤班组',plan:120,real:0,h:'16学时',q:'8月第2周',dept:'沈北所·承接段下达',st:'已下达',courses:2},
+    {no:2,cat:'日常',sub:'每月一练',name:'8月每月一练·基本技能实作演练 CR400',code:'空计划',form:'脱产',xz:'日常',obj:'地勤机械师各班组',plan:0,real:0,h:'实作',q:'8月第3周',dept:'沈北所·勾博文编',st:'执行中',courses:1,detail:'下发各班组：CR400基本技能实作 / 库外看车巡视 / 接触网供断电操作 / 空泵站巡检'},
   ],
   // 班组级：真实取自 沈北所计划的班组维度
   班组:[
-    {no:1,name:'每周一学·必知必会题库101-125题',code:'常规性',form:'非脱产',xz:'适应性',obj:'①②③④号地勤机械师 24人',plan:24,real:24,h:'1学时/周',q:'8月第1周',dept:'一级修甲班技检·工长吕强/辅导员任忠义',st:'已完成',courses:1},
-    {no:2,name:'每月一练·基本技能实作演练 CR400',code:'组队实作',form:'脱产',xz:'适应性',obj:'本班组应训12人',plan:12,real:8,h:'15min×人',q:'8月第3周',dept:'一级修甲班技检·辅导员任忠义',st:'执行中',courses:1},
-    {no:3,name:'每月一练·探伤基本技能实作',code:'组队实作',form:'脱产',xz:'适应性',obj:'探伤工/辅助工 22人',plan:22,real:0,h:'15min×人',q:'8月第3周',dept:'二级修探伤·工长白涛/辅导员李洪玉',st:'已下达',courses:1},
+    {no:1,cat:'日常',sub:'每周一学',name:'每周一学·必知必会题库101-125题',code:'空计划',form:'非脱产',xz:'日常',obj:'①②③④号地勤机械师 24人',plan:24,real:24,h:'1学时/周',q:'8月第1周',dept:'一级修甲班技检·工长吕强/辅导员任忠义',st:'已完成',courses:1},
+    {no:2,cat:'日常',sub:'每月一练',name:'每月一练·基本技能实作演练 CR400',code:'空计划',form:'脱产',xz:'日常',obj:'本班组应训12人',plan:12,real:8,h:'15min×人',q:'8月第3周',dept:'一级修甲班技检·辅导员任忠义',st:'执行中',courses:1},
+    {no:3,cat:'专项',name:'班组级钳工专项·承接段轮训',code:'承接sydcd-2026-010',form:'脱产',xz:'适应性',obj:'本班组钳工',plan:8,real:0,h:'16学时',q:'二·三季度',dept:'一级修甲班·辅导员任忠义',st:'已下达',courses:0},
   ],
 };
+// 各层级可建的培训类型（决定新建表单）
+const CAT_BY_LEVEL={
+  站段:[{cat:'专项',label:'专项培训（年度培训班）'}],
+  车间:[{cat:'专项',label:'专项培训（承接段计划）'},{cat:'日常',sub:'每月一练',label:'日常·每月一练（下发班组）'}],
+  班组:[{cat:'专项',label:'专项培训（承接上级）'},{cat:'日常',sub:'每周一学',label:'日常·每周一学'},{cat:'日常',sub:'每月一练',label:'日常·每月一练'}],
+};
+let planFilterCat='';// 类型筛选
 const ST_PLAN={'编制中':'#8c8c8c','待审核':'#faad14','已下达':'#1677ff','执行中':'#52c41a','已完成':'#13c2c2'};
 let curPlanLevel='站段',planRole='段职培科专职';
 
@@ -475,12 +480,21 @@ function renderPlanLevel(){
   document.getElementById('pyrInfo').innerHTML=`<b>${py.full}</b>：由 <b>${py.who}</b> 创建；管的是「${py.manage}」；单位量级：${py.unit}`;
   document.getElementById('curLevelName').textContent=py.full;
   document.getElementById('curLevelSrc').textContent={站段:'来自 2026 年度培训计划表（真实）',车间:'来自 沈北所 8 月培训计划（真实·勾博文编）',班组:'来自 班组每周一学/每月一练（真实）',国铁:'脑图未展开',集团:'脑图未展开'}[curPlanLevel];
-  const data=PLAN_DATA[curPlanLevel];
+  // 类型筛选 Tab
+  const tabEl=document.getElementById('planCatTabs');
+  if(tabEl&&!lv.placeholder){
+    const cats=[{v:'',t:'全部'},{v:'专项',t:'专项培训'},{v:'日常',t:'日常培训(每周一学/每月一练)'}];
+    tabEl.innerHTML=cats.map(c=>`<span class="cat-tab ${planFilterCat===c.v?'on':''}" onclick="setPlanCat('${c.v}')">${c.t}</span>`).join('')
+      +`<button class="btn primary sm" style="margin-left:auto" onclick="openCreatePlan()">＋ 新建${py.full}计划</button>`;
+  } else if(tabEl){tabEl.innerHTML='';}
+  let data=(PLAN_DATA[curPlanLevel]||[]);
+  if(planFilterCat)data=data.filter(p=>p.cat===planFilterCat);
   const body=document.getElementById('planTbody');
   if(lv.placeholder){body.innerHTML=`<tr><td colspan="11" class="empty-state">${lv.full}计划由上级职教部门创建，脑图未展开字段——本层为只读占位，字段待向甲方确认。</td></tr>`;return;}
-  body.innerHTML=data.map(p=>`<tr>
+  if(!data.length){body.innerHTML=`<tr><td colspan="11" class="empty-state">本层级该类型暂无计划，点右上「新建」创建</td></tr>`;return;}
+  body.innerHTML=data.map((p,idx)=>`<tr>
     <td>${p.no}</td>
-    <td><b>${p.name}</b>${p.detail?`<br><span class="muted" style="font-size:11px">${p.detail}</span>`:''}</td>
+    <td><span class="cat-badge ${p.cat==='专项'?'zx':'rc'}">${p.cat}${p.sub?'·'+p.sub:''}</span><br><b>${p.name}</b>${p.detail?`<br><span class="muted" style="font-size:11px">${p.detail}</span>`:''}</td>
     <td>${p.code}</td>
     <td>${p.form}/${p.xz}</td>
     <td>${p.obj}</td>
@@ -489,9 +503,62 @@ function renderPlanLevel(){
     <td>${p.q}</td>
     <td style="font-size:11px">${p.dept}</td>
     <td><span class="plan-st" style="background:${ST_PLAN[p.st]}22;color:${ST_PLAN[p.st]}">${p.st}</span></td>
-    <td><span class="link-a" onclick="planDrill('${p.name}',${p.courses})">课程(${p.courses})</span> · <span class="link-a" onclick="go('sched-smart')">排课</span></td>
+    <td><span class="link-a" onclick="editPlan(${idx})">编辑</span> · <span class="link-a" onclick="planDrill('${p.name}',${p.courses})">课程(${p.courses})</span></td>
   </tr>`).join('');
 }
+function setPlanCat(v){planFilterCat=v;renderPlanLevel();}
+
+/* 新建/编辑计划：先选类型 → 动态表单 */
+function openCreatePlan(editData){
+  const py=PYRAMID.find(l=>l.k===curPlanLevel);
+  const cats=CAT_BY_LEVEL[curPlanLevel]||[];
+  const title=editData?`编辑计划 · ${py.full}`:`新建计划 · ${py.full}`;
+  openModal(title,`
+    <div class="note">本层(${py.full})由 <b>${py.who}</b> 创建。先选培训类型，表单字段随之变化——这就是"专项 vs 日常"的区别。</div>
+    <div class="field"><label>培训类型<span class="req">*</span></label>
+      <div class="seg" id="catSeg">${cats.map((c,i)=>`<button class="${i===0?'on':''}" onclick="planTypeForm('${c.cat}','${c.sub||''}')">${c.label}</button>`).join('')}</div></div>
+    <div id="planForm"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn primary" onclick="savePlan()">${editData?'保存修改':'保存计划'}</button>
+      <button class="btn" onclick="closeModal()">取消</button></div>`);
+  const c0=cats[0]||{cat:'专项'};
+  planTypeForm(c0.cat,c0.sub||'');
+}
+function planTypeForm(cat,sub){
+  document.querySelectorAll('#catSeg button').forEach(b=>b.classList.toggle('on',b.textContent.includes(cat)&&(!sub||b.textContent.includes(sub))));
+  const el=document.getElementById('planForm');
+  if(cat==='专项'){
+    el.innerHTML=`<div class="form-tag zx">专项培训 = 集中办培训班，要排课/定老师（具体计划）</div>
+      <div class="row" style="gap:10px"><div class="field" style="flex:1"><label>项目编号</label><input class="input" value="sydcd-2026-0XX（自动生成）" readonly></div>
+        <div class="field" style="flex:1"><label>培训班名称<span class="req">*</span></label><input class="input" placeholder="唯一·必填，如：钳工岗位轮训班"></div></div>
+      <div class="row" style="gap:10px"><div class="field" style="flex:1"><label>培训性质<span class="muted">枚举来自职培网</span></label><select class="input"><option>适应性</option><option>安全培训</option><option>资格性</option></select></div>
+        <div class="field" style="flex:1"><label>培训形式</label><select class="input"><option>脱产</option><option>非脱产</option></select></div></div>
+      <div class="row" style="gap:10px"><div class="field" style="flex:1"><label>培训对象(岗位·手输)</label><input class="input" placeholder="如：钳工" oninput="document.getElementById('cpHead')&&(document.getElementById('cpHead').value=(POST_HEAD[Object.keys(POST_HEAD).find(k=>this.value.includes(k.slice(0,2)))]||'按岗位库统计')+' 人')"></div>
+        <div class="field" style="flex:1"><label>计划人数<span class="muted">按岗位自动算</span></label><input class="input" id="cpHead" value="—" readonly></div></div>
+      <div class="row" style="gap:10px"><div class="field" style="flex:1"><label>每期培训时间(学时·0.5倍数)</label><select class="input"><option>2</option><option>4</option><option selected>16</option></select></div>
+        <div class="field" style="flex:1"><label>主办部门</label><select class="input"><option>职培科</option><option>安全科</option></select></div></div>
+      <div class="field"><label>实施季度(多选·须带年份)</label><div class="seg"><button class="on">2026二季度</button><button class="on">三季度</button><button>四季度</button></div></div>
+      <div class="hint">★ 保存后状态=编制中→可"提交下达"；在该计划下点"进入排课"配课程(设备/教室/时长)→一键排课→选老师。</div>`;
+  } else if(sub==='每周一学'){
+    el.innerHTML=`<div class="form-tag rc">日常·每周一学 = 在线学习/答题，凑够1学时（空计划，不排死时间）</div>
+      <div class="field"><label>学习内容来源<span class="req">*</span></label><select class="input"><option>必知必会题库(一级修岗位) 101-125题</option><option>两学一执行题库 201-210题</option><option>标准化作业指导书/故障案例</option></select></div>
+      <div class="row" style="gap:10px"><div class="field" style="flex:1"><label>常规/临时</label><select class="input"><option>常规性</option><option>临时性</option></select></div>
+        <div class="field" style="flex:1"><label>周期</label><input class="input" value="每周（本月第1~4周）" readonly></div></div>
+      <div class="field"><label>对象(班组/岗位)</label><input class="input" placeholder="如：一级修甲班 ①②③④号地勤机械师"></div>
+      <div class="field"><label>要求</label><input class="input" value="每周累计 ≥ 1学时（约60分钟），零散答题可凑" readonly></div>
+      <div class="hint">★ 空计划：只给学习内容+周期+对象，不排死时间。下发后学员在"弹性预约-每周一学"里自己随时学。</div>`;
+  } else {
+    el.innerHTML=`<div class="form-tag rc">日常·每月一练 = 实作演练（组队/单人），空计划，学员弹性预约</div>
+      <div class="field"><label>实作演练项目<span class="req">*</span></label><select class="input"><option>CR400 基本技能实作演练</option><option>库外看车巡视一次作业</option><option>接触网供断电操作演练</option><option>空泵站一次巡检</option></select></div>
+      <div class="row" style="gap:10px"><div class="field" style="flex:1"><label>关联设备</label><select class="input"><option>CR400BF综合实训设备</option><option>探伤检测台</option></select></div>
+        <div class="field" style="flex:1"><label>周期</label><input class="input" value="每月（本月第3周）" readonly></div></div>
+      <div class="field"><label>参练人员(组队·从班组选)</label><input class="input" placeholder="如：本班组应训12人，辅导员勾选名单"></div>
+      <div class="field"><label>时长规则</label><input class="input" value="15分钟 × 人数（到点强制下机）" readonly></div>
+      <div class="hint">★ 空计划：只给项目+设备+人，不排死时间。下发后在"弹性预约-每月一练"里组队预约设备时段，没考完下次接着考。</div>`;
+  }
+}
+function savePlan(){closeModal();toast('计划已保存（演示）。专项→进排课配课程；日常→学员弹性预约','📋');}
+function editPlan(idx){const p=(planFilterCat?PLAN_DATA[curPlanLevel].filter(x=>x.cat===planFilterCat):PLAN_DATA[curPlanLevel])[idx];openCreatePlan(p);}
 function planDrill(name,n){
   if(!n){toast('该计划尚未挂课程，点"排课"进入添加','📋');return;}
   openModal(`「${name}」下的课程`,`<div class="note">计划是粗的上层、课程是细的下层（父子从属）。课程由排课人在计划下创建，绑定设备/教室、形式、时长；课程周期强校验落在计划季度内。</div>

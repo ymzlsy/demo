@@ -158,15 +158,28 @@
         </div>
 
         <div class="card">
-          <h2>② 同一个培训，一层层往下拆（传递演示）<span class="sub">以「钳工岗位轮训」为例 · 看上层一条计划下达后变成啥</span></h2>
+          <h2>② 培训分两大类（和层级是两个维度，交叉的）<span class="sub">同一层级下可同时有这两类</span></h2>
+          <div class="cat2">
+            <div class="cat2-card zx">
+              <div class="c2-h">专项培训</div>
+              <div class="c2-b">集中办个<b>培训班</b>，有头有尾（如 钳工岗位轮训班157人）。<br>→ <b>具体计划</b>：定课程/设备/时间/老师<br>→ 走<b>智能排课</b>（干部排好周几几点）<br>→ 站段级建得最多</div>
+            </div>
+            <div class="cat2-card rc">
+              <div class="c2-h">日常培训（每周一学 / 每月一练 / 每季一考）</div>
+              <div class="c2-b">日常持续学技练功，<b>循环不结束</b>（如 每周学题库、每月练CR400）。<br>→ <b>空计划</b>：只给任务+时间段<br>→ 走<b>弹性预约</b>（学员自己挑时间）<br>→ 班组级建得最多</div>
+            </div>
+          </div>
+          <div class="note" style="margin-top:12px">📌 两个维度：<b>层级</b>(站段/车间/班组)=谁管；<b>类型</b>(专项/日常)=管什么类。所以"每周一学"= 班组级的·日常培训类。下面列表可按类型筛选。</div>
+        </div>
+
+        <div class="card">
+          <h2>③ 同一个培训，一层层往下拆（传递演示）<span class="sub">以「钳工岗位轮训」(专项) 为例 · 看上层一条计划下达后变成啥</span></h2>
           <div class="relay" id="relayChain"></div>
         </div>
 
         <div class="card">
-          <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:12px">
-            <h2 style="margin:0">③ <span id="curLevelName">站段级</span>的真实计划列表 <span class="sub" id="curLevelSrc">来自2026年度计划表</span></h2>
-            <button class="btn primary sm" onclick="go('sched-smart')">＋ 新建本级计划</button>
-          </div>
+          <h2 style="margin-bottom:6px">④ <span id="curLevelName">站段级</span>的计划列表 <span class="sub" id="curLevelSrc">来自2026年度计划表</span></h2>
+          <div class="cat-tabs" id="planCatTabs" style="margin-bottom:12px"></div>
           <div class="tt-wrap">
             <table class="plan-table">
               <thead><tr><th>序号</th><th>培训班/项目名称</th><th>项目编号</th><th>形式/性质</th><th>培训对象(岗位)</th><th>计划/实际人数</th><th>学时</th><th>实施季度</th><th>创建人/部门</th><th>状态</th><th>操作</th></tr></thead>
