@@ -1,181 +1,188 @@
-/* ============ 沈阳南需求原型 Demo · 交互逻辑 ============ */
+/* ============ 沈阳南需求原型 Demo · 交互逻辑（细化版）============ */
 
 /* ---------- 数据 ---------- */
-// 场地树（对齐勾老师：集团→校区→车间→实训室/教室；只示意，待共建字典）
-const PLACE_TREE = {
-  name:'沈阳动车段动车实训基地', level:'集团公司级',
-  children:[
-    {name:'沈南校区', level:'校区', children:[
-      {name:'沈南动车所', level:'车间', children:[
-        {name:'CR400BF 综合实训室', level:'实训室', cnt:'4 台设备'},
-        {name:'CRH5 综合实训室', level:'实训室', cnt:'4 台设备'},
-        {name:'救援联挂实训室', level:'实训室', cnt:'3 台设备'},
-        {name:'虚拟检修实训室(VR)', level:'实训室', cnt:'4 台设备'},
-        {name:'电钳工实训室', level:'实训室', cnt:'3 台设备'},
-        {name:'理论教室 1 / 2 / 3', level:'教室', cnt:'3 间'},
-      ]},
-      {name:'段库（总部）', level:'车间', children:[
-        {name:'教室 A / B / C', level:'教室', cnt:'3 间·待列名'},
-      ]},
+const PLACE_TREE={name:'沈阳动车段动车实训基地',level:'集团公司级',children:[
+  {name:'沈南校区',level:'校区',children:[
+    {name:'沈南动车所',level:'车间',children:[
+      {name:'CR400BF 综合实训室',level:'实训室',cnt:'4 台设备'},
+      {name:'CRH5 综合实训室',level:'实训室',cnt:'4 台设备'},
+      {name:'救援联挂实训室',level:'实训室',cnt:'3 台设备'},
+      {name:'虚拟检修实训室(VR)',level:'实训室',cnt:'4 台设备'},
+      {name:'电钳工实训室',level:'实训室',cnt:'3 台设备'},
+      {name:'理论教室 1 / 2 / 3',level:'教室',cnt:'3 间'},
     ]},
-    {name:'沈北校区', level:'校区', children:[
-      {name:'沈北动车所', level:'车间', children:[
-        {name:'综合实训室', level:'实训室', cnt:'多台·平面图待标注'},
-        {name:'理论教室群', level:'教室', cnt:'若干'},
-      ]},
+    {name:'段库（总部）',level:'车间',children:[{name:'教室 A / B / C',level:'教室',cnt:'3 间·待列名'}]},
+  ]},
+  {name:'沈北校区',level:'校区',children:[
+    {name:'沈北动车所',level:'车间',children:[
+      {name:'综合实训室',level:'实训室',cnt:'多台·平面图待标注'},
+      {name:'理论教室群',level:'教室',cnt:'若干'},
     ]},
-    {name:'异地车间（接入）', level:'—', children:[
-      {name:'长春动车所', level:'车间', cnt:'接入'},
-      {name:'大连动车所', level:'车间', cnt:'接入'},
-    ]},
-  ]
-};
+  ]},
+  {name:'异地车间（接入）',level:'—',children:[{name:'长春动车所',level:'车间',cnt:'接入'},{name:'大连动车所',level:'车间',cnt:'接入'}]},
+]};
 
-// 实训室 → 设备（设备级占用，对齐勾老师）
-const ROOMS = {
+// 设备隶属树（课程→一套设备→二级→三级）
+const DEV_TREE={
+  '受电弓检修台':{course:'受电弓检查',l1:'CR400BF 综合实训装置',l2:'受电弓检修主机',l3:['碳滑板更换工装','弓网调整组件']},
+  '图罩开关设备':{course:'图罩开关操作',l1:'CR400BF 综合实训装置',l2:'图罩开关控制台',l3:['开关执行机构']},
+  'J5 救援联挂主机':{course:'救援连挂作业',l1:'救援联挂实训装置',l2:'J5 救援联挂主机',l3:['连挂操作终端','气路控制组件']},
+  'VR 工位 #1':{course:'虚拟检修流程',l1:'VR 虚拟检修装置',l2:'VR 主机 #1',l3:['头显','手柄','换插板组件']},
+};
+const ROOMS={
   'CR400BF 综合实训室':[
-    {nm:'受电弓检修台', st:'using', user:'张伟 · 第5期轮训班', course:'受电弓检查', time:'09:00-10:00', cap:'1/1'},
-    {nm:'图罩开关设备', st:'reserved', user:'10:30 李强预约', course:'图罩开关操作', time:'10:30-11:30', cap:'0/1'},
-    {nm:'电环路系统台', st:'using', user:'王磊 · 个人练功', course:'HMI操作复位', time:'09:20-09:50', cap:'1/2'},
-    {nm:'HMI 操作台', st:'idle', user:'—', course:'—', time:'下一场 14:00', cap:'0/1'},
+    {nm:'受电弓检修台',st:'using',user:'张伟 · 第5期轮训班',course:'受电弓检查',time:'09:00-10:00',cap:'1/1',task:'受电弓检查'},
+    {nm:'图罩开关设备',st:'reserved',user:'10:30 李强预约',course:'图罩开关操作',time:'10:30-11:30',cap:'0/1',task:'图罩开关操作'},
+    {nm:'电环路系统台',st:'using',user:'王磊 · 个人练功',course:'HMI操作复位',time:'09:20-09:50',cap:'1/2',task:'HMI操作复位'},
+    {nm:'HMI 操作台',st:'idle',user:'—',course:'—',time:'下一场 14:00',cap:'0/1',task:'HMI操作复位'},
   ],
   'CRH5 综合实训室':[
-    {nm:'CRH5 主控台', st:'using', user:'赵敏 · 资格性培训', course:'小复位操作', time:'09:00-10:30', cap:'2/3'},
-    {nm:'空调照明台', st:'idle', user:'—', course:'—', time:'空闲', cap:'0/1'},
-    {nm:'制动系统台', st:'fault', user:'—', course:'—', time:'报修中', cap:'0/1'},
-    {nm:'TDTSL 操作台', st:'using', user:'刘洋 · 个人练功', course:'TBPS查看', time:'09:30-10:00', cap:'1/1'},
+    {nm:'CRH5 主控台',st:'using',user:'赵敏 · 资格性培训',course:'小复位操作',time:'09:00-10:30',cap:'2/3',task:'小复位操作'},
+    {nm:'空调照明台',st:'idle',user:'—',course:'—',time:'空闲',cap:'0/1',task:'空调照明操作'},
+    {nm:'制动系统台',st:'fault',user:'—',course:'—',time:'报修中',cap:'0/1',task:'制动检查'},
+    {nm:'TDTSL 操作台',st:'using',user:'刘洋 · 个人练功',course:'TBPS查看',time:'09:30-10:00',cap:'1/1',task:'TBPS查看操作'},
   ],
   '救援联挂实训室':[
-    {nm:'J5 救援联挂主机', st:'using', user:'孙浩 · 第5期轮训班', course:'救援连挂作业', time:'08:30-10:00', cap:'3/4'},
-    {nm:'探伤检测台 #1', st:'reserved', user:'19:00 每月一练', course:'探伤板更换', time:'19:00-22:45', cap:'0/1'},
-    {nm:'连挂操作终端', st:'idle', user:'—', course:'—', time:'空闲', cap:'0/2'},
+    {nm:'J5 救援联挂主机',st:'using',user:'孙浩 · 第5期轮训班',course:'救援连挂作业',time:'08:30-10:00',cap:'3/4',task:'救援连挂作业'},
+    {nm:'探伤检测台 #1',st:'reserved',user:'19:00 每月一练',course:'探伤板更换',time:'19:00-22:45',cap:'0/1',task:'探伤板更换'},
+    {nm:'连挂操作终端',st:'idle',user:'—',course:'—',time:'空闲',cap:'0/2',task:'救援连挂作业'},
   ],
   '虚拟检修实训室(VR)':[
-    {nm:'VR 工位 #1', st:'using', user:'周强', course:'人身安全体验', time:'09:00-09:40', cap:'1/1'},
-    {nm:'VR 工位 #2', st:'using', user:'吴军', course:'虚拟检修流程', time:'09:10-09:50', cap:'1/1'},
-    {nm:'VR 工位 #3', st:'idle', user:'—', course:'—', time:'空闲', cap:'0/1'},
-    {nm:'VR 工位 #4', st:'idle', user:'—', course:'—', time:'空闲', cap:'0/1'},
+    {nm:'VR 工位 #1',st:'using',user:'周强',course:'人身安全体验',time:'09:00-09:40',cap:'1/1',task:'虚拟检修流程'},
+    {nm:'VR 工位 #2',st:'using',user:'吴军',course:'虚拟检修流程',time:'09:10-09:50',cap:'1/1',task:'虚拟检修流程'},
+    {nm:'VR 工位 #3',st:'idle',user:'—',course:'—',time:'空闲',cap:'0/1',task:'虚拟检修流程'},
+    {nm:'VR 工位 #4',st:'idle',user:'—',course:'—',time:'空闲',cap:'0/1',task:'虚拟检修流程'},
   ],
   '电钳工实训室':[
-    {nm:'万用表实操台', st:'using', user:'郑凯', course:'万用表使用', time:'09:00-09:45', cap:'1/2'},
-    {nm:'电环路接线台', st:'idle', user:'—', course:'—', time:'空闲', cap:'0/2'},
-    {nm:'钳工实操台', st:'idle', user:'—', course:'—', time:'空闲', cap:'0/1'},
+    {nm:'万用表实操台',st:'using',user:'郑凯',course:'万用表使用',time:'09:00-09:45',cap:'1/2',task:'万用表使用'},
+    {nm:'电环路接线台',st:'idle',user:'—',course:'—',time:'空闲',cap:'0/2',task:'接线作业'},
+    {nm:'钳工实操台',st:'idle',user:'—',course:'—',time:'空闲',cap:'0/1',task:'钳工作业'},
   ],
 };
 const ST_LABEL={using:'使用中',idle:'空闲',fault:'故障',reserved:'已预约'};
 
-// 教室管控
+// 教室
 const CLASSROOMS=[
-  {nm:'理论教室 1', active:true, teacher:'马建国', course:'动车组结构原理', cls:'第5期轮训班', time:'08:30-10:00'},
-  {nm:'理论教室 2', active:true, teacher:'李红', course:'安全规章', cls:'地勤资格性班', time:'09:00-11:00'},
-  {nm:'理论教室 3', active:false},
-  {nm:'综合教室', active:true, teacher:'王志强', course:'应急处置案例', cls:'第5期轮训班', time:'09:30-11:30'},
-  {nm:'段库 教室 A', active:true, teacher:'孙磊', course:'车型能力提升', cls:'车间长培训', time:'08:00-12:00'},
-  {nm:'段库 教室 B', active:false},
-  {nm:'段库 教室 C', active:false},
+  {nm:'理论教室 1',active:true,teacher:'马建国',course:'动车组结构原理',cls:'第5期轮训班',time:'08:30-10:00'},
+  {nm:'理论教室 2',active:true,teacher:'李红',course:'安全规章',cls:'地勤资格性班',time:'09:00-11:00'},
+  {nm:'理论教室 3',active:false},
+  {nm:'综合教室',active:true,teacher:'王志强',course:'应急处置案例',cls:'第5期轮训班',time:'09:30-11:30'},
+  {nm:'段库 教室 A',active:true,teacher:'孙磊',course:'车型能力提升',cls:'车间长培训',time:'08:00-12:00'},
+  {nm:'段库 教室 B',active:false},{nm:'段库 教室 C',active:false},
 ];
 
-// 设备选项（智能排课）
-const DEV_OPTS=['受电弓检修台','图罩开关设备','电环路系统台','HMI 操作台','VR 工位','J5 救援联挂主机','探伤检测台','万用表实操台','理论教室1','理论教室2'];
+// 老师库（选老师用）：年度课时档位 12/16/20=合格/良好/优秀
+const TEACHERS=[
+  {nm:'马建国',dept:'沈南所 检修车间',phone:'138****2011',year:8,total:142},
+  {nm:'李红',dept:'沈南所 乘务车间',phone:'139****3022',year:20,total:310},
+  {nm:'王志强',dept:'段库 教研室',phone:'137****4033',year:16,total:256},
+  {nm:'孙磊',dept:'沈北所 检修车间',phone:'135****5044',year:4,total:88},
+  {nm:'赵敏',dept:'沈南所 转向架',phone:'136****6055',year:12,total:175},
+  {nm:'刘洋',dept:'沈南所 电气',phone:'134****7066',year:6,total:120},
+  {nm:'周建华',dept:'长春所 检修',phone:'130****8077',year:0,total:35},
+];
+function gradeOf(y){return y>=20?{g:3,t:'优秀'}:y>=16?{g:2,t:'良好'}:y>=12?{g:1,t:'合格'}:{g:0,t:'未达标'};}
 
-// 课表示例数据（日期×节次）
+// 每周一练（在线学习）
+const WEEKLY=[
+  {t:'动车组制动系统原理',p:'12题/已答8',min:18},
+  {t:'应急故障处置闯关',p:'10题/已答10',min:12},
+  {t:'安全规章日测',p:'5题/已答3',min:6},
+];
+
+const DEV_OPTS=['受电弓检修台','图罩开关设备','电环路系统台','HMI 操作台','VR 工位','J5 救援联挂主机','探伤检测台','万用表实操台','理论教室1','理论教室2'];
 const DAYS=['周一 11/10','周二 11/11','周三 11/12','周四 11/13','周五 11/14'];
 const SLOTS=[{t:'第1-2节',h:'08:00-10:00'},{t:'第3-4节',h:'10:00-12:00'},{t:'第5-6节',h:'14:00-16:00'},{t:'第7-8节',h:'16:00-18:00'}];
-// board[slotIdx][dayIdx] = [ {nm,sub,type,ban,course,teacher,place} ]
 const BOARD=[
-  [ [{nm:'受电弓检查',sub:'CR400BF·受电弓检修台',type:'dev',ban:'第5期轮训班',course:'受电弓检查',teacher:'张伟',place:'受电弓检修台'}],
-    [{nm:'救援连挂作业',sub:'救援联挂室·J5主机',type:'dev',ban:'第5期轮训班',course:'救援连挂',teacher:'孙浩',place:'J5救援联挂主机'}],
-    [{nm:'动车组结构原理',sub:'理论教室1',type:'room',ban:'第5期轮训班',course:'结构原理',teacher:'马建国',place:'理论教室1'}],
-    [{nm:'小复位操作',sub:'CRH5·主控台',type:'dev',ban:'地勤资格性班',course:'小复位',teacher:'赵敏',place:'CRH5主控台'}],
-    [] ],
-  [ [{nm:'图罩开关操作',sub:'CR400BF·图罩开关',type:'dev',ban:'第5期轮训班',course:'图罩开关',teacher:'李强',place:'图罩开关设备'}],
-    [{nm:'安全规章',sub:'理论教室2',type:'room',ban:'地勤资格性班',course:'安全规章',teacher:'李红',place:'理论教室2'}],
-    [{nm:'⚠ 冲突：HMI操作',sub:'电环路台·与个人预约重叠',type:'conflict',ban:'第5期轮训班',course:'HMI操作',teacher:'待定',place:'电环路系统台'}],
-    [],
-    [{nm:'万用表使用',sub:'电钳工室',type:'dev',ban:'地勤资格性班',course:'万用表',teacher:'郑凯',place:'万用表实操台'}] ],
-  [ [],
-    [{nm:'应急处置案例',sub:'综合教室',type:'room',ban:'第5期轮训班',course:'应急处置',teacher:'王志强',place:'综合教室'}],
-    [{nm:'TBPS查看操作',sub:'CRH5·TDTSL台',type:'dev',ban:'地勤资格性班',course:'TBPS查看',teacher:'刘洋',place:'TDTSL操作台'}],
-    [{nm:'虚拟检修流程',sub:'VR室·工位1-2',type:'dev',ban:'第5期轮训班',course:'虚拟检修',teacher:'周强',place:'VR工位'}],
-    [] ],
-  [ [{nm:'探伤板更换',sub:'救援联挂室·探伤台',type:'dev',ban:'第5期轮训班',course:'探伤板更换',teacher:'每月一练',place:'探伤检测台'}],
-    [],
-    [{nm:'空调照明操作',sub:'CRH5·空调照明台',type:'dev',ban:'地勤资格性班',course:'空调照明',teacher:'待定',place:'空调照明台'}],
-    [{nm:'车型能力提升',sub:'段库教室A',type:'room',ban:'车间长培训',course:'车型能力',teacher:'孙磊',place:'段库教室A'}],
-    [] ],
+  [[{nm:'受电弓检查',sub:'CR400BF·受电弓检修台',type:'dev',ban:'第5期轮训班',course:'受电弓检查',teacher:'张伟',place:'受电弓检修台'}],
+   [{nm:'救援连挂作业',sub:'救援联挂室·J5主机',type:'dev',ban:'第5期轮训班',course:'救援连挂',teacher:'孙浩',place:'J5救援联挂主机'}],
+   [{nm:'动车组结构原理',sub:'理论教室1',type:'room',ban:'第5期轮训班',course:'结构原理',teacher:'马建国',place:'理论教室1'}],
+   [{nm:'小复位操作',sub:'CRH5·主控台',type:'dev',ban:'地勤资格性班',course:'小复位',teacher:'赵敏',place:'CRH5主控台'}],[]],
+  [[{nm:'图罩开关操作',sub:'CR400BF·图罩开关',type:'dev',ban:'第5期轮训班',course:'图罩开关',teacher:'李强',place:'图罩开关设备'}],
+   [{nm:'安全规章',sub:'理论教室2',type:'room',ban:'地勤资格性班',course:'安全规章',teacher:'李红',place:'理论教室2'}],
+   [{nm:'⚠ 冲突：HMI操作',sub:'电环路台·与个人预约重叠',type:'conflict',ban:'第5期轮训班',course:'HMI操作',teacher:'待定',place:'电环路系统台'}],[],
+   [{nm:'万用表使用',sub:'电钳工室',type:'dev',ban:'地勤资格性班',course:'万用表',teacher:'郑凯',place:'万用表实操台'}]],
+  [[],[{nm:'应急处置案例',sub:'综合教室',type:'room',ban:'第5期轮训班',course:'应急处置',teacher:'王志强',place:'综合教室'}],
+   [{nm:'TBPS查看操作',sub:'CRH5·TDTSL台',type:'dev',ban:'地勤资格性班',course:'TBPS查看',teacher:'刘洋',place:'TDTSL操作台'}],
+   [{nm:'虚拟检修流程',sub:'VR室·工位1-2',type:'dev',ban:'第5期轮训班',course:'虚拟检修',teacher:'周强',place:'VR工位'}],[]],
+  [[{nm:'探伤板更换',sub:'救援联挂室·探伤台',type:'dev',ban:'第5期轮训班',course:'探伤板更换',teacher:'每月一练',place:'探伤检测台'}],[],
+   [{nm:'空调照明操作',sub:'CRH5·空调照明台',type:'dev',ban:'地勤资格性班',course:'空调照明',teacher:'待定',place:'空调照明台'}],
+   [{nm:'车型能力提升',sub:'段库教室A',type:'room',ban:'车间长培训',course:'车型能力',teacher:'孙磊',place:'段库教室A'}],[]],
 ];
 
 /* ---------- 导航 ---------- */
 const NAV={
-  twin:[
-    {g:'数字孪生实训管控'},
+  twin:[{g:'数字孪生实训管控'},
     {v:'twin-home',ic:'🏠',t:'总览首页'},
+    {v:'twin-dash',ic:'📊',t:'段·车间数据看板'},
     {v:'twin-train',ic:'⚙️',t:'实训场地（设备级）'},
-    {v:'twin-class',ic:'🏫',t:'教室管控'},
-  ],
-  sched:[
-    {g:'预约排课管理'},
-    {v:'sched-smart',ic:'⚡',t:'智能排课（专项培训）'},
+    {v:'twin-class',ic:'🏫',t:'教室管控+点名'}],
+  sched:[{g:'预约排课管理'},
+    {v:'sched-smart',ic:'⚡',t:'智能排课（专项）'},
     {v:'sched-board',ic:'📅',t:'课表总览'},
-    {v:'sched-month',ic:'👥',t:'每月一练（组队）'},
-    {v:'sched-person',ic:'🙋',t:'个人练功预约'},
-  ]
+    {v:'sched-manual',ic:'🧩',t:'手动排课（层级筛选）'},
+    {v:'sched-flex',ic:'🙋',t:'弹性预约（月/周/个人）'}]
 };
-let curMod='twin', curView='twin-home';
+let curMod='twin',curView='twin-home';
+function renderNav(){document.getElementById('sidenav').innerHTML=NAV[curMod].map(n=>n.g?`<div class="group">${n.g}</div>`:`<a data-v="${n.v}" class="${n.v===curView?'active':''}" onclick="go('${n.v}')"><span class="ic">${n.ic}</span>${n.t}</a>`).join('');}
+function go(v){curView=v;document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.sidenav a').forEach(a=>a.classList.toggle('active',a.dataset.v===v));document.getElementById('main').scrollTop=0;}
+document.querySelectorAll('.modswitch button').forEach(b=>b.onclick=()=>{curMod=b.dataset.mod;document.querySelectorAll('.modswitch button').forEach(x=>x.classList.toggle('active',x===b));curView=NAV[curMod][1].v;renderNav();go(curView);});
 
-function renderNav(){
-  const el=document.getElementById('sidenav');
-  el.innerHTML=NAV[curMod].map(n=>n.g?`<div class="group">${n.g}</div>`
-    :`<a data-v="${n.v}" class="${n.v===curView?'active':''}" onclick="go('${n.v}')"><span class="ic">${n.ic}</span>${n.t}</a>`).join('');
-}
-function go(v){
-  curView=v;
-  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.dataset.view===v));
-  document.querySelectorAll('.sidenav a').forEach(a=>a.classList.toggle('active',a.dataset.v===v));
-  document.getElementById('main').scrollTop=0;
-}
-document.querySelectorAll('.modswitch button').forEach(b=>b.onclick=()=>{
-  curMod=b.dataset.mod;
-  document.querySelectorAll('.modswitch button').forEach(x=>x.classList.toggle('active',x===b));
-  curView=NAV[curMod][1].v;
-  renderNav(); go(curView);
-});
-
-/* ---------- 4.5 渲染 ---------- */
+/* ---------- 4.5 场地树 ---------- */
 function renderTree(){
-  function node(n){
-    const has=n.children&&n.children.length;
-    const badge=n.level&&n.level!=='—'?`<span class="lvl-badge">${n.level}</span>`:'';
-    const cnt=n.cnt?`<span class="cnt">${n.cnt}</span>`:'';
-    const click=ROOMS[n.name]?`onclick="openRoom('${n.name}')"`:'';
-    return `<div class="node"><span class="label" ${click}>${has?'▸':'·'} ${n.name} ${badge} ${cnt}</span>`
-      +(has?`<div class="children">${n.children.map(node).join('')}</div>`:'')+`</div>`;
-  }
+  function node(n){const has=n.children&&n.children.length;const badge=n.level&&n.level!=='—'?`<span class="lvl-badge">${n.level}</span>`:'';const cnt=n.cnt?`<span class="cnt">${n.cnt}</span>`:'';const click=ROOMS[n.name]?`onclick="openRoom('${n.name}')"`:'';
+    return `<div class="node"><span class="label" ${click}>${has?'▸':'·'} ${n.name} ${badge} ${cnt}</span>`+(has?`<div class="children">${n.children.map(node).join('')}</div>`:'')+`</div>`;}
   document.getElementById('placeTree').innerHTML=node(PLACE_TREE);
 }
-function openRoom(name){
-  if(ROOMS[name]){curMod='sched';/*noop*/}
-  go('twin-train'); selectRoom(name);
+function openRoom(name){go('twin-train');selectRoom(name);}
+
+/* ---------- 4.5 数据看板 ---------- */
+const DASH={年度:{kpi:[['年度参培','12,480','人次'],['考核完成','86%','up'],['考试合格率','92.4%','up'],['设备利用率','61%',''],['计划兑现率','78%','warn']],
+  campus:[['沈南校区',7200],['沈北校区',3100],['长春所',1400],['大连所',780]],
+  hot:[['受电弓检修台',420],['J5救援联挂',360],['VR 工位',310],['CRH5主控台',250],['万用表台',180]]},
+  月度:{kpi:[['月度参培','1,180','人次'],['考核完成','73%','warn'],['考试合格率','90.1%','up'],['设备利用率','58%',''],['计划兑现率','69%','warn']],
+  campus:[['沈南校区',640],['沈北校区',300],['长春所',150],['大连所',90]],
+  hot:[['受电弓检修台',48],['VR 工位',41],['J5救援联挂',36],['CRH5主控台',28],['万用表台',19]]}};
+let dashCur='年度';
+function dashScope(btn,s){document.querySelectorAll('[data-view="twin-dash"] .seg button').forEach(b=>b.classList.toggle('on',b===btn));dashCur=s;renderDash();}
+function renderDash(){
+  const d=DASH[dashCur];
+  document.getElementById('kpiRow').innerHTML=d.kpi.map(k=>`<div class="kpi"><div class="v ${k[2]==='up'?'up':k[2]==='warn'?'warn':''}">${k[1]}</div><div class="l">${k[0]}${k[2]&&k[2]!=='up'&&k[2]!=='warn'?'（'+k[2]+'）':k[2]==='up'||k[2]==='warn'?'':''}</div></div>`).join('');
+  const mx=Math.max(...d.campus.map(c=>c[1]));
+  document.getElementById('barCampus').innerHTML=d.campus.map(c=>`<div class="bar"><span class="bn">${c[0]}</span><span class="bt"><span class="bf" style="width:${c[1]/mx*100}%"></span></span><span class="bv">${c[1]}</span></div>`).join('');
+  const mh=Math.max(...d.hot.map(c=>c[1]));
+  document.getElementById('barHot').innerHTML=d.hot.map(c=>`<div class="bar"><span class="bn">${c[0]}</span><span class="bt"><span class="bf hot" style="width:${c[1]/mh*100}%"></span></span><span class="bv">${c[1]}h</span></div>`).join('');
 }
-function renderRoomList(){
-  document.getElementById('roomList').innerHTML=Object.keys(ROOMS).map(r=>{
-    const using=ROOMS[r].filter(d=>d.st==='using').length;
-    return `<div class="tree"><span class="label" onclick="selectRoom('${r}')">${r} <span class="cnt">${using}/${ROOMS[r].length} 用</span></span></div>`;
-  }).join('');
+
+/* ---------- 4.5 实训场地 ---------- */
+function renderRoomList(){document.getElementById('roomList').innerHTML=Object.keys(ROOMS).map(r=>{const u=ROOMS[r].filter(d=>d.st==='using').length;return `<div class="tree"><span class="label" onclick="selectRoom('${r}')">${r} <span class="cnt">${u}/${ROOMS[r].length} 用</span></span></div>`;}).join('');}
+let curRoom='CR400BF 综合实训室';
+function selectRoom(name){if(!ROOMS[name])name='CR400BF 综合实训室';curRoom=name;document.getElementById('roomTitle').textContent=name;document.getElementById('trainRoomName').textContent=name;
+  // 任务下拉
+  const tasks=[...new Set(ROOMS[name].map(d=>d.task))];
+  document.getElementById('taskHL').innerHTML='<option value="">— 不筛选，显示全部 —</option>'+tasks.map(t=>`<option>${t}</option>`).join('');
+  renderDevGrid();
 }
-function selectRoom(name){
-  if(!ROOMS[name])name='CR400BF 综合实训室';
-  document.getElementById('roomTitle').textContent=name;
-  document.getElementById('trainRoomName').textContent=name;
-  document.getElementById('devGrid').innerHTML=ROOMS[name].map((d,i)=>`
-    <div class="dev ${d.st}" onclick='openDev(${JSON.stringify(d).replace(/'/g,"&#39;")}, "${name}")'>
-      <span class="led"></span>
-      <div class="nm">${d.nm}</div>
-      <div class="meta">容量 ${d.cap}<br>${d.time}</div>
-      <span class="st">${ST_LABEL[d.st]}</span>
-    </div>`).join('');
+function renderDevGrid(hlTask){
+  document.getElementById('devGrid').innerHTML=ROOMS[curRoom].map(d=>{
+    const hl=hlTask&&d.task===hlTask?'hl':(hlTask?'dim':'');
+    return `<div class="dev ${d.st} ${hl}" onclick='openDev(${JSON.stringify(d).replace(/'/g,"&#39;")}, "${curRoom}")'>
+      <span class="led"></span><div class="nm">${d.nm}</div><div class="meta">容量 ${d.cap}<br>${d.time}</div><span class="st">${ST_LABEL[d.st]}</span></div>`;}).join('');
 }
+function highlightByTask(){const t=document.getElementById('taskHL').value;renderDevGrid(t);if(t)toast(`已高亮「${t}」关联的设备（任务→硬设关系→设备亮起）`,'🔗');}
+function remoteCtl(lvl){const map={'设备':'已下发：单台设备远程关机指令','实训室':'已下发：'+curRoom+' 统一关机','校区':'已下发：沈南校区统一关机','上电':'已下发：远程上电'};toast(map[lvl]+'（演示）','🔌');}
+
 function openDev(d,room){
+  const tree=DEV_TREE[d.nm];
+  let treeHtml='';
+  if(tree){treeHtml=`<h2 style="margin:18px 0 8px;font-size:14px">任务-设备隶属关系</h2>
+    <div class="dev-tree">
+      <div class="lv1">📋 课程/任务：<span class="hit">${tree.course}</span></div>
+      <div class="lv1">⚙️ 一套设备：${tree.l1}</div>
+      <div class="lv2">└ 二级：<span class="hit">${tree.l2}</span></div>
+      ${tree.l3.map(x=>`<div class="lv3">└ 三级：${x}</div>`).join('')}
+    </div>
+    <p class="hint">★ 学员只认课程/任务名；选任务经"硬设关系"自动点亮到末端设备。</p>`;}
   document.getElementById('drawerTitle').textContent=d.nm;
   document.getElementById('drawerBody').innerHTML=`
     <div class="kv"><span>所属实训室</span><b>${room}</b></div>
@@ -184,154 +191,157 @@ function openDev(d,room){
     <div class="kv"><span>当前课程/任务</span><b>${d.course}</b></div>
     <div class="kv"><span>时间段</span><b>${d.time}</b></div>
     <div class="kv"><span>容量</span><b>${d.cap}</b></div>
+    ${treeHtml}
     <h2 style="margin:18px 0 10px;font-size:14px">设备视频监控</h2>
-    <div class="video-wrap" style="grid-template-columns:1fr">
-      <div class="video-main"><span class="live">● LIVE</span><span class="cap">摄像头对准：${d.nm}</span>📹 实时画面</div>
-    </div>
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <div class="cam on">机位 1（主）</div><div class="cam">机位 2</div>
-    </div>
-    <h2 style="margin:18px 0 10px;font-size:14px">历史使用记录</h2>
-    <div class="kv"><span>11-09 14:00-15:00</span><b>李明 · 受电弓检查 · 合格</b></div>
-    <div class="kv"><span>11-08 09:00-10:00</span><b>王芳 · 图罩开关 · 良好</b></div>
-    <p class="hint" style="margin-top:14px">★ 数据孪生：设备占用与录像时间标签一比一对应，点开可定位录像回放。</p>`;
-  document.getElementById('drawer').classList.add('open');
-  document.getElementById('drawerMask').classList.add('open');
+    <div class="video-wrap" style="grid-template-columns:1fr"><div class="video-main"><span class="live">● LIVE</span><span class="cap">摄像头对准：${d.nm}</span>📹 实时画面</div></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><div class="cam on">机位 1（主）</div><div class="cam">机位 2</div></div>
+    <h2 style="margin:18px 0 10px;font-size:14px">历史使用记录（数据孪生·点定位录像）</h2>
+    <div class="kv"><span>11-09 14:00-15:00</span><b>李明 · 受电弓检查 · 合格 ▶</b></div>
+    <div class="kv"><span>11-08 09:00-10:00</span><b>王芳 · 图罩开关 · 良好 ▶</b></div>
+    <div style="margin-top:16px;display:flex;gap:8px"><button class="btn sm" onclick="remoteCtl('设备')">远程关机</button><button class="btn sm" onclick="remoteCtl('上电')">远程上电</button></div>`;
+  document.getElementById('drawer').classList.add('open');document.getElementById('drawerMask').classList.add('open');
 }
 function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('drawerMask').classList.remove('open');}
-function renderClassrooms(){
-  document.getElementById('clsGrid').innerHTML=CLASSROOMS.map(c=>c.active?`
-    <div class="cls active"><span class="live-badge">● 上课中</span>
-      <div class="nm">${c.nm}</div>
-      <div class="who"><b>${c.teacher}</b> 老师<br>${c.course}<br><span class="muted">${c.cls} · ${c.time}</span></div>
-    </div>`:`
-    <div class="cls empty"><span class="live-badge">空闲</span>
-      <div class="nm">${c.nm}</div><div class="who muted">当前无课程</div>
-    </div>`).join('');
+
+/* ---------- 4.5 教室管控 + 点名流程 ---------- */
+function renderClassrooms(){document.getElementById('clsGrid').innerHTML=CLASSROOMS.map((c,i)=>c.active?`
+  <div class="cls active" onclick="checkinFlow(${i})"><span class="live-badge">● 上课中</span><div class="nm">${c.nm}</div><div class="who"><b>${c.teacher}</b> 老师<br>${c.course}<br><span class="muted">${c.cls} · ${c.time}</span></div></div>`:`
+  <div class="cls empty" onclick="checkinFlow(${i})"><span class="live-badge">空闲</span><div class="nm">${c.nm}</div><div class="who muted">点击模拟教员开课</div></div>`).join('');}
+const ROSTER=['张伟','李强','王磊','赵敏','刘洋','孙浩','周强','吴军','郑凯','马建','李红','王志'];
+let checked=new Set();
+function checkinFlow(i){
+  const c=CLASSROOMS[i];checked=new Set(c.active?ROSTER.slice(0,8):[]);
+  openModal(`教室点名 · ${c.nm}`,`
+    <div class="note">流程：教员工卡登录 → 选课程任务 → <b>参陪人员点名</b> → 点「开始培训」→ 系统记录录像时间标签，回看可定位。</div>
+    <div class="field"><label>教员（工卡登录）</label><input class="input" value="${c.active?c.teacher:'（刷工卡登录）'}" readonly></div>
+    <div class="field"><label>课程/培训任务</label><select class="input"><option>${c.active?c.course:'动车组结构原理'}</option><option>应急处置案例</option></select></div>
+    <div class="field"><label>参陪人员点名（点选到场人员，共 ${ROSTER.length} 人）</label>
+      <div class="checkin-grid" id="ckGrid"></div>
+      <div class="hint">已到 <b id="ckCount">0</b> / ${ROSTER.length} 人</div></div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn primary" onclick="startTrain()">▶ 开始培训（生成录像时间标签）</button>
+      <button class="btn" onclick="closeModal()">取消</button></div>
+    <div id="trainTag"></div>`);
+  renderCk();
 }
+function renderCk(){document.getElementById('ckGrid').innerHTML=ROSTER.map(p=>`<div class="ck ${checked.has(p)?'on':''}" onclick="toggleCk('${p}')">${p}</div>`).join('');document.getElementById('ckCount').textContent=checked.size;}
+function toggleCk(p){checked.has(p)?checked.delete(p):checked.add(p);renderCk();}
+function startTrain(){const t=new Date();const ts=`REC-${String(t.getHours()).padStart(2,'0')}${String(t.getMinutes()).padStart(2,'0')}-CAM01`;
+  document.getElementById('trainTag').innerHTML=`<div class="note" style="background:var(--success-bg);border-color:#b7eb8f;color:#389e0d;margin-top:12px">✅ 已开始培训。到场 <b>${checked.size}</b> 人已计入考勤；录像时间标签 <b>${ts}</b> 已打点，回看录像可直接定位此刻。</div>`;
+  toast('培训已开始，录像时间标签已生成','▶');}
 
 /* ---------- 4.8 智能排课 ---------- */
-let courses=[];
-function fillDevOpts(){
-  document.getElementById('smDev').innerHTML=DEV_OPTS.map(d=>`<option>${d}</option>`).join('');
-}
-function addCourse(){
-  const dev=document.getElementById('smDev').value;
-  const nm=document.getElementById('smCourse').value.trim()||'(未命名课程)';
-  const dur=document.getElementById('smDur').value;
-  courses.push({dev,nm,dur:+dur});
-  document.getElementById('smCourse').value='';
-  renderCourseList();
-}
-function renderCourseList(){
-  document.getElementById('smCount').textContent=courses.length+' 门';
-  const el=document.getElementById('smList');
-  if(!courses.length){el.innerHTML='<div class="empty-state">尚未添加课程</div>';return;}
-  el.innerHTML=courses.map((c,i)=>`<div class="pk"><span class="tag">${c.dev}</span><span class="nm">${c.nm}</span><span class="du">${c.dur}学时</span><span class="rm" style="cursor:pointer" onclick="rmCourse(${i})">✕</span></div>`).join('');
-}
+let courses=[],smStep=1;
+function renderSteps(){const labels=['建计划','添加课程','一键排课','选老师'];document.getElementById('smSteps').innerHTML=labels.map((l,i)=>`<div class="stp ${smStep>i+1?'done':smStep===i+1?'cur':''}"><span class="n">${i+1}</span>${l}</div>`).join('');}
+function fillDevOpts(){document.getElementById('smDev').innerHTML=DEV_OPTS.map(d=>`<option>${d}</option>`).join('');}
+function addCourse(){const dev=document.getElementById('smDev').value;const nm=document.getElementById('smCourse').value.trim()||'(未命名)';const form=document.getElementById('smForm').value;const dur=+document.getElementById('smDur').value;courses.push({dev,nm,form,dur});document.getElementById('smCourse').value='';smStep=2;renderCourseList();renderSteps();}
+function renderCourseList(){document.getElementById('smCount').textContent=courses.length+' 门';const el=document.getElementById('smList');if(!courses.length){el.innerHTML='<div class="empty-state">尚未添加课程</div>';return;}
+  // 标签：同一设备重复添加用 #1 #2
+  const seen={};el.innerHTML=courses.map((c,i)=>{seen[c.dev]=(seen[c.dev]||0)+1;const tag=courses.filter(x=>x.dev===c.dev).length>1?` 标签#${seen[c.dev]}`:'';return `<div class="pk"><span class="tag">${c.dev}${tag}</span><span class="nm">${c.nm}</span><span class="du">${c.form}·${c.dur}学时</span><span class="rm" style="cursor:pointer" onclick="rmCourse(${i})">✕</span></div>`;}).join('');}
 function rmCourse(i){courses.splice(i,1);renderCourseList();}
-function oneClick(){
-  if(!courses.length){toast('请先添加待排课程','⚠️');return;}
-  // 简单排课：依次填入空格，避开已占用
+function oneClick(){if(!courses.length){toast('请先添加待排课程','⚠️');return;}
   const grid=Array.from({length:4},()=>Array.from({length:5},()=>null));
-  // 预置一些"别人的占用"
   grid[0][2]={nm:'已占用·他班',type:'conflict'};
   let di=0,si=0,placed=0;
-  courses.forEach(c=>{
-    // 找下一个空格
-    let tries=0;
-    while(tries<20){
-      if(!grid[si][di]){grid[si][di]={nm:c.nm,sub:c.dev+' · '+c.dur+'学时',type:'dev'};placed++;
-        di++; if(di>=5){di=0;si=(si+1)%4;} break;}
-      di++; if(di>=5){di=0;si=(si+1)%4;} tries++;
-    }
-  });
-  renderTable('smTable',grid,true);
-  toast(`已为 ${placed} 门课自动排课，避开 ${1} 处占用冲突`,'⚡');
-}
+  courses.forEach(c=>{let tries=0;while(tries<20){if(!grid[si][di]){grid[si][di]={nm:c.nm,sub:c.dev+' · '+c.dur+'学时',type:'dev',teacher:''};placed++;di++;if(di>=5){di=0;si=(si+1)%4;}break;}di++;if(di>=5){di=0;si=(si+1)%4;}tries++;}});
+  window._smGrid=grid;renderTable('smTable',grid,true,true);smStep=3;renderSteps();toast(`已为 ${placed} 门课自动排课，避开 1 处占用冲突。点课程块选老师`,'⚡');}
 
-/* ---------- 课表渲染（含拖拽） ---------- */
-function renderTable(id,grid,draggable){
-  const tb=document.getElementById(id);
-  let html=`<tr><th class="time-col">时间</th>${DAYS.map(d=>`<th>${d}</th>`).join('')}</tr>`;
-  for(let s=0;s<4;s++){
-    html+=`<tr><td class="time-col"><b>${SLOTS[s].t}</b><br>${SLOTS[s].h}</td>`;
-    for(let d=0;d<5;d++){
-      const cell=grid[s][d];
-      let inner='';
-      const arr=Array.isArray(cell)?cell:(cell?[cell]:[]);
-      arr.forEach(c=>{ inner+=`<div class="slot ${c.type}" ${draggable&&c.type!=='conflict'?'draggable="true"':''} data-s="${s}" data-d="${d}"><div class="nm">${c.nm}</div><div class="sub">${c.sub||''}</div></div>`; });
-      html+=`<td class="cell" data-s="${s}" data-d="${d}">${inner}</td>`;
-    }
-    html+=`</tr>`;
-  }
-  tb.innerHTML=html;
-  if(draggable)bindDrag(tb);
+/* 选老师 modal */
+let tchSortKey='year',tchAsc=true,curSlotRef=null;
+function pickTeacher(s,d){curSlotRef={s,d};const cell=window._smGrid[s][d];if(!cell||cell.type==='conflict')return;openTeacherModal(cell.nm);}
+function openTeacherModal(courseName){
+  openModal(`为「${courseName}」选/通知老师`,`
+    <div class="note">选老师提示：部门/电话/年度课时/总课时；可按年度课时<b>正/倒排</b>，<b>优先推荐学时不足的老师</b>。学时档位 12/16/20 = 合格/良好/优秀。</div>
+    <div style="margin-bottom:8px"><button class="btn sm" onclick="sortTch('year')">按年度课时排序（倒排优先少的）</button> <button class="btn sm" onclick="sortTch('total')">按总课时</button></div>
+    <table class="tch-table" id="tchTable"></table>`);
+  renderTchTable();
 }
-function bindDrag(tb){
-  let dragEl=null;
-  tb.querySelectorAll('.slot[draggable]').forEach(el=>{
-    el.addEventListener('dragstart',e=>{dragEl=el;el.classList.add('dragging');});
-    el.addEventListener('dragend',e=>{el.classList.remove('dragging');tb.querySelectorAll('td').forEach(t=>t.classList.remove('drop-ok'));});
-  });
-  tb.querySelectorAll('td.cell').forEach(td=>{
-    td.addEventListener('dragover',e=>{e.preventDefault();td.classList.add('drop-ok');});
-    td.addEventListener('dragleave',e=>td.classList.remove('drop-ok'));
-    td.addEventListener('drop',e=>{e.preventDefault();td.classList.remove('drop-ok');if(dragEl){td.appendChild(dragEl);toast('已调整该课程时间','✏️');}});
-  });
+function sortTch(k){if(tchSortKey===k)tchAsc=!tchAsc;else{tchSortKey=k;tchAsc=true;}renderTchTable();}
+function renderTchTable(){
+  const arr=[...TEACHERS].sort((a,b)=>tchAsc?a[tchSortKey]-b[tchSortKey]:b[tchSortKey]-a[tchSortKey]);
+  document.getElementById('tchTable').innerHTML=`<tr><th>姓名</th><th>部门</th><th>电话</th><th onclick="sortTch('year')">年度课时↕</th><th>档位</th><th>总课时</th><th></th></tr>`+
+    arr.map(t=>{const g=gradeOf(t.year);return `<tr class="${t.year<12?'low':''}"><td><b>${t.nm}</b></td><td>${t.dept}</td><td>${t.phone}</td><td>${t.year}</td><td><span class="grade g${g.g}">${g.t}</span></td><td>${t.total}</td><td><span class="btn sm pick-t" onclick="assignTch('${t.nm}')">指派/通知</span></td></tr>`;}).join('');
 }
+function assignTch(nm){if(curSlotRef){const c=window._smGrid[curSlotRef.s][curSlotRef.d];c.teacher=nm;c.sub=(c.sub.split(' · 老师')[0])+' · 老师'+nm;renderTable('smTable',window._smGrid,true,true);}smStep=4;renderSteps();closeModal();toast(`已指派/通知老师：${nm}`,'📣');}
 
-/* ---------- 课表总览 + 筛选 ---------- */
+/* ---------- 课表渲染 ---------- */
+function renderTable(id,grid,draggable,pickTch){const tb=document.getElementById(id);let html=`<tr><th class="time-col">时间</th>${DAYS.map(d=>`<th>${d}</th>`).join('')}</tr>`;
+  for(let s=0;s<4;s++){html+=`<tr><td class="time-col"><b>${SLOTS[s].t}</b><br>${SLOTS[s].h}</td>`;
+    for(let d=0;d<5;d++){const cell=grid[s][d];const arr=Array.isArray(cell)?cell:(cell?[cell]:[]);let inner='';
+      arr.forEach(c=>{const click=pickTch&&c.type!=='conflict'?`onclick="pickTeacher(${s},${d})"`:'';inner+=`<div class="slot ${c.type}" ${draggable&&c.type!=='conflict'?'draggable="true"':''} ${click} data-s="${s}" data-d="${d}"><div class="nm">${c.nm}</div><div class="sub">${c.sub||''}</div></div>`;});
+      html+=`<td class="cell" data-s="${s}" data-d="${d}">${inner}</td>`;}
+    html+=`</tr>`;}
+  tb.innerHTML=html;if(draggable)bindDrag(tb);}
+function bindDrag(tb){let dragEl=null;tb.querySelectorAll('.slot[draggable]').forEach(el=>{el.addEventListener('dragstart',()=>{dragEl=el;el.classList.add('dragging');});el.addEventListener('dragend',()=>{el.classList.remove('dragging');tb.querySelectorAll('td').forEach(t=>t.classList.remove('drop-ok'));});});
+  tb.querySelectorAll('td.cell').forEach(td=>{td.addEventListener('dragover',e=>{e.preventDefault();td.classList.add('drop-ok');});td.addEventListener('dragleave',()=>td.classList.remove('drop-ok'));td.addEventListener('drop',e=>{e.preventDefault();td.classList.remove('drop-ok');if(dragEl){td.appendChild(dragEl);toast('已调整该课程时间','✏️');}});});}
+
+/* ---------- 课表总览筛选 ---------- */
 function flatBoard(){const a=[];BOARD.forEach((row,s)=>row.forEach((cell,d)=>cell.forEach(c=>a.push({...c,s,d}))));return a;}
-function initFilters(){
-  const all=flatBoard();
-  const uniq=k=>[...new Set(all.map(x=>x[k]))];
-  fillSel('fBan',uniq('ban'),'全部班级');
-  fillSel('fCourse',uniq('course'),'全部课程');
-  fillSel('fTeacher',uniq('teacher'),'全部老师');
-  fillSel('fPlace',uniq('place'),'全部教室/设备');
-  ['fBan','fCourse','fTeacher','fPlace'].forEach(id=>document.getElementById(id).onchange=renderBoard);
-}
+function initFilters(){const all=flatBoard();const u=k=>[...new Set(all.map(x=>x[k]))];fillSel('fBan',u('ban'),'全部班级');fillSel('fCourse',u('course'),'全部课程');fillSel('fTeacher',u('teacher'),'全部老师');fillSel('fPlace',u('place'),'全部教室/设备');['fBan','fCourse','fTeacher','fPlace'].forEach(id=>document.getElementById(id).onchange=renderBoard);}
 function fillSel(id,arr,all){document.getElementById(id).innerHTML=`<option value="">${all}</option>`+arr.map(x=>`<option>${x}</option>`).join('');}
 function resetFilter(){['fBan','fCourse','fTeacher','fPlace'].forEach(id=>document.getElementById(id).value='');renderBoard();}
-function renderBoard(){
-  const fb=document.getElementById('fBan').value,fc=document.getElementById('fCourse').value,
-        ft=document.getElementById('fTeacher').value,fp=document.getElementById('fPlace').value;
-  const grid=Array.from({length:4},()=>Array.from({length:5},()=>[]));
-  BOARD.forEach((row,s)=>row.forEach((cell,d)=>cell.forEach(c=>{
-    if(fb&&c.ban!==fb)return; if(fc&&c.course!==fc)return;
-    if(ft&&c.teacher!==ft)return; if(fp&&c.place!==fp)return;
-    grid[s][d].push(c);
-  })));
-  renderTable('boardTable',grid,false);
-}
+function renderBoard(){const fb=v('fBan'),fc=v('fCourse'),ft=v('fTeacher'),fp=v('fPlace');const grid=Array.from({length:4},()=>Array.from({length:5},()=>[]));
+  BOARD.forEach((row,s)=>row.forEach((cell,d)=>cell.forEach(c=>{if(fb&&c.ban!==fb)return;if(fc&&c.course!==fc)return;if(ft&&c.teacher!==ft)return;if(fp&&c.place!==fp)return;grid[s][d].push(c);})));
+  renderTable('boardTable',grid,false,false);}
+function v(id){return document.getElementById(id).value;}
 
-/* ---------- 每月一练 + 个人预约 ---------- */
+/* ---------- 手动排课：层级筛选式 ---------- */
+const MANUAL_BUSY={ // 占用：date|slot -> 已占用地点
+  '0|0':['受电弓检修台','理论教室1'],'1|0':['图罩开关设备'],'0|2':['J5救援联挂主机']
+};
+const PLACES_DEV=['受电弓检修台','图罩开关设备','电环路系统台','HMI操作台','J5救援联挂主机','VR工位'];
+const PLACES_ROOM=['理论教室1','理论教室2','综合教室','段库教室A'];
+let mp={date:null,slot:null,form:null,place:null};
+function renderManual(){
+  setOpts('stepDate',DAYS.map((d,i)=>({v:i,t:d})),'date',null);
+  setOpts('stepSlot',SLOTS.map((s,i)=>({v:i,t:s.t+' '+s.h})),'slot',mp.date===null);
+  setOpts('stepForm',[{v:'实作',t:'实作（选设备）'},{v:'理论',t:'理论（选教室）'}],'form',mp.slot===null);
+  let places=[];if(mp.form==='实作')places=PLACES_DEV;else if(mp.form==='理论')places=PLACES_ROOM;
+  const busy=(mp.date!==null&&mp.slot!==null)?(MANUAL_BUSY[mp.date+'|'+mp.slot]||[]):[];
+  setOpts('stepPlace',places.map(p=>({v:p,t:p,busy:busy.includes(p)})),'place',mp.form===null);
+  const r=document.getElementById('pickResult');
+  if(mp.place)r.innerHTML=`✅ 可排：<b>${DAYS[mp.date]} · ${SLOTS[mp.slot].t} · ${mp.form} · ${mp.place}</b>　<span class="btn sm" onclick="manualSave()">保存（落库加锁）</span>`;
+  else r.innerHTML='按 ①→②→③→④ 逐层选择；选到地点时已占用项立即标红禁选。';
+}
+function setOpts(id,opts,key,disabled){
+  const box=document.querySelector('#'+id+' .sp-opts');
+  box.innerHTML=opts.map(o=>{const on=mp[key]===o.v?'on':'';const b=o.busy?'busy':'';const cls=disabled?'disabled':'';return `<span class="sp-opt ${on} ${b} ${cls}" ${(!disabled&&!o.busy)?`onclick="pickStep('${key}','${o.v}')"`:''}>${o.t}${o.busy?'（占用）':''}</span>`;}).join('');
+}
+function pickStep(key,val){if(key==='date')val=+val;if(key==='slot')val=+val;mp[key]=val;
+  // 选上层后重置下层
+  if(key==='date'){mp.slot=null;mp.form=null;mp.place=null;}
+  if(key==='slot'){mp.form=null;mp.place=null;}
+  if(key==='form'){mp.place=null;}
+  renderManual();
+  if(key==='place'){const busy=(MANUAL_BUSY[mp.date+'|'+mp.slot]||[]);if(busy.includes(val)){toast('该地点此时段已占用','⛔');}}
+}
+function manualSave(){toast('已落库（演示）。并发场景下按(地点,日期,节次)加锁，后到者会被拦','🔒');mp={date:null,slot:null,form:null,place:null};renderManual();}
+
+/* ---------- 弹性预约 ---------- */
+function flexTab(btn,pane){document.querySelectorAll('#flexTabs .mode-tab').forEach(t=>t.classList.toggle('active',t===btn));document.querySelectorAll('.flex-pane').forEach(p=>p.style.display=p.dataset.pane===pane?'block':'none');}
 const PEOPLE=['张伟','李强','王磊','赵敏','刘洋','孙浩','周强','吴军','郑凯','马建','李红','王志','陈成','杨光','黄海'];
 let picked=new Set();
-function renderPeople(){
-  document.getElementById('peoplePick').innerHTML=PEOPLE.map(p=>`<span class="pp ${picked.has(p)?'on':''}" onclick="togglePerson('${p}')">${p}</span>`).join('');
-  document.getElementById('pcount').textContent=picked.size;
-  document.getElementById('ptime').textContent=picked.size*15;
-}
+function renderPeople(){document.getElementById('peoplePick').innerHTML=PEOPLE.map(p=>`<span class="pp ${picked.has(p)?'on':''}" onclick="togglePerson('${p}')">${p}</span>`).join('');document.getElementById('pcount').textContent=picked.size;document.getElementById('ptime').textContent=picked.size*15;}
 function togglePerson(p){picked.has(p)?picked.delete(p):picked.add(p);renderPeople();}
-function renderBook(id,axisId,busy){
-  const el=document.getElementById(id);
-  el.innerHTML=Array.from({length:16},(_,i)=>`<div class="book-cell ${busy.includes(i)?'busy':''}" data-i="${i}" onclick="toggleCell(this)"></div>`).join('');
-  document.getElementById(axisId).innerHTML=Array.from({length:16},(_,i)=>i%2===0?`<span>${i}</span>`:'<span></span>').join('');
-}
-let bookSel=[];
-function toggleCell(c){ if(c.classList.contains('busy'))return; c.classList.toggle('sel'); }
+function renderBook(id,axisId,busy){document.getElementById(id).innerHTML=Array.from({length:16},(_,i)=>`<div class="book-cell ${busy.includes(i)?'busy':''}" data-i="${i}" onclick="toggleCell(this)"></div>`).join('');document.getElementById(axisId).innerHTML=Array.from({length:16},(_,i)=>i%2===0?`<span>${i}</span>`:'<span></span>').join('');}
+function toggleCell(c){if(c.classList.contains('busy'))return;c.classList.toggle('sel');}
 function bookToast(){toast('预约已提交，待审批/确认','✅');}
+// 每周一练
+function renderWeek(){document.getElementById('weekList').innerHTML=WEEKLY.map(w=>`<div class="week-item"><div class="wt">${w.t}<div class="wp">${w.p}</div></div><div class="wp">${w.min} 分钟</div></div>`).join('');
+  const min=36;document.getElementById('weekRing').style.background=`conic-gradient(var(--primary) ${min/60*360}deg,#f0f2f5 0)`;document.getElementById('weekRing').innerHTML=`<div style="background:#fff;width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center">${Math.round(min/60*100)}%</div>`;}
+let wkMin=36;
+function weekLearn(){wkMin=Math.min(60,wkMin+12);document.getElementById('weekMin').textContent=wkMin;document.getElementById('weekRing').style.background=`conic-gradient(var(--primary) ${wkMin/60*360}deg,#f0f2f5 0)`;document.getElementById('weekRing').firstElementChild.textContent=Math.round(wkMin/60*100)+'%';if(wkMin>=60)toast('本周一学已达 1 学时，任务完成','🎉');else toast('+12 分钟','📖');}
 
 /* ---------- 通用 ---------- */
-function toast(msg,ic='✅'){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.querySelector('span').textContent=ic;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function openModal(title,html){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=html;document.getElementById('modalMask').classList.add('open');}
+function closeModal(){document.getElementById('modalMask').classList.remove('open');}
+function toast(msg,ic='✅'){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.querySelector('span').textContent=ic;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
 function tickClock(){const d=new Date();document.getElementById('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 
 /* ---------- init ---------- */
-renderNav(); go('twin-home');
-renderTree(); renderRoomList(); selectRoom('CR400BF 综合实训室'); renderClassrooms();
-fillDevOpts(); renderCourseList(); renderTable('smTable',Array.from({length:4},()=>Array.from({length:5},()=>null)),true);
-initFilters(); renderBoard();
-renderPeople(); renderBook('monthBook','monthAxis',[3,4,9]); renderBook('personBook','personAxis',[5,6,7,12,13]);
-tickClock(); setInterval(tickClock,30000);
+renderNav();go('twin-home');
+renderTree();renderDash();renderRoomList();selectRoom('CR400BF 综合实训室');renderClassrooms();
+fillDevOpts();renderCourseList();renderSteps();renderTable('smTable',Array.from({length:4},()=>Array.from({length:5},()=>null)),true,true);
+initFilters();renderBoard();renderManual();
+renderPeople();renderBook('monthBook','monthAxis',[3,4,9]);renderBook('personBook','personAxis',[5,6,7,12,13]);renderWeek();
+tickClock();setInterval(tickClock,30000);

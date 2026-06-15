@@ -207,3 +207,80 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:
 .muted{color:var(--text-3);font-size:12px}
 .hint{font-size:12px;color:var(--text-3);margin-top:6px}
 .empty-state{text-align:center;color:var(--text-3);padding:40px}
+
+/* ===== 补充组件 ===== */
+/* 流程步骤条 */
+.steps{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.steps .stp{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;background:#fff;border:1px solid var(--border);font-size:13px}
+.steps .stp .n{width:20px;height:20px;border-radius:50%;background:var(--idle);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
+.steps .stp.done{border-color:var(--success);background:var(--success-bg)}
+.steps .stp.done .n{background:var(--success)}
+.steps .stp.cur{border-color:var(--primary);background:var(--primary-bg)}
+.steps .stp.cur .n{background:var(--primary)}
+
+/* Modal */
+.modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:60;align-items:center;justify-content:center}
+.modal-mask.open{display:flex}
+.modal{background:#fff;border-radius:12px;width:560px;max-width:92vw;max-height:86vh;display:flex;flex-direction:column;box-shadow:0 12px 48px rgba(0,0,0,.2)}
+.modal .mh{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal .mh h3{font-size:16px}
+.modal .mh .x{cursor:pointer;color:var(--text-3);font-size:20px}
+.modal .mc{padding:18px 20px;overflow-y:auto}
+
+/* 点名网格 */
+.checkin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin:10px 0}
+.ck{padding:8px 6px;border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;font-size:13px;transition:.15s}
+.ck:hover{border-color:var(--primary)}
+.ck.on{background:var(--success-bg);border-color:var(--success);color:#389e0d}
+.ck.on::after{content:" ✓";color:var(--success)}
+
+/* 老师选择表 */
+.tch-table{width:100%;border-collapse:collapse;font-size:13px}
+.tch-table th,.tch-table td{border-bottom:1px solid var(--border);padding:9px 8px;text-align:left}
+.tch-table th{color:var(--text-3);font-weight:500;cursor:pointer;user-select:none}
+.tch-table tr:hover{background:var(--primary-bg)}
+.tch-table .low{background:#fffbe6}
+.grade{font-size:11px;padding:1px 7px;border-radius:10px}
+.grade.g3{background:var(--success-bg);color:#389e0d}
+.grade.g2{background:#e6f4ff;color:var(--primary)}
+.grade.g1{background:var(--warning-bg);color:#d48806}
+.grade.g0{background:var(--error-bg);color:var(--error)}
+.pick-t{cursor:pointer}
+
+/* 层级筛选 step-pick */
+.step-pick{margin-bottom:14px}
+.step-pick .sp-label{font-size:13px;color:var(--text-2);margin-bottom:7px}
+.step-pick .sp-opts{display:flex;flex-wrap:wrap;gap:8px}
+.sp-opt{padding:6px 14px;border:1px solid var(--border);border-radius:7px;cursor:pointer;font-size:13px;background:#fff}
+.sp-opt:hover{border-color:var(--primary)}
+.sp-opt.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.sp-opt.busy{background:var(--error-bg);border-color:#ffccc7;color:var(--error);cursor:not-allowed;text-decoration:line-through}
+.sp-opt.disabled{opacity:.4;cursor:not-allowed}
+
+/* KPI + bars */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:16px}
+.kpi{background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:16px}
+.kpi .v{font-size:26px;font-weight:700}
+.kpi .l{font-size:12px;color:var(--text-3);margin-top:2px}
+.kpi .v.up{color:var(--success)} .kpi .v.warn{color:var(--warning)}
+.bar{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:13px}
+.bar .bn{width:88px;flex-shrink:0;color:var(--text-2)}
+.bar .bt{flex:1;height:18px;background:#f0f2f5;border-radius:4px;overflow:hidden}
+.bar .bf{height:100%;background:linear-gradient(90deg,var(--primary),#69b1ff);border-radius:4px}
+.bar .bf.hot{background:linear-gradient(90deg,#fa8c16,#ffc069)}
+.bar .bv{width:52px;text-align:right;color:var(--text-3);font-variant-numeric:tabular-nums}
+
+/* ring */
+.ring{width:120px;height:120px;border-radius:50%;margin:10px auto;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--primary)}
+
+/* 设备隶属树 in drawer */
+.dev-tree{font-size:13px;line-height:2}
+.dev-tree .lv1{font-weight:600}
+.dev-tree .lv2{margin-left:16px;color:var(--text-2)}
+.dev-tree .lv3{margin-left:32px;color:var(--text-3)}
+.dev-tree .hit{background:var(--primary-bg);color:var(--primary);border-radius:4px;padding:0 6px}
+.week-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px}
+.week-item .wt{flex:1}
+.week-item .wp{font-size:12px;color:var(--text-3)}
+.dev.hl{outline:3px solid var(--primary);outline-offset:1px}
+.dev.dim{opacity:.35}
