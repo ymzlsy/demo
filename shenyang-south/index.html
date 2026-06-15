@@ -206,14 +206,17 @@
       <div class="view" data-view="sched-smart">
         <div class="page-head">
           <div class="crumb">预约排课管理 / 智能排课（专项培训）</div>
-          <h1>智能排课 · 一键排课</h1>
-          <span class="tagline">★ 两段式：① 建计划(粗：周期+课程+设备，不查占用) → ② 一键排课(细：自动定周几/几点并避冲突) → ③ 选老师</span>
+          <h1>智能排课 · 给计划里的课程排时间</h1>
+          <span class="tagline">★ 串联：在「培训计划管理」选一条专项计划 → 这里给它加课程 → 一键排到周几几点 → 选老师。课程从属于计划</span>
         </div>
+        <div id="smartPlanBar"></div>
         <div class="steps" id="smSteps"></div>
-        <div class="note">★ 排课人 = <b>职培管理人员</b>（段职培科专职 / 车间职培专职 / 班组业务辅导员）。前两者向<b>直接下级</b>单位派发，班组业务辅导员指派到<b>学员</b>；仅段职培科专职可向平级科室派发。<b>"一键"只排「周几+几点」</b>，下列字段须人工指定。</div>
+        <div class="note">★ 排课人 = <b>职培管理人员</b>。本页是在<b>某条专项计划之下</b>加课程并排课——计划在「培训计划管理」先建好（粗：办哪个班），这里只管课程（细：上哪些课、排到几点）。<b>"一键"只排「周几+几点」</b>。</div>
         <div class="row">
           <div class="card" style="flex:1;min-width:360px">
-            <h2>① 建培训计划（上层粗略计划·不查占用）<span class="sub">字段对齐勾老师脑图</span></h2>
+            <h2>① 计划来源 <span class="sub">来自培训计划管理（不在这里重新建计划）</span></h2>
+            <div id="smPlanSource" style="margin-bottom:8px"></div>
+            <details class="plan-fields"><summary>▸ 展开该计划的详细字段（已从计划管理带入，一般不改）</summary>
             <div class="row" style="gap:10px">
               <div class="field" style="flex:1"><label>项目编号</label><input class="input" value="2026-Q4-ZX-0087（自动生成）" readonly></div>
               <div class="field" style="flex:1"><label>培训班名称<span class="req">*</span></label><input class="input" placeholder="唯一·必填，如：第5期轨道车司机轮训班"></div>
@@ -249,7 +252,8 @@
               <div class="hint" id="dispHint">同级=群发全部直接下级；班组业务辅导员则指派到学员。仅"段职培科专职"可向平级科室派发，平级再向下转、其上级可夺回。</div></div>
             <div class="field"><label>可排时段限制</label>
               <input type="hidden" id="smPeriod" value="本季度"><div class="seg"><button class="on">上午 8-12</button><button class="on">下午 14-18</button><button>晚上 19-22</button></div></div>
-            <h2 style="margin-top:18px">② 添加课程/设备（含标签）<span class="req">*</span></h2>
+            </details>
+            <h2 style="margin-top:18px">② 在此计划下加课程/设备（含标签）<span class="req">*</span></h2>
             <div class="row" style="gap:8px;align-items:flex-end">
               <div class="field" style="flex:1;margin:0"><label>设备/教室</label><select class="input" id="smDev"></select></div>
               <div class="field" style="flex:1;margin:0"><label>课程名(标签)</label><input class="input" id="smCourse" placeholder="如：受电弓检查"/></div>
@@ -276,7 +280,7 @@
         <div class="page-head">
           <div class="crumb">预约排课管理 / 课表总览</div>
           <h1>课表总览</h1>
-          <span class="tagline">★ 日期×节次二维表；四维筛选(班级/课程/老师/教室或设备)；冲突标红；共享可视化；推送电子班牌</span>
+          <span class="tagline">★ 课表里每节课都属于某条培训计划/培训班（"班级"筛选维度=所属计划）；日期×节次二维表；冲突标红；推送电子班牌</span>
         </div>
         <div class="card">
           <div class="filters">

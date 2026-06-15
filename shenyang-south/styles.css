@@ -410,3 +410,18 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:
 .field-cmp .fc-y{background:var(--success-bg);color:#389e0d}
 .field-cmp .fc-h{background:var(--warning-bg);color:#874d00}
 .field-cmp .fc-n{background:#fafafa;color:var(--text-3)}
+
+/* 计划→排课 上下文 */
+.plan-ctx{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--primary-bg);border:1px solid #91caff;border-radius:8px;padding:11px 16px;margin-bottom:14px;font-size:14px}
+.plan-ctx.none{background:var(--warning-bg);border-color:#ffe58f;color:#874d00}
+.plan-ctx .pc-tag{font-size:11px;background:var(--primary);color:#fff;padding:2px 9px;border-radius:10px}
+.plan-ctx .pc-tag.warn{background:var(--warning)}
+.plan-ctx .pc-meta{font-size:12px;color:var(--text-3)}
+.src-plan{border:1px solid var(--border);border-radius:8px;padding:12px 14px;background:#fafdff}
+.src-plan .sp-row{display:flex;gap:10px;font-size:13px;padding:4px 0}
+.src-plan .sp-row span:first-child{color:var(--text-3);width:70px;flex-shrink:0}
+
+/* 计划字段折叠 */
+.plan-fields{margin:8px 0;border:1px dashed var(--border);border-radius:8px;padding:0 12px}
+.plan-fields summary{cursor:pointer;color:var(--text-3);font-size:12px;padding:10px 0}
+.plan-fields[open]{padding-bottom:8px}

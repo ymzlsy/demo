@@ -187,7 +187,7 @@ const GRAB_ORDERS=[
 ];
 let curMod='twin',curView='twin-home';
 function renderNav(){document.getElementById('sidenav').innerHTML=NAV[curMod].map(n=>n.g?`<div class="group">${n.g}</div>`:`<a data-v="${n.v}" class="${n.v===curView?'active':''}" onclick="go('${n.v}')"><span class="ic">${n.ic}</span>${n.t}</a>`).join('');}
-function go(v){curView=v;document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.sidenav a').forEach(a=>a.classList.toggle('active',a.dataset.v===v));document.getElementById('main').scrollTop=0;}
+function go(v){curView=v;document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.sidenav a').forEach(a=>a.classList.toggle('active',a.dataset.v===v));document.getElementById('main').scrollTop=0;if(v==='sched-smart'){renderSmartPlanBar&&renderSmartPlanBar();renderSmPlanSource&&renderSmPlanSource();}}
 document.querySelectorAll('.modswitch button').forEach(b=>b.onclick=()=>{curMod=b.dataset.mod;document.querySelectorAll('.modswitch button').forEach(x=>x.classList.toggle('active',x===b));curView=NAV[curMod][1].v;renderNav();go(curView);});
 
 /* ---------- 4.5 场地树 ---------- */
@@ -333,8 +333,10 @@ function oneClick(){if(!courses.length){toast('请先添加待排课程','⚠️
   const grid=Array.from({length:4},()=>Array.from({length:5},()=>null));
   grid[0][2]={nm:'已占用·他班',type:'conflict'};
   let di=0,si=0,placed=0;
-  courses.forEach(c=>{let tries=0;while(tries<20){if(!grid[si][di]){grid[si][di]={nm:c.nm,sub:c.dev+' · '+c.dur+'学时',type:'dev',teacher:''};placed++;di++;if(di>=5){di=0;si=(si+1)%4;}break;}di++;if(di>=5){di=0;si=(si+1)%4;}tries++;}});
-  window._smGrid=grid;renderTable('smTable',grid,true,true);smStep=3;renderSteps();toast(`已为 ${placed} 门课自动排课，避开 1 处占用冲突。点课程块选老师`,'⚡');}
+  const banTag=currentPlan?currentPlan.name:'(未绑定计划)';
+  courses.forEach(c=>{let tries=0;while(tries<20){if(!grid[si][di]){grid[si][di]={nm:c.nm,sub:c.dev+' · '+c.dur+'学时',type:'dev',teacher:'',ban:banTag};placed++;di++;if(di>=5){di=0;si=(si+1)%4;}break;}di++;if(di>=5){di=0;si=(si+1)%4;}tries++;}});
+  window._smGrid=grid;renderTable('smTable',grid,true,true);smStep=3;renderSteps();
+  toast(currentPlan?`已为「${currentPlan.name}」排 ${placed} 门课，避开占用冲突。这些课已归属该计划，点课程块选老师`:`已排 ${placed} 门课。⚠未绑定计划`,'⚡');}
 
 /* 选老师 modal */
 let tchSortKey='year',tchAsc=true,curSlotRef=null;
@@ -516,7 +518,7 @@ function renderPlanLevel(){
     <td>${p.q}</td>
     <td style="font-size:11px">${p.dept}</td>
     <td><span class="plan-st" style="background:${ST_PLAN[p.st]}22;color:${ST_PLAN[p.st]}">${p.st}</span></td>
-    <td><span class="link-a" onclick="editPlanByLv('${p._lv}',${p.no},'${p.cat}')">编辑</span> · <span class="link-a" onclick="planDrill('${p.name.replace(/'/g,'')}',${p.courses})">课程(${p.courses})</span></td>
+    <td><span class="link-a" onclick="editPlanByLv('${p._lv}',${p.no},'${p.cat}')">编辑</span> · ${p.cat==='专项'?`<span class="link-a" onclick="goSchedule('${p._lv}',${p.no})">课程/排课(${p.courses})</span>`:`<span class="link-a" onclick="go('sched-flex')">去弹性预约</span>`}</td>
   </tr>`).join('');
 }
 function setPlanCat(v){planFilterCat=v;renderPlanLevel();}
@@ -590,14 +592,43 @@ function planTypeForm(cat,sub){
 }
 function savePlan(){closeModal();toast('计划已保存（演示）。专项→进排课配课程；日常→学员弹性预约','📋');}
 function editPlan(idx){const p=(planFilterCat?PLAN_DATA[curPlanLevel].filter(x=>x.cat===planFilterCat):PLAN_DATA[curPlanLevel])[idx];openCreatePlan(p);}
+/* === 计划 → 课程 → 排课 串联 === */
+let currentPlan=null; // 当前正在排课的专项计划
+function goSchedule(lv,no){
+  const p=(PLAN_DATA[lv]||[]).find(x=>x.no===no);
+  currentPlan={...p,_lv:lv};
+  closeModal();go('sched-smart');renderSmartPlanBar();renderSmPlanSource();
+  toast(`已进入「${p.name}」的排课：在这条计划下加课程→一键排课`,'🔗');
+}
+function clearSmartPlan(){currentPlan=null;renderSmartPlanBar();renderSmPlanSource();}
+function renderSmartPlanBar(){
+  const el=document.getElementById('smartPlanBar');if(!el)return;
+  if(currentPlan){
+    el.innerHTML=`<div class="plan-ctx"><span class="pc-tag">正在为计划排课</span><b>${currentPlan.name}</b><span class="pc-meta">${currentPlan.code} · ${currentPlan.obj} · 计划${currentPlan.plan||'—'}人 · 实施${currentPlan.q}</span><span class="link-a" style="margin-left:auto" onclick="go('sched-plan')">↩ 回计划管理换一条</span></div>`;
+  } else {
+    el.innerHTML=`<div class="plan-ctx none"><span class="pc-tag warn">未选计划</span>本页要在某条<b>专项计划</b>下排课。请先去 <span class="link-a" onclick="go('sched-plan')">培训计划管理</span> 选一条计划点「课程/排课」进来。（下方为演示，正式必须带计划）</div>`;
+  }
+}
+function renderSmPlanSource(){
+  const el=document.getElementById('smPlanSource');if(!el)return;
+  if(currentPlan){
+    el.innerHTML=`<div class="src-plan"><div class="sp-row"><span>培训班</span><b>${currentPlan.name}</b></div>
+      <div class="sp-row"><span>项目编号</span>${currentPlan.code}</div>
+      <div class="sp-row"><span>对象/人数</span>${currentPlan.obj} · ${currentPlan.plan||'—'}人</div>
+      <div class="sp-row"><span>实施季度</span>${currentPlan.q} <span class="muted">（下面加的课程周期必须落在此季度内）</span></div>
+      <div class="hint">★ 计划已在「培训计划管理」建好，这里不再重复建计划，只在它下面加课程并排课。</div></div>`;
+  } else {
+    el.innerHTML=`<div class="note" style="background:var(--warning-bg);border-color:#ffe58f;color:#874d00">未绑定计划——下方为演示。正式流程：从培训计划管理选专项计划进来。</div>`;
+  }
+}
 function planDrill(name,n){
-  if(!n){toast('该计划尚未挂课程，点"排课"进入添加','📋');return;}
-  openModal(`「${name}」下的课程`,`<div class="note">计划是粗的上层、课程是细的下层（父子从属）。课程由排课人在计划下创建，绑定设备/教室、形式、时长；课程周期强校验落在计划季度内。</div>
-    <table class="tch-table"><tr><th>课程名</th><th>形式</th><th>设备/教室</th><th>时长</th><th>老师</th></tr>
-    <tr><td>受电弓检查</td><td>实作</td><td>受电弓检修台</td><td>1学时</td><td>张伟</td></tr>
-    <tr><td>动车组结构原理</td><td>理论</td><td>理论教室1</td><td>2学时</td><td>马建国</td></tr>
-    <tr><td>应急处置案例</td><td>理论</td><td>综合教室</td><td>1学时</td><td>待选</td></tr></table>
-    <button class="btn primary" style="margin-top:12px" onclick="closeModal();go('sched-smart')">＋ 在此计划下加课程/排课</button>`);
+  if(!n){toast('该计划尚未挂课程，点"课程/排课"进入添加','📋');return;}
+  openModal(`「${name}」下的课程`,`<div class="note">计划是粗的上层、课程是细的下层（父子从属）。课程绑定设备/教室、形式、时长；课程周期强校验落在计划季度内。</div>
+    <table class="tch-table"><tr><th>课程名</th><th>形式</th><th>设备/教室</th><th>时长</th><th>老师</th><th>排课状态</th></tr>
+    <tr><td>受电弓检查</td><td>实作</td><td>受电弓检修台</td><td>1学时</td><td>张伟</td><td><span class="plan-st" style="background:#52c41a22;color:#52c41a">已排</span></td></tr>
+    <tr><td>动车组结构原理</td><td>理论</td><td>理论教室1</td><td>2学时</td><td>马建国</td><td><span class="plan-st" style="background:#52c41a22;color:#52c41a">已排</span></td></tr>
+    <tr><td>应急处置案例</td><td>理论</td><td>综合教室</td><td>1学时</td><td>待选</td><td><span class="plan-st" style="background:#faad1422;color:#d48806">待排</span></td></tr></table>
+    <button class="btn primary" style="margin-top:12px" onclick="closeModal();go('sched-smart')">＋ 在此计划下继续加课程/排课</button>`);
 }
 
 /* ---------- 师资抢单 ---------- */
