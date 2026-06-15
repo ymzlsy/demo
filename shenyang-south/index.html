@@ -143,6 +143,38 @@
       </div>
 
       <!-- ============ 4.8 ============ -->
+      <!-- 培训计划管理（分层） -->
+      <div class="view" data-view="sched-plan">
+        <div class="page-head">
+          <div class="crumb">培训计划管理 / 分层计划数据</div>
+          <h1>培训计划管理</h1>
+          <span class="tagline">★ 计划分5层(国铁→集团→站段→车间→班组)；三层级管理人员只建"计划"不建"课程"；计划在前、课程在后(父子从属)。数据来自真实年度/月度计划表</span>
+        </div>
+        <div class="card" style="padding:14px 18px">
+          <div class="muted" style="margin-bottom:8px">层级链路（点击切换；自上而下下达 + 下级承接/自建）：</div>
+          <div class="plan-chain" id="planChain"></div>
+          <div class="note" style="margin:12px 0 0" id="planTip"></div>
+          <div style="margin-top:10px;font-size:13px;color:var(--text-2)" id="planLevelInfo"></div>
+        </div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h2 style="margin:0">计划数据列表 <span class="sub">真实样例（站段=2026年度计划 / 车间=沈北所8月 / 班组=班组每周一学·每月一练）</span></h2>
+            <button class="btn primary sm" onclick="go('sched-smart')">＋ 新建计划</button>
+          </div>
+          <div class="tt-wrap">
+            <table class="plan-table">
+              <thead><tr><th>序号</th><th>培训班/项目名称</th><th>项目编号</th><th>形式/性质</th><th>培训对象(岗位)</th><th>计划/实际人数</th><th>学时</th><th>实施季度</th><th>创建人/部门</th><th>状态</th><th>操作</th></tr></thead>
+              <tbody id="planTbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h2>谁建计划 / 谁建课程 <span class="sub">捋清层级逻辑</span></h2>
+          <div class="flow"><span class="step">站段级·段职培科专职</span><span class="arr">下达→</span><span class="step">车间级·车间职培专职</span><span class="arr">下达→</span><span class="step">班组级·业务辅导员</span><span class="arr">指派→</span><span class="step">学员</span></div>
+          <div class="note" style="margin-top:10px">① <b>建计划</b>(粗·上层)：三层级管理人员各建本级计划，选时间段+课程纲要+对象+季度，不查设备占用。<br>② <b>建课程</b>(细·下层)：由排课人(管理干部·非老师)在某条计划下创建，绑定设备/教室+形式+时长，选到具体地点才查冲突 → 一键排课只定周几几点 → 选老师。<br>③ 强校验：课程周期必须落在所属计划的实施季度内。日常培训(每周一学/每月一练)是"空计划"，只给任务+时间段，学员弹性自选。</div>
+        </div>
+      </div>
+
       <!-- 智能排课 -->
       <div class="view" data-view="sched-smart">
         <div class="page-head">

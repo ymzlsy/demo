@@ -130,13 +130,49 @@ const NAV={
     {v:'twin-dash',ic:'📊',t:'段·车间数据看板'},
     {v:'twin-train',ic:'⚙️',t:'实训场地（设备级）'},
     {v:'twin-class',ic:'🏫',t:'教室管控+点名'}],
-  sched:[{g:'预约排课管理'},
+  sched:[{g:'培训计划管理'},
+    {v:'sched-plan',ic:'📋',t:'培训计划管理（分层）'},
+    {g:'预约排课管理'},
     {v:'sched-smart',ic:'⚡',t:'智能排课（专项）'},
     {v:'sched-board',ic:'📅',t:'课表总览'},
     {v:'sched-manual',ic:'🧩',t:'手动排课（层级筛选）'},
     {v:'sched-flex',ic:'🙋',t:'弹性预约（月/周/个人）'},
     {v:'sched-grab',ic:'🙋‍♂️',t:'师资抢单'}]
 };
+// ===== 培训计划管理（分层）=====
+const PLAN_LEVELS=[
+  {k:'国铁',full:'国铁级',creator:'国铁集团职教部门',type:'年度纲要/专项纲要',placeholder:true},
+  {k:'集团',full:'集团公司级',creator:'沈阳局集团职教/人力部门',type:'年度/专项',placeholder:true},
+  {k:'站段',full:'站段级',creator:'段职培科专职',type:'年度培训计划 / 专项培训计划'},
+  {k:'车间',full:'车间级',creator:'车间职培专职（编制）+ 职培副职（审核）',type:'专项培训 / 每月一练'},
+  {k:'班组',full:'班组级',creator:'班组业务辅导员',type:'专项 / 日常（每周一学+每月一练）'},
+];
+// 站段级：真实取自 20260226 沈阳动车段2026年职工业务培训计划
+const PLAN_DATA={
+  站段:[
+    {no:1,name:'沈阳动车段2026年春运培训班',code:'sydcd-2026-001',form:'非脱产',xz:'适应性',obj:'重点行车岗位',plan:870,real:862,h:2,q:'一季度',dept:'职培科',st:'执行中',courses:3},
+    {no:6,name:'地勤机械师（运用）岗位轮训班',code:'sydcd-2026-006',form:'脱产',xz:'适应性',obj:'重点行车岗位',plan:972,real:0,h:16,q:'一~四季度',dept:'职培科',st:'已下达',courses:0},
+    {no:10,name:'钳工岗位轮训班',code:'sydcd-2026-010',form:'脱产',xz:'适应性',obj:'钳工',plan:157,real:0,h:16,q:'二·三季度',dept:'职培科',st:'已下达',courses:0},
+    {no:12,name:'2026上半年劳动安全再培训',code:'sydcd-2026-012',form:'非脱产',xz:'适应性',obj:'在岗操作技能人员',plan:3300,real:0,h:4,q:'二季度',dept:'职培科',st:'编制中',courses:0},
+    {no:16,name:'动力分散动车组司机岗前轮训班',code:'sydcd-2026-015',form:'脱产',xz:'适应性',obj:'动车组司机',plan:16,real:0,h:450,q:'一季度',dept:'职培科',st:'已下达',courses:0},
+    {no:17,name:'动车组冬季运行安全防控措施培训班',code:'sydcd-2026-016',form:'非脱产',xz:'适应性',obj:'机械师/值班员/动态检车员',plan:2170,real:0,h:3,q:'四季度',dept:'职培科',st:'编制中',courses:0},
+  ],
+  // 车间级：真实取自 沈阳北动车所8月技术业务培训计划（编制 勾博文 / 审核 牟广利）
+  车间:[
+    {no:1,name:'8月每周一学·必知必会题库(一级修)101-200题',code:'分4周·常规性',form:'非脱产',xz:'适应性',obj:'一级修各班组岗位',plan:0,real:0,h:'每周1学时',q:'8月',dept:'沈北所·勾博文编/牟广利审',st:'执行中',courses:4,detail:'按班组×岗位逐周：第1周101-125·第2周126-150·第3周151-175·第4周176-200'},
+    {no:2,name:'8月每月一练·基本技能实作演练 CR400',code:'第三周',form:'脱产',xz:'适应性',obj:'地勤机械师各班组',plan:0,real:0,h:'实作',q:'8月第3周',dept:'沈北所·勾博文编',st:'执行中',courses:1,detail:'各班组：CR400基本技能实作 / 库外看车巡视 / 接触网供断电操作 / 空泵站巡检'},
+    {no:3,name:'地勤机械师轮训（二级修）第1、2期',code:'临时性',form:'脱产',xz:'适应性',obj:'二级修综合/车下/探伤班组',plan:0,real:0,h:'专项',q:'8月第2周',dept:'沈北所·承接段下达',st:'已下达',courses:2},
+  ],
+  // 班组级：真实取自 沈北所计划的班组维度
+  班组:[
+    {no:1,name:'每周一学·必知必会题库101-125题',code:'常规性',form:'非脱产',xz:'适应性',obj:'①②③④号地勤机械师 24人',plan:24,real:24,h:'1学时/周',q:'8月第1周',dept:'一级修甲班技检·工长吕强/辅导员任忠义',st:'已完成',courses:1},
+    {no:2,name:'每月一练·基本技能实作演练 CR400',code:'组队实作',form:'脱产',xz:'适应性',obj:'本班组应训12人',plan:12,real:8,h:'15min×人',q:'8月第3周',dept:'一级修甲班技检·辅导员任忠义',st:'执行中',courses:1},
+    {no:3,name:'每月一练·探伤基本技能实作',code:'组队实作',form:'脱产',xz:'适应性',obj:'探伤工/辅助工 22人',plan:22,real:0,h:'15min×人',q:'8月第3周',dept:'二级修探伤·工长白涛/辅导员李洪玉',st:'已下达',courses:1},
+  ],
+};
+const ST_PLAN={'编制中':'#8c8c8c','待审核':'#faad14','已下达':'#1677ff','执行中':'#52c41a','已完成':'#13c2c2'};
+let curPlanLevel='站段',planRole='段职培科专职';
+
 // 师资抢单数据（脑图img2：预约排课管理→师资抢单）
 const GRAB_ORDERS=[
   {course:'受电弓检查',place:'CR400BF·受电弓检修台',time:'11/12 周二 8-10节',ban:'第5期轮训班',need:'CR400BF 资质',status:'待接单'},
@@ -380,6 +416,48 @@ function renderWeek(){document.getElementById('weekList').innerHTML=WEEKLY.map(w
 let wkMin=36;
 function weekLearn(){wkMin=Math.min(60,wkMin+12);document.getElementById('weekMin').textContent=wkMin;document.getElementById('weekRing').style.background=`conic-gradient(var(--primary) ${wkMin/60*360}deg,#f0f2f5 0)`;document.getElementById('weekRing').firstElementChild.textContent=Math.round(wkMin/60*100)+'%';if(wkMin>=60)toast('本周一学已达 1 学时，任务完成','🎉');else toast('+12 分钟','📖');}
 
+/* ---------- 培训计划管理（分层）---------- */
+function renderPlanChain(){
+  const el=document.getElementById('planChain');if(!el)return;
+  el.innerHTML=PLAN_LEVELS.map((l,i)=>`<span class="chain-node ${l.k===curPlanLevel?'on':''} ${l.placeholder?'ph':''}" onclick="setPlanLevel('${l.k}')">${l.full}${l.placeholder?'<i>待确认</i>':''}</span>${i<PLAN_LEVELS.length-1?'<span class="chain-arr">▶</span>':''}`).join('');
+}
+function setPlanLevel(k){curPlanLevel=k;renderPlanChain();renderPlanLevel();}
+function renderPlanLevel(){
+  const lv=PLAN_LEVELS.find(l=>l.k===curPlanLevel);
+  document.getElementById('planLevelInfo').innerHTML=`<b>${lv.full}</b> · 创建：${lv.creator} · 可建类型：${lv.type}`;
+  const tip=document.getElementById('planTip');
+  const dispatch={国铁:'仅向直接下级（集团公司级）下达',集团:'把国铁纲要细化后向各站段下达',
+    站段:'段职培科专职向直接下级车间派发；仅段职培科专职可向平级科室派发再下转、其上级可夺回',
+    车间:'车间职培专职向直接下级班组派发；承接段下达后逐周分解',
+    班组:'最底层不再向下级单位下达，业务辅导员直接指派到学员；可本级自建（每月一练）'}[curPlanLevel];
+  tip.textContent='下达/派发规则：'+dispatch;
+  const data=PLAN_DATA[curPlanLevel];
+  const body=document.getElementById('planTbody');
+  if(lv.placeholder){body.innerHTML=`<tr><td colspan="11" class="empty-state">${lv.full}计划由上级职教部门创建，脑图未展开字段——本层 Demo 为只读占位，字段待向甲方确认。</td></tr>`;return;}
+  body.innerHTML=data.map(p=>`<tr>
+    <td>${p.no}</td>
+    <td><b>${p.name}</b>${p.detail?`<br><span class="muted" style="font-size:11px">${p.detail}</span>`:''}</td>
+    <td>${p.code}</td>
+    <td>${p.form}/${p.xz}</td>
+    <td>${p.obj}</td>
+    <td>${p.plan||'—'}${p.real?` / 实${p.real}`:''}${p.plan&&p.real?`<br><span class="muted" style="font-size:11px">兑现 ${Math.round(p.real/p.plan*100)}%</span>`:''}</td>
+    <td>${p.h}</td>
+    <td>${p.q}</td>
+    <td style="font-size:11px">${p.dept}</td>
+    <td><span class="plan-st" style="background:${ST_PLAN[p.st]}22;color:${ST_PLAN[p.st]}">${p.st}</span></td>
+    <td><span class="link-a" onclick="planDrill('${p.name}',${p.courses})">课程(${p.courses})</span> · <span class="link-a" onclick="go('sched-smart')">排课</span></td>
+  </tr>`).join('');
+}
+function planDrill(name,n){
+  if(!n){toast('该计划尚未挂课程，点"排课"进入添加','📋');return;}
+  openModal(`「${name}」下的课程`,`<div class="note">计划是粗的上层、课程是细的下层（父子从属）。课程由排课人在计划下创建，绑定设备/教室、形式、时长；课程周期强校验落在计划季度内。</div>
+    <table class="tch-table"><tr><th>课程名</th><th>形式</th><th>设备/教室</th><th>时长</th><th>老师</th></tr>
+    <tr><td>受电弓检查</td><td>实作</td><td>受电弓检修台</td><td>1学时</td><td>张伟</td></tr>
+    <tr><td>动车组结构原理</td><td>理论</td><td>理论教室1</td><td>2学时</td><td>马建国</td></tr>
+    <tr><td>应急处置案例</td><td>理论</td><td>综合教室</td><td>1学时</td><td>待选</td></tr></table>
+    <button class="btn primary" style="margin-top:12px" onclick="closeModal();go('sched-smart')">＋ 在此计划下加课程/排课</button>`);
+}
+
 /* ---------- 师资抢单 ---------- */
 function renderGrab(){
   const el=document.getElementById('grabList');if(!el)return;
@@ -421,5 +499,5 @@ renderTree();renderDash();renderRoomList();selectRoom('CR400BF 综合实训室')
 fillDevOpts();renderCourseList();renderSteps();renderTable('smTable',Array.from({length:4},()=>Array.from({length:5},()=>null)),true,true);
 initFilters();renderBoard();renderManual();
 renderPeople();renderBook('monthBook','monthAxis',[3,4,9]);renderBook('personBook','personAxis',[5,6,7,12,13]);renderWeek();
-renderGrab();renderTodaySummary();
+renderGrab();renderTodaySummary();renderPlanChain();renderPlanLevel();
 tickClock();setInterval(tickClock,30000);

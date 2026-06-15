@@ -332,3 +332,19 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:
 .dayscan .ds{flex:1;text-align:center;padding:8px 4px;border-radius:6px;font-size:12px;line-height:1.3}
 .dayscan .ds.ok{background:var(--success-bg);color:#389e0d;border:1px solid #b7eb8f}
 .dayscan .ds.full{background:var(--error-bg);color:var(--error);border:1px solid #ffccc7;font-weight:600}
+
+/* 培训计划管理 */
+.plan-chain{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.plan-chain .chain-node{padding:7px 14px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;background:#fff;position:relative}
+.plan-chain .chain-node:hover{border-color:var(--primary)}
+.plan-chain .chain-node.on{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600}
+.plan-chain .chain-node.ph{border-style:dashed;color:var(--text-3)}
+.plan-chain .chain-node i{font-size:10px;font-style:normal;opacity:.7;margin-left:4px}
+.plan-chain .chain-arr{color:var(--text-3);font-size:11px}
+.plan-table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px}
+.plan-table th,.plan-table td{border-bottom:1px solid var(--border);padding:9px 8px;text-align:left;vertical-align:top}
+.plan-table th{background:#fafafa;color:var(--text-3);font-weight:500;white-space:nowrap}
+.plan-table tr:hover td{background:var(--primary-bg)}
+.plan-st{font-size:11px;padding:2px 9px;border-radius:10px;white-space:nowrap}
+.link-a{color:var(--primary);cursor:pointer;font-size:12px}
+.link-a:hover{text-decoration:underline}
