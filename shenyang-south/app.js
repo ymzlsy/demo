@@ -416,24 +416,68 @@ function renderWeek(){document.getElementById('weekList').innerHTML=WEEKLY.map(w
 let wkMin=36;
 function weekLearn(){wkMin=Math.min(60,wkMin+12);document.getElementById('weekMin').textContent=wkMin;document.getElementById('weekRing').style.background=`conic-gradient(var(--primary) ${wkMin/60*360}deg,#f0f2f5 0)`;document.getElementById('weekRing').firstElementChild.textContent=Math.round(wkMin/60*100)+'%';if(wkMin>=60)toast('本周一学已达 1 学时，任务完成','🎉');else toast('+12 分钟','📖');}
 
-/* ---------- 培训计划管理（分层）---------- */
-function renderPlanChain(){
-  const el=document.getElementById('planChain');if(!el)return;
-  el.innerHTML=PLAN_LEVELS.map((l,i)=>`<span class="chain-node ${l.k===curPlanLevel?'on':''} ${l.placeholder?'ph':''}" onclick="setPlanLevel('${l.k}')">${l.full}${l.placeholder?'<i>待确认</i>':''}</span>${i<PLAN_LEVELS.length-1?'<span class="chain-arr">▶</span>':''}`).join('');
+/* ---------- 培训计划管理（金字塔 + 下达拆解链）---------- */
+// 金字塔每层：谁、管什么颗粒度、单位数量级
+const PYRAMID=[
+  {k:'国铁',full:'国铁级',who:'国铁集团职教部门',manage:'定全国大方向（最粗）',unit:'1（全国）',ph:true},
+  {k:'集团',full:'集团公司级',who:'沈阳局集团职教/人力',manage:'把国铁方向细化，分给各段',unit:'十几个站段',ph:true},
+  {k:'站段',full:'站段级（沈阳动车段）',who:'段职培科专职',manage:'定本段今年办哪些"培训班"（到班，870人这种）',unit:'几十个培训班'},
+  {k:'车间',full:'车间级（动车所）',who:'车间职培专职（如勾博文）',manage:'把段的培训班拆到"每月、每个班组学啥"',unit:'各所·每月计划'},
+  {k:'班组',full:'班组级',who:'班组业务辅导员（如任忠义）',manage:'落到"这周谁学哪几道题、谁练CR400"（最细）',unit:'到岗位·到人'},
+];
+// 钳工培训贯穿拆解链：一条段级计划怎么一层层拆下去
+const RELAY_CHAIN=[
+  {level:'站段级',who:'段职培科专职',color:'#1677ff',
+   plan:'钳工岗位轮训班',meta:'编号 sydcd-2026-010 · 全段钳工 157 人 · 每期16学时 · 二三季度',
+   detail:'段里只定"今年要给全段157个钳工办轮训"——这是一句话的大计划，没说具体哪天、在哪、学哪道题。',
+   down:'下达给承训车间（沈北所等）'},
+  {level:'车间级',who:'车间职培专职 勾博文',color:'#13c2c2',
+   plan:'沈北所·8月 钳工培训月度计划',meta:'编制 勾博文 / 审核 牟广利',
+   detail:'车间接到段的"钳工轮训"任务，拆成本所8月的安排：本所钳工分到一级修甲/乙班，排好"每周一学+每月一练"。',
+   down:'拆解下达给各班组'},
+  {level:'班组级',who:'业务辅导员 任忠义',color:'#52c41a',
+   plan:'一级修甲班·8月钳工培训',meta:'本班组应训 24 人 · 工长吕强 / 辅导员任忠义',
+   detail:'班组再拆到"本班这24人，这4周分别学啥、这月练啥"：',
+   items:['每周一学：必知必会题库 第1周101-125 / 第2周126-150 / 第3周151-175 / 第4周176-200','每月一练：第3周 CR400 基本技能实作演练（组队）'],
+   down:'指派到具体学员'},
+  {level:'学员',who:'班组成员（老张/老李…）',color:'#722ed1',
+   plan:'个人学习/练功任务',meta:'到人',
+   detail:'每个人收到自己的任务：老张这周学101-125题（在线答题凑1学时）、本月去练CR400实作（自己弹性预约时间，到点下机）。',
+   down:null},
+];
+function renderPyramid(){
+  const el=document.getElementById('pyramid');if(!el)return;
+  el.innerHTML=PYRAMID.map((l,i)=>{
+    const w=52+i*12; // 越往下越宽
+    return `<div class="pyr-row"><div class="pyr-bar ${l.k===curPlanLevel?'on':''} ${l.ph?'ph':''}" style="width:${w}%" onclick="setPlanLevel('${l.k}')">
+      <div class="pyr-lv">${l.full}${l.ph?' <i>(脑图未展开·待确认)</i>':''}</div>
+      <div class="pyr-desc"><b>${l.who}</b>　${l.manage}</div></div></div>`;
+  }).join('');
 }
-function setPlanLevel(k){curPlanLevel=k;renderPlanChain();renderPlanLevel();}
+function renderRelay(){
+  const el=document.getElementById('relayChain');if(!el)return;
+  el.innerHTML=RELAY_CHAIN.map((c,i)=>{
+    const hl=PYRAMID.find(p=>p.full.startsWith(c.level)||c.level.startsWith(p.full.slice(0,3)));
+    const isCur=hl&&hl.k===curPlanLevel;
+    return `<div class="relay-card ${isCur?'cur':''}" style="border-left-color:${c.color}">
+      <div class="rc-head"><span class="rc-lv" style="background:${c.color}">${c.level}</span><span class="rc-who">${c.who}</span></div>
+      <div class="rc-plan">${c.plan}</div>
+      <div class="rc-meta">${c.meta}</div>
+      <div class="rc-detail">${c.detail}</div>
+      ${c.items?'<ul class="rc-items">'+c.items.map(x=>`<li>${x}</li>`).join('')+'</ul>':''}
+    </div>${c.down?`<div class="relay-arr">⬇ <span>${c.down}</span></div>`:''}`;
+  }).join('');
+}
+function setPlanLevel(k){curPlanLevel=k;renderPyramid();renderRelay();renderPlanLevel();}
 function renderPlanLevel(){
   const lv=PLAN_LEVELS.find(l=>l.k===curPlanLevel);
-  document.getElementById('planLevelInfo').innerHTML=`<b>${lv.full}</b> · 创建：${lv.creator} · 可建类型：${lv.type}`;
-  const tip=document.getElementById('planTip');
-  const dispatch={国铁:'仅向直接下级（集团公司级）下达',集团:'把国铁纲要细化后向各站段下达',
-    站段:'段职培科专职向直接下级车间派发；仅段职培科专职可向平级科室派发再下转、其上级可夺回',
-    车间:'车间职培专职向直接下级班组派发；承接段下达后逐周分解',
-    班组:'最底层不再向下级单位下达，业务辅导员直接指派到学员；可本级自建（每月一练）'}[curPlanLevel];
-  tip.textContent='下达/派发规则：'+dispatch;
+  const py=PYRAMID.find(l=>l.k===curPlanLevel);
+  document.getElementById('pyrInfo').innerHTML=`<b>${py.full}</b>：由 <b>${py.who}</b> 创建；管的是「${py.manage}」；单位量级：${py.unit}`;
+  document.getElementById('curLevelName').textContent=py.full;
+  document.getElementById('curLevelSrc').textContent={站段:'来自 2026 年度培训计划表（真实）',车间:'来自 沈北所 8 月培训计划（真实·勾博文编）',班组:'来自 班组每周一学/每月一练（真实）',国铁:'脑图未展开',集团:'脑图未展开'}[curPlanLevel];
   const data=PLAN_DATA[curPlanLevel];
   const body=document.getElementById('planTbody');
-  if(lv.placeholder){body.innerHTML=`<tr><td colspan="11" class="empty-state">${lv.full}计划由上级职教部门创建，脑图未展开字段——本层 Demo 为只读占位，字段待向甲方确认。</td></tr>`;return;}
+  if(lv.placeholder){body.innerHTML=`<tr><td colspan="11" class="empty-state">${lv.full}计划由上级职教部门创建，脑图未展开字段——本层为只读占位，字段待向甲方确认。</td></tr>`;return;}
   body.innerHTML=data.map(p=>`<tr>
     <td>${p.no}</td>
     <td><b>${p.name}</b>${p.detail?`<br><span class="muted" style="font-size:11px">${p.detail}</span>`:''}</td>
@@ -499,5 +543,5 @@ renderTree();renderDash();renderRoomList();selectRoom('CR400BF 综合实训室')
 fillDevOpts();renderCourseList();renderSteps();renderTable('smTable',Array.from({length:4},()=>Array.from({length:5},()=>null)),true,true);
 initFilters();renderBoard();renderManual();
 renderPeople();renderBook('monthBook','monthAxis',[3,4,9]);renderBook('personBook','personAxis',[5,6,7,12,13]);renderWeek();
-renderGrab();renderTodaySummary();renderPlanChain();renderPlanLevel();
+renderGrab();renderTodaySummary();renderPyramid();renderRelay();renderPlanLevel();
 tickClock();setInterval(tickClock,30000);

@@ -146,20 +146,26 @@
       <!-- 培训计划管理（分层） -->
       <div class="view" data-view="sched-plan">
         <div class="page-head">
-          <div class="crumb">培训计划管理 / 分层计划数据</div>
-          <h1>培训计划管理</h1>
-          <span class="tagline">★ 计划分5层(国铁→集团→站段→车间→班组)；三层级管理人员只建"计划"不建"课程"；计划在前、课程在后(父子从属)。数据来自真实年度/月度计划表</span>
+          <div class="crumb">培训计划管理 / 分层计划</div>
+          <h1>培训计划：一条计划怎么从段拆到人</h1>
+          <span class="tagline">★ 层级=铁路上下级；上层定大方向(粗)，一层层往下拆，到班组就落到"这周谁学哪几道题"(细)。点金字塔每层看那层在管什么</span>
         </div>
-        <div class="card" style="padding:14px 18px">
-          <div class="muted" style="margin-bottom:8px">层级链路（点击切换；自上而下下达 + 下级承接/自建）：</div>
-          <div class="plan-chain" id="planChain"></div>
-          <div class="note" style="margin:12px 0 0" id="planTip"></div>
-          <div style="margin-top:10px;font-size:13px;color:var(--text-2)" id="planLevelInfo"></div>
+
+        <div class="card">
+          <h2>① 组织层级金字塔 <span class="sub">越往下：单位越多、计划越细。点一层看那层</span></h2>
+          <div class="pyramid" id="pyramid"></div>
+          <div class="note" id="pyrInfo" style="margin-top:14px"></div>
         </div>
+
+        <div class="card">
+          <h2>② 同一个培训，一层层往下拆（传递演示）<span class="sub">以「钳工岗位轮训」为例 · 看上层一条计划下达后变成啥</span></h2>
+          <div class="relay" id="relayChain"></div>
+        </div>
+
         <div class="card">
           <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:12px">
-            <h2 style="margin:0">计划数据列表 <span class="sub">真实样例（站段=2026年度计划 / 车间=沈北所8月 / 班组=班组每周一学·每月一练）</span></h2>
-            <button class="btn primary sm" onclick="go('sched-smart')">＋ 新建计划</button>
+            <h2 style="margin:0">③ <span id="curLevelName">站段级</span>的真实计划列表 <span class="sub" id="curLevelSrc">来自2026年度计划表</span></h2>
+            <button class="btn primary sm" onclick="go('sched-smart')">＋ 新建本级计划</button>
           </div>
           <div class="tt-wrap">
             <table class="plan-table">
@@ -167,11 +173,6 @@
               <tbody id="planTbody"></tbody>
             </table>
           </div>
-        </div>
-        <div class="card">
-          <h2>谁建计划 / 谁建课程 <span class="sub">捋清层级逻辑</span></h2>
-          <div class="flow"><span class="step">站段级·段职培科专职</span><span class="arr">下达→</span><span class="step">车间级·车间职培专职</span><span class="arr">下达→</span><span class="step">班组级·业务辅导员</span><span class="arr">指派→</span><span class="step">学员</span></div>
-          <div class="note" style="margin-top:10px">① <b>建计划</b>(粗·上层)：三层级管理人员各建本级计划，选时间段+课程纲要+对象+季度，不查设备占用。<br>② <b>建课程</b>(细·下层)：由排课人(管理干部·非老师)在某条计划下创建，绑定设备/教室+形式+时长，选到具体地点才查冲突 → 一键排课只定周几几点 → 选老师。<br>③ 强校验：课程周期必须落在所属计划的实施季度内。日常培训(每周一学/每月一练)是"空计划"，只给任务+时间段，学员弹性自选。</div>
         </div>
       </div>
 
