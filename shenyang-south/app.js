@@ -1,25 +1,38 @@
 /* ============ 沈阳南需求原型 Demo · 交互逻辑（细化版）============ */
 
 /* ---------- 数据 ---------- */
+// 场地树（依勾老师脑图 wb1 真实字典）
 const PLACE_TREE={name:'沈阳动车段动车实训基地',level:'集团公司级',children:[
-  {name:'沈南校区',level:'校区',children:[
-    {name:'沈南动车所',level:'车间',children:[
-      {name:'CR400BF 综合实训室',level:'实训室',cnt:'4 台设备'},
-      {name:'CRH5 综合实训室',level:'实训室',cnt:'4 台设备'},
-      {name:'救援联挂实训室',level:'实训室',cnt:'3 台设备'},
-      {name:'虚拟检修实训室(VR)',level:'实训室',cnt:'4 台设备'},
-      {name:'电钳工实训室',level:'实训室',cnt:'3 台设备'},
-      {name:'理论教室 1 / 2 / 3',level:'教室',cnt:'3 间'},
-    ]},
-    {name:'段库（总部）',level:'车间',children:[{name:'教室 A / B / C',level:'教室',cnt:'3 间·待列名'}]},
+  {name:'实训场地（设备）',level:'实训',children:[
+    {name:'CR400BF 综合实训室',level:'实训室',cnt:'4 台设备'},
+    {name:'CRH5 综合实训室',level:'实训室',cnt:'4 台设备'},
+    {name:'救援联挂实训室',level:'实训室',cnt:'3 台设备'},
+    {name:'虚拟检修实训室(VR)',level:'实训室',cnt:'4 台设备'},
+    {name:'电钳工实训室',level:'实训室',cnt:'3 台设备'},
   ]},
-  {name:'沈北校区',level:'校区',children:[
-    {name:'沈北动车所',level:'车间',children:[
-      {name:'综合实训室',level:'实训室',cnt:'多台·平面图待标注'},
-      {name:'理论教室群',level:'教室',cnt:'若干'},
+  {name:'段级培训场地',level:'段级·分母320分/天',children:[
+    {name:'职培科教室',level:'职培科',children:[
+      {name:'职培科教室1：学习室',level:'教室'},
+      {name:'职培科教室2：微机教室',level:'教室'},
+      {name:'职培科教室3：外网教室',level:'教室'},
+    ]},
+    {name:'实训基地教室',level:'基地',children:[
+      {name:'沈南所多功能教室',level:'教室'},
+      {name:'沈南所 MOOC 录制室',level:'教室'},
+      {name:'沈北所实训理论教室',level:'教室'},
     ]},
   ]},
-  {name:'异地车间（接入）',level:'—',children:[{name:'长春动车所',level:'车间',cnt:'接入'},{name:'大连动车所',level:'车间',cnt:'接入'}]},
+  {name:'车间级培训场地',level:'车间级·分母12分/天',children:[
+    {name:'沈南所',level:'车间',children:[
+      {name:'学习室',level:'室'},{name:'一级修-待检室',level:'室'},{name:'二级修-待检室',level:'室'},{name:'临修-待检室',level:'室'},{name:'值班室',level:'室'},
+    ]},
+    {name:'沈北所',level:'车间',children:[
+      {name:'学习室',level:'室'},{name:'二级修-综合/车下/探伤 待检室',level:'室'},
+      {name:'一级修-甲班 技检/维修/综合 待检室',level:'室'},{name:'一级修-乙班 技检/维修/综合 待检室',level:'室'},
+      {name:'临修待检室 / 值班室',level:'室'},
+    ]},
+    {name:'长春所 / 大连所',level:'车间',cnt:'同构·待补'},
+  ]},
 ]};
 
 // 设备隶属树（课程→一套设备→二级→三级）
@@ -141,12 +154,12 @@ const DASH={年度:{kpi:[['年度参培','12,480','人次'],['考核完成','86%
   campus:[['沈南校区',7200],['沈北校区',3100],['长春所',1400],['大连所',780]],
   hot:[['受电弓检修台',420],['J5救援联挂',360],['VR 工位',310],['CRH5主控台',250],['万用表台',180]],
   prog:[['培训班计划','plan',82],['日常培训','daily',74],['考试人数完成','plan',91]],
-  util:[['CR400BF实训室',68,'480分/天'],['CRH5实训室',55,'480分/天'],['救援联挂室',47,'480分/天'],['段库理论教室',38,'分母按段库层级取值'],['异地理论教室',26,'分母按异地层级取值']]},
+  util:[['CR400BF实训设备',68,'实训分母480分/天'],['职培科微机教室',72,'段级分母320分/天'],['沈南所MOOC录制室',58,'段级分母320分/天'],['沈南所一级修待检室',83,'车间级分母12分/天'],['沈北所探伤待检室',76,'车间级分母12分/天']]},
   月度:{kpi:[['月度参培','1,180','人次'],['考核完成','73%','warn'],['考试合格率','90.1%','up'],['设备利用率','58%',''],['计划兑现率','69%','warn']],
   campus:[['沈南校区',640],['沈北校区',300],['长春所',150],['大连所',90]],
   hot:[['受电弓检修台',48],['VR 工位',41],['J5救援联挂',36],['CRH5主控台',28],['万用表台',19]],
   prog:[['培训班计划','plan',69],['日常培训','daily',61],['考试人数完成','plan',77]],
-  util:[['CR400BF实训室',63,'480分/天'],['CRH5实训室',51,'480分/天'],['救援联挂室',44,'480分/天'],['段库理论教室',35,'分母按段库层级取值'],['异地理论教室',22,'分母按异地层级取值']]}};
+  util:[['CR400BF实训设备',63,'实训分母480分/天'],['职培科微机教室',67,'段级分母320分/天'],['沈南所MOOC录制室',52,'段级分母320分/天'],['沈南所一级修待检室',78,'车间级分母12分/天'],['沈北所探伤待检室',71,'车间级分母12分/天']]}};
 // 座位级占用：教室 → 座位数组（0空 1有人 2电脑占用）
 const SEATS={
   '理论教室 1':[2,2,1,2,0,1,2,2, 1,2,2,0,1,2,2,1, 0,1,2,2,1,0,2,1],
@@ -262,6 +275,9 @@ function renderCourseList(){document.getElementById('smCount').textContent=cours
   // 标签：同一设备重复添加用 #1 #2
   const seen={};el.innerHTML=courses.map((c,i)=>{seen[c.dev]=(seen[c.dev]||0)+1;const tag=courses.filter(x=>x.dev===c.dev).length>1?` 标签#${seen[c.dev]}`:'';return `<div class="pk"><span class="tag">${c.dev}${tag}</span><span class="nm">${c.nm}</span><span class="du">${c.form}·${c.dur}学时</span><span class="rm" style="cursor:pointer" onclick="rmCourse(${i})">✕</span></div>`;}).join('');}
 function rmCourse(i){courses.splice(i,1);renderCourseList();}
+// 按岗位自动算人数（脑图：计划培训人数按培训对象岗位自动算并回显）
+const POST_HEAD={'轨道车司机':157,'地勤机械师':92,'随车机械师':128,'车辆钳工':64,'电力钳工':45};
+function calcHeadcount(post){const k=Object.keys(POST_HEAD).find(p=>post&&post.includes(p.slice(0,3)));document.getElementById('smHead').value=k?POST_HEAD[k]+' 人（岗位库自动统计）':(post?'按岗位库匹配中…':'—');}
 function oneClick(){if(!courses.length){toast('请先添加待排课程','⚠️');return;}
   const grid=Array.from({length:4},()=>Array.from({length:5},()=>null));
   grid[0][2]={nm:'已占用·他班',type:'conflict'};

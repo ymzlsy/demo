@@ -142,18 +142,35 @@
           <span class="tagline">★ 两段式：① 建计划(粗：周期+课程+设备，不查占用) → ② 一键排课(细：自动定周几/几点并避冲突) → ③ 选老师</span>
         </div>
         <div class="steps" id="smSteps"></div>
-        <div class="note"><b>"一键"只负责排「周几+几点」</b>；课程/形式/设备/大周期四要素人工指定。同一设备可重复添加打不同标签（如 VR 换插板/换工装=不同课）。</div>
+        <div class="note">★ 排课人 = <b>职培管理人员</b>（段职培科专职 / 车间职培专职 / 班组业务辅导员）。前两者向<b>直接下级</b>单位派发，班组业务辅导员指派到<b>学员</b>；仅段职培科专职可向平级科室派发。<b>"一键"只排「周几+几点」</b>，下列字段须人工指定。</div>
         <div class="row">
           <div class="card" style="flex:1;min-width:360px">
-            <h2>① 建计划（粗粒度·不查占用）</h2>
+            <h2>① 建培训计划（上层粗略计划·不查占用）<span class="sub">字段对齐勾老师脑图</span></h2>
             <div class="row" style="gap:10px">
-              <div class="field" style="flex:1"><label>训练周期<span class="req">*</span></label>
-                <select class="input" id="smPeriod"><option>本周（11/10 – 11/14）</option><option>本月（11月）</option><option>本季度（Q4）</option></select></div>
-              <div class="field" style="flex:1"><label>培训班/批次<span class="req">*</span></label>
-                <select class="input"><option>第5期轨道车司机轮训班（45人）</option><option>地勤机械师资格性培训班（30人）</option></select></div>
+              <div class="field" style="flex:1"><label>项目编号</label><input class="input" value="2026-Q4-ZX-0087（自动生成）" readonly></div>
+              <div class="field" style="flex:1"><label>培训班名称<span class="req">*</span></label><input class="input" placeholder="唯一·必填，如：第5期轨道车司机轮训班"></div>
             </div>
+            <div class="row" style="gap:10px">
+              <div class="field" style="flex:1"><label>培训性质<span class="req">*</span> <span class="muted">枚举来自职培网</span></label>
+                <select class="input"><option>适应性</option><option>安全培训</option><option>资格性</option><option>日常培训</option></select></div>
+              <div class="field" style="flex:1"><label>培训形式<span class="req">*</span></label>
+                <select class="input"><option>脱产</option><option>非脱产</option></select></div>
+            </div>
+            <div class="row" style="gap:10px">
+              <div class="field" style="flex:1"><label>培训对象（岗位·手输）<span class="req">*</span></label><input class="input" placeholder="如：轨道车司机" oninput="calcHeadcount(this.value)"></div>
+              <div class="field" style="flex:1"><label>计划培训人数 <span class="muted">按岗位自动算</span></label><input class="input" id="smHead" value="—" readonly></div>
+            </div>
+            <div class="row" style="gap:10px">
+              <div class="field" style="flex:1"><label>每期培训时间（H·0.5倍数）<span class="req">*</span></label>
+                <select class="input"><option>0.5</option><option>1</option><option>1.5</option><option selected>2</option><option>4</option></select></div>
+              <div class="field" style="flex:1"><label>培训主办部门<span class="req">*</span></label>
+                <select class="input"><option>职培科</option><option>检修车间</option><option>乘务车间</option></select></div>
+            </div>
+            <div class="field"><label>实施时间（季度·多选，最少1，须指定年份）<span class="req">*</span></label>
+              <div class="seg"><button class="on">2026 一季度</button><button>二季度</button><button>三季度</button><button>四季度</button></div>
+              <div class="hint">校验：下发后排课时，课程周期必须落在所选季度内。</div></div>
             <div class="field"><label>可排时段限制</label>
-              <div class="seg"><button class="on">上午 8-12</button><button class="on">下午 14-18</button><button>晚上 19-22</button></div></div>
+              <input type="hidden" id="smPeriod" value="本季度"><div class="seg"><button class="on">上午 8-12</button><button class="on">下午 14-18</button><button>晚上 19-22</button></div></div>
             <h2 style="margin-top:18px">② 添加课程/设备（含标签）<span class="req">*</span></h2>
             <div class="row" style="gap:8px;align-items:flex-end">
               <div class="field" style="flex:1;margin:0"><label>设备/教室</label><select class="input" id="smDev"></select></div>
