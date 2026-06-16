@@ -163,8 +163,7 @@
     /* ===== Overlay ===== */
     .xiaoan-overlay {
       position: fixed; inset: 0; z-index: 899;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(3px);
+      background: rgba(0,0,0,0.35);
       opacity: 0; pointer-events: none;
       transition: opacity .3s ease;
     }
@@ -194,12 +193,12 @@
 
     /* ===== Digital Human - White Panel ===== */
     .xiaoan-panel {
-      width: 440px; z-index: 1;
+      width: 560px; z-index: 1;
       background: #ffffff;
       border-radius: 14px;
       box-shadow: 0 12px 48px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05);
       display: flex; flex-direction: column;
-      max-height: 520px;
+      max-height: 620px;
       position: relative;
     }
 
@@ -208,7 +207,9 @@
       padding: 16px 48px 14px 20px;
       border-bottom: 1px solid #eee;
       flex-shrink: 0;
+      cursor: grab;
     }
+    .xiaoan-panel-header:active { cursor: grabbing; }
     .xiaoan-panel-header .title { font-size: 16px; font-weight: 700; color: #1a1a2e; flex: 1; }
     .xiaoan-panel-header .subtitle { font-size: 11px; color: #999; }
 
@@ -729,14 +730,17 @@ function openPanel() {
   var wrapper = document.getElementById('xiaoanWrapper');
   var overlay = document.getElementById('xiaoanOverlay');
   var fab = document.getElementById('xiaoanFab');
+
+  var fabRect = fab.getBoundingClientRect();
   fab.style.display = 'none';
 
-  var ww = window.innerWidth;
-  var wh = window.innerHeight;
-  var px = ww - 440 - 160 - 40;
-  var py = wh - 520 - 40;
+  var wrapperW = 560 + 140;
+  var wrapperH = 620;
+  var px = fabRect.right - wrapperW;
+  var py = fabRect.bottom - wrapperH;
   if (px < 10) px = 10;
   if (py < 10) py = 10;
+  if (px + wrapperW > window.innerWidth - 10) px = window.innerWidth - wrapperW - 10;
 
   wrapper.style.left = px + 'px';
   wrapper.style.top = py + 'px';
@@ -751,11 +755,55 @@ function openPanel() {
   }
 }
 
+// ========== WRAPPER DRAG ==========
+var wrapperDragging = false;
+var wdStartX, wdStartY, wdWrapX, wdWrapY;
+
+(function initWrapperDrag() {
+  var header = document.querySelector('.xiaoan-panel-header');
+  var wrapper = document.getElementById('xiaoanWrapper');
+
+  header.addEventListener('mousedown', function(e) {
+    if (e.target.closest('.xiaoan-close')) return;
+    wrapperDragging = true;
+    wdStartX = e.clientX; wdStartY = e.clientY;
+    var rect = wrapper.getBoundingClientRect();
+    wdWrapX = rect.left; wdWrapY = rect.top;
+    wrapper.style.transition = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!wrapperDragging) return;
+    var nx = wdWrapX + (e.clientX - wdStartX);
+    var ny = wdWrapY + (e.clientY - wdStartY);
+    nx = Math.max(0, Math.min(nx, window.innerWidth - 200));
+    ny = Math.max(0, Math.min(ny, window.innerHeight - 100));
+    wrapper.style.left = nx + 'px';
+    wrapper.style.top = ny + 'px';
+  });
+
+  document.addEventListener('mouseup', function() {
+    if (wrapperDragging) {
+      wrapperDragging = false;
+      document.getElementById('xiaoanWrapper').style.transition = '';
+    }
+  });
+})();
+
 function closePanel() {
   panelOpen = false;
   var wrapper = document.getElementById('xiaoanWrapper');
   var overlay = document.getElementById('xiaoanOverlay');
   var fab = document.getElementById('xiaoanFab');
+  var wr = wrapper.getBoundingClientRect();
+  var fabX = wr.right - 80;
+  var fabY = wr.bottom - 80;
+  fabX = Math.max(10, Math.min(fabX, window.innerWidth - 90));
+  fabY = Math.max(10, Math.min(fabY, window.innerHeight - 100));
+  fab.style.left = fabX + 'px'; fab.style.top = fabY + 'px';
+  fab.style.right = 'auto'; fab.style.bottom = 'auto';
+  fabPos.x = fabX; fabPos.y = fabY;
   wrapper.classList.remove('open');
   overlay.classList.remove('open');
   fab.style.display = '';
