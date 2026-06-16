@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>沈阳客运职培基地 — 需求原型 Demo</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:#0a1020; color:#e8eef7; min-height:100vh;
+    background-image:radial-gradient(circle at 20% 10%, rgba(40,102,205,0.18), transparent 45%),
+                     radial-gradient(circle at 85% 80%, rgba(3,230,241,0.10), transparent 50%);
+  }
+  .wrap { max-width:980px; margin:0 auto; padding:48px 28px 80px; }
+  .back { display:inline-block; color:#9fb3d0; font-size:14px; text-decoration:none; margin-bottom:24px; }
+  .back:hover { color:#03e6f1; }
+  .brand { font-size:14px; color:#9fb3d0; margin-bottom:6px; }
+  h1 { font-size:28px; font-weight:700; margin-bottom:8px; }
+  .sub { color:#9fb3d0; font-size:14px; line-height:1.7; margin-bottom:36px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:720px){ .grid{ grid-template-columns:1fr; } }
+  .card {
+    display:block; text-decoration:none; color:inherit;
+    background:rgba(20,32,70,0.55); border:1px solid rgba(80,130,210,0.28);
+    border-radius:12px; padding:24px 22px; transition:transform .15s, border-color .15s, box-shadow .15s;
+  }
+  .card:hover { transform:translateY(-3px); border-color:#03e6f1; box-shadow:0 10px 30px rgba(3,230,241,0.15); }
+  .tag { display:inline-block; font-size:12px; color:#47ffff; border:1px solid rgba(71,255,255,0.4);
+         border-radius:4px; padding:2px 9px; margin-bottom:12px; }
+  .card h3 { font-size:17px; margin-bottom:6px; }
+  .card p { color:#9fb3d0; font-size:13px; line-height:1.6; }
+  .card .arrow { margin-top:14px; color:#03e6f1; font-size:13px; font-weight:600; }
+  .foot { margin-top:40px; color:#67769a; font-size:12px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&larr; 返回项目列表</a>
+  <div class="brand">2025172 沈阳客运职培基地</div>
+  <h1>培训综合管理模块 — 需求原型 Demo</h1>
+  <p class="sub">覆盖智慧管控平台 7 个功能模块的可交互原型。数据均为演示用 mock。<br>
+     对应需求规格说明书：<a href="https://jiean.feishu.cn/wiki/DUhHw4NSmiwJHkkTdxkcSDAKnlT" style="color:#47ffff;" target="_blank">飞书 Wiki</a></p>
+
+  <div class="grid">
+    <a class="card" href="./panorama/">
+      <span class="tag">2.1.1 全景可视化</span>
+      <h3>全景管控 · 4车厢分块</h3>
+      <p>真实1F基地3D俯视图；4车厢独立分块可点；摄像头点位弹窗；监控热区自动排序。</p>
+      <div class="arrow">点击体验 &rarr;</div>
+    </a>
+    <a class="card" href="./data-screen/">
+      <span class="tag">2.1.3 实训数据展示</span>
+      <h3>设备利用率 · 横向优化</h3>
+      <p>横向条形图展示设备利用率；名称拆分名称/区域；低利用率橙色高亮预警。</p>
+      <div class="arrow">点击体验 &rarr;</div>
+    </a>
+    <a class="card" href="./2.2.4-%E5%AE%9E%E8%AE%AD%E8%80%83%E6%A0%B8%E7%AE%A1%E7%90%86/">
+      <span class="tag">2.2.4 实训考核管理</span>
+      <h3>单次考试结果分析</h3>
+      <p>考试总览（参考人数/平均分/标准差/等级占比/分布曲线）；学员成绩明细；扣分项查看；薄弱项 Top 10。</p>
+      <div class="arrow">点击体验 &rarr;</div>
+    </a>
+    <a class="card" href="./2.2.5-%E6%99%BA%E8%83%BD%E7%9B%91%E6%8E%A7%E9%A2%84%E8%AD%A6/">
+      <span class="tag">2.2.5 智能监控预警</span>
+      <h3>AI 行为识别 · 定向推送 · Pad 提醒</h3>
+      <p>预警总览/课堂分析记录/教师 Pad 端提醒模拟/课后回看。覆盖 17 区域 24 摄像头。</p>
+      <div class="arrow">点击体验 &rarr;</div>
+    </a>
+    <a class="card" href="./2.4.1-%E5%AE%9E%E8%AE%AD%E8%80%83%E6%A0%B8%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">
+      <span class="tag">2.4.1 实训考核数据分析</span>
+      <h3>分层数据聚合 · 六维能力雷达</h3>
+      <p>站段/车间/班组/个人四级切换；六维雷达图；成绩分布曲线；个人画像；两委扣分导入。</p>
+      <div class="arrow">点击体验 &rarr;</div>
+    </a>
+    <a class="card" href="./2.5-%E6%95%99%E5%AD%A6%E8%B5%84%E6%96%99%E7%AE%A1%E7%90%86/">
+      <span class="tag">2.5 教学资料管理</span>
+      <h3>电子表单 · AI 质量小结 · 承诺书</h3>
+      <p>日志类电子表单（考勤/日志/小结）；班级质量小结 AI 生成；学员报告简化；承诺书电子确认。</p>
+      <div class="arrow">点击体验 &rarr;</div>
+    </a>
+    <a class="card" href="./2.6-%E5%AE%9E%E8%AE%AD%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/">
+      <span class="tag">2.6 实训设备管理</span>
+      <h3>故障登记 · 维修闭环 · 保养提醒</h3>
+      <p>故障全流程闭环（待处理→处理中→待验收→完成/返工）；维修时间线；保养提醒；导入导出。</p>
+      <div class="arrow">点击体验 &rarr;</div>
+    </a>
+  </div>
+
+  <p class="foot">数据均为演示用 mock，非真实业务数据。维护：捷安高科 · 培训服务产品线。</p>
+</div>
+</body>
+</html>
