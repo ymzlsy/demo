@@ -8,30 +8,29 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-    background:#0a1020; color:#e8eef7; min-height:100vh;
-    background-image:radial-gradient(circle at 20% 10%, rgba(40,102,205,0.18), transparent 45%),
-                     radial-gradient(circle at 85% 80%, rgba(3,230,241,0.10), transparent 50%);
+    background:#f5f7fa; color:rgba(0,0,0,.85); min-height:100vh;
   }
   .wrap { max-width:980px; margin:0 auto; padding:48px 28px 80px; }
-  .back { display:inline-block; color:#9fb3d0; font-size:14px; text-decoration:none; margin-bottom:24px; }
-  .back:hover { color:#03e6f1; }
-  .brand { font-size:14px; color:#9fb3d0; margin-bottom:6px; }
+  .back { display:inline-block; color:#8c8c8c; font-size:14px; text-decoration:none; margin-bottom:24px; }
+  .back:hover { color:#1677ff; }
+  .brand { font-size:14px; color:#8c8c8c; margin-bottom:6px; }
   h1 { font-size:28px; font-weight:700; margin-bottom:8px; }
-  .sub { color:#9fb3d0; font-size:14px; line-height:1.7; margin-bottom:36px; }
+  .sub { color:#8c8c8c; font-size:14px; line-height:1.7; margin-bottom:36px; }
+  .sub a { color:#1677ff; }
   .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media (max-width:720px){ .grid{ grid-template-columns:1fr; } }
   .card {
     display:block; text-decoration:none; color:inherit;
-    background:rgba(20,32,70,0.55); border:1px solid rgba(80,130,210,0.28);
+    background:#fff; border:1px solid #e8e8e8;
     border-radius:12px; padding:24px 22px; transition:transform .15s, border-color .15s, box-shadow .15s;
   }
-  .card:hover { transform:translateY(-3px); border-color:#03e6f1; box-shadow:0 10px 30px rgba(3,230,241,0.15); }
-  .tag { display:inline-block; font-size:12px; color:#47ffff; border:1px solid rgba(71,255,255,0.4);
+  .card:hover { transform:translateY(-3px); border-color:#1677ff; box-shadow:0 10px 30px rgba(22,119,255,0.12); }
+  .tag { display:inline-block; font-size:12px; color:#1677ff; border:1px solid rgba(22,119,255,0.35);
          border-radius:4px; padding:2px 9px; margin-bottom:12px; }
   .card h3 { font-size:17px; margin-bottom:6px; }
-  .card p { color:#9fb3d0; font-size:13px; line-height:1.6; }
-  .card .arrow { margin-top:14px; color:#03e6f1; font-size:13px; font-weight:600; }
-  .foot { margin-top:40px; color:#67769a; font-size:12px; line-height:1.7; }
+  .card p { color:#595959; font-size:13px; line-height:1.6; }
+  .card .arrow { margin-top:14px; color:#1677ff; font-size:13px; font-weight:600; }
+  .foot { margin-top:40px; color:#bfbfbf; font-size:12px; line-height:1.7; }
 </style>
 </head>
 <body>
@@ -39,8 +38,8 @@
   <a class="back" href="../">&larr; 返回项目列表</a>
   <div class="brand">2025172 沈阳客运职培基地</div>
   <h1>培训综合管理模块 — 需求原型 Demo</h1>
-  <p class="sub">覆盖智慧管控平台 8 个功能模块的可交互原型。数据均为演示用 mock。<br>
-     对应需求规格说明书：<a href="https://jiean.feishu.cn/wiki/DUhHw4NSmiwJHkkTdxkcSDAKnlT" style="color:#47ffff;" target="_blank">飞书 Wiki</a></p>
+  <p class="sub">覆盖智慧管控平台 10 个功能模块的可交互原型。数据均为演示用 mock。<br>
+     对应需求规格说明书：<a href="https://jiean.feishu.cn/wiki/DUhHw4NSmiwJHkkTdxkcSDAKnlT" target="_blank">飞书 Wiki</a></p>
 
   <div class="grid">
     <a class="card" href="./panorama/">
@@ -77,6 +76,18 @@
       <span class="tag">2.4.1 实训考核数据分析</span>
       <h3>分层数据聚合 · 六维能力雷达</h3>
       <p>站段/车间/班组/个人四级切换；六维雷达图；成绩分布曲线；个人画像；两委扣分导入。</p>
+      <div class="arrow">点击体验 &rarr;</div>
+    </a>
+    <a class="card" href="./2.4.2-%E5%9F%B9%E8%AE%AD%E7%BB%BC%E5%90%88%E5%88%86%E6%9E%90/">
+      <span class="tag">2.4.2 培训综合分析</span>
+      <h3>培训综合分析 · 年度计划兑现</h3>
+      <p>培训计划完成率/人数人次/合格率/设备利用率KPI；月度办班兑现分析；群体薄弱点TOP；数字人综合分析入口。</p>
+      <div class="arrow">点击体验 &rarr;</div>
+    </a>
+    <a class="card" href="./2.4.3-%E6%95%99%E5%AD%A6%E8%B4%A8%E9%87%8F%E5%88%86%E6%9E%90/">
+      <span class="tag">2.4.3 教学质量分析</span>
+      <h3>教师画像 · 四维度评价</h3>
+      <p>教师一览与画像详情；教学效果/学员反馈/职业素养/教研成果四维雷达；权重配置；数字人智能分析。</p>
       <div class="arrow">点击体验 &rarr;</div>
     </a>
     <a class="card" href="./2.5-%E6%95%99%E5%AD%A6%E8%B5%84%E6%96%99%E7%AE%A1%E7%90%86/">

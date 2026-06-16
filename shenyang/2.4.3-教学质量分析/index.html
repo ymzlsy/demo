@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440" />
+  <title>教学质量分析 - 沈阳客运职培基地</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1440px; color: rgba(0,0,0,.85); }
+    .header { background: #fff; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f0f0f0; }
+    .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
+    .breadcrumb a { color: #1677ff; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .content { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+    .page-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .page-title { font-size: 20px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
+    .card-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
+    .card-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
+    .btn { display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all .2s; gap: 6px; }
+    .btn:hover { border-color: #1677ff; color: #1677ff; }
+    .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
+    .btn-primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
+    .btn-sm { padding: 3px 10px; font-size: 13px; }
+    .form-select { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; background: #fff; color: rgba(0,0,0,.85); min-width: 140px; }
+    .form-select:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+    .form-input { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; background: #fff; min-width: 200px; }
+    .form-input:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+    .tag-blue { background: #e6f7ff; color: #1677ff; border: 1px solid #91d5ff; }
+    .tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+    .tag-red { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
+    .tag-purple { background: #f9f0ff; color: #722ed1; border: 1px solid #d3adf7; }
+
+    .filter-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+    /* Teacher Card Grid */
+    .teacher-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .teacher-card { background: #fff; border-radius: 8px; border: 1px solid #f0f0f0; padding: 20px; cursor: pointer; transition: all .25s; position: relative; overflow: hidden; }
+    .teacher-card:hover { border-color: #1677ff; box-shadow: 0 4px 12px rgba(22,119,255,.12); transform: translateY(-2px); }
+    .teacher-card-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .avatar { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .teacher-info { flex: 1; }
+    .teacher-name { font-size: 16px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 2px; }
+    .teacher-meta { font-size: 13px; color: rgba(0,0,0,.45); }
+    .teacher-card-mid { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+    .mini-radar { width: 120px; height: 100px; flex-shrink: 0; }
+    .score-block { text-align: center; flex: 1; }
+    .score-number { font-size: 36px; font-weight: 700; color: #1677ff; line-height: 1.1; }
+    .score-label { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
+    .teacher-card-bottom { display: flex; align-items: center; justify-content: space-between; }
+    .view-detail-btn { padding: 5px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 1px solid #1677ff; background: #fff; color: #1677ff; transition: all .2s; }
+    .view-detail-btn:hover { background: #1677ff; color: #fff; }
+
+    /* Detail Page */
+    .detail-layout { display: grid; grid-template-columns: 280px 1fr 360px; gap: 16px; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #1677ff; cursor: pointer; margin-bottom: 16px; padding: 4px 0; }
+    .back-btn:hover { text-decoration: underline; }
+    .profile-card { text-align: center; }
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: #fff; margin: 0 auto 12px; border: 3px solid #e6f0ff; }
+    .profile-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .profile-id { font-size: 13px; color: rgba(0,0,0,.45); margin-bottom: 16px; }
+    .info-list { list-style: none; text-align: left; }
+    .info-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+    .info-list li .lbl { color: rgba(0,0,0,.45); }
+    .info-list li .val { color: rgba(0,0,0,.85); font-weight: 500; }
+    .big-score { text-align: center; padding: 12px 0; }
+    .big-score .number { font-size: 48px; font-weight: 700; color: #1677ff; }
+    .big-score .rank { font-size: 14px; color: rgba(0,0,0,.45); margin-top: 4px; }
+    .big-score .level { display: inline-block; margin-top: 8px; padding: 4px 16px; border-radius: 20px; font-size: 14px; }
+    .level-excellent { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+    .level-good { background: #e6f7ff; color: #1677ff; border: 1px solid #91d5ff; }
+    .level-pass { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+
+    .dim-card { margin-bottom: 12px; }
+    .dim-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .dim-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .dim-weight { font-size: 12px; color: rgba(0,0,0,.45); }
+    .dim-stat { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; }
+    .dim-stat .ds-label { color: rgba(0,0,0,.45); min-width: 120px; }
+    .dim-stat .ds-value { font-weight: 600; color: rgba(0,0,0,.85); }
+    .progress-bar { height: 8px; background: #f0f0f0; border-radius: 4px; flex: 1; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 4px; background: #1677ff; }
+    .review-item { padding: 10px 12px; background: #fafafa; border-radius: 6px; margin-bottom: 8px; font-size: 13px; color: rgba(0,0,0,.65); border-left: 3px solid #1677ff; }
+    .review-item .ri-score { color: #fa8c16; font-weight: 600; }
+    .research-table { width: 100%; font-size: 13px; border-collapse: collapse; }
+    .research-table th { background: #fafafa; padding: 8px 10px; text-align: left; font-weight: 600; border-bottom: 1px solid #f0f0f0; }
+    .research-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
+
+    /* Weight Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: #fff; border-radius: 12px; width: 480px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+    .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+    .weight-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .weight-label { width: 80px; font-size: 14px; color: rgba(0,0,0,.65); }
+    .weight-slider { flex: 1; -webkit-appearance: none; height: 6px; border-radius: 3px; background: #f0f0f0; outline: none; }
+    .weight-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #1677ff; cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+    .weight-value { width: 50px; text-align: right; font-size: 14px; font-weight: 600; color: #1677ff; }
+    .weight-total { text-align: center; font-size: 14px; margin: 12px 0; padding: 8px; border-radius: 6px; }
+    .weight-total.ok { background: #f6ffed; color: #52c41a; }
+    .weight-total.err { background: #fff2f0; color: #ff4d4f; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+
+    /* Xiaoan FAB */
+    .xiaoan-fab { position: fixed; bottom: 32px; right: 32px; z-index: 900; cursor: pointer; }
+    .xiaoan-fab-inner { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #1677ff, #4096ff); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(22,119,255,.35); transition: transform .2s; }
+    .xiaoan-fab:hover .xiaoan-fab-inner { transform: scale(1.08); }
+    .xiaoan-fab-inner svg { width: 28px; height: 28px; fill: #fff; }
+    .xiaoan-label { text-align: center; margin-top: 4px; font-size: 11px; color: #1677ff; font-weight: 500; }
+    .xiaoan-pulse { position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(22,119,255,.4); animation: xiaoanPulse 2.5s ease-out infinite; pointer-events: none; }
+    .xiaoan-pulse-2 { position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(22,119,255,.25); animation: xiaoanPulse 2.5s ease-out 1.2s infinite; pointer-events: none; }
+    @keyframes xiaoanPulse { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.5); opacity: 0; } }
+
+    /* Xiaoan Panel */
+    .xiaoan-panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 950; opacity: 0; pointer-events: none; transition: opacity .25s; }
+    .xiaoan-panel-overlay.open { opacity: 1; pointer-events: all; }
+    .xiaoan-panel { position: fixed; bottom: 100px; right: 32px; width: 380px; background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.15); z-index: 960; transform: translateY(20px) scale(.95); opacity: 0; pointer-events: none; transition: all .3s cubic-bezier(.4,0,.2,1); overflow: hidden; }
+    .xiaoan-panel.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: all; }
+    .xiaoan-panel-header { padding: 16px 20px; background: linear-gradient(135deg, #1677ff, #4096ff); color: #fff; display: flex; align-items: center; gap: 12px; }
+    .xiaoan-panel-header .xa-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; }
+    .xiaoan-panel-header .xa-avatar svg { width: 24px; height: 24px; fill: #fff; }
+    .xiaoan-panel-header .xa-info { flex: 1; }
+    .xiaoan-panel-header .xa-name { font-size: 15px; font-weight: 600; }
+    .xiaoan-panel-header .xa-sub { font-size: 12px; opacity: .8; }
+    .xiaoan-panel-close { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,.2); border: none; color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .xiaoan-panel-close:hover { background: rgba(255,255,255,.35); }
+    .xiaoan-panel-body { padding: 16px 20px; max-height: 420px; overflow-y: auto; }
+    .xa-section { margin-bottom: 16px; }
+    .xa-section-title { font-size: 13px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .xa-section-title svg { width: 16px; height: 16px; fill: #1677ff; }
+    .xa-item { padding: 8px 12px; background: #f6f8fa; border-radius: 6px; margin-bottom: 6px; font-size: 13px; color: rgba(0,0,0,.65); line-height: 1.6; }
+    .xa-highlight { color: #1677ff; font-weight: 500; }
+    .xa-compare-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px; }
+    .xa-compare-bar .cb-label { width: 80px; color: rgba(0,0,0,.45); }
+    .xa-compare-bar .cb-bar { flex: 1; height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+    .xa-compare-bar .cb-fill { height: 100%; border-radius: 3px; }
+    .xa-compare-bar .cb-val { width: 40px; text-align: right; font-weight: 600; font-size: 12px; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="breadcrumb">
+    <a href="#">首页</a> / <a href="#">实训技能评价分析</a> / 教学质量分析
+  </div>
+</div>
+
+<!-- List View -->
+<div class="content" id="listView">
+  <div class="page-title-row">
+    <div class="page-title">教学质量分析</div>
+    <button class="btn" onclick="openWeightModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="6" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="12" cy="18" r="2"/></svg>
+      权重配置
+    </button>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="card" style="padding: 16px 20px;">
+    <div class="filter-bar" style="margin-bottom:0;">
+      <input class="form-input" id="searchName" placeholder="搜索教师姓名..." oninput="filterTeachers()">
+      <select class="form-select" id="filterDept" onchange="filterTeachers()">
+        <option value="">全部部门</option>
+        <option value="客运一车间">客运一车间</option>
+        <option value="客运二车间">客运二车间</option>
+        <option value="安全科">安全科</option>
+        <option value="培训中心">培训中心</option>
+      </select>
+      <select class="form-select" id="filterPost" onchange="filterTeachers()">
+        <option value="">全部岗位</option>
+        <option value="高级讲师">高级讲师</option>
+        <option value="讲师">讲师</option>
+        <option value="助理讲师">助理讲师</option>
+        <option value="实训指导员">实训指导员</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Teacher Grid -->
+  <div class="teacher-grid" id="teacherGrid"></div>
+</div>
+
+<!-- Detail View -->
+<div class="content hidden" id="detailView">
+  <div class="back-btn" onclick="showList()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    返回教师列表
+  </div>
+  <div class="detail-layout" id="detailContent"></div>
+</div>
+
+<!-- Weight Modal -->
+<div class="modal-overlay" id="weightModal">
+  <div class="modal">
+    <div class="modal-title">评价权重配置</div>
+    <div class="weight-row">
+      <span class="weight-label">教学效果</span>
+      <input type="range" class="weight-slider" id="w1" min="0" max="100" value="40" oninput="updateWeights()">
+      <span class="weight-value" id="w1v">40%</span>
+    </div>
+    <div class="weight-row">
+      <span class="weight-label">学员反馈</span>
+      <input type="range" class="weight-slider" id="w2" min="0" max="100" value="25" oninput="updateWeights()">
+      <span class="weight-value" id="w2v">25%</span>
+    </div>
+    <div class="weight-row">
+      <span class="weight-label">职业素养</span>
+      <input type="range" class="weight-slider" id="w3" min="0" max="100" value="20" oninput="updateWeights()">
+      <span class="weight-value" id="w3v">20%</span>
+    </div>
+    <div class="weight-row">
+      <span class="weight-label">教研成果</span>
+      <input type="range" class="weight-slider" id="w4" min="0" max="100" value="15" oninput="updateWeights()">
+      <span class="weight-value" id="w4v">15%</span>
+    </div>
+    <div class="weight-total ok" id="weightTotal">合计：100%</div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeWeightModal()">取消</button>
+      <button class="btn btn-primary" id="weightSaveBtn" onclick="saveWeights()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Xiaoan FAB -->
+<div class="xiaoan-fab hidden" id="xiaoanFab" onclick="toggleXiaoan()">
+  <div class="xiaoan-pulse"></div>
+  <div class="xiaoan-pulse-2"></div>
+  <div class="xiaoan-fab-inner">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+  </div>
+  <div class="xiaoan-label">小安</div>
+</div>
+
+<!-- Xiaoan Panel -->
+<div class="xiaoan-panel-overlay" id="xiaoanOverlay" onclick="toggleXiaoan()"></div>
+<div class="xiaoan-panel" id="xiaoanPanel">
+  <div class="xiaoan-panel-header">
+    <div class="xa-avatar">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    </div>
+    <div class="xa-info">
+      <div class="xa-name">小安 AI 助手</div>
+      <div class="xa-sub">教学质量智能分析</div>
+    </div>
+    <button class="xiaoan-panel-close" onclick="toggleXiaoan()">&times;</button>
+  </div>
+  <div class="xiaoan-panel-body" id="xiaoanBody"></div>
+</div>
+
+<script>
+// ===== Mock Data =====
+const COLORS = ['#1677ff','#52c41a','#fa8c16','#722ed1','#eb2f96','#13c2c2','#2f54eb','#faad14','#f5222d'];
+const teachers = [
+  { id:'T001', name:'王建国', dept:'培训中心', post:'高级讲师', years:12, courses:8, avatar:'#1677ff',
+    dims: { teach:91.2, feedback:88.5, profess:95.0, research:82.0 },
+    passRate:94.5, progress:14.2, satisfaction:4.7, attitude:4.8, quality:4.6, interact:4.7,
+    attendance:99.2, reviews:['讲解细致，理论联系实际，收获很大','课堂节奏好，重点突出','教学方法灵活，案例丰富'],
+    profItems:[{n:'教学责任心',s:96},{n:'职业道德',s:94},{n:'团队协作',s:93}],
+    researches:[{n:'铁路客运安全培训体系研究',t:'论文',d:'2025-03',s:'已发表'},{n:'实训考核标准化方案',t:'标准',d:'2025-06',s:'已通过'},{n:'VR应急演练课件开发',t:'课件',d:'2025-08',s:'开发中'},{n:'客运服务质量提升研究',t:'课题',d:'2025-01',s:'已结题'}],
+    trends:[88,90,92,93,94.5] },
+  { id:'T002', name:'李明辉', dept:'客运一车间', post:'讲师', years:8, courses:6, avatar:'#52c41a',
+    dims: { teach:85.6, feedback:90.2, profess:88.0, research:72.5 },
+    passRate:91.2, progress:11.5, satisfaction:4.6, attitude:4.7, quality:4.5, interact:4.8,
+    attendance:97.8, reviews:['互动性强，课堂氛围好','善于引导学员思考','实操指导耐心细致'],
+    profItems:[{n:'教学责任心',s:90},{n:'职业道德',s:88},{n:'团队协作',s:86}],
+    researches:[{n:'客运服务礼仪培训手册',t:'教材',d:'2025-05',s:'已出版'},{n:'智能化培训系统应用',t:'论文',d:'2025-09',s:'审稿中'},{n:'应急处置模拟训练方案',t:'方案',d:'2025-07',s:'已通过'}],
+    trends:[83,84,86,88,91.2] },
+  { id:'T003', name:'张晓红', dept:'安全科', post:'高级讲师', years:15, courses:10, avatar:'#fa8c16',
+    dims: { teach:93.8, feedback:86.0, profess:96.5, research:88.0 },
+    passRate:96.1, progress:15.8, satisfaction:4.5, attitude:4.6, quality:4.5, interact:4.3,
+    attendance:99.5, reviews:['专业功底深厚，安全知识讲解到位','案例分析深入，有实战价值','课程体系完整'],
+    profItems:[{n:'教学责任心',s:97},{n:'职业道德',s:96},{n:'团队协作',s:95}],
+    researches:[{n:'铁路安全应急预案研究',t:'课题',d:'2024-12',s:'已结题'},{n:'安全生产标准化培训方案',t:'标准',d:'2025-04',s:'已通过'},{n:'事故案例教学法研究',t:'论文',d:'2025-06',s:'已发表'},{n:'安全VR仿真课件',t:'课件',d:'2025-10',s:'开发中'},{n:'安全管理能力评估体系',t:'标准',d:'2025-02',s:'已通过'}],
+    trends:[90,91,93,95,96.1] },
+  { id:'T004', name:'陈伟', dept:'客运二车间', post:'实训指导员', years:5, courses:7, avatar:'#722ed1',
+    dims: { teach:78.5, feedback:82.0, profess:85.0, research:60.0 },
+    passRate:86.3, progress:9.8, satisfaction:4.3, attitude:4.4, quality:4.2, interact:4.3,
+    attendance:96.5, reviews:['实操演示规范，容易理解','讲解速度适中','希望增加更多案例'],
+    profItems:[{n:'教学责任心',s:86},{n:'职业道德',s:84},{n:'团队协作',s:85}],
+    researches:[{n:'客运实训操作规程',t:'规程',d:'2025-08',s:'编写中'}],
+    trends:[80,82,84,85,86.3] },
+  { id:'T005', name:'刘丽娟', dept:'培训中心', post:'讲师', years:6, courses:5, avatar:'#eb2f96',
+    dims: { teach:82.0, feedback:91.5, profess:87.0, research:68.0 },
+    passRate:89.5, progress:10.2, satisfaction:4.8, attitude:4.9, quality:4.7, interact:4.8,
+    attendance:98.0, reviews:['授课风格亲切，学员参与度高','善于运用多媒体教学','课后答疑认真负责'],
+    profItems:[{n:'教学责任心',s:88},{n:'职业道德',s:87},{n:'团队协作',s:90}],
+    researches:[{n:'混合式教学模式探索',t:'论文',d:'2025-07',s:'审稿中'},{n:'在线培训课程设计',t:'课件',d:'2025-04',s:'已上线'},{n:'学员学习行为分析',t:'课题',d:'2025-09',s:'进行中'}],
+    trends:[84,85,87,88,89.5] },
+  { id:'T006', name:'赵国强', dept:'客运一车间', post:'高级讲师', years:18, courses:9, avatar:'#13c2c2',
+    dims: { teach:90.0, feedback:84.0, profess:94.0, research:90.5 },
+    passRate:93.2, progress:13.1, satisfaction:4.4, attitude:4.5, quality:4.4, interact:4.2,
+    attendance:99.0, reviews:['经验丰富，教学内容实用','理论讲解透彻','互动环节可以再多些'],
+    profItems:[{n:'教学责任心',s:95},{n:'职业道德',s:94},{n:'团队协作',s:92}],
+    researches:[{n:'铁路客运服务标准研究',t:'标准',d:'2024-11',s:'已通过'},{n:'高铁乘务培训创新',t:'论文',d:'2025-03',s:'已发表'},{n:'培训效果评估模型',t:'课题',d:'2025-06',s:'已结题'},{n:'实训基地建设方案',t:'方案',d:'2025-01',s:'已通过'}],
+    trends:[87,89,90,92,93.2] },
+  { id:'T007', name:'孙雪梅', dept:'安全科', post:'讲师', years:7, courses:6, avatar:'#2f54eb',
+    dims: { teach:84.0, feedback:87.5, profess:90.0, research:65.0 },
+    passRate:90.0, progress:11.0, satisfaction:4.5, attitude:4.6, quality:4.5, interact:4.4,
+    attendance:97.5, reviews:['安全知识讲解清晰','案例生动有趣','教学认真负责'],
+    profItems:[{n:'教学责任心',s:91},{n:'职业道德',s:90},{n:'团队协作',s:88}],
+    researches:[{n:'安全培训课件开发',t:'课件',d:'2025-05',s:'已上线'},{n:'安全意识培养方法',t:'论文',d:'2025-10',s:'写作中'}],
+    trends:[82,84,86,88,90.0] },
+  { id:'T008', name:'周明', dept:'客运二车间', post:'助理讲师', years:3, courses:4, avatar:'#faad14',
+    dims: { teach:72.0, feedback:78.5, profess:80.0, research:45.0 },
+    passRate:82.5, progress:8.5, satisfaction:4.1, attitude:4.2, quality:4.0, interact:4.1,
+    attendance:95.0, reviews:['教学态度认真','基础知识讲解到位','需要更多实践经验'],
+    profItems:[{n:'教学责任心',s:82},{n:'职业道德',s:80},{n:'团队协作',s:78}],
+    researches:[{n:'新员工培训方案优化',t:'方案',d:'2025-09',s:'编写中'}],
+    trends:[75,76,78,80,82.5] },
+  { id:'T009', name:'吴晓燕', dept:'培训中心', post:'实训指导员', years:4, courses:5, avatar:'#f5222d',
+    dims: { teach:76.0, feedback:85.0, profess:82.0, research:55.0 },
+    passRate:85.0, progress:9.0, satisfaction:4.4, attitude:4.5, quality:4.3, interact:4.4,
+    attendance:96.8, reviews:['实操指导认真','对学员很有耐心','课堂管理良好'],
+    profItems:[{n:'教学责任心',s:84},{n:'职业道德',s:82},{n:'团队协作',s:85}],
+    researches:[{n:'实训操作视频教程',t:'课件',d:'2025-06',s:'已上线'},{n:'实训安全管理规范',t:'规程',d:'2025-08',s:'编写中'}],
+    trends:[78,80,82,83,85.0] }
+];
+
+let weights = { teach: 40, feedback: 25, profess: 20, research: 15 };
+let currentTeacher = null;
+
+function calcScore(t) {
+  return +(t.dims.teach * weights.teach / 100 + t.dims.feedback * weights.feedback / 100 + t.dims.profess * weights.profess / 100 + t.dims.research * weights.research / 100).toFixed(1);
+}
+
+function getLevel(score) {
+  if (score >= 85) return { text: '优秀', cls: 'tag-green', lcls: 'level-excellent' };
+  if (score >= 70) return { text: '良好', cls: 'tag-blue', lcls: 'level-good' };
+  return { text: '合格', cls: 'tag-orange', lcls: 'level-pass' };
+}
+
+function getRank(t) {
+  const scores = teachers.map(x => calcScore(x)).sort((a,b) => b - a);
+  return scores.indexOf(calcScore(t)) + 1;
+}
+
+// ===== Render List =====
+function renderList() {
+  const grid = document.getElementById('teacherGrid');
+  const search = document.getElementById('searchName').value.trim().toLowerCase();
+  const dept = document.getElementById('filterDept').value;
+  const post = document.getElementById('filterPost').value;
+
+  let filtered = teachers.filter(t => {
+    if (search && !t.name.toLowerCase().includes(search)) return false;
+    if (dept && t.dept !== dept) return false;
+    if (post && t.post !== post) return false;
+    return true;
+  });
+
+  grid.innerHTML = filtered.map(t => {
+    const score = calcScore(t);
+    const level = getLevel(score);
+    return `
+      <div class="teacher-card" onclick="showDetail('${t.id}')">
+        <div class="teacher-card-top">
+          <div class="avatar" style="background:${t.avatar}">${t.name[0]}</div>
+          <div class="teacher-info">
+            <div class="teacher-name">${t.name}</div>
+            <div class="teacher-meta">${t.id} | ${t.dept} | ${t.post}</div>
+          </div>
+        </div>
+        <div class="teacher-card-mid">
+          <div class="mini-radar" id="mini-${t.id}"></div>
+          <div class="score-block">
+            <div class="score-number">${score}</div>
+            <div class="score-label">综合评分</div>
+          </div>
+          <span class="tag ${level.cls}">${level.text}</span>
+        </div>
+        <div class="teacher-card-bottom">
+          <span style="font-size:12px;color:rgba(0,0,0,.45);">入职${t.years}年 | 本期${t.courses}门课</span>
+          <button class="view-detail-btn" onclick="event.stopPropagation();showDetail('${t.id}')">查看详情</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Render mini radars
+  filtered.forEach(t => {
+    const el = document.getElementById('mini-' + t.id);
+    if (!el) return;
+    const chart = echarts.init(el);
+    chart.setOption({
+      radar: {
+        indicator: [
+          { name: '', max: 100 }, { name: '', max: 100 },
+          { name: '', max: 100 }, { name: '', max: 100 }
+        ],
+        radius: '70%', center: ['50%','50%'],
+        axisLine: { lineStyle: { color: 'rgba(0,0,0,.08)' } },
+        splitLine: { lineStyle: { color: 'rgba(0,0,0,.06)' } },
+        splitArea: { show: false }
+      },
+      series: [{ type: 'radar', symbol: 'none', lineStyle: { width: 2, color: '#1677ff' },
+        areaStyle: { color: 'rgba(22,119,255,.15)' },
+        data: [{ value: [t.dims.teach, t.dims.feedback, t.dims.profess, t.dims.research] }]
+      }]
+    });
+  });
+}
+
+function filterTeachers() { renderList(); }
+
+// ===== Detail View =====
+function showDetail(id) {
+  currentTeacher = teachers.find(t => t.id === id);
+  if (!currentTeacher) return;
+  const t = currentTeacher;
+  const score = calcScore(t);
+  const level = getLevel(score);
+  const rank = getRank(t);
+
+  document.getElementById('listView').classList.add('hidden');
+  document.getElementById('detailView').classList.remove('hidden');
+  document.getElementById('xiaoanFab').classList.remove('hidden');
+
+  const detail = document.getElementById('detailContent');
+  detail.innerHTML = `
+    <!-- Left: Profile -->
+    <div>
+      <div class="card profile-card">
+        <div class="profile-avatar" style="background:${t.avatar}">${t.name[0]}</div>
+        <div class="profile-name">${t.name}</div>
+        <div class="profile-id">${t.id}</div>
+        <ul class="info-list">
+          <li><span class="lbl">部门</span><span class="val">${t.dept}</span></li>
+          <li><span class="lbl">岗位</span><span class="val">${t.post}</span></li>
+          <li><span class="lbl">入职年限</span><span class="val">${t.years}年</span></li>
+          <li><span class="lbl">本期授课数</span><span class="val">${t.courses}门</span></li>
+          <li><span class="lbl">出勤率</span><span class="val">${t.attendance}%</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Middle: Radar + Score -->
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">四维能力雷达图</div>
+        <div id="mainRadar" style="height:300px;"></div>
+      </div>
+      <div class="card">
+        <div class="big-score">
+          <div class="number">${score}</div>
+          <div class="rank">全站排名 第${rank}/${teachers.length}名</div>
+          <div class="level ${level.lcls}">${level.text}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Dimension Details -->
+    <div>
+      <!-- 1. Teaching Effect -->
+      <div class="card dim-card">
+        <div class="dim-header">
+          <span class="dim-title">教学效果</span>
+          <span class="dim-weight">权重 ${weights.teach}%</span>
+        </div>
+        <div class="dim-stat">
+          <span class="ds-label">考试平均通过率</span>
+          <span class="ds-value" style="color:#52c41a">${t.passRate}%</span>
+        </div>
+        <div class="dim-stat">
+          <span class="ds-label">学员平均进步</span>
+          <span class="ds-value" style="color:#1677ff">+${t.progress}分</span>
+        </div>
+        <div id="trendChart" style="height:120px;margin-top:8px;"></div>
+      </div>
+
+      <!-- 2. Student Feedback -->
+      <div class="card dim-card">
+        <div class="dim-header">
+          <span class="dim-title">学员反馈</span>
+          <span class="dim-weight">权重 ${weights.feedback}%</span>
+        </div>
+        <div class="dim-stat">
+          <span class="ds-label">综合满意度</span>
+          <span class="ds-value">${t.satisfaction}/5.0</span>
+        </div>
+        <div style="margin:8px 0;">
+          <div class="dim-stat"><span class="ds-label">教学态度</span><div class="progress-bar"><div class="progress-fill" style="width:${t.attitude*20}%;background:#52c41a"></div></div><span style="font-size:13px;font-weight:600;width:40px;text-align:right;">${t.attitude}</span></div>
+          <div class="dim-stat"><span class="ds-label">内容质量</span><div class="progress-bar"><div class="progress-fill" style="width:${t.quality*20}%;background:#1677ff"></div></div><span style="font-size:13px;font-weight:600;width:40px;text-align:right;">${t.quality}</span></div>
+          <div class="dim-stat"><span class="ds-label">互动效果</span><div class="progress-bar"><div class="progress-fill" style="width:${t.interact*20}%;background:#722ed1"></div></div><span style="font-size:13px;font-weight:600;width:40px;text-align:right;">${t.interact}</span></div>
+        </div>
+        <div style="margin-top:8px;">
+          ${t.reviews.map(r => `<div class="review-item">"${r}"</div>`).join('')}
+        </div>
+      </div>
+
+      <!-- 3. Professional Quality -->
+      <div class="card dim-card">
+        <div class="dim-header">
+          <span class="dim-title">职业素养</span>
+          <span class="dim-weight">权重 ${weights.profess}%</span>
+        </div>
+        <div class="dim-stat">
+          <span class="ds-label">出勤率</span>
+          <span class="ds-value" style="color:#52c41a">${t.attendance}%</span>
+        </div>
+        ${t.profItems.map(p => `
+          <div class="dim-stat">
+            <span class="ds-label">${p.n}</span>
+            <div class="progress-bar"><div class="progress-fill" style="width:${p.s}%;background:#13c2c2"></div></div>
+            <span style="font-size:13px;font-weight:600;width:40px;text-align:right;">${p.s}</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- 4. Research -->
+      <div class="card dim-card">
+        <div class="dim-header">
+          <span class="dim-title">教研成果</span>
+          <span class="dim-weight">权重 ${weights.research}%</span>
+        </div>
+        <table class="research-table">
+          <thead><tr><th>成果名称</th><th>类型</th><th>日期</th><th>状态</th></tr></thead>
+          <tbody>
+            ${t.researches.map(r => {
+              let tagCls = 'tag-green';
+              if (r.s.includes('中') || r.s.includes('写')) tagCls = 'tag-orange';
+              if (r.s.includes('审')) tagCls = 'tag-blue';
+              return `<tr><td>${r.n}</td><td>${r.t}</td><td>${r.d}</td><td><span class="tag ${tagCls}">${r.s}</span></td></tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // Render main radar
+  setTimeout(() => {
+    const radarEl = document.getElementById('mainRadar');
+    if (radarEl) {
+      const radarChart = echarts.init(radarEl);
+      radarChart.setOption({
+        tooltip: { trigger: 'item' },
+        radar: {
+          indicator: [
+            { name: '教学效果', max: 100 },
+            { name: '学员反馈', max: 100 },
+            { name: '职业素养', max: 100 },
+            { name: '教研成果', max: 100 }
+          ],
+          radius: '65%',
+          axisName: { color: 'rgba(0,0,0,.65)', fontSize: 13 },
+          axisLine: { lineStyle: { color: 'rgba(0,0,0,.1)' } },
+          splitLine: { lineStyle: { color: 'rgba(0,0,0,.08)' } },
+          splitArea: { areaStyle: { color: ['rgba(22,119,255,.02)','rgba(22,119,255,.04)'] } }
+        },
+        series: [{
+          type: 'radar',
+          symbol: 'circle', symbolSize: 6,
+          lineStyle: { width: 2, color: '#1677ff' },
+          areaStyle: { color: 'rgba(22,119,255,.18)' },
+          itemStyle: { color: '#1677ff' },
+          data: [{ value: [t.dims.teach, t.dims.feedback, t.dims.profess, t.dims.research], name: t.name }]
+        }]
+      });
+    }
+
+    // Trend chart
+    const trendEl = document.getElementById('trendChart');
+    if (trendEl) {
+      const trendChart = echarts.init(trendEl);
+      trendChart.setOption({
+        tooltip: { trigger: 'axis' },
+        grid: { top: 10, right: 10, bottom: 20, left: 40 },
+        xAxis: { type: 'category', data: ['第1期','第2期','第3期','第4期','第5期'], axisLine: { lineStyle: { color: '#e0e0e0' } }, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
+        yAxis: { type: 'value', min: 60, max: 100, splitLine: { lineStyle: { color: '#f0f0f0' } }, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
+        series: [{ type: 'line', data: t.trends, smooth: true, lineStyle: { color: '#1677ff', width: 2 }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(22,119,255,.2)' }, { offset: 1, color: 'rgba(22,119,255,.02)' }] } }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 6 }]
+      });
+    }
+  }, 100);
+
+  // Update xiaoan content
+  updateXiaoan(t);
+}
+
+function showList() {
+  document.getElementById('detailView').classList.add('hidden');
+  document.getElementById('listView').classList.remove('hidden');
+  document.getElementById('xiaoanFab').classList.add('hidden');
+  closeXiaoan();
+  renderList();
+}
+
+// ===== Weight Modal =====
+function openWeightModal() {
+  document.getElementById('w1').value = weights.teach;
+  document.getElementById('w2').value = weights.feedback;
+  document.getElementById('w3').value = weights.profess;
+  document.getElementById('w4').value = weights.research;
+  updateWeights();
+  document.getElementById('weightModal').classList.add('open');
+}
+function closeWeightModal() { document.getElementById('weightModal').classList.remove('open'); }
+function updateWeights() {
+  const v1 = +document.getElementById('w1').value;
+  const v2 = +document.getElementById('w2').value;
+  const v3 = +document.getElementById('w3').value;
+  const v4 = +document.getElementById('w4').value;
+  document.getElementById('w1v').textContent = v1 + '%';
+  document.getElementById('w2v').textContent = v2 + '%';
+  document.getElementById('w3v').textContent = v3 + '%';
+  document.getElementById('w4v').textContent = v4 + '%';
+  const total = v1 + v2 + v3 + v4;
+  const totalEl = document.getElementById('weightTotal');
+  const saveBtn = document.getElementById('weightSaveBtn');
+  if (total === 100) {
+    totalEl.className = 'weight-total ok';
+    totalEl.textContent = '合计：100%';
+    saveBtn.disabled = false;
+    saveBtn.style.opacity = '1';
+  } else {
+    totalEl.className = 'weight-total err';
+    totalEl.textContent = `合计：${total}%（需等于100%）`;
+    saveBtn.disabled = true;
+    saveBtn.style.opacity = '.5';
+  }
+}
+function saveWeights() {
+  const v1 = +document.getElementById('w1').value;
+  const v2 = +document.getElementById('w2').value;
+  const v3 = +document.getElementById('w3').value;
+  const v4 = +document.getElementById('w4').value;
+  if (v1 + v2 + v3 + v4 !== 100) return;
+  weights = { teach: v1, feedback: v2, profess: v3, research: v4 };
+  closeWeightModal();
+  if (currentTeacher) showDetail(currentTeacher.id);
+  else renderList();
+}
+
+// ===== Xiaoan =====
+let xiaoanOpen = false;
+function toggleXiaoan() {
+  xiaoanOpen = !xiaoanOpen;
+  document.getElementById('xiaoanOverlay').classList.toggle('open', xiaoanOpen);
+  document.getElementById('xiaoanPanel').classList.toggle('open', xiaoanOpen);
+}
+function closeXiaoan() {
+  xiaoanOpen = false;
+  document.getElementById('xiaoanOverlay').classList.remove('open');
+  document.getElementById('xiaoanPanel').classList.remove('open');
+}
+function updateXiaoan(t) {
+  const score = calcScore(t);
+  const dims = [
+    { name: '教学效果', val: t.dims.teach },
+    { name: '学员反馈', val: t.dims.feedback },
+    { name: '职业素养', val: t.dims.profess },
+    { name: '教研成果', val: t.dims.research }
+  ];
+  const sorted = [...dims].sort((a,b) => b.val - a.val);
+  const strongest = sorted[0];
+  const weakest = sorted[sorted.length - 1];
+
+  // Compute department average
+  const sameDept = teachers.filter(x => x.dept === t.dept);
+  const deptAvg = +(sameDept.reduce((s,x) => s + calcScore(x), 0) / sameDept.length).toFixed(1);
+  const samePost = teachers.filter(x => x.post === t.post);
+  const postAvg = +(samePost.reduce((s,x) => s + calcScore(x), 0) / samePost.length).toFixed(1);
+
+  document.getElementById('xiaoanBody').innerHTML = `
+    <div class="xa-section">
+      <div class="xa-section-title">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        教学优势分析
+      </div>
+      <div class="xa-item">
+        ${t.name}老师的<span class="xa-highlight">最强维度为${strongest.name}</span>（${strongest.val}分），
+        综合评分${score}分，${score >= 85 ? '处于优秀水平' : score >= 70 ? '处于良好水平' : '有较大提升空间'}。
+      </div>
+      <div class="xa-item">
+        ${t.passRate >= 90 ? `考试通过率达${t.passRate}%，培训效果显著；` : ''}
+        ${t.satisfaction >= 4.5 ? `学员满意度${t.satisfaction}/5.0，教学口碑良好。` : `学员满意度${t.satisfaction}/5.0，有提升空间。`}
+      </div>
+    </div>
+    <div class="xa-section">
+      <div class="xa-section-title">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        改进建议
+      </div>
+      <div class="xa-item">
+        <span class="xa-highlight">${weakest.name}</span>维度得分${weakest.val}分，为当前最短板。
+        ${weakest.name === '教研成果' ? '建议增加论文发表、课题申报，参与教材编写。' :
+          weakest.name === '学员反馈' ? '建议增强课堂互动，采用案例教学法提升学员参与感。' :
+          weakest.name === '教学效果' ? '建议优化教学设计，加强重难点练习，关注学员进步。' :
+          '建议提高出勤率，加强职业素养自我提升。'}
+      </div>
+      ${t.interact < 4.5 ? '<div class="xa-item">互动效果评分偏低，建议引入小组讨论、角色扮演等互动教学方式。</div>' : ''}
+    </div>
+    <div class="xa-section">
+      <div class="xa-section-title">
+        <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
+        与同岗位对比
+      </div>
+      <div class="xa-compare-bar">
+        <span class="cb-label">${t.name}</span>
+        <div class="cb-bar"><div class="cb-fill" style="width:${score}%;background:#1677ff"></div></div>
+        <span class="cb-val" style="color:#1677ff">${score}</span>
+      </div>
+      <div class="xa-compare-bar">
+        <span class="cb-label">${t.dept}均值</span>
+        <div class="cb-bar"><div class="cb-fill" style="width:${deptAvg}%;background:#52c41a"></div></div>
+        <span class="cb-val" style="color:#52c41a">${deptAvg}</span>
+      </div>
+      <div class="xa-compare-bar">
+        <span class="cb-label">${t.post}均值</span>
+        <div class="cb-bar"><div class="cb-fill" style="width:${postAvg}%;background:#fa8c16"></div></div>
+        <span class="cb-val" style="color:#fa8c16">${postAvg}</span>
+      </div>
+      <div class="xa-item" style="margin-top:8px;">
+        ${score > postAvg ? `综合评分<span class="xa-highlight">高于</span>同岗位平均${(score - postAvg).toFixed(1)}分` : `综合评分<span class="xa-highlight">低于</span>同岗位平均${(postAvg - score).toFixed(1)}分`}，
+        ${score > deptAvg ? `高于部门平均${(score - deptAvg).toFixed(1)}分。` : `低于部门平均${(deptAvg - score).toFixed(1)}分。`}
+      </div>
+    </div>
+  `;
+}
+
+// Init
+renderList();
+</script>
+</body>
+</html>
