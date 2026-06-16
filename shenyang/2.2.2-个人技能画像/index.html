@@ -30,19 +30,8 @@
       justify-content: space-between;
       backdrop-filter: blur(8px);
     }
-    .page-header h2 {
-      font-size: 18px;
-      font-weight: 600;
-      color: #e8eef7;
-      letter-spacing: 2px;
-    }
-    .header-time {
-      font-size: 13px;
-      color: #8eabc5;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+    .page-header h2 { font-size: 18px; font-weight: 600; color: #e8eef7; letter-spacing: 2px; }
+    .header-time { font-size: 13px; color: #8eabc5; display: flex; align-items: center; gap: 16px; }
     .header-time .date-display { color: #4fc3f7; }
 
     /* ===== Main Layout ===== */
@@ -72,82 +61,40 @@
       align-items: center;
       justify-content: space-between;
     }
-    .card-header h4 {
-      font-size: 14px;
-      font-weight: 600;
-      color: #e8eef7;
-      padding-left: 10px;
-      border-left: 3px solid #00e5ff;
-    }
-    .card-header .hint {
-      font-size: 11px;
-      color: #5a7a9a;
-    }
+    .card-header h4 { font-size: 14px; font-weight: 600; color: #e8eef7; padding-left: 10px; border-left: 3px solid #00e5ff; }
+    .card-header .hint { font-size: 11px; color: #5a7a9a; }
     .card-body { padding: 16px; }
 
     /* ===== Profile Card ===== */
-    .profile-card .card-body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
+    .profile-card .card-body { display: flex; flex-direction: column; align-items: center; text-align: center; }
     .avatar-wrap {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
+      width: 72px; height: 72px; border-radius: 50%;
       background: linear-gradient(135deg, #0d47a1, #1565c0);
       border: 2px solid rgba(0,229,255,0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 10px;
-      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px; position: relative;
     }
-    .avatar-wrap::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,229,255,0.15);
-    }
+    .avatar-wrap::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid rgba(0,229,255,0.15); }
     .avatar-text { color: #4fc3f7; font-size: 28px; font-weight: 700; }
     .profile-name { font-size: 17px; font-weight: 600; color: #e8eef7; margin-bottom: 2px; }
     .profile-position { font-size: 12px; color: #5a7a9a; margin-bottom: 14px; }
-
     .profile-score-box {
       width: 100%;
       background: linear-gradient(135deg, rgba(0,229,255,0.08), rgba(0,100,200,0.12));
       border: 1px solid rgba(0,229,255,0.15);
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 14px;
-      text-align: center;
+      border-radius: 8px; padding: 12px; margin-bottom: 14px; text-align: center;
     }
     .profile-score-label { font-size: 11px; color: #5a7a9a; margin-bottom: 4px; }
     .profile-score-value { font-size: 36px; font-weight: 700; color: #00e5ff; }
     .profile-score-unit { font-size: 13px; color: #5a7a9a; margin-left: 2px; }
-
     .profile-info { width: 100%; }
-    .profile-info-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 7px 0;
-      border-bottom: 1px solid rgba(0,200,255,0.06);
-      font-size: 13px;
-    }
+    .profile-info-item { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(0,200,255,0.06); font-size: 13px; }
     .profile-info-item:last-child { border-bottom: none; }
     .profile-info-item .label { color: #5a7a9a; }
     .profile-info-item .value { color: #c8ddf0; font-weight: 500; }
 
     /* ===== Tags ===== */
-    .tag {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 3px;
-      font-size: 11px;
-      line-height: 18px;
-    }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; line-height: 18px; }
     .tag-cyan { background: rgba(0,229,255,0.12); color: #00e5ff; border: 1px solid rgba(0,229,255,0.25); }
     .tag-green { background: rgba(0,230,118,0.12); color: #69f0ae; border: 1px solid rgba(0,230,118,0.25); }
     .tag-orange { background: rgba(255,171,0,0.12); color: #ffab00; border: 1px solid rgba(255,171,0,0.25); }
@@ -160,32 +107,11 @@
     /* ===== Donut + Stats ===== */
     .donut-container { width: 100%; height: 190px; }
     .mastery-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
-    .mastery-stat {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: #8eabc5;
-      padding: 5px 8px;
-      background: rgba(0,100,200,0.08);
-      border-radius: 4px;
-    }
+    .mastery-stat { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #8eabc5; padding: 5px 8px; background: rgba(0,100,200,0.08); border-radius: 4px; }
     .mastery-stat .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .mastery-stat .num { font-weight: 600; color: #c8ddf0; margin-left: auto; font-size: 12px; }
-
-    .stat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .stat-box {
-      background: rgba(0,100,200,0.08);
-      border: 1px solid rgba(0,200,255,0.08);
-      border-radius: 6px;
-      padding: 8px;
-      text-align: center;
-    }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .stat-box { background: rgba(0,100,200,0.08); border: 1px solid rgba(0,200,255,0.08); border-radius: 6px; padding: 8px; text-align: center; }
     .stat-box .stat-label { font-size: 11px; color: #5a7a9a; }
     .stat-box .stat-value { font-size: 20px; font-weight: 700; color: #c8ddf0; margin-top: 2px; }
     .stat-box .stat-value.accent { color: #4fc3f7; }
@@ -193,378 +119,188 @@
 
     /* ===== Tables ===== */
     table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    table th {
-      background: rgba(0,60,120,0.3);
-      padding: 8px 12px;
-      text-align: left;
-      font-weight: 600;
-      color: #8eabc5;
-      border-bottom: 1px solid rgba(0,200,255,0.1);
-      white-space: nowrap;
-      font-size: 12px;
-    }
-    table td {
-      padding: 8px 12px;
-      border-bottom: 1px solid rgba(0,200,255,0.06);
-      color: #8eabc5;
-    }
+    table th { background: rgba(0,60,120,0.3); padding: 8px 12px; text-align: left; font-weight: 600; color: #8eabc5; border-bottom: 1px solid rgba(0,200,255,0.1); white-space: nowrap; font-size: 12px; }
+    table td { padding: 8px 12px; border-bottom: 1px solid rgba(0,200,255,0.06); color: #8eabc5; }
     table tr:hover td { background: rgba(0,100,200,0.1); }
     table tr.highlighted td { background: rgba(0,229,255,0.08); }
 
-    /* Tab bar */
-    .card-tabs {
-      display: flex;
-      border-bottom: 1px solid rgba(0,200,255,0.1);
-      padding: 0 16px;
-      background: rgba(0,40,80,0.3);
-    }
-    .card-tab {
-      padding: 10px 14px;
-      cursor: pointer;
-      font-size: 13px;
-      color: #5a7a9a;
-      position: relative;
-      transition: color .2s;
-    }
+    .card-tabs { display: flex; border-bottom: 1px solid rgba(0,200,255,0.1); padding: 0 16px; background: rgba(0,40,80,0.3); }
+    .card-tab { padding: 10px 14px; cursor: pointer; font-size: 13px; color: #5a7a9a; position: relative; transition: color .2s; }
     .card-tab:hover { color: #4fc3f7; }
     .card-tab.active { color: #00e5ff; font-weight: 500; }
-    .card-tab.active::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 14px;
-      right: 14px;
-      height: 2px;
-      background: #00e5ff;
-      border-radius: 1px;
-      box-shadow: 0 0 6px rgba(0,229,255,0.5);
-    }
+    .card-tab.active::after { content: ''; position: absolute; bottom: 0; left: 14px; right: 14px; height: 2px; background: #00e5ff; border-radius: 1px; box-shadow: 0 0 6px rgba(0,229,255,0.5); }
     .card-tab-content { display: none; }
     .card-tab-content.active { display: block; }
 
-    /* Progress bar */
-    .progress-bar {
-      background: rgba(0,60,120,0.3);
-      border-radius: 100px;
-      height: 5px;
-      overflow: hidden;
-      width: 80px;
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 6px;
-    }
+    .progress-bar { background: rgba(0,60,120,0.3); border-radius: 100px; height: 5px; overflow: hidden; width: 80px; display: inline-block; vertical-align: middle; margin-right: 6px; }
     .progress-bar-inner { height: 100%; border-radius: 100px; transition: width .3s; }
 
-    /* Weakness tags */
-    .weakness-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 3px;
-      font-size: 11px;
-    }
+    .weakness-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 3px; font-size: 11px; }
     .weakness-high { background: rgba(255,82,82,0.15); color: #ff5252; }
     .weakness-medium { background: rgba(255,171,0,0.15); color: #ffab00; }
     .weakness-low { background: rgba(79,195,247,0.15); color: #4fc3f7; }
 
     /* ===== Digital Human - Idle Avatar ===== */
     .xiaoan-fab {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      z-index: 900;
-      cursor: grab;
-      user-select: none;
+      position: fixed; bottom: 28px; right: 28px; z-index: 900;
+      cursor: grab; user-select: none;
     }
     .xiaoan-fab:active { cursor: grabbing; }
     .xiaoan-fab-inner {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 2px solid rgba(0,229,255,0.5);
-      position: relative;
+      width: 80px; height: 80px; border-radius: 50%; overflow: hidden;
+      border: 2px solid rgba(0,229,255,0.5); position: relative;
       background: #0a1a3a;
       box-shadow: 0 0 20px rgba(0,229,255,0.2), 0 4px 16px rgba(0,0,0,0.4);
       transition: transform .2s;
     }
     .xiaoan-fab:hover .xiaoan-fab-inner { transform: scale(1.06); }
-    .xiaoan-fab-inner img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
+    .xiaoan-fab-inner img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .xiaoan-pulse { position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(0,229,255,0.5); animation: xiaoanPulse 2.5s ease-out infinite; pointer-events: none; }
+    .xiaoan-pulse-2 { position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(0,229,255,0.3); animation: xiaoanPulse 2.5s ease-out 1.2s infinite; pointer-events: none; }
+    @keyframes xiaoanPulse { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.6); opacity: 0; } }
+    .xiaoan-label { text-align: center; margin-top: 6px; font-size: 12px; color: #00e5ff; font-weight: 500; text-shadow: 0 0 8px rgba(0,229,255,0.3); }
+
+    /* ===== Overlay ===== */
+    .xiaoan-overlay {
+      position: fixed; inset: 0; z-index: 899;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(3px);
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
     }
-    .xiaoan-pulse {
-      position: absolute;
-      inset: -6px;
-      border-radius: 50%;
-      border: 2px solid rgba(0,229,255,0.5);
-      animation: xiaoanPulse 2.5s ease-out infinite;
+    .xiaoan-overlay.open { opacity: 1; pointer-events: all; }
+
+    /* ===== Digital Human - Panel Wrapper (character + panel side by side) ===== */
+    .xiaoan-wrapper {
+      position: fixed; z-index: 901;
+      display: flex; align-items: flex-end; gap: 0;
+      transform: scale(0.4); transform-origin: bottom right;
+      opacity: 0; pointer-events: none;
+      transition: transform .35s cubic-bezier(.4,0,.2,1), opacity .25s ease;
+    }
+    .xiaoan-wrapper.open { transform: scale(1); opacity: 1; pointer-events: all; }
+
+    .xiaoan-character-outer {
+      width: 160px; flex-shrink: 0;
+      display: flex; align-items: flex-end; justify-content: center;
+      margin-right: -20px; z-index: 2;
       pointer-events: none;
     }
-    .xiaoan-pulse-2 {
-      position: absolute;
-      inset: -6px;
-      border-radius: 50%;
-      border: 2px solid rgba(0,229,255,0.3);
-      animation: xiaoanPulse 2.5s ease-out 1.2s infinite;
-      pointer-events: none;
-    }
-    @keyframes xiaoanPulse {
-      0% { transform: scale(1); opacity: .7; }
-      100% { transform: scale(1.6); opacity: 0; }
-    }
-    .xiaoan-label {
-      text-align: center;
-      margin-top: 6px;
-      font-size: 12px;
-      color: #00e5ff;
-      font-weight: 500;
-      text-shadow: 0 0 8px rgba(0,229,255,0.3);
+    .xiaoan-character-outer img {
+      max-height: 360px; max-width: 150px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 20px rgba(0,0,0,0.4));
     }
 
-    /* ===== Digital Human - Expanded Panel ===== */
+    /* ===== Digital Human - White Panel ===== */
     .xiaoan-panel {
-      position: fixed;
-      z-index: 901;
-      width: 560px;
-      background: rgba(8,25,65,0.94);
-      border: 1px solid rgba(0,229,255,0.25);
-      border-radius: 10px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 0 30px rgba(0,229,255,0.1);
-      backdrop-filter: blur(12px);
-      display: flex;
-      flex-direction: column;
-      transform: scale(0.4);
-      transform-origin: bottom right;
-      opacity: 0;
-      pointer-events: none;
-      transition: transform .35s cubic-bezier(.4,0,.2,1), opacity .25s ease;
-      max-height: 600px;
-    }
-    .xiaoan-panel.open {
-      transform: scale(1);
-      opacity: 1;
-      pointer-events: all;
-    }
-    .xiaoan-panel::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.5), transparent);
+      width: 440px; z-index: 1;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05);
+      display: flex; flex-direction: column;
+      max-height: 520px;
+      position: relative;
     }
 
     .xiaoan-panel-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      border-bottom: 1px solid rgba(0,200,255,0.12);
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 48px 14px 20px;
+      border-bottom: 1px solid #eee;
       flex-shrink: 0;
     }
-    .xiaoan-panel-header .title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #e8eef7;
-      flex: 1;
-    }
-    .xiaoan-panel-header .subtitle {
-      font-size: 11px;
-      color: #5a7a9a;
-    }
-    .xiaoan-close {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #5a7a9a;
-      padding: 2px 6px;
-      border-radius: 4px;
-      transition: all .2s;
-      line-height: 1;
-    }
-    .xiaoan-close:hover { background: rgba(0,200,255,0.1); color: #e8eef7; }
+    .xiaoan-panel-header .title { font-size: 16px; font-weight: 700; color: #1a1a2e; flex: 1; }
+    .xiaoan-panel-header .subtitle { font-size: 11px; color: #999; }
 
-    .xiaoan-panel-body {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      min-height: 0;
+    .xiaoan-close {
+      position: absolute; top: 12px; right: 12px;
+      background: #f0f0f0; border: none;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; cursor: pointer; color: #666;
+      transition: all .2s; line-height: 1;
     }
-    .xiaoan-character {
-      width: 180px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 0 8px 12px;
-      background: linear-gradient(180deg, transparent 0%, rgba(0,229,255,0.03) 100%);
-      border-right: 1px solid rgba(0,200,255,0.08);
-    }
-    .xiaoan-character img {
-      max-height: 220px;
-      max-width: 160px;
-      object-fit: contain;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
-    }
+    .xiaoan-close:hover { background: #e0e0e0; color: #333; }
+
     .xiaoan-content-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 14px 16px;
-      min-height: 0;
+      flex: 1; overflow-y: auto;
+      padding: 16px 20px; min-height: 0;
     }
     .xiaoan-content-area::-webkit-scrollbar { width: 4px; }
-    .xiaoan-content-area::-webkit-scrollbar-thumb { background: rgba(0,200,255,0.2); border-radius: 4px; }
-    .xiaoan-content-area::-webkit-scrollbar-thumb:hover { background: rgba(0,200,255,0.35); }
+    .xiaoan-content-area::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
 
-    /* Analysis sections */
-    .xa-section { margin-bottom: 14px; }
+    /* Analysis sections - light theme */
+    .xa-section { margin-bottom: 16px; }
     .xa-section-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #00e5ff;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 13px; font-weight: 600; color: #1565c0;
+      margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
     }
     .xa-section-title .xa-icon {
-      width: 16px;
-      height: 16px;
-      background: rgba(0,229,255,0.12);
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      width: 18px; height: 18px; background: #e3f2fd;
+      border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .xa-section-title .xa-icon svg { width: 10px; height: 10px; fill: #00e5ff; }
-    .xa-text {
-      font-size: 13px;
-      line-height: 1.85;
-      color: #8eabc5;
-    }
-    .xa-text .hl { color: #00e5ff; font-weight: 500; }
-    .xa-text .warn { color: #ffab00; font-weight: 500; }
-    .xa-text .danger { color: #ff5252; font-weight: 500; }
+    .xa-section-title .xa-icon svg { width: 11px; height: 11px; fill: #1565c0; }
+    .xa-text { font-size: 13px; line-height: 1.85; color: #555; }
+    .xa-text .hl { color: #1565c0; font-weight: 600; }
+    .xa-text .warn { color: #e65100; font-weight: 600; }
+    .xa-text .danger { color: #c62828; font-weight: 600; }
 
-    /* Action buttons */
+    /* Action buttons - light theme */
     .xiaoan-actions {
-      padding: 10px 16px;
-      border-top: 1px solid rgba(0,200,255,0.12);
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      flex-shrink: 0;
+      padding: 12px 20px;
+      border-top: 1px solid #eee;
+      display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0;
     }
     .xa-btn {
-      padding: 6px 12px;
-      border-radius: 5px;
-      font-size: 12px;
-      cursor: pointer;
-      border: 1px solid rgba(0,200,255,0.25);
-      background: rgba(0,60,120,0.2);
-      color: #8eabc5;
-      transition: all .2s;
-      font-family: inherit;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      padding: 7px 14px; border-radius: 8px; font-size: 12px;
+      cursor: pointer; border: 1px solid #d0d0d0;
+      background: #fafafa; color: #555;
+      transition: all .2s; font-family: inherit;
+      display: inline-flex; align-items: center; gap: 5px;
     }
-    .xa-btn:hover { border-color: #00e5ff; color: #00e5ff; background: rgba(0,229,255,0.08); }
-    .xa-btn.active { background: rgba(0,229,255,0.15); color: #00e5ff; border-color: #00e5ff; }
+    .xa-btn:hover { border-color: #1565c0; color: #1565c0; background: #e3f2fd; }
+    .xa-btn.active { background: #1565c0; color: #fff; border-color: #1565c0; }
     .xa-btn svg { width: 13px; height: 13px; }
 
     /* Typing cursor */
-    .typing-cursor {
-      display: inline-block;
-      width: 2px;
-      height: 13px;
-      background: #00e5ff;
-      margin-left: 2px;
-      animation: tcBlink .8s step-end infinite;
-      vertical-align: text-bottom;
-    }
+    .typing-cursor { display: inline-block; width: 2px; height: 13px; background: #1565c0; margin-left: 2px; animation: tcBlink .8s step-end infinite; vertical-align: text-bottom; }
     @keyframes tcBlink { 50% { opacity: 0; } }
 
-    /* Broadcasting */
+    /* Broadcasting - light */
     .broadcast-bar {
-      display: none;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      background: rgba(0,229,255,0.08);
-      border: 1px solid rgba(0,229,255,0.15);
-      border-radius: 5px;
-      font-size: 11px;
-      color: #00e5ff;
-      margin-bottom: 10px;
+      display: none; align-items: center; gap: 6px;
+      padding: 8px 12px; background: #e3f2fd;
+      border: 1px solid #bbdefb; border-radius: 8px;
+      font-size: 12px; color: #1565c0; margin-bottom: 12px;
     }
     .broadcast-bar.active { display: flex; }
     .sound-wave { display: flex; align-items: center; gap: 2px; height: 14px; }
-    .sound-wave span {
-      display: block;
-      width: 3px;
-      background: #00e5ff;
-      border-radius: 2px;
-      animation: swAnim 1s ease-in-out infinite;
-    }
+    .sound-wave span { display: block; width: 3px; background: #1565c0; border-radius: 2px; animation: swAnim 1s ease-in-out infinite; }
     .sound-wave span:nth-child(1) { height: 4px; animation-delay: 0s; }
     .sound-wave span:nth-child(2) { height: 8px; animation-delay: .15s; }
     .sound-wave span:nth-child(3) { height: 12px; animation-delay: .3s; }
     .sound-wave span:nth-child(4) { height: 8px; animation-delay: .45s; }
     .sound-wave span:nth-child(5) { height: 4px; animation-delay: .6s; }
-    @keyframes swAnim {
-      0%, 100% { transform: scaleY(0.4); }
-      50% { transform: scaleY(1); }
-    }
+    @keyframes swAnim { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
 
-    /* Walkthrough dimension highlight */
+    /* Walkthrough dimension card - light */
     .dim-highlight {
-      background: rgba(0,229,255,0.06);
-      border-left: 3px solid #00e5ff;
-      padding: 10px 14px;
-      border-radius: 0 6px 6px 0;
-      margin-bottom: 10px;
+      background: #f8f9fa; border-left: 4px solid #1565c0;
+      padding: 14px 16px; border-radius: 0 10px 10px 0; margin-bottom: 12px;
     }
-    .dim-highlight .dh-name { font-weight: 600; color: #00e5ff; font-size: 14px; }
-    .dim-highlight .dh-score { font-size: 22px; font-weight: 700; }
+    .dim-highlight .dh-name { font-weight: 700; color: #1a1a2e; font-size: 15px; }
+    .dim-highlight .dh-score { font-size: 28px; font-weight: 800; }
 
-    /* Training plan inline */
-    .plan-stage {
-      padding: 10px 12px;
-      background: rgba(0,100,200,0.08);
-      border: 1px solid rgba(0,200,255,0.1);
-      border-radius: 6px;
-      margin-bottom: 8px;
-    }
-    .plan-stage-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: #4fc3f7;
-      margin-bottom: 6px;
-    }
-    .plan-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: #8eabc5;
-      padding: 4px 0;
-    }
+    /* Training plan - light */
+    .plan-stage { padding: 12px 14px; background: #f8f9fa; border: 1px solid #e8e8e8; border-radius: 10px; margin-bottom: 10px; }
+    .plan-stage-title { font-size: 13px; font-weight: 700; color: #1565c0; margin-bottom: 8px; }
+    .plan-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #555; padding: 5px 0; }
     .plan-item .pi-name { flex: 1; }
-    .plan-item .pi-dur { color: #5a7a9a; font-size: 11px; }
-    .plan-item .pi-priority {
-      font-size: 10px;
-      padding: 1px 6px;
-      border-radius: 3px;
-    }
-    .pi-high { background: rgba(255,82,82,0.15); color: #ff5252; }
-    .pi-med { background: rgba(255,171,0,0.15); color: #ffab00; }
-    .pi-low { background: rgba(79,195,247,0.15); color: #4fc3f7; }
+    .plan-item .pi-dur { color: #999; font-size: 11px; }
+    .plan-item .pi-priority { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+    .pi-high { background: #ffebee; color: #c62828; }
+    .pi-med { background: #fff3e0; color: #e65100; }
+    .pi-low { background: #e3f2fd; color: #1565c0; }
 
     /* Responsive */
     @media (max-width: 1200px) {
@@ -586,18 +322,14 @@
 
 <!-- Main Content -->
 <div class="main-content">
-  <!-- Top Row -->
   <div class="top-row">
-    <!-- Profile Card -->
     <div class="card profile-card">
       <div class="card-header">
         <h4>基本信息</h4>
         <span class="tag tag-cyan">中级</span>
       </div>
       <div class="card-body">
-        <div class="avatar-wrap">
-          <span class="avatar-text">安</span>
-        </div>
+        <div class="avatar-wrap"><span class="avatar-text">安</span></div>
         <div class="profile-name">安涛</div>
         <div class="profile-position">调车长 / 延安北车站</div>
         <div class="profile-score-box">
@@ -613,7 +345,6 @@
       </div>
     </div>
 
-    <!-- Radar Chart -->
     <div class="card">
       <div class="card-header">
         <h4>能力雷达图</h4>
@@ -624,11 +355,8 @@
       </div>
     </div>
 
-    <!-- Mastery Donut -->
     <div class="card">
-      <div class="card-header">
-        <h4>能力项掌握情况</h4>
-      </div>
+      <div class="card-header"><h4>能力项掌握情况</h4></div>
       <div class="card-body">
         <div id="donutChart" class="donut-container"></div>
         <div class="mastery-stats">
@@ -638,30 +366,16 @@
           <div class="mastery-stat"><span class="dot" style="background:#ff5252;"></span>未掌握<span class="num">1个 6%</span></div>
         </div>
         <div class="stat-grid">
-          <div class="stat-box">
-            <div class="stat-label">涉及能力项数</div>
-            <div class="stat-value">18<span class="stat-suffix"> 个</span></div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">考试次数</div>
-            <div class="stat-value accent">21<span class="stat-suffix"> 次</span></div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">练习次数</div>
-            <div class="stat-value">0<span class="stat-suffix"> 次</span></div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">未测评能力项数</div>
-            <div class="stat-value">0<span class="stat-suffix"> 个</span></div>
-          </div>
+          <div class="stat-box"><div class="stat-label">涉及能力项数</div><div class="stat-value">18<span class="stat-suffix"> 个</span></div></div>
+          <div class="stat-box"><div class="stat-label">考试次数</div><div class="stat-value accent">21<span class="stat-suffix"> 次</span></div></div>
+          <div class="stat-box"><div class="stat-label">练习次数</div><div class="stat-value">0<span class="stat-suffix"> 次</span></div></div>
+          <div class="stat-box"><div class="stat-label">未测评能力项数</div><div class="stat-value">0<span class="stat-suffix"> 个</span></div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Row -->
   <div class="bottom-row">
-    <!-- Training Data Table -->
     <div class="card">
       <div class="card-tabs">
         <div class="card-tab active" data-tab="tab-ability" onclick="switchTab(this,'tab-ability')">培训数据</div>
@@ -671,68 +385,32 @@
       <div class="card-body" style="padding-top:10px;">
         <div id="tab-ability" class="card-tab-content active">
           <table id="abilityTable">
-            <thead>
-              <tr>
-                <th style="width:40px;">序号</th>
-                <th>能力项种类</th>
-                <th>能力项名称</th>
-                <th style="width:90px;">测评值</th>
-                <th style="width:70px;">考评分数</th>
-                <th style="width:80px;">掌握程度</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th style="width:40px;">序号</th><th>能力项种类</th><th>能力项名称</th>
+              <th style="width:90px;">测评值</th><th style="width:70px;">考评分数</th><th style="width:80px;">掌握程度</th>
+            </tr></thead>
             <tbody id="abilityTableBody"></tbody>
           </table>
         </div>
         <div id="tab-exam" class="card-tab-content">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:40px;">序号</th>
-                <th>考试名称</th>
-                <th>考试日期</th>
-                <th style="width:70px;">得分</th>
-                <th style="width:70px;">结果</th>
-              </tr>
-            </thead>
-            <tbody id="examTableBody"></tbody>
-          </table>
+          <table><thead><tr>
+            <th style="width:40px;">序号</th><th>考试名称</th><th>考试日期</th><th style="width:70px;">得分</th><th style="width:70px;">结果</th>
+          </tr></thead><tbody id="examTableBody"></tbody></table>
         </div>
         <div id="tab-problem" class="card-tab-content">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:40px;">序号</th>
-                <th>能力项名称</th>
-                <th>H 类问题</th>
-                <th>A1 类问题</th>
-                <th>A2 类问题</th>
-                <th>B 类问题</th>
-              </tr>
-            </thead>
-            <tbody id="problemTableBody"></tbody>
-          </table>
+          <table><thead><tr>
+            <th style="width:40px;">序号</th><th>能力项名称</th><th>H 类问题</th><th>A1 类问题</th><th>A2 类问题</th><th>B 类问题</th>
+          </tr></thead><tbody id="problemTableBody"></tbody></table>
         </div>
       </div>
     </div>
 
-    <!-- Weak Points -->
     <div class="card">
-      <div class="card-header">
-        <h4>薄弱项分析</h4>
-        <span class="tag tag-red">需关注</span>
-      </div>
+      <div class="card-header"><h4>薄弱项分析</h4><span class="tag tag-red">需关注</span></div>
       <div class="card-body" style="padding-top:10px;">
         <div id="weaknessBarChart" style="width:100%;height:170px;"></div>
         <table style="margin-top:10px;">
-          <thead>
-            <tr>
-              <th style="width:36px;">序号</th>
-              <th>薄弱知识点</th>
-              <th>所属考核项</th>
-              <th style="width:60px;">紧迫度</th>
-            </tr>
-          </thead>
+          <thead><tr><th style="width:36px;">序号</th><th>薄弱知识点</th><th>所属考核项</th><th style="width:60px;">紧迫度</th></tr></thead>
           <tbody>
             <tr><td>1</td><td>调车信号机故障处理</td><td>非正常作业</td><td><span class="weakness-tag weakness-high">高</span></td></tr>
             <tr><td>2</td><td>制动机故障排查</td><td>特殊作业</td><td><span class="weakness-tag weakness-high">高</span></td></tr>
@@ -756,18 +434,21 @@
   <div class="xiaoan-label">小安</div>
 </div>
 
-<!-- ===== XiaoAn Expanded Panel ===== -->
-<div class="xiaoan-panel" id="xiaoanPanel">
-  <div class="xiaoan-panel-header">
-    <div>
-      <div class="title">小安 &middot; 智能分析</div>
-      <div class="subtitle">数字人智能助手</div>
-    </div>
-    <button class="xiaoan-close" onclick="closePanel()">&times;</button>
+<!-- ===== Overlay ===== -->
+<div class="xiaoan-overlay" id="xiaoanOverlay" onclick="closePanel()"></div>
+
+<!-- ===== XiaoAn Panel Wrapper (character outside + white panel) ===== -->
+<div class="xiaoan-wrapper" id="xiaoanWrapper">
+  <div class="xiaoan-character-outer">
+    <img src="./xiaoan.png" alt="小安" draggable="false">
   </div>
-  <div class="xiaoan-panel-body">
-    <div class="xiaoan-character">
-      <img src="./xiaoan.png" alt="小安" draggable="false">
+  <div class="xiaoan-panel" id="xiaoanPanel">
+    <button class="xiaoan-close" onclick="closePanel()">&times;</button>
+    <div class="xiaoan-panel-header">
+      <div>
+        <div class="title">小安 &middot; 智能分析</div>
+        <div class="subtitle">数字人智能助手</div>
+      </div>
     </div>
     <div class="xiaoan-content-area" id="xiaoanContentArea">
       <div class="broadcast-bar" id="broadcastBar">
@@ -776,31 +457,31 @@
       </div>
       <div id="xiaoanContent"></div>
     </div>
-  </div>
-  <div class="xiaoan-actions" id="xiaoanActions">
-    <button class="xa-btn" onclick="handleRecommendPlan()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      推荐培训计划
-    </button>
-    <button class="xa-btn" id="broadcastBtn" onclick="handleBroadcast()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-      语音播报
-    </button>
-    <button class="xa-btn" id="walkthroughBtn" onclick="startWalkthrough()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      逐项解读
-    </button>
+    <div class="xiaoan-actions" id="xiaoanActions">
+      <button class="xa-btn" onclick="handleRecommendPlan()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        推荐培训计划
+      </button>
+      <button class="xa-btn" id="broadcastBtn" onclick="handleBroadcast()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        语音播报
+      </button>
+      <button class="xa-btn" id="walkthroughBtn" onclick="startWalkthrough()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        逐项解读
+      </button>
+    </div>
   </div>
 </div>
 
 <script>
 // ========== DATA ==========
-const radarData = {
+var radarData = {
   labels: ['非正常作业', '特殊作业', '专业技能', '设备设施', '车站差异化', '安全知识'],
   values: [79, 79, 81, 91.2, 82, 94]
 };
 
-const abilityItems = [
+var abilityItems = [
   { category: '非正常作业', name: '调车信号机故障处理', score: 62, level: '未掌握' },
   { category: '非正常作业', name: '脱轨应急处置', score: 75, level: '一般' },
   { category: '非正常作业', name: '挤岔应急处理', score: 81, level: '良好' },
@@ -821,7 +502,7 @@ const abilityItems = [
   { category: '专业技能', name: '调车联控', score: 80, level: '优秀' },
 ];
 
-const examRecords = [
+var examRecords = [
   { name: '2025年一季度综合考核', date: '2025-03-15', score: 82, result: '合格' },
   { name: '非正常情况应急处置专项', date: '2025-03-01', score: 71, result: '不合格' },
   { name: '安全知识季度测试', date: '2025-02-20', score: 95, result: '优秀' },
@@ -834,7 +515,7 @@ const examRecords = [
   { name: '三季度综合技能考核', date: '2024-09-25', score: 80, result: '合格' },
 ];
 
-const problemData = [
+var problemData = [
   { name: '调车信号机故障处理', h: 3, a1: 2, a2: 1, b: 0 },
   { name: '脱轨应急处置', h: 1, a1: 2, a2: 2, b: 1 },
   { name: '制动机故障排查', h: 2, a1: 1, a2: 3, b: 0 },
@@ -846,11 +527,11 @@ const problemData = [
 
 // ========== HEADER TIME ==========
 function updateHeaderTime() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+  var now = new Date();
+  var y = now.getFullYear();
+  var m = String(now.getMonth() + 1).padStart(2, '0');
+  var d = String(now.getDate()).padStart(2, '0');
+  var days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
   document.getElementById('headerDate').textContent = y + '-' + m + '-' + d + ' ' + days[now.getDay()];
   document.getElementById('headerTime').textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
 }
@@ -858,88 +539,77 @@ setInterval(updateHeaderTime, 1000);
 updateHeaderTime();
 
 // ========== CHARTS ==========
-let radarChart, donutChart, weaknessChart;
+var radarChart, donutChart, weaknessChart;
+var darkTextColor = '#8eabc5';
+var darkSplitLine = 'rgba(0,200,255,0.08)';
+var darkAxisLine = 'rgba(0,200,255,0.12)';
+var HIGHLIGHT_COLOR = '#ff9800';
+var currentHighlightIndex = -1;
 
-const darkTextColor = '#8eabc5';
-const darkSplitLine = 'rgba(0,200,255,0.08)';
-const darkAxisLine = 'rgba(0,200,255,0.12)';
+function getRadarOption(highlightIdx) {
+  var indicators = radarData.labels.map(function(name, i) {
+    var label = name + '\n' + radarData.values[i];
+    return {
+      name: label, max: 100,
+      color: i === highlightIdx ? HIGHLIGHT_COLOR : '#8eabc5'
+    };
+  });
 
-function initRadarChart() {
-  radarChart = echarts.init(document.getElementById('radarChart'));
-  const option = {
-    tooltip: {
-      trigger: 'item',
-      backgroundColor: 'rgba(8,25,65,0.92)',
-      borderColor: 'rgba(0,229,255,0.3)',
-      textStyle: { color: '#e8eef7', fontSize: 12 }
-    },
+  var symbolSizes = radarData.labels.map(function(_, i) { return i === highlightIdx ? 12 : 6; });
+  var itemColors = radarData.labels.map(function(_, i) { return i === highlightIdx ? HIGHLIGHT_COLOR : '#00e5ff'; });
+
+  return {
+    tooltip: { trigger: 'item', backgroundColor: 'rgba(8,25,65,0.92)', borderColor: 'rgba(0,229,255,0.3)', textStyle: { color: '#e8eef7', fontSize: 12 } },
     radar: {
-      indicator: radarData.labels.map((name, i) => ({
-        name: name + '\n' + radarData.values[i],
-        max: 100
-      })),
-      shape: 'polygon',
-      splitNumber: 4,
-      axisName: { color: '#8eabc5', fontSize: 11 },
-      splitArea: {
-        areaStyle: {
-          color: [
-            'rgba(0,60,120,0.04)',
-            'rgba(0,60,120,0.08)',
-            'rgba(0,60,120,0.12)',
-            'rgba(0,60,120,0.16)'
-          ]
-        }
-      },
+      indicator: indicators,
+      shape: 'polygon', splitNumber: 4,
+      axisName: { fontSize: 11, rich: {} },
+      splitArea: { areaStyle: { color: ['rgba(0,60,120,0.04)','rgba(0,60,120,0.08)','rgba(0,60,120,0.12)','rgba(0,60,120,0.16)'] } },
       splitLine: { lineStyle: { color: darkSplitLine } },
       axisLine: { lineStyle: { color: darkAxisLine } }
     },
     series: [{
       type: 'radar',
       data: [{
-        value: radarData.values,
-        name: '能力值',
+        value: radarData.values, name: '能力值',
         areaStyle: { color: 'rgba(0,229,255,0.12)' },
         lineStyle: { color: '#00e5ff', width: 2 },
-        itemStyle: { color: '#00e5ff' },
+        itemStyle: { color: function(params) { return itemColors[params.dataIndex] || '#00e5ff'; } },
         symbol: 'circle',
-        symbolSize: 6
+        symbolSize: function(val, params) { return symbolSizes[params.dataIndex] || 6; }
       }]
     }]
   };
-  radarChart.setOption(option);
+}
+
+function initRadarChart() {
+  radarChart = echarts.init(document.getElementById('radarChart'));
+  radarChart.setOption(getRadarOption(-1));
 
   document.getElementById('radarChart').addEventListener('click', function(e) {
-    const rect = this.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const angle = Math.atan2(y - centerY, x - centerX);
-    const deg = ((angle * 180 / Math.PI) + 360 + 90) % 360;
-    const sectorSize = 360 / 6;
-    const index = Math.floor(deg / sectorSize);
-    if (index >= 0 && index < 6) {
-      highlightDimension(index);
-    }
+    var rect = this.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    var centerX = rect.width / 2;
+    var centerY = rect.height / 2;
+    var angle = Math.atan2(y - centerY, x - centerX);
+    var deg = ((angle * 180 / Math.PI) + 360 + 90) % 360;
+    var index = Math.floor(deg / 60);
+    if (index >= 0 && index < 6) highlightDimension(index);
   });
+}
+
+function highlightRadar(index) {
+  currentHighlightIndex = index;
+  radarChart.setOption(getRadarOption(index), true);
 }
 
 function initDonutChart() {
   donutChart = echarts.init(document.getElementById('donutChart'));
-  const option = {
-    tooltip: {
-      trigger: 'item',
-      formatter: '{b}: {c}个 ({d}%)',
-      backgroundColor: 'rgba(8,25,65,0.92)',
-      borderColor: 'rgba(0,229,255,0.3)',
-      textStyle: { color: '#e8eef7', fontSize: 12 }
-    },
+  donutChart.setOption({
+    tooltip: { trigger: 'item', formatter: '{b}: {c}个 ({d}%)', backgroundColor: 'rgba(8,25,65,0.92)', borderColor: 'rgba(0,229,255,0.3)', textStyle: { color: '#e8eef7', fontSize: 12 } },
     series: [{
-      type: 'pie',
-      radius: ['48%', '72%'],
-      center: ['50%', '50%'],
-      avoidLabelOverlap: false,
+      type: 'pie', radius: ['48%', '72%'], center: ['50%', '50%'], avoidLabelOverlap: false,
       itemStyle: { borderRadius: 3, borderColor: 'rgba(8,25,65,0.85)', borderWidth: 2 },
       label: { show: true, formatter: '{b}\n{c}个', fontSize: 10, color: '#8eabc5' },
       labelLine: { length: 8, length2: 6, lineStyle: { color: 'rgba(0,200,255,0.2)' } },
@@ -950,121 +620,64 @@ function initDonutChart() {
         { value: 1, name: '未掌握', itemStyle: { color: '#ff5252' } }
       ]
     }]
-  };
-  donutChart.setOption(option);
+  });
 }
 
 function initWeaknessChart() {
   weaknessChart = echarts.init(document.getElementById('weaknessBarChart'));
-  const items = ['调车信号机故障', '制动机故障排查', '脱轨应急处置', '道岔故障判断', '恶劣天气作业'];
-  const scores = [62, 68, 75, 78, 82];
-  const option = {
-    tooltip: {
-      trigger: 'axis',
-      backgroundColor: 'rgba(8,25,65,0.92)',
-      borderColor: 'rgba(0,229,255,0.3)',
-      textStyle: { color: '#e8eef7', fontSize: 12 }
-    },
+  var items = ['调车信号机故障', '制动机故障排查', '脱轨应急处置', '道岔故障判断', '恶劣天气作业'];
+  var scores = [62, 68, 75, 78, 82];
+  weaknessChart.setOption({
+    tooltip: { trigger: 'axis', backgroundColor: 'rgba(8,25,65,0.92)', borderColor: 'rgba(0,229,255,0.3)', textStyle: { color: '#e8eef7', fontSize: 12 } },
     grid: { left: 110, right: 30, top: 8, bottom: 16 },
-    xAxis: {
-      type: 'value',
-      max: 100,
-      splitLine: { lineStyle: { type: 'dashed', color: darkSplitLine } },
-      axisLabel: { fontSize: 10, color: '#5a7a9a' },
-      axisLine: { lineStyle: { color: darkAxisLine } }
-    },
-    yAxis: {
-      type: 'category',
-      data: items.reverse(),
-      axisLabel: { fontSize: 11, color: '#8eabc5' },
-      axisLine: { show: false },
-      axisTick: { show: false }
-    },
-    series: [{
-      type: 'bar',
-      data: scores.reverse().map(v => ({
-        value: v,
-        itemStyle: {
-          color: v < 70 ? '#ff5252' : v < 80 ? '#ffab00' : '#4fc3f7',
-          borderRadius: [0, 3, 3, 0]
-        }
-      })),
-      barWidth: 14,
-      label: { show: true, position: 'right', fontSize: 10, color: '#8eabc5' }
-    }]
-  };
-  weaknessChart.setOption(option);
+    xAxis: { type: 'value', max: 100, splitLine: { lineStyle: { type: 'dashed', color: darkSplitLine } }, axisLabel: { fontSize: 10, color: '#5a7a9a' }, axisLine: { lineStyle: { color: darkAxisLine } } },
+    yAxis: { type: 'category', data: items.reverse(), axisLabel: { fontSize: 11, color: '#8eabc5' }, axisLine: { show: false }, axisTick: { show: false } },
+    series: [{ type: 'bar', data: scores.reverse().map(function(v) { return { value: v, itemStyle: { color: v < 70 ? '#ff5252' : v < 80 ? '#ffab00' : '#4fc3f7', borderRadius: [0, 3, 3, 0] } }; }), barWidth: 14, label: { show: true, position: 'right', fontSize: 10, color: '#8eabc5' } }]
+  });
 }
 
 // ========== TABLES ==========
-let currentHighlightCategory = null;
+var currentHighlightCategory = null;
 
 function renderAbilityTable(filterCategory) {
-  const tbody = document.getElementById('abilityTableBody');
-  const items = filterCategory ? abilityItems.filter(i => i.category === filterCategory) : abilityItems;
-  tbody.innerHTML = items.map((item, i) => {
-    const barColor = item.score >= 90 ? '#69f0ae' : item.score >= 80 ? '#4fc3f7' : item.score >= 70 ? '#ffab00' : '#ff5252';
-    const levelTag = item.level === '优秀' ? 'tag-green' : item.level === '良好' ? 'tag-blue' : item.level === '一般' ? 'tag-orange' : 'tag-red';
-    const highlighted = filterCategory && item.category === filterCategory ? ' class="highlighted"' : '';
-    return `<tr${highlighted}>
-      <td>${i + 1}</td>
-      <td>${item.category}</td>
-      <td>${item.name}</td>
-      <td><div class="progress-bar"><div class="progress-bar-inner" style="width:${item.score}%;background:${barColor};"></div></div>${item.score}</td>
-      <td style="color:${barColor};font-weight:600;">${item.score}</td>
-      <td><span class="tag ${levelTag}">${item.level}</span></td>
-    </tr>`;
+  var tbody = document.getElementById('abilityTableBody');
+  var items = filterCategory ? abilityItems.filter(function(i) { return i.category === filterCategory; }) : abilityItems;
+  tbody.innerHTML = items.map(function(item, i) {
+    var barColor = item.score >= 90 ? '#69f0ae' : item.score >= 80 ? '#4fc3f7' : item.score >= 70 ? '#ffab00' : '#ff5252';
+    var levelTag = item.level === '优秀' ? 'tag-green' : item.level === '良好' ? 'tag-blue' : item.level === '一般' ? 'tag-orange' : 'tag-red';
+    var highlighted = filterCategory && item.category === filterCategory ? ' class="highlighted"' : '';
+    return '<tr' + highlighted + '><td>' + (i+1) + '</td><td>' + item.category + '</td><td>' + item.name + '</td><td><div class="progress-bar"><div class="progress-bar-inner" style="width:' + item.score + '%;background:' + barColor + ';"></div></div>' + item.score + '</td><td style="color:' + barColor + ';font-weight:600;">' + item.score + '</td><td><span class="tag ' + levelTag + '">' + item.level + '</span></td></tr>';
   }).join('');
 }
 
 function renderExamTable() {
-  const tbody = document.getElementById('examTableBody');
-  tbody.innerHTML = examRecords.map((r, i) => {
-    const resultTag = r.result === '优秀' ? 'tag-green' : r.result === '合格' ? 'tag-blue' : 'tag-red';
-    return `<tr>
-      <td>${i + 1}</td>
-      <td>${r.name}</td>
-      <td>${r.date}</td>
-      <td style="font-weight:600;color:#c8ddf0;">${r.score}</td>
-      <td><span class="tag ${resultTag}">${r.result}</span></td>
-    </tr>`;
+  var tbody = document.getElementById('examTableBody');
+  tbody.innerHTML = examRecords.map(function(r, i) {
+    var resultTag = r.result === '优秀' ? 'tag-green' : r.result === '合格' ? 'tag-blue' : 'tag-red';
+    return '<tr><td>' + (i+1) + '</td><td>' + r.name + '</td><td>' + r.date + '</td><td style="font-weight:600;color:#c8ddf0;">' + r.score + '</td><td><span class="tag ' + resultTag + '">' + r.result + '</span></td></tr>';
   }).join('');
 }
 
 function renderProblemTable() {
-  const tbody = document.getElementById('problemTableBody');
-  tbody.innerHTML = problemData.map((p, i) => `<tr>
-    <td>${i + 1}</td>
-    <td>${p.name}</td>
-    <td>${p.h > 0 ? '<span style="color:#ff5252;font-weight:600;">' + p.h + '</span>' : '0'}</td>
-    <td>${p.a1 > 0 ? '<span style="color:#ffab00;font-weight:600;">' + p.a1 + '</span>' : '0'}</td>
-    <td>${p.a2 > 0 ? '<span style="color:#ffab00;">' + p.a2 + '</span>' : '0'}</td>
-    <td>${p.b}</td>
-  </tr>`).join('');
+  var tbody = document.getElementById('problemTableBody');
+  tbody.innerHTML = problemData.map(function(p, i) {
+    return '<tr><td>' + (i+1) + '</td><td>' + p.name + '</td><td>' + (p.h > 0 ? '<span style="color:#ff5252;font-weight:600;">' + p.h + '</span>' : '0') + '</td><td>' + (p.a1 > 0 ? '<span style="color:#ffab00;font-weight:600;">' + p.a1 + '</span>' : '0') + '</td><td>' + (p.a2 > 0 ? '<span style="color:#ffab00;">' + p.a2 + '</span>' : '0') + '</td><td>' + p.b + '</td></tr>';
+  }).join('');
 }
 
 // ========== INTERACTIONS ==========
 function switchTab(el, tabId) {
-  el.parentElement.querySelectorAll('.card-tab').forEach(t => t.classList.remove('active'));
+  el.parentElement.querySelectorAll('.card-tab').forEach(function(t) { t.classList.remove('active'); });
   el.classList.add('active');
-  el.closest('.card').querySelectorAll('.card-tab-content').forEach(c => c.classList.remove('active'));
+  el.closest('.card').querySelectorAll('.card-tab-content').forEach(function(c) { c.classList.remove('active'); });
   document.getElementById(tabId).classList.add('active');
 }
 
 function highlightDimension(index) {
-  const category = radarData.labels[index];
+  var category = radarData.labels[index];
   currentHighlightCategory = currentHighlightCategory === category ? null : category;
   renderAbilityTable(currentHighlightCategory);
-  radarChart.setOption({
-    series: [{
-      data: [{
-        value: radarData.values,
-        areaStyle: { color: 'rgba(0,229,255,0.12)' },
-        lineStyle: { color: '#00e5ff', width: 2 },
-        itemStyle: { color: '#00e5ff' }
-      }]
-    }]
-  });
+  highlightRadar(currentHighlightCategory ? index : -1);
 }
 
 // ========== DRAGGABLE FAB ==========
@@ -1074,47 +687,29 @@ var dragStartX, dragStartY, fabStartX, fabStartY;
 var dragMoved = false;
 
 (function initDrag() {
-  const fab = document.getElementById('xiaoanFab');
-
+  var fab = document.getElementById('xiaoanFab');
   fab.addEventListener('mousedown', function(e) {
-    isDragging = true;
-    dragMoved = false;
-    dragStartX = e.clientX;
-    dragStartY = e.clientY;
-    const rect = fab.getBoundingClientRect();
-    fabStartX = rect.left;
-    fabStartY = rect.top;
+    isDragging = true; dragMoved = false;
+    dragStartX = e.clientX; dragStartY = e.clientY;
+    var rect = fab.getBoundingClientRect();
+    fabStartX = rect.left; fabStartY = rect.top;
     fab.style.transition = 'none';
     e.preventDefault();
   });
-
   document.addEventListener('mousemove', function(e) {
     if (!isDragging) return;
-    const dx = e.clientX - dragStartX;
-    const dy = e.clientY - dragStartY;
+    var dx = e.clientX - dragStartX;
+    var dy = e.clientY - dragStartY;
     if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragMoved = true;
     if (!dragMoved) return;
-
-    let newX = fabStartX + dx;
-    let newY = fabStartY + dy;
-    const maxX = window.innerWidth - fab.offsetWidth;
-    const maxY = window.innerHeight - fab.offsetHeight;
-    newX = Math.max(0, Math.min(newX, maxX));
-    newY = Math.max(0, Math.min(newY, maxY));
-
-    fab.style.left = newX + 'px';
-    fab.style.top = newY + 'px';
-    fab.style.right = 'auto';
-    fab.style.bottom = 'auto';
-    fabPos.x = newX;
-    fabPos.y = newY;
+    var newX = Math.max(0, Math.min(fabStartX + dx, window.innerWidth - fab.offsetWidth));
+    var newY = Math.max(0, Math.min(fabStartY + dy, window.innerHeight - fab.offsetHeight));
+    fab.style.left = newX + 'px'; fab.style.top = newY + 'px';
+    fab.style.right = 'auto'; fab.style.bottom = 'auto';
+    fabPos.x = newX; fabPos.y = newY;
   });
-
   document.addEventListener('mouseup', function() {
-    if (isDragging) {
-      isDragging = false;
-      fab.style.transition = '';
-    }
+    if (isDragging) { isDragging = false; fab.style.transition = ''; }
   });
 })();
 
@@ -1131,25 +726,25 @@ var walkthroughIndex = 0;
 
 function openPanel() {
   panelOpen = true;
-  const panel = document.getElementById('xiaoanPanel');
-  const fab = document.getElementById('xiaoanFab');
+  var wrapper = document.getElementById('xiaoanWrapper');
+  var overlay = document.getElementById('xiaoanOverlay');
+  var fab = document.getElementById('xiaoanFab');
   fab.style.display = 'none';
 
-  // Position panel near fab
-  const fabRect = fab.getBoundingClientRect();
-  let px = fabRect.left - 480;
-  let py = fabRect.top - 500;
+  var ww = window.innerWidth;
+  var wh = window.innerHeight;
+  var px = ww - 440 - 160 - 40;
+  var py = wh - 520 - 40;
   if (px < 10) px = 10;
   if (py < 10) py = 10;
-  if (px + 560 > window.innerWidth - 10) px = window.innerWidth - 570;
-  if (py + 600 > window.innerHeight - 10) py = window.innerHeight - 610;
 
-  panel.style.left = px + 'px';
-  panel.style.top = py + 'px';
-  panel.style.right = 'auto';
-  panel.style.bottom = 'auto';
-  panel.style.transformOrigin = 'bottom right';
-  panel.classList.add('open');
+  wrapper.style.left = px + 'px';
+  wrapper.style.top = py + 'px';
+  wrapper.style.right = 'auto';
+  wrapper.style.bottom = 'auto';
+  wrapper.style.transformOrigin = 'bottom right';
+  wrapper.classList.add('open');
+  overlay.classList.add('open');
 
   if (!document.getElementById('xiaoanContent').innerHTML) {
     showInitialAnalysis();
@@ -1158,16 +753,19 @@ function openPanel() {
 
 function closePanel() {
   panelOpen = false;
-  const panel = document.getElementById('xiaoanPanel');
-  const fab = document.getElementById('xiaoanFab');
-  panel.classList.remove('open');
+  var wrapper = document.getElementById('xiaoanWrapper');
+  var overlay = document.getElementById('xiaoanOverlay');
+  var fab = document.getElementById('xiaoanFab');
+  wrapper.classList.remove('open');
+  overlay.classList.remove('open');
   fab.style.display = '';
   isBroadcasting = false;
   document.getElementById('broadcastBar').classList.remove('active');
+  if (walkthroughMode) stopWalkthrough();
 }
 
 // ========== ANALYSIS CONTENT ==========
-const analysisData = {
+var analysisData = {
   overview: {
     title: '综合分析',
     icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
@@ -1191,61 +789,50 @@ const analysisData = {
 };
 
 function showInitialAnalysis() {
-  const container = document.getElementById('xiaoanContent');
+  var container = document.getElementById('xiaoanContent');
   container.innerHTML = '';
-  const sections = ['overview', 'weakness', 'suggestion', 'trend'];
-  let delay = 0;
-
-  sections.forEach((key) => {
-    const data = analysisData[key];
-    const section = document.createElement('div');
+  var sections = ['overview', 'weakness', 'suggestion', 'trend'];
+  var delay = 0;
+  sections.forEach(function(key) {
+    var data = analysisData[key];
+    var section = document.createElement('div');
     section.className = 'xa-section';
     section.style.opacity = '0';
     section.style.transform = 'translateY(8px)';
     section.style.transition = 'opacity .4s, transform .4s';
-    section.innerHTML = `
-      <div class="xa-section-title">
-        <span class="xa-icon">${data.icon}</span>
-        ${data.title}
-      </div>
-      <div class="xa-text" id="xa-text-${key}"></div>
-    `;
+    section.innerHTML = '<div class="xa-section-title"><span class="xa-icon">' + data.icon + '</span>' + data.title + '</div><div class="xa-text" id="xa-text-' + key + '"></div>';
     container.appendChild(section);
-
-    setTimeout(() => {
+    setTimeout(function() {
       section.style.opacity = '1';
       section.style.transform = 'translateY(0)';
-      typeText(`xa-text-${key}`, data.text, 12);
+      typeText('xa-text-' + key, data.text, 12);
     }, delay);
     delay += 900;
   });
 }
 
 function typeText(elementId, html, speed) {
-  const el = document.getElementById(elementId);
+  var el = document.getElementById(elementId);
   if (!el) return;
   el.innerHTML = '<span class="typing-cursor"></span>';
-
-  const regex = /(<[^>]+>)/g;
-  let lastIndex = 0;
-  let match;
-  const segments = [];
+  var regex = /(<[^>]+>)/g;
+  var lastIndex = 0, match;
+  var segments = [];
   while ((match = regex.exec(html)) !== null) {
     if (match.index > lastIndex) segments.push({ type: 'text', content: html.substring(lastIndex, match.index) });
     segments.push({ type: 'tag', content: match[1] });
     lastIndex = match.index + match[0].length;
   }
   if (lastIndex < html.length) segments.push({ type: 'text', content: html.substring(lastIndex) });
-
-  let si = 0, ci = 0, output = '';
+  var si = 0, ci = 0, output = '';
   function tick() {
     if (si >= segments.length) { el.innerHTML = html; return; }
-    const seg = segments[si];
+    var seg = segments[si];
     if (seg.type === 'tag') { output += seg.content; si++; tick(); return; }
     if (ci < seg.content.length) {
       output += seg.content[ci]; ci++;
       el.innerHTML = output + '<span class="typing-cursor"></span>';
-      const area = document.getElementById('xiaoanContentArea');
+      var area = document.getElementById('xiaoanContentArea');
       if (area) area.scrollTop = area.scrollHeight;
       setTimeout(tick, speed);
     } else { si++; ci = 0; tick(); }
@@ -1256,44 +843,40 @@ function typeText(elementId, html, speed) {
 // ========== BROADCAST ==========
 function handleBroadcast() {
   isBroadcasting = !isBroadcasting;
-  const bar = document.getElementById('broadcastBar');
-  const btn = document.getElementById('broadcastBtn');
+  var bar = document.getElementById('broadcastBar');
+  var btn = document.getElementById('broadcastBtn');
   if (isBroadcasting) {
-    bar.classList.add('active');
-    btn.classList.add('active');
+    bar.classList.add('active'); btn.classList.add('active');
     btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 停止播报';
-    setTimeout(() => {
+    setTimeout(function() {
       if (isBroadcasting) {
-        isBroadcasting = false;
-        bar.classList.remove('active');
-        btn.classList.remove('active');
+        isBroadcasting = false; bar.classList.remove('active'); btn.classList.remove('active');
         btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> 语音播报';
       }
     }, 8000);
   } else {
-    bar.classList.remove('active');
-    btn.classList.remove('active');
+    bar.classList.remove('active'); btn.classList.remove('active');
     btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> 语音播报';
   }
 }
 
 // ========== WALKTHROUGH ==========
-const walkthroughDimensions = radarData.labels.map((label, i) => {
-  const score = radarData.values[i];
-  const categoryItems = abilityItems.filter(a => a.category === label);
-  const weakItems = categoryItems.filter(a => a.score < 80);
-  let comment = '';
+var walkthroughDimensions = radarData.labels.map(function(label, i) {
+  var score = radarData.values[i];
+  var categoryItems = abilityItems.filter(function(a) { return a.category === label; });
+  var weakItems = categoryItems.filter(function(a) { return a.score < 80; });
+  var comment = '';
   if (score >= 90) comment = '表现优秀，继续保持。';
   else if (score >= 85) comment = '表现良好，略有提升空间。';
   else if (score >= 80) comment = '达到合格水平，建议适当巩固。';
   else comment = '低于平均水平，建议重点关注和加强训练。';
-  return { name: label, score, comment, itemCount: categoryItems.length, weakItems: weakItems.map(w => w.name), weakCount: weakItems.length };
+  return { name: label, score: score, comment: comment, itemCount: categoryItems.length, weakItems: weakItems.map(function(w) { return w.name; }), weakCount: weakItems.length };
 });
 
 function startWalkthrough() {
   walkthroughMode = true;
   walkthroughIndex = 0;
-  const btn = document.getElementById('walkthroughBtn');
+  var btn = document.getElementById('walkthroughBtn');
   btn.classList.add('active');
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 停止解读';
   btn.onclick = stopWalkthrough;
@@ -1302,50 +885,42 @@ function startWalkthrough() {
 
 function stopWalkthrough() {
   walkthroughMode = false;
-  const btn = document.getElementById('walkthroughBtn');
+  var btn = document.getElementById('walkthroughBtn');
   btn.classList.remove('active');
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 逐项解读';
   btn.onclick = startWalkthrough;
   currentHighlightCategory = null;
   renderAbilityTable(null);
+  highlightRadar(-1);
   showInitialAnalysis();
 }
 
 function showWalkthroughStep() {
   if (!walkthroughMode || walkthroughIndex >= walkthroughDimensions.length) { stopWalkthrough(); return; }
-  const dim = walkthroughDimensions[walkthroughIndex];
-  const container = document.getElementById('xiaoanContent');
-  highlightDimension(walkthroughIndex);
+  var dim = walkthroughDimensions[walkthroughIndex];
+  var container = document.getElementById('xiaoanContent');
 
-  const scoreColor = dim.score >= 90 ? '#69f0ae' : dim.score >= 80 ? '#4fc3f7' : '#ffab00';
-  let weakHtml = '';
+  currentHighlightCategory = dim.name;
+  renderAbilityTable(dim.name);
+  highlightRadar(walkthroughIndex);
+
+  var scoreColor = dim.score >= 90 ? '#2e7d32' : dim.score >= 80 ? '#1565c0' : '#e65100';
+  var weakHtml = '';
   if (dim.weakItems.length > 0) {
-    weakHtml = `<div style="margin-top:8px;padding:8px 10px;background:rgba(255,171,0,0.08);border:1px solid rgba(255,171,0,0.15);border-radius:4px;font-size:11px;color:#ffab00;">
-      <strong>薄弱子项：</strong>${dim.weakItems.join('、')}
-    </div>`;
+    weakHtml = '<div style="margin-top:10px;padding:8px 12px;background:#fff3e0;border:1px solid #ffe0b2;border-radius:6px;font-size:12px;color:#e65100;"><strong>薄弱子项：</strong>' + dim.weakItems.join('、') + '</div>';
   }
 
-  container.innerHTML = `
-    <div style="text-align:center;margin-bottom:10px;font-size:11px;color:#5a7a9a;">
-      维度解读 ${walkthroughIndex + 1} / ${walkthroughDimensions.length}
-    </div>
-    <div class="dim-highlight">
-      <div class="dh-name">${dim.name}</div>
-      <div style="margin:6px 0;"><span class="dh-score" style="color:${scoreColor}">${dim.score}</span><span style="color:#5a7a9a;font-size:12px;"> / 100</span></div>
-      <div style="font-size:12px;color:#8eabc5;">${dim.comment}</div>
-      <div style="margin-top:4px;font-size:11px;color:#5a7a9a;">涉及能力项 ${dim.itemCount} 个，薄弱项 ${dim.weakCount} 个</div>
-      ${weakHtml}
-    </div>
-    <div style="display:flex;justify-content:center;gap:10px;margin-top:14px;">
-      <button class="xa-btn" onclick="prevWalkthrough()" ${walkthroughIndex === 0 ? 'disabled style="opacity:.4;cursor:default;"' : ''}>上一项</button>
-      <button class="xa-btn active" onclick="nextWalkthrough()">
-        ${walkthroughIndex < walkthroughDimensions.length - 1 ? '下一项' : '完成解读'}
-      </button>
-    </div>
-    <div style="display:flex;justify-content:center;gap:4px;margin-top:10px;">
-      ${walkthroughDimensions.map((_, i) => `<div style="width:${i === walkthroughIndex ? '18px' : '6px'};height:3px;border-radius:2px;background:${i === walkthroughIndex ? '#00e5ff' : 'rgba(0,200,255,0.2)'};transition:all .3s;"></div>`).join('')}
-    </div>
-  `;
+  container.innerHTML = '<div style="text-align:center;margin-bottom:12px;font-size:12px;color:#999;">维度解读 ' + (walkthroughIndex + 1) + ' / ' + walkthroughDimensions.length + '</div>' +
+    '<div class="dim-highlight"><div class="dh-name">' + dim.name + '</div>' +
+    '<div style="margin:8px 0;"><span class="dh-score" style="color:' + scoreColor + '">' + dim.score + '</span><span style="color:#999;font-size:13px;"> / 100</span></div>' +
+    '<div style="font-size:13px;color:#555;">' + dim.comment + '</div>' +
+    '<div style="margin-top:6px;font-size:12px;color:#999;">涉及能力项 ' + dim.itemCount + ' 个，薄弱项 ' + dim.weakCount + ' 个</div>' +
+    weakHtml + '</div>' +
+    '<div style="display:flex;justify-content:center;gap:10px;margin-top:16px;">' +
+    '<button class="xa-btn" onclick="prevWalkthrough()"' + (walkthroughIndex === 0 ? ' disabled style="opacity:.4;cursor:default;"' : '') + '>上一项</button>' +
+    '<button class="xa-btn active" onclick="nextWalkthrough()">' + (walkthroughIndex < walkthroughDimensions.length - 1 ? '下一项' : '完成解读') + '</button></div>' +
+    '<div style="display:flex;justify-content:center;gap:4px;margin-top:12px;">' +
+    walkthroughDimensions.map(function(_, i) { return '<div style="width:' + (i === walkthroughIndex ? '18px' : '6px') + ';height:3px;border-radius:2px;background:' + (i === walkthroughIndex ? '#1565c0' : '#ddd') + ';transition:all .3s;"></div>'; }).join('') + '</div>';
 }
 
 function nextWalkthrough() { walkthroughIndex++; showWalkthroughStep(); }
@@ -1353,62 +928,22 @@ function prevWalkthrough() { if (walkthroughIndex > 0) { walkthroughIndex--; sho
 
 // ========== RECOMMEND PLAN ==========
 function handleRecommendPlan() {
-  const container = document.getElementById('xiaoanContent');
-  container.innerHTML = `
-    <div class="xa-section">
-      <div class="xa-section-title">
-        <span class="xa-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></span>
-        推荐培训计划
-      </div>
-      <div class="xa-text" style="margin-bottom:10px;">根据安涛的技能画像，为您推荐以下培训方案：</div>
-      <div class="plan-stage">
-        <div class="plan-stage-title">第一阶段：薄弱项攻坚（1-2周）</div>
-        <div class="plan-item">
-          <span class="pi-name">调车信号机故障处理 - 实操模拟</span>
-          <span class="pi-dur">3课时</span>
-          <span class="pi-priority pi-high">紧急</span>
-        </div>
-        <div class="plan-item">
-          <span class="pi-name">制动机故障排查 - 实操模拟</span>
-          <span class="pi-dur">2课时</span>
-          <span class="pi-priority pi-high">紧急</span>
-        </div>
-        <div class="plan-item">
-          <span class="pi-name">脱轨应急处置 - 场景化训练</span>
-          <span class="pi-dur">2课时</span>
-          <span class="pi-priority pi-med">重要</span>
-        </div>
-      </div>
-      <div class="plan-stage">
-        <div class="plan-stage-title">第二阶段：巩固提升（3-4周）</div>
-        <div class="plan-item">
-          <span class="pi-name">非正常作业综合演练</span>
-          <span class="pi-dur">2课时</span>
-          <span class="pi-priority pi-med">重要</span>
-        </div>
-        <div class="plan-item">
-          <span class="pi-name">特殊作业流程复训（理论+实操）</span>
-          <span class="pi-dur">1课时</span>
-          <span class="pi-priority pi-low">常规</span>
-        </div>
-        <div class="plan-item">
-          <span class="pi-name">手信号运用强化训练</span>
-          <span class="pi-dur">1课时</span>
-          <span class="pi-priority pi-low">常规</span>
-        </div>
-      </div>
-      <div class="plan-stage">
-        <div class="plan-stage-title">第三阶段：综合验证（第5周）</div>
-        <div class="plan-item">
-          <span class="pi-name">全维度综合考核</span>
-          <span class="pi-dur">1课时</span>
-          <span class="pi-priority pi-med">重要</span>
-        </div>
-      </div>
-      <div class="xa-text" style="margin-top:10px;">预期效果：画像值提升至 <span class="hl">85分</span> 以上，消除未掌握能力项。</div>
-    </div>
-  `;
-  const area = document.getElementById('xiaoanContentArea');
+  var container = document.getElementById('xiaoanContent');
+  container.innerHTML = '<div class="xa-section">' +
+    '<div class="xa-section-title"><span class="xa-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></span>推荐培训计划</div>' +
+    '<div class="xa-text" style="margin-bottom:12px;">根据安涛的技能画像，为您推荐以下培训方案：</div>' +
+    '<div class="plan-stage"><div class="plan-stage-title">第一阶段：薄弱项攻坚（1-2周）</div>' +
+    '<div class="plan-item"><span class="pi-name">调车信号机故障处理 - 实操模拟</span><span class="pi-dur">3课时</span><span class="pi-priority pi-high">紧急</span></div>' +
+    '<div class="plan-item"><span class="pi-name">制动机故障排查 - 实操模拟</span><span class="pi-dur">2课时</span><span class="pi-priority pi-high">紧急</span></div>' +
+    '<div class="plan-item"><span class="pi-name">脱轨应急处置 - 场景化训练</span><span class="pi-dur">2课时</span><span class="pi-priority pi-med">重要</span></div></div>' +
+    '<div class="plan-stage"><div class="plan-stage-title">第二阶段：巩固提升（3-4周）</div>' +
+    '<div class="plan-item"><span class="pi-name">非正常作业综合演练</span><span class="pi-dur">2课时</span><span class="pi-priority pi-med">重要</span></div>' +
+    '<div class="plan-item"><span class="pi-name">特殊作业流程复训（理论+实操）</span><span class="pi-dur">1课时</span><span class="pi-priority pi-low">常规</span></div>' +
+    '<div class="plan-item"><span class="pi-name">手信号运用强化训练</span><span class="pi-dur">1课时</span><span class="pi-priority pi-low">常规</span></div></div>' +
+    '<div class="plan-stage"><div class="plan-stage-title">第三阶段：综合验证（第5周）</div>' +
+    '<div class="plan-item"><span class="pi-name">全维度综合考核</span><span class="pi-dur">1课时</span><span class="pi-priority pi-med">重要</span></div></div>' +
+    '<div class="xa-text" style="margin-top:12px;">预期效果：画像值提升至 <span class="hl">85分</span> 以上，消除未掌握能力项。</div></div>';
+  var area = document.getElementById('xiaoanContentArea');
   if (area) area.scrollTop = 0;
 }
 
@@ -1423,9 +958,9 @@ window.addEventListener('load', function() {
 });
 
 window.addEventListener('resize', function() {
-  radarChart && radarChart.resize();
-  donutChart && donutChart.resize();
-  weaknessChart && weaknessChart.resize();
+  if (radarChart) radarChart.resize();
+  if (donutChart) donutChart.resize();
+  if (weaknessChart) weaknessChart.resize();
 });
 </script>
 </body>
