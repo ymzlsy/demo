@@ -34,23 +34,18 @@
     .btn:hover { border-color: #1677ff; color: #1677ff; }
     .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
     .btn-primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
+    .btn-sm { padding: 3px 10px; font-size: 13px; }
     .form-select { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; background: #fff; color: rgba(0,0,0,.85); }
     .form-select:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
     .form-input { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; background: #fff; }
     .form-input:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
 
-    /* Station overview cards */
-    .station-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
-    .station-card { background: #fff; border-radius: 8px; padding: 20px; border: 1px solid #f0f0f0; box-shadow: 0 1px 2px rgba(0,0,0,.03); cursor: pointer; transition: all .2s; }
-    .station-card:hover { border-color: #1677ff; box-shadow: 0 2px 8px rgba(22,119,255,.1); }
-    .station-card.active { border-color: #1677ff; box-shadow: 0 2px 8px rgba(22,119,255,.15); }
-    .station-card .st-name { font-size: 16px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-    .station-card .st-name .dot { width: 8px; height: 8px; border-radius: 50%; }
-    .station-card .st-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .station-card .metric { text-align: center; }
-    .station-card .metric .val { font-size: 22px; font-weight: 700; color: #1677ff; }
-    .station-card .metric .val.green { color: #52c41a; }
-    .station-card .metric .lbl { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 4px; }
+    /* Time selector bar */
+    .time-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; padding: 12px 16px; background: #fafafa; border-radius: 6px; border: 1px solid #f0f0f0; }
+    .time-bar label { font-size: 14px; color: rgba(0,0,0,.65); font-weight: 500; white-space: nowrap; }
+    .time-quick-btn { padding: 4px 12px; border-radius: 4px; border: 1px solid #d9d9d9; background: #fff; font-size: 13px; cursor: pointer; color: rgba(0,0,0,.65); transition: all .2s; }
+    .time-quick-btn:hover { border-color: #1677ff; color: #1677ff; }
+    .time-quick-btn.active { background: #1677ff; color: #fff; border-color: #1677ff; }
 
     /* Summary bar */
     .summary-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 20px; }
@@ -58,14 +53,17 @@
     .summary-item .s-val { font-size: 26px; font-weight: 700; color: #1677ff; }
     .summary-item .s-val .unit { font-size: 13px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
     .summary-item .s-lbl { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 4px; }
+    .summary-item .s-trend { font-size: 12px; margin-top: 2px; }
 
     /* Charts row */
     .charts-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
     .charts-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .charts-row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
     .chart-box { min-height: 320px; }
+    .chart-box-sm { min-height: 260px; }
 
     /* Filter bar */
-    .filter-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; font-size: 14px; color: rgba(0,0,0,.65); }
+    .filter-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; font-size: 14px; color: rgba(0,0,0,.65); flex-wrap: wrap; }
 
     /* Person card */
     .person-grid { display: grid; grid-template-columns: 280px 1fr 340px; gap: 16px; margin-bottom: 16px; }
@@ -84,8 +82,40 @@
     .trend-down { color: #ff4d4f; font-weight: 600; }
     .rank-num { color: #1677ff; font-weight: 700; min-width: 24px; display: inline-block; }
 
-    .search-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 20px; }
-    .search-bar .form-input { width: 320px; }
+    .search-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .search-bar .form-input { width: 280px; }
+
+    /* Ranking cards */
+    .rank-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .rank-card { background: #fafafa; border-radius: 8px; padding: 14px; text-align: center; border: 1px solid #f0f0f0; }
+    .rank-card .r-scope { font-size: 13px; color: rgba(0,0,0,.45); margin-bottom: 6px; }
+    .rank-card .r-val { font-size: 24px; font-weight: 700; color: #1677ff; }
+    .rank-card .r-total { font-size: 13px; color: rgba(0,0,0,.45); }
+    .rank-card .r-pct { font-size: 12px; color: #52c41a; margin-top: 4px; }
+
+    /* Modal overlay */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.45); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+    .modal-box { background: #fff; border-radius: 8px; width: 520px; max-height: 80vh; overflow-y: auto; }
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { font-size: 16px; font-weight: 600; }
+    .modal-close { cursor: pointer; font-size: 18px; color: rgba(0,0,0,.45); background: none; border: none; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+    .modal-close:hover { background: #f5f5f5; color: rgba(0,0,0,.85); }
+    .modal-body { padding: 20px; }
+    .modal-footer { padding: 12px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 8px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 14px; color: rgba(0,0,0,.85); margin-bottom: 6px; font-weight: 500; }
+    .form-group .form-input, .form-group .form-select { width: 100%; }
+    .form-group .hint { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 4px; }
+
+    /* Progress bar style for weakness */
+    .progress-bar { height: 18px; background: #f0f0f0; border-radius: 10px; overflow: hidden; display: flex; }
+    .progress-bar .seg { height: 100%; transition: width .3s; }
+    .progress-bar .seg-green { background: #52c41a; }
+    .progress-bar .seg-blue { background: #1677ff; }
+    .progress-bar .seg-orange { background: #faad14; }
+    .progress-bar .seg-red { background: #ff4d4f; }
+    .progress-legend { display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: rgba(0,0,0,.45); }
+    .progress-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
   </style>
 </head>
 <body>
@@ -98,6 +128,30 @@
 <div class="content">
   <div class="page-title">实训考核数据分析</div>
 
+  <!-- Global time selector -->
+  <div class="card" style="padding: 12px 20px;">
+    <div class="time-bar" style="margin-bottom:0;padding:0;background:transparent;border:none;">
+      <label>统计周期：</label>
+      <select class="form-select" id="timeYear">
+        <option>2026年</option><option>2025年</option><option>2024年</option>
+      </select>
+      <select class="form-select" id="timeQuarter">
+        <option value="">全年</option><option value="Q1">第一季度</option><option value="Q2">第二季度</option><option value="Q3">第三季度</option><option value="Q4">第四季度</option>
+      </select>
+      <select class="form-select" id="timeMonth">
+        <option value="">全部月份</option>
+        <option>1月</option><option>2月</option><option>3月</option><option>4月</option><option>5月</option><option>6月</option>
+        <option>7月</option><option>8月</option><option>9月</option><option>10月</option><option>11月</option><option>12月</option>
+      </select>
+      <span style="color:rgba(0,0,0,.25);margin:0 4px;">|</span>
+      <button class="time-quick-btn" onclick="setQuickTime(this,'month')">本月</button>
+      <button class="time-quick-btn active" onclick="setQuickTime(this,'quarter')">本季度</button>
+      <button class="time-quick-btn" onclick="setQuickTime(this,'year')">本年度</button>
+      <span style="flex:1;"></span>
+      <span style="font-size:12px;color:rgba(0,0,0,.35);">数据更新时间：2026-06-15 08:30</span>
+    </div>
+  </div>
+
   <!-- Level tabs -->
   <div class="card" style="padding: 0 20px;">
     <div class="tab-bar" id="levelTabs" style="margin-bottom: 0;">
@@ -108,30 +162,41 @@
     </div>
   </div>
 
-  <!-- Tab 0: Station Overview -->
+  <!-- ===== Tab 0: Station Overview (single 沈阳客运) ===== -->
   <div id="level-0">
-    <div class="station-row" id="stationCards"></div>
+    <div class="summary-row" id="summaryRow"></div>
     <div class="charts-row">
       <div class="card"><div class="card-title">六维能力雷达图</div><div id="radar0" class="chart-box"></div></div>
       <div class="card"><div class="card-title">成绩分布曲线</div><div id="dist0" class="chart-box"></div></div>
       <div class="card"><div class="card-title">模块科目掌握情况</div><div id="mastery0" class="chart-box"></div></div>
     </div>
-    <div class="summary-row" id="summaryRow"></div>
+    <div class="charts-row-2">
+      <div class="card"><div class="card-title">各车间综合得分对比</div><div id="workshopBar0" class="chart-box"></div></div>
+      <div class="card"><div class="card-title">各车间合格率趋势（按月）</div><div id="trendLine0" class="chart-box"></div></div>
+    </div>
+    <div class="charts-row-2">
+      <div class="card"><div class="card-title">各岗位综合能力对比</div><div id="postRadar0" class="chart-box"></div></div>
+      <div class="card"><div class="card-title">培训批次与参培人次</div><div id="batchBar0" class="chart-box"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">各车间核心指标一览</div>
+      <table id="stationDetailTable"></table>
+    </div>
   </div>
 
-  <!-- Tab 1: Workshop -->
+  <!-- ===== Tab 1: Workshop ===== -->
   <div id="level-1" class="hidden">
     <div class="card">
       <div class="filter-bar">
-        <span>选择车站：</span>
-        <select class="form-select" id="ws-station" onchange="renderWorkshop()">
-          <option>沈阳站</option><option>沈阳北站</option><option>沈阳南站</option>
+        <span>选择车间：</span>
+        <select class="form-select" id="ws-workshop" onchange="renderWorkshop()">
+          <option>客运一车间</option><option>客运二车间</option><option>客运三车间</option><option>客运四车间</option>
         </select>
       </div>
     </div>
     <div class="charts-row">
       <div class="card"><div class="card-title">六维能力雷达图</div><div id="radar1" class="chart-box"></div></div>
-      <div class="card" style="grid-column: span 1;">
+      <div class="card">
         <div class="card-title">优秀班组 Top 5</div>
         <table id="wsTopTable"></table>
         <div style="margin-top: 20px;">
@@ -141,19 +206,23 @@
       </div>
       <div class="card"><div class="card-title">模块科目掌握情况</div><div id="mastery1" class="chart-box"></div></div>
     </div>
+    <div class="charts-row-2">
+      <div class="card"><div class="card-title">各班组综合得分排名</div><div id="wsTeamRank" class="chart-box"></div></div>
+      <div class="card"><div class="card-title">车间合格率月度趋势</div><div id="wsTrend" class="chart-box"></div></div>
+    </div>
   </div>
 
-  <!-- Tab 2: Team -->
+  <!-- ===== Tab 2: Team ===== -->
   <div id="level-2" class="hidden">
     <div class="card">
       <div class="filter-bar">
-        <span>选择车站：</span>
-        <select class="form-select" id="tm-station" onchange="renderTeam()">
-          <option>沈阳站</option><option>沈阳北站</option><option>沈阳南站</option>
-        </select>
-        <span style="margin-left:12px;">选择车间：</span>
+        <span>选择车间：</span>
         <select class="form-select" id="tm-workshop" onchange="renderTeam()">
-          <option>客运一车间</option><option>客运二车间</option><option>客运三车间</option>
+          <option>客运一车间</option><option>客运二车间</option><option>客运三车间</option><option>客运四车间</option>
+        </select>
+        <span style="margin-left:12px;">选择班组：</span>
+        <select class="form-select" id="tm-team" onchange="renderTeam()">
+          <option>甲班</option><option>乙班</option><option>丙班</option><option>丁班</option>
         </select>
       </div>
     </div>
@@ -167,20 +236,34 @@
           <table id="tmBottomTable"></table>
         </div>
       </div>
+      <div class="card"><div class="card-title">模块科目掌握情况</div><div id="mastery2" class="chart-box"></div></div>
+    </div>
+    <div class="charts-row-2">
       <div class="card">
-        <div class="card-title">薄弱技能模块</div>
-        <table id="tmWeakTable"></table>
+        <div class="card-title">薄弱技能模块分析</div>
+        <div id="tmWeakChart" class="chart-box"></div>
       </div>
+      <div class="card">
+        <div class="card-title">各科目掌握率分布</div>
+        <div id="tmMasteryPie" class="chart-box"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">薄弱技能模块明细</div>
+      <table id="tmWeakTable"></table>
+      <div id="tmWeakBars" style="margin-top: 16px;"></div>
     </div>
   </div>
 
-  <!-- Tab 3: Personal -->
+  <!-- ===== Tab 3: Personal ===== -->
   <div id="level-3" class="hidden">
     <div class="card">
       <div class="search-bar">
         <span style="color:rgba(0,0,0,.65);">搜索职工：</span>
         <input class="form-input" placeholder="输入姓名或工号搜索..." id="personSearch" />
         <button class="btn btn-primary" onclick="searchPerson()">查询</button>
+        <span style="flex:1;"></span>
+        <button class="btn" onclick="showImportModal()">导入数据</button>
       </div>
     </div>
     <div class="person-grid">
@@ -188,12 +271,35 @@
         <div class="card-title">基本信息</div>
         <ul class="info-list">
           <li><span class="lbl">姓名</span><span class="val">王建国</span></li>
-          <li><span class="lbl">岗位</span><span class="val">客运员</span></li>
-          <li><span class="lbl">车站</span><span class="val">沈阳站</span></li>
+          <li><span class="lbl">岗位</span><span class="val">客运值班员</span></li>
           <li><span class="lbl">车间</span><span class="val">客运一车间</span></li>
           <li><span class="lbl">班组</span><span class="val">甲班</span></li>
           <li><span class="lbl">工号</span><span class="val">SY2024-0318</span></li>
+          <li><span class="lbl">入职日期</span><span class="val">2020-03-15</span></li>
         </ul>
+        <div style="margin-top:16px;">
+          <div class="card-title">排名分析</div>
+          <div class="rank-cards">
+            <div class="rank-card">
+              <div class="r-scope">班组排名</div>
+              <div class="r-val">3</div>
+              <div class="r-total">/ 18人</div>
+              <div class="r-pct">前 16.7%</div>
+            </div>
+            <div class="rank-card">
+              <div class="r-scope">车间排名</div>
+              <div class="r-val">12</div>
+              <div class="r-total">/ 96人</div>
+              <div class="r-pct">前 12.5%</div>
+            </div>
+            <div class="rank-card">
+              <div class="r-scope">站段排名</div>
+              <div class="r-val">45</div>
+              <div class="r-total">/ 386人</div>
+              <div class="r-pct">前 11.7%</div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="card" style="text-align:center;">
         <div class="card-title" style="justify-content:center;">综合画像值</div>
@@ -207,25 +313,32 @@
       <div class="card">
         <div class="card-title">考试成绩</div>
         <table>
-          <thead><tr><th>考试类型</th><th>成绩</th><th>等级</th></tr></thead>
+          <thead><tr><th>考试类型</th><th>成绩</th><th>满分</th><th>等级</th><th>考试时间</th></tr></thead>
           <tbody>
-            <tr><td>入学考试</td><td>85</td><td><span class="tag tag-blue">良好</span></td></tr>
-            <tr><td>安全考试</td><td>92</td><td><span class="tag tag-green">优秀</span></td></tr>
-            <tr><td>理论考试</td><td>78</td><td><span class="tag tag-orange">一般</span></td></tr>
-            <tr><td>实作考试</td><td>94</td><td><span class="tag tag-green">优秀</span></td></tr>
+            <tr><td>入学考试</td><td>85</td><td>100</td><td><span class="tag tag-blue">良好</span></td><td>2026-03-10</td></tr>
+            <tr><td>安全考试</td><td>92</td><td>100</td><td><span class="tag tag-green">优秀</span></td><td>2026-04-15</td></tr>
+            <tr><td>理论考试</td><td>78</td><td>100</td><td><span class="tag tag-orange">一般</span></td><td>2026-05-20</td></tr>
+            <tr><td>实作考试</td><td>94</td><td>100</td><td><span class="tag tag-green">优秀</span></td><td>2026-06-01</td></tr>
           </tbody>
         </table>
         <div style="margin-top: 16px;">
           <div class="card-title">薄弱项分析</div>
-          <div class="weak-item"><span class="w-title">应急处置：</span>得分偏低，建议加强演练频次，重点关注火灾应急和旅客疏散场景</div>
-          <div class="weak-item"><span class="w-title">理论知识：</span>第三章掌握不牢固，建议复习《铁路客运服务规范》相关章节</div>
+          <div class="weak-item"><span class="w-title">应急处置：</span>得分偏低（68分），建议加强演练频次，重点关注火灾应急和旅客疏散场景</div>
+          <div class="weak-item"><span class="w-title">理论知识：</span>第三章掌握不牢固（72分），建议复习《铁路客运服务规范》相关章节</div>
         </div>
       </div>
     </div>
+
+    <!-- Score trend -->
+    <div class="charts-row-2">
+      <div class="card"><div class="card-title">个人成绩趋势</div><div id="personTrend" class="chart-box-sm"></div></div>
+      <div class="card"><div class="card-title">同岗位排名变化</div><div id="personRankTrend" class="chart-box-sm"></div></div>
+    </div>
+
     <div class="card">
       <div class="card-title" style="justify-content:space-between;">
         两委扣分记录
-        <button class="btn" onclick="alert('导入功能演示')">导入数据</button>
+        <button class="btn btn-sm" onclick="showAddRecordModal()">添加记录</button>
       </div>
       <table>
         <thead><tr><th>日期</th><th>扣分类型</th><th>扣分值</th><th>原因</th><th>记录人</th></tr></thead>
@@ -236,6 +349,88 @@
           <tr><td>2026-03-10</td><td><span class="tag tag-orange">考勤异常</span></td><td>-2</td><td>培训课程迟到超过15分钟</td><td>赵文婷</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<!-- Import Modal -->
+<div id="importModal" class="modal-overlay hidden" onclick="if(event.target===this)closeImportModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>批量导入数据</h3>
+      <button class="modal-close" onclick="closeImportModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>导入类型</label>
+        <select class="form-select">
+          <option>考试成绩（入学/安全/理论）</option>
+          <option>两委扣分记录</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>选择文件</label>
+        <div style="border:2px dashed #d9d9d9;border-radius:8px;padding:32px;text-align:center;color:rgba(0,0,0,.45);cursor:pointer;" onclick="alert('文件选择演示')">
+          <div style="font-size:28px;margin-bottom:8px;">+</div>
+          <div>点击或拖拽上传 CSV / Excel 文件</div>
+          <div style="font-size:12px;margin-top:8px;">必须包含"姓名"列，系统自动匹配人员</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>模板下载</label>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sm" onclick="alert('下载考试成绩模板')">考试成绩模板.xlsx</button>
+          <button class="btn btn-sm" onclick="alert('下载两委扣分模板')">两委扣分模板.xlsx</button>
+        </div>
+        <div class="hint">模板包含必填字段说明和示例数据</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeImportModal()">取消</button>
+      <button class="btn btn-primary" onclick="alert('导入成功（Demo演示）');closeImportModal()">开始导入</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Record Modal -->
+<div id="addRecordModal" class="modal-overlay hidden" onclick="if(event.target===this)closeAddRecordModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>添加两委扣分记录</h3>
+      <button class="modal-close" onclick="closeAddRecordModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>当前职工</label>
+        <input class="form-input" value="王建国（SY2024-0318）" disabled />
+      </div>
+      <div class="form-group">
+        <label>扣分日期</label>
+        <input class="form-input" type="date" value="2026-06-15" />
+      </div>
+      <div class="form-group">
+        <label>扣分类型</label>
+        <select class="form-select">
+          <option>安全违章</option><option>操作违规</option><option>服务投诉</option><option>考勤异常</option><option>其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>扣分值</label>
+        <input class="form-input" type="number" placeholder="请输入扣分值，如 5" />
+        <div class="hint">正数，系统自动取负</div>
+      </div>
+      <div class="form-group">
+        <label>扣分原因</label>
+        <textarea class="form-input" rows="3" style="width:100%;resize:vertical;" placeholder="请详细描述扣分原因..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>记录人</label>
+        <input class="form-input" placeholder="填写记录人姓名" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeAddRecordModal()">取消</button>
+      <button class="btn btn-primary" onclick="alert('记录添加成功（Demo演示）');closeAddRecordModal()">确认添加</button>
     </div>
   </div>
 </div>
@@ -254,42 +449,55 @@ function switchLevel(idx, el) {
   if (idx === 0) initLevel0Charts();
   if (idx === 1) renderWorkshop();
   if (idx === 2) renderTeam();
-  if (idx === 3) initPersonRadar();
+  if (idx === 3) initPersonCharts();
 }
 
-// ========== Mock Data ==========
-var stationData = [
-  { name: '沈阳站', total: 386, score: 82.5, rate: 94.2, color: '#1677ff' },
-  { name: '沈阳北站', total: 412, score: 79.8, rate: 91.7, color: '#722ed1' },
-  { name: '沈阳南站', total: 258, score: 85.1, rate: 96.3, color: '#52c41a' }
-];
+function setQuickTime(btn, range) {
+  document.querySelectorAll('.time-quick-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  switchLevel(currentLevel);
+}
 
+// ========== Modal Controls ==========
+function showImportModal() { document.getElementById('importModal').classList.remove('hidden'); }
+function closeImportModal() { document.getElementById('importModal').classList.add('hidden'); }
+function showAddRecordModal() { document.getElementById('addRecordModal').classList.remove('hidden'); }
+function closeAddRecordModal() { document.getElementById('addRecordModal').classList.add('hidden'); }
+
+// ========== Mock Data ==========
 var radarDims = ['安全知识', '证书信息', '专业技能', '基础能理化', '操作技能', '安全考核'];
 var radarAll = { current: [85, 78, 82, 76, 88, 80], avg: [80, 75, 79, 74, 83, 77] };
-var radarByStation = {
-  '沈阳站': { current: [83, 80, 84, 78, 86, 82], avg: [80, 75, 79, 74, 83, 77] },
-  '沈阳北站': { current: [80, 76, 79, 73, 85, 78], avg: [80, 75, 79, 74, 83, 77] },
-  '沈阳南站': { current: [88, 82, 86, 80, 90, 84], avg: [80, 75, 79, 74, 83, 77] }
-};
-
-var modules = ['客运基础', '安全规程', '应急处置', '服务礼仪', '设备操作'];
-var masteryData = { excellent: [35,28,22,40,30], good: [40,38,35,32,38], normal: [18,24,28,20,22], poor: [7,10,15,8,10] };
-
+var modules = ['客运基础', '安全规程', '应急处置', '服务礼仪', '设备操作', '理论知识'];
+var masteryData = { excellent: [35,28,22,40,30,25], good: [40,38,35,32,38,36], normal: [18,24,28,20,22,26], poor: [7,10,15,8,10,13] };
 var distScores = [2,3,5,4,6,8,10,14,18,25,38,52,68,85,96,105,98,82,65,48,35,22,15,10,7,5,3,2,1,1];
 
+var workshops = [
+  { name: '客运一车间', total: 96, score: 84.2, rate: 95.8, teams: 4 },
+  { name: '客运二车间', total: 102, score: 81.5, rate: 93.2, teams: 4 },
+  { name: '客运三车间', total: 88, score: 79.8, rate: 90.5, teams: 4 },
+  { name: '客运四车间', total: 100, score: 82.1, rate: 94.1, teams: 4 }
+];
+
+var radarByWorkshop = {
+  '客运一车间': { current: [87, 80, 84, 78, 90, 82], avg: [83, 77, 81, 76, 86, 79] },
+  '客运二车间': { current: [82, 76, 80, 74, 85, 78], avg: [83, 77, 81, 76, 86, 79] },
+  '客运三车间': { current: [80, 74, 78, 72, 83, 76], avg: [83, 77, 81, 76, 86, 79] },
+  '客运四车间': { current: [84, 78, 82, 76, 87, 80], avg: [83, 77, 81, 76, 86, 79] }
+};
+
 var wsTopTeams = [
-  { name: '甲班', workshop: '客运一车间', score: 91.2, rate: '97.5%' },
-  { name: '乙班', workshop: '客运一车间', score: 89.5, rate: '96.8%' },
-  { name: '甲班', workshop: '客运二车间', score: 88.7, rate: '96.2%' },
-  { name: '丙班', workshop: '客运一车间', score: 87.3, rate: '95.5%' },
-  { name: '乙班', workshop: '客运三车间', score: 86.8, rate: '95.1%' }
+  { name: '甲班', score: 91.2, rate: '97.5%', count: 18 },
+  { name: '乙班', score: 89.5, rate: '96.8%', count: 20 },
+  { name: '丙班', score: 87.3, rate: '95.5%', count: 22 },
+  { name: '甲班（二车间）', score: 86.8, rate: '95.1%', count: 19 },
+  { name: '乙班（二车间）', score: 85.5, rate: '94.2%', count: 21 }
 ];
 var wsBottomTeams = [
-  { name: '丁班', workshop: '客运三车间', score: 68.5, rate: '78.2%' },
-  { name: '丙班', workshop: '客运二车间', score: 70.2, rate: '80.5%' },
-  { name: '丁班', workshop: '客运一车间', score: 72.1, rate: '82.3%' },
-  { name: '乙班', workshop: '客运二车间', score: 73.4, rate: '83.1%' },
-  { name: '丙班', workshop: '客运三车间', score: 74.8, rate: '84.6%' }
+  { name: '丁班', score: 68.5, rate: '78.2%', count: 24 },
+  { name: '丙班（三车间）', score: 70.2, rate: '80.5%', count: 20 },
+  { name: '丁班（二车间）', score: 72.1, rate: '82.3%', count: 22 },
+  { name: '乙班（三车间）', score: 73.4, rate: '83.1%', count: 18 },
+  { name: '丙班（二车间）', score: 74.8, rate: '84.6%', count: 21 }
 ];
 
 var tmTopWorkers = [
@@ -308,50 +516,21 @@ var tmBottomWorkers = [
 ];
 
 var tmWeakModules = [
-  { name: '应急处置', mastered: 42, normal: 28, poor: 15, rate: '49.4%' },
-  { name: '设备操作', mastered: 48, normal: 22, poor: 10, rate: '60.0%' },
-  { name: '安全规程', mastered: 52, normal: 24, poor: 10, rate: '60.5%' },
-  { name: '服务礼仪', mastered: 58, normal: 20, poor: 8, rate: '67.4%' },
-  { name: '客运基础', mastered: 62, normal: 18, poor: 7, rate: '71.3%' }
+  { name: '应急处置', mastered: 4, good: 5, normal: 5, poor: 4, rate: '22.2%' },
+  { name: '设备操作', mastered: 6, good: 4, normal: 4, poor: 4, rate: '33.3%' },
+  { name: '安全规程', mastered: 7, good: 5, normal: 3, poor: 3, rate: '38.9%' },
+  { name: '理论知识', mastered: 8, good: 4, normal: 4, poor: 2, rate: '44.4%' },
+  { name: '服务礼仪', mastered: 10, good: 4, normal: 2, poor: 2, rate: '55.6%' },
+  { name: '客运基础', mastered: 12, good: 3, normal: 2, poor: 1, rate: '66.7%' }
 ];
 
-// ========== Level 0: Station Overview ==========
-function renderStationCards() {
-  var html = '';
-  stationData.forEach(function(s) {
-    html += '<div class="station-card" onclick="this.classList.toggle(\'active\')">' +
-      '<div class="st-name"><span class="dot" style="background:' + s.color + '"></span>' + s.name + '</div>' +
-      '<div class="st-metrics">' +
-      '<div class="metric"><div class="val">' + s.total + '</div><div class="lbl">职工人数</div></div>' +
-      '<div class="metric"><div class="val">' + s.score + '</div><div class="lbl">综合画像值</div></div>' +
-      '<div class="metric"><div class="val green">' + s.rate + '%</div><div class="lbl">培训合格率</div></div>' +
-      '</div></div>';
-  });
-  document.getElementById('stationCards').innerHTML = html;
-}
-
-function renderSummary() {
-  var total = stationData.reduce(function(a, b) { return a + b.total; }, 0);
-  var avgScore = (stationData.reduce(function(a, b) { return a + b.score; }, 0) / 3).toFixed(1);
-  var avgRate = (stationData.reduce(function(a, b) { return a + b.rate; }, 0) / 3).toFixed(1);
-  var items = [
-    { label: '职工总数', value: total, unit: '人' },
-    { label: '平均综合得分', value: avgScore, unit: '分' },
-    { label: '平均合格率', value: avgRate, unit: '%' },
-    { label: '站段数量', value: 3, unit: '个' },
-    { label: '本月考核批次', value: 12, unit: '次' }
-  ];
-  var html = '';
-  items.forEach(function(it) {
-    html += '<div class="summary-item"><div class="s-val">' + it.value + '<span class="unit">' + it.unit + '</span></div><div class="s-lbl">' + it.label + '</div></div>';
-  });
-  document.getElementById('summaryRow').innerHTML = html;
-}
+// ========== Chart Helpers ==========
+var charts = {};
 
 function makeRadarOption(rd, label) {
   return {
     color: ['#1677ff', '#faad14'],
-    legend: { data: [label || '当前选择', '全站段均值'], bottom: 0, textStyle: { color: 'rgba(0,0,0,.45)', fontSize: 12 } },
+    legend: { data: [label || '当前选择', '全站平均'], bottom: 0, textStyle: { color: 'rgba(0,0,0,.45)', fontSize: 12 } },
     radar: {
       indicator: radarDims.map(function(d) { return { name: d, max: 100 }; }),
       shape: 'polygon', splitNumber: 4, radius: '60%',
@@ -364,7 +543,7 @@ function makeRadarOption(rd, label) {
       type: 'radar',
       data: [
         { value: rd.current, name: label || '当前选择', areaStyle: { color: 'rgba(22,119,255,.15)' }, lineStyle: { width: 2 } },
-        { value: rd.avg, name: '全站段均值', areaStyle: { color: 'rgba(250,173,20,.08)' }, lineStyle: { type: 'dashed', width: 1 } }
+        { value: rd.avg, name: '全站平均', areaStyle: { color: 'rgba(250,173,20,.08)' }, lineStyle: { type: 'dashed', width: 1 } }
       ]
     }]
   };
@@ -383,8 +562,8 @@ function makeDistOption() {
     tooltip: { trigger: 'axis' },
     legend: { data: ['实际分布', '正态拟合'], top: 5, right: 20, textStyle: { color: 'rgba(0,0,0,.45)', fontSize: 12 } },
     grid: { left: 50, right: 30, top: 40, bottom: 35 },
-    xAxis: { type: 'category', data: xLabels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, axisLine: { lineStyle: { color: '#d9d9d9' } }, name: '分数', nameTextStyle: { color: 'rgba(0,0,0,.45)' } },
-    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } }, axisLine: { lineStyle: { color: '#d9d9d9' } }, name: '人数', nameTextStyle: { color: 'rgba(0,0,0,.45)' } },
+    xAxis: { type: 'category', data: xLabels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, axisLine: { lineStyle: { color: '#d9d9d9' } }, name: '分数' },
+    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } }, axisLine: { lineStyle: { color: '#d9d9d9' } }, name: '人数' },
     series: [
       { name: '实际分布', type: 'bar', data: distScores, itemStyle: { color: '#1677ff', borderRadius: [2, 2, 0, 0] }, barWidth: '60%' },
       { name: '正态拟合', type: 'line', data: normalY, smooth: true, lineStyle: { color: '#faad14', width: 2, type: 'dashed' }, symbol: 'none', areaStyle: { color: 'rgba(250,173,20,.06)' } }
@@ -397,7 +576,7 @@ function makeMasteryOption() {
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     legend: { data: ['优秀', '良好', '一般', '未掌握'], top: 2, right: 10, textStyle: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
     grid: { left: 80, right: 20, top: 36, bottom: 25 },
-    xAxis: { type: 'value', max: 100, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11, formatter: '{value}%' }, splitLine: { lineStyle: { color: '#f0f0f0' } }, axisLine: { lineStyle: { color: '#d9d9d9' } } },
+    xAxis: { type: 'value', max: 100, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11, formatter: '{value}%' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     yAxis: { type: 'category', data: modules, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 12 }, axisLine: { lineStyle: { color: '#d9d9d9' } } },
     series: [
       { name: '优秀', type: 'bar', stack: 'total', data: masteryData.excellent, itemStyle: { color: '#1677ff' }, barWidth: 20 },
@@ -408,46 +587,189 @@ function makeMasteryOption() {
   };
 }
 
-var charts = {};
+// ========== Level 0: Station Overview ==========
+function renderSummary() {
+  var total = workshops.reduce(function(a, b) { return a + b.total; }, 0);
+  var avgScore = (workshops.reduce(function(a, b) { return a + b.score; }, 0) / workshops.length).toFixed(1);
+  var avgRate = (workshops.reduce(function(a, b) { return a + b.rate; }, 0) / workshops.length).toFixed(1);
+  var items = [
+    { label: '职工总数', value: total, unit: '人', trend: '+12', up: true },
+    { label: '平均综合得分', value: avgScore, unit: '分', trend: '+1.3', up: true },
+    { label: '平均合格率', value: avgRate, unit: '%', trend: '+0.8', up: true },
+    { label: '车间数量', value: workshops.length, unit: '个', trend: '', up: true },
+    { label: '本季度考核批次', value: 36, unit: '次', trend: '+8', up: true }
+  ];
+  var html = '';
+  items.forEach(function(it) {
+    var trendHtml = it.trend ? '<div class="s-trend ' + (it.up ? 'trend-up' : 'trend-down') + '">' + (it.up ? '&#9650; ' : '&#9660; ') + it.trend + ' 较上期</div>' : '';
+    html += '<div class="summary-item"><div class="s-val">' + it.value + '<span class="unit">' + it.unit + '</span></div><div class="s-lbl">' + it.label + '</div>' + trendHtml + '</div>';
+  });
+  document.getElementById('summaryRow').innerHTML = html;
+}
+
+function renderStationDetailTable() {
+  var html = '<thead><tr><th>车间</th><th>职工人数</th><th>班组数</th><th>综合得分</th><th>合格率</th><th>优秀率</th><th>薄弱科目</th><th>较上期</th></tr></thead><tbody>';
+  var weakModules = ['应急处置', '设备操作', '安全规程', '理论知识'];
+  workshops.forEach(function(w, i) {
+    var excellent = (w.rate * 0.4 + 10).toFixed(1);
+    var diff = ['+1.5', '-0.3', '+2.1', '+0.8'][i];
+    var diffClass = diff.charAt(0) === '+' ? 'trend-up' : 'trend-down';
+    html += '<tr><td><b>' + w.name + '</b></td><td>' + w.total + '人</td><td>' + w.teams + '</td><td>' + w.score + '</td>' +
+      '<td><span class="tag ' + (w.rate >= 95 ? 'tag-green' : w.rate >= 90 ? 'tag-blue' : 'tag-orange') + '">' + w.rate + '%</span></td>' +
+      '<td>' + excellent + '%</td><td><span class="tag tag-orange">' + weakModules[i] + '</span></td>' +
+      '<td><span class="' + diffClass + '">' + diff + '</span></td></tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('stationDetailTable').innerHTML = html;
+}
+
 function initLevel0Charts() {
+  // Radar
   if (!charts.radar0) charts.radar0 = echarts.init(document.getElementById('radar0'));
+  charts.radar0.setOption(makeRadarOption(radarAll, '沈阳客运'));
+  // Distribution
   if (!charts.dist0) charts.dist0 = echarts.init(document.getElementById('dist0'));
-  if (!charts.mastery0) charts.mastery0 = echarts.init(document.getElementById('mastery0'));
-  charts.radar0.setOption(makeRadarOption(radarAll, '站段平均'));
   charts.dist0.setOption(makeDistOption());
+  // Mastery
+  if (!charts.mastery0) charts.mastery0 = echarts.init(document.getElementById('mastery0'));
   charts.mastery0.setOption(makeMasteryOption());
+
+  // Workshop bar comparison
+  if (!charts.workshopBar0) charts.workshopBar0 = echarts.init(document.getElementById('workshopBar0'));
+  charts.workshopBar0.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['综合得分', '合格率'], top: 5, right: 20, textStyle: { fontSize: 12 } },
+    grid: { left: 80, right: 40, top: 40, bottom: 30 },
+    yAxis: { type: 'category', data: workshops.map(function(w) { return w.name; }), axisLabel: { fontSize: 12 } },
+    xAxis: [
+      { type: 'value', max: 100, position: 'bottom', axisLabel: { formatter: '{value}分', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } }
+    ],
+    series: [
+      { name: '综合得分', type: 'bar', data: workshops.map(function(w) { return w.score; }), itemStyle: { color: '#1677ff', borderRadius: [0, 4, 4, 0] }, barWidth: 16, label: { show: true, position: 'right', fontSize: 11 } },
+      { name: '合格率', type: 'bar', data: workshops.map(function(w) { return w.rate; }), itemStyle: { color: '#52c41a', borderRadius: [0, 4, 4, 0] }, barWidth: 16, label: { show: true, position: 'right', fontSize: 11, formatter: '{c}%' } }
+    ]
+  });
+
+  // Monthly trend line
+  if (!charts.trendLine0) charts.trendLine0 = echarts.init(document.getElementById('trendLine0'));
+  var months = ['1月', '2月', '3月', '4月', '5月', '6月'];
+  charts.trendLine0.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { data: workshops.map(function(w) { return w.name; }), top: 5, right: 20, textStyle: { fontSize: 11 } },
+    grid: { left: 50, right: 30, top: 40, bottom: 30 },
+    xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11 } },
+    yAxis: { type: 'value', min: 80, max: 100, axisLabel: { formatter: '{value}%', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [
+      { name: '客运一车间', type: 'line', data: [93.2, 94.1, 94.5, 95.0, 95.5, 95.8], smooth: true, lineStyle: { width: 2 } },
+      { name: '客运二车间', type: 'line', data: [90.5, 91.2, 91.8, 92.5, 93.0, 93.2], smooth: true, lineStyle: { width: 2 } },
+      { name: '客运三车间', type: 'line', data: [87.3, 88.0, 88.5, 89.2, 89.8, 90.5], smooth: true, lineStyle: { width: 2 } },
+      { name: '客运四车间', type: 'line', data: [91.5, 92.0, 92.8, 93.2, 93.8, 94.1], smooth: true, lineStyle: { width: 2 } }
+    ]
+  });
+
+  // Post radar
+  if (!charts.postRadar0) charts.postRadar0 = echarts.init(document.getElementById('postRadar0'));
+  charts.postRadar0.setOption({
+    color: ['#1677ff', '#52c41a', '#fa8c16', '#722ed1'],
+    legend: { data: ['客运值班员', '售票员', '安检员', '客运员'], bottom: 0, textStyle: { fontSize: 11 } },
+    radar: {
+      indicator: radarDims.map(function(d) { return { name: d, max: 100 }; }),
+      shape: 'polygon', splitNumber: 4, radius: '55%',
+      axisName: { color: 'rgba(0,0,0,.65)', fontSize: 11 },
+      splitLine: { lineStyle: { color: '#e8e8e8' } },
+      splitArea: { areaStyle: { color: ['#fff', '#fafafa'] } }
+    },
+    series: [{
+      type: 'radar',
+      data: [
+        { value: [88, 82, 86, 80, 90, 84], name: '客运值班员' },
+        { value: [82, 78, 80, 76, 84, 80], name: '售票员' },
+        { value: [86, 80, 84, 78, 88, 82], name: '安检员' },
+        { value: [80, 74, 78, 72, 82, 76], name: '客运员' }
+      ]
+    }]
+  });
+
+  // Batch bar
+  if (!charts.batchBar0) charts.batchBar0 = echarts.init(document.getElementById('batchBar0'));
+  charts.batchBar0.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['考核批次', '参培人次'], top: 5, right: 20, textStyle: { fontSize: 11 } },
+    grid: { left: 50, right: 50, top: 40, bottom: 30 },
+    xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11 } },
+    yAxis: [
+      { type: 'value', name: '批次', axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+      { type: 'value', name: '人次', axisLabel: { fontSize: 11 }, splitLine: { show: false } }
+    ],
+    series: [
+      { name: '考核批次', type: 'bar', data: [4, 5, 6, 7, 6, 8], itemStyle: { color: '#1677ff', borderRadius: [4, 4, 0, 0] }, barWidth: 24 },
+      { name: '参培人次', type: 'line', yAxisIndex: 1, data: [120, 156, 185, 210, 198, 245], smooth: true, lineStyle: { color: '#fa8c16', width: 2 }, itemStyle: { color: '#fa8c16' } }
+    ]
+  });
 }
 
 // ========== Level 1: Workshop ==========
 function renderWorkshop() {
-  var station = document.getElementById('ws-station').value;
-  var rd = radarByStation[station] || radarAll;
+  var ws = document.getElementById('ws-workshop').value;
+  var rd = radarByWorkshop[ws] || radarAll;
   if (!charts.radar1) charts.radar1 = echarts.init(document.getElementById('radar1'));
   if (!charts.mastery1) charts.mastery1 = echarts.init(document.getElementById('mastery1'));
-  charts.radar1.setOption(makeRadarOption(rd, station));
+  charts.radar1.setOption(makeRadarOption(rd, ws));
   charts.mastery1.setOption(makeMasteryOption());
 
-  var html = '<thead><tr><th style="width:36px"></th><th>班组</th><th>车间</th><th>综合得分</th><th>合格率</th></tr></thead><tbody>';
+  // Top teams table
+  var html = '<thead><tr><th style="width:36px"></th><th>班组</th><th>人数</th><th>综合得分</th><th>合格率</th></tr></thead><tbody>';
   wsTopTeams.forEach(function(t, i) {
-    html += '<tr><td><span class="rank-num">' + (i + 1) + '</span></td><td>' + t.name + '</td><td>' + t.workshop + '</td><td>' + t.score + '</td><td><span class="tag tag-green">' + t.rate + '</span></td></tr>';
+    html += '<tr><td><span class="rank-num">' + (i + 1) + '</span></td><td>' + t.name + '</td><td>' + t.count + '人</td><td>' + t.score + '</td><td><span class="tag tag-green">' + t.rate + '</span></td></tr>';
   });
   html += '</tbody>';
   document.getElementById('wsTopTable').innerHTML = html;
 
-  html = '<thead><tr><th style="width:36px"></th><th>班组</th><th>车间</th><th>综合得分</th><th>合格率</th></tr></thead><tbody>';
+  html = '<thead><tr><th style="width:36px"></th><th>班组</th><th>人数</th><th>综合得分</th><th>合格率</th></tr></thead><tbody>';
   wsBottomTeams.forEach(function(t, i) {
-    html += '<tr><td><span class="rank-num" style="color:#ff4d4f">' + (i + 1) + '</span></td><td>' + t.name + '</td><td>' + t.workshop + '</td><td>' + t.score + '</td><td><span class="tag tag-red">' + t.rate + '</span></td></tr>';
+    html += '<tr><td><span class="rank-num" style="color:#ff4d4f">' + (i + 1) + '</span></td><td>' + t.name + '</td><td>' + t.count + '人</td><td>' + t.score + '</td><td><span class="tag tag-red">' + t.rate + '</span></td></tr>';
   });
   html += '</tbody>';
   document.getElementById('wsBottomTable').innerHTML = html;
+
+  // Team rank bar
+  if (!charts.wsTeamRank) charts.wsTeamRank = echarts.init(document.getElementById('wsTeamRank'));
+  var teamNames = ['甲班', '乙班', '丙班', '丁班'];
+  var teamScores = [91.2, 89.5, 87.3, 68.5];
+  charts.wsTeamRank.setOption({
+    tooltip: { trigger: 'axis' },
+    grid: { left: 60, right: 40, top: 20, bottom: 30 },
+    yAxis: { type: 'category', data: teamNames, axisLabel: { fontSize: 12 } },
+    xAxis: { type: 'value', max: 100, axisLabel: { formatter: '{value}分', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [{
+      type: 'bar',
+      data: teamScores.map(function(s) {
+        return { value: s, itemStyle: { color: s >= 85 ? '#52c41a' : s >= 75 ? '#1677ff' : s >= 60 ? '#faad14' : '#ff4d4f', borderRadius: [0, 4, 4, 0] } };
+      }),
+      barWidth: 20,
+      label: { show: true, position: 'right', fontSize: 12 }
+    }]
+  });
+
+  // Trend
+  if (!charts.wsTrend) charts.wsTrend = echarts.init(document.getElementById('wsTrend'));
+  charts.wsTrend.setOption({
+    tooltip: { trigger: 'axis' },
+    grid: { left: 50, right: 30, top: 20, bottom: 30 },
+    xAxis: { type: 'category', data: ['1月', '2月', '3月', '4月', '5月', '6月'], axisLabel: { fontSize: 11 } },
+    yAxis: { type: 'value', min: 80, max: 100, axisLabel: { formatter: '{value}%', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [{ type: 'line', data: [92.1, 93.0, 93.5, 94.2, 95.0, 95.8], smooth: true, lineStyle: { color: '#1677ff', width: 2 }, areaStyle: { color: 'rgba(22,119,255,.08)' }, itemStyle: { color: '#1677ff' } }]
+  });
 }
 
 // ========== Level 2: Team ==========
 function renderTeam() {
-  var station = document.getElementById('tm-station').value;
-  var rd = radarByStation[station] || radarAll;
+  var ws = document.getElementById('tm-workshop').value;
+  var rd = radarByWorkshop[ws] || radarAll;
   if (!charts.radar2) charts.radar2 = echarts.init(document.getElementById('radar2'));
-  charts.radar2.setOption(makeRadarOption(rd, station));
+  if (!charts.mastery2) charts.mastery2 = echarts.init(document.getElementById('mastery2'));
+  charts.radar2.setOption(makeRadarOption(rd, ws + ' - ' + document.getElementById('tm-team').value));
+  charts.mastery2.setOption(makeMasteryOption());
 
   // Top workers
   var html = '<thead><tr><th style="width:36px"></th><th>姓名</th><th>岗位</th><th>综合得分</th><th>趋势</th></tr></thead><tbody>';
@@ -467,18 +789,63 @@ function renderTeam() {
   html += '</tbody>';
   document.getElementById('tmBottomTable').innerHTML = html;
 
-  // Weak modules
-  html = '<thead><tr><th>模块名称</th><th>已掌握</th><th>一般</th><th>未掌握</th><th>掌握率</th></tr></thead><tbody>';
+  // Weak modules chart (horizontal bar with segments)
+  if (!charts.tmWeakChart) charts.tmWeakChart = echarts.init(document.getElementById('tmWeakChart'));
+  charts.tmWeakChart.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: { data: ['已掌握', '良好', '一般', '未掌握'], top: 5, right: 10, textStyle: { fontSize: 11 } },
+    grid: { left: 80, right: 40, top: 36, bottom: 25 },
+    yAxis: { type: 'category', data: tmWeakModules.map(function(m) { return m.name; }), axisLabel: { fontSize: 12 } },
+    xAxis: { type: 'value', axisLabel: { formatter: '{value}人', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [
+      { name: '已掌握', type: 'bar', stack: 'total', data: tmWeakModules.map(function(m) { return m.mastered; }), itemStyle: { color: '#52c41a' }, barWidth: 18 },
+      { name: '良好', type: 'bar', stack: 'total', data: tmWeakModules.map(function(m) { return m.good; }), itemStyle: { color: '#1677ff' } },
+      { name: '一般', type: 'bar', stack: 'total', data: tmWeakModules.map(function(m) { return m.normal; }), itemStyle: { color: '#faad14' } },
+      { name: '未掌握', type: 'bar', stack: 'total', data: tmWeakModules.map(function(m) { return m.poor; }), itemStyle: { color: '#ff4d4f' } }
+    ]
+  });
+
+  // Mastery pie
+  if (!charts.tmMasteryPie) charts.tmMasteryPie = echarts.init(document.getElementById('tmMasteryPie'));
+  var totalMastered = tmWeakModules.reduce(function(a, m) { return a + m.mastered; }, 0);
+  var totalGood = tmWeakModules.reduce(function(a, m) { return a + m.good; }, 0);
+  var totalNormal = tmWeakModules.reduce(function(a, m) { return a + m.normal; }, 0);
+  var totalPoor = tmWeakModules.reduce(function(a, m) { return a + m.poor; }, 0);
+  charts.tmMasteryPie.setOption({
+    tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
+    legend: { orient: 'vertical', right: 20, top: 'center', textStyle: { fontSize: 12 } },
+    series: [{
+      type: 'pie', radius: ['40%', '65%'], center: ['35%', '50%'],
+      data: [
+        { value: totalMastered, name: '已掌握', itemStyle: { color: '#52c41a' } },
+        { value: totalGood, name: '良好', itemStyle: { color: '#1677ff' } },
+        { value: totalNormal, name: '一般', itemStyle: { color: '#faad14' } },
+        { value: totalPoor, name: '未掌握', itemStyle: { color: '#ff4d4f' } }
+      ],
+      label: { formatter: '{b}\n{d}%', fontSize: 12 },
+      emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,.2)' } }
+    }]
+  });
+
+  // Weak table
+  html = '<thead><tr><th>模块名称</th><th>已掌握</th><th>良好</th><th>一般</th><th>未掌握</th><th>掌握率</th><th>掌握分布</th></tr></thead><tbody>';
   tmWeakModules.forEach(function(m) {
-    var rateColor = parseFloat(m.rate) < 60 ? 'tag-red' : parseFloat(m.rate) < 70 ? 'tag-orange' : 'tag-green';
-    html += '<tr><td>' + m.name + '</td><td>' + m.mastered + '人</td><td>' + m.normal + '人</td><td><span style="color:#ff4d4f;font-weight:600;">' + m.poor + '人</span></td><td><span class="tag ' + rateColor + '">' + m.rate + '</span></td></tr>';
+    var total = m.mastered + m.good + m.normal + m.poor;
+    var rateColor = parseFloat(m.rate) < 40 ? 'tag-red' : parseFloat(m.rate) < 60 ? 'tag-orange' : 'tag-green';
+    var bar = '<div class="progress-bar" style="min-width:120px;">' +
+      '<div class="seg seg-green" style="width:' + (m.mastered / total * 100) + '%"></div>' +
+      '<div class="seg seg-blue" style="width:' + (m.good / total * 100) + '%"></div>' +
+      '<div class="seg seg-orange" style="width:' + (m.normal / total * 100) + '%"></div>' +
+      '<div class="seg seg-red" style="width:' + (m.poor / total * 100) + '%"></div></div>';
+    html += '<tr><td>' + m.name + '</td><td>' + m.mastered + '人</td><td>' + m.good + '人</td><td>' + m.normal + '人</td><td><span style="color:#ff4d4f;font-weight:600;">' + m.poor + '人</span></td><td><span class="tag ' + rateColor + '">' + m.rate + '</span></td><td>' + bar + '</td></tr>';
   });
   html += '</tbody>';
   document.getElementById('tmWeakTable').innerHTML = html;
 }
 
 // ========== Level 3: Personal ==========
-function initPersonRadar() {
+function initPersonCharts() {
+  // Radar
   if (!charts.radar3) charts.radar3 = echarts.init(document.getElementById('radar3'));
   charts.radar3.setOption({
     color: ['#1677ff'],
@@ -492,6 +859,32 @@ function initPersonRadar() {
     },
     series: [{ type: 'radar', data: [{ value: [88, 82, 90, 75, 92, 85], areaStyle: { color: 'rgba(22,119,255,.15)' }, lineStyle: { width: 2 } }] }]
   });
+
+  // Score trend
+  if (!charts.personTrend) charts.personTrend = echarts.init(document.getElementById('personTrend'));
+  charts.personTrend.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['入学', '安全', '理论', '实作'], top: 5, right: 20, textStyle: { fontSize: 11 } },
+    grid: { left: 50, right: 30, top: 40, bottom: 30 },
+    xAxis: { type: 'category', data: ['2025Q3', '2025Q4', '2026Q1', '2026Q2'], axisLabel: { fontSize: 11 } },
+    yAxis: { type: 'value', min: 60, max: 100, axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [
+      { name: '入学', type: 'line', data: [78, 80, 82, 85], smooth: true, lineStyle: { width: 2 } },
+      { name: '安全', type: 'line', data: [85, 88, 90, 92], smooth: true, lineStyle: { width: 2 } },
+      { name: '理论', type: 'line', data: [72, 74, 75, 78], smooth: true, lineStyle: { width: 2 } },
+      { name: '实作', type: 'line', data: [88, 90, 92, 94], smooth: true, lineStyle: { width: 2 } }
+    ]
+  });
+
+  // Rank trend
+  if (!charts.personRankTrend) charts.personRankTrend = echarts.init(document.getElementById('personRankTrend'));
+  charts.personRankTrend.setOption({
+    tooltip: { trigger: 'axis', formatter: function(p) { return p[0].name + '<br/>' + p[0].seriesName + ': 第 ' + p[0].value + ' 名'; } },
+    grid: { left: 60, right: 30, top: 20, bottom: 30 },
+    xAxis: { type: 'category', data: ['2025Q3', '2025Q4', '2026Q1', '2026Q2'], axisLabel: { fontSize: 11 } },
+    yAxis: { type: 'value', inverse: true, min: 1, max: 20, name: '排名', axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [{ name: '同岗位排名', type: 'line', data: [8, 6, 5, 3], smooth: true, lineStyle: { color: '#1677ff', width: 2 }, areaStyle: { color: 'rgba(22,119,255,.08)' }, itemStyle: { color: '#1677ff' }, markLine: { data: [{ type: 'average', name: '平均' }], lineStyle: { color: '#faad14', type: 'dashed' } } }]
+  });
 }
 
 function searchPerson() {
@@ -501,8 +894,8 @@ function searchPerson() {
 
 // ========== Init ==========
 window.onload = function() {
-  renderStationCards();
   renderSummary();
+  renderStationDetailTable();
   initLevel0Charts();
   window.addEventListener('resize', function() {
     Object.keys(charts).forEach(function(k) { if (charts[k]) charts[k].resize(); });
