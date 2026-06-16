@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440" />
+  <title>智能监控预警 - 沈阳客运职培基地</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1440px; color: rgba(0,0,0,.85); }
+    .layout { display: flex; min-height: 100vh; }
+    .sider { width: 240px; background: #001529; padding-top: 16px; flex-shrink: 0; }
+    .sider-title { color: #fff; font-size: 16px; font-weight: 600; padding: 12px 24px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 8px; }
+    .menu-item { padding: 12px 24px; color: rgba(255,255,255,0.65); cursor: pointer; transition: all 0.2s; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+    .menu-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .menu-item.active { color: #fff; background: #1677ff; }
+    .menu-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .main { flex: 1; display: flex; flex-direction: column; }
+    .header { background: #fff; padding: 0 24px; height: 56px; display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; }
+    .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
+    .breadcrumb span { color: #1677ff; }
+    .content { padding: 24px; flex: 1; overflow-y: auto; }
+    .page-title { font-size: 20px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 16px; }
+    .card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: rgba(0,0,0,.85); }
+    .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: #fff; border-radius: 8px; padding: 20px; text-align: center; border: 1px solid #f0f0f0; }
+    .stat-value { font-size: 28px; font-weight: 700; }
+    .stat-value.blue { color: #1677ff; }
+    .stat-value.green { color: #52c41a; }
+    .stat-value.orange { color: #fa8c16; }
+    .stat-value.red { color: #ff4d4f; }
+    .stat-value.cyan { color: #13c2c2; }
+    .stat-label { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    table th { background: #fafafa; padding: 12px 16px; text-align: left; font-weight: 600; color: rgba(0,0,0,.85); border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+    table td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; color: rgba(0,0,0,.65); }
+    table tr:hover td { background: #f5f7fa; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .tag-blue { background: #e6f7ff; color: #1677ff; border: 1px solid #91d5ff; }
+    .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+    .tag-gray { background: #fafafa; color: rgba(0,0,0,.45); border: 1px solid #d9d9d9; }
+    .tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+    .tag-red { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
+    .tag-purple { background: #f9f0ff; color: #722ed1; border: 1px solid #d3adf7; }
+    .link-btn { color: #1677ff; cursor: pointer; font-size: 13px; background: none; border: none; margin-right: 8px; }
+    .link-btn:hover { color: #4096ff; text-decoration: underline; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 6px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all 0.2s; }
+    .btn:hover { border-color: #1677ff; color: #1677ff; }
+    .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
+    .btn-primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
+    .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 16px; }
+    .filter-bar { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+    .filter-bar select, .filter-bar input { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; background: #fff; color: rgba(0,0,0,.85); }
+    .filter-bar select:focus, .filter-bar input:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.1); }
+    .cam-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .cam-card { background: #fafafa; border: 1px solid #f0f0f0; border-radius: 8px; padding: 16px; text-align: center; }
+    .cam-card .cam-icon { font-size: 28px; margin-bottom: 6px; }
+    .cam-card .cam-name { font-size: 13px; color: rgba(0,0,0,.85); font-weight: 500; margin-bottom: 6px; }
+    .cam-badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
+    .cam-online { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+    .cam-offline { background: #fafafa; color: rgba(0,0,0,.45); border: 1px solid #d9d9d9; }
+    .cam-alert { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
+    .hidden { display: none !important; }
+
+    /* iPad mockup */
+    .ipad-frame { width: 375px; min-height: 667px; border: 2px solid #d9d9d9; border-radius: 28px; margin: 0 auto; background: #fff; overflow: hidden; position: relative; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .ipad-statusbar { height: 32px; background: #fafafa; display: flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(0,0,0,.45); border-bottom: 1px solid #f0f0f0; }
+    .ipad-header { padding: 12px 16px; background: #1677ff; color: #fff; font-size: 15px; font-weight: 600; }
+    .ipad-body { padding: 16px; }
+    .toast-notification { position: absolute; top: 36px; left: 12px; right: 12px; background: #fff; border-radius: 10px; padding: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); border: 1px solid #f0f0f0; display: flex; align-items: center; gap: 10px; z-index: 10; transform: translateY(-120%); transition: transform 0.4s ease; }
+    .toast-notification.show { transform: translateY(0); }
+    .toast-avatar { width: 36px; height: 36px; border-radius: 6px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 14px; color: rgba(0,0,0,.45); flex-shrink: 0; }
+    .toast-content { flex: 1; }
+    .toast-title { font-size: 13px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .toast-desc { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
+    .toast-actions { display: flex; gap: 6px; }
+    .toast-actions button { padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; border: none; }
+    .toast-ignore { background: #fafafa; color: rgba(0,0,0,.45); border: 1px solid #d9d9d9 !important; }
+    .toast-view { background: #1677ff; color: #fff; }
+    .sim-btns { display: flex; gap: 12px; margin-top: 20px; justify-content: center; }
+
+    /* Timeline */
+    .timeline-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #f0f0f0; }
+    .timeline-time { width: 60px; font-size: 14px; color: rgba(0,0,0,.45); flex-shrink: 0; padding-top: 2px; }
+    .timeline-body { flex: 1; }
+    .timeline-name { font-weight: 600; color: rgba(0,0,0,.85); font-size: 14px; }
+    .timeline-type { margin-left: 8px; }
+    .timeline-photo { width: 48px; height: 48px; background: #f5f5f5; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: rgba(0,0,0,.25); font-size: 18px; margin-top: 8px; border: 1px solid #f0f0f0; }
+    .timeline-ops { margin-top: 8px; }
+    .summary-card { background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 16px; margin-top: 16px; font-size: 14px; color: rgba(0,0,0,.65); line-height: 1.8; }
+    .course-selector { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 8px; margin-bottom: 16px; font-size: 14px; color: rgba(0,0,0,.85); }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+  <div class="sider">
+    <div class="sider-title">智能监控预警</div>
+    <div class="menu-item active" onclick="switchPage('overview', this)">
+      <span class="icon">&#128202;</span> 预警总览
+    </div>
+    <div class="menu-item" onclick="switchPage('records', this)">
+      <span class="icon">&#128203;</span> 课堂分析记录
+    </div>
+    <div class="menu-item" onclick="switchPage('teacher', this)">
+      <span class="icon">&#128241;</span> 教师提醒模拟
+    </div>
+    <div class="menu-item" onclick="switchPage('review', this)">
+      <span class="icon">&#127916;</span> 课后回看
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <div class="breadcrumb">培训管理 &gt; 智能监控预警 &gt; <span id="breadcrumb-current">预警总览</span></div>
+    </div>
+
+    <div class="content">
+      <!-- PAGE 1: 预警总览 -->
+      <div id="page-overview">
+        <div class="page-title">预警总览</div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-value blue">66</div><div class="stat-label">今日预警总数</div></div>
+          <div class="stat-card"><div class="stat-value green">48</div><div class="stat-label">已处理</div></div>
+          <div class="stat-card"><div class="stat-value orange">12</div><div class="stat-label">处理中</div></div>
+          <div class="stat-card"><div class="stat-value red">6</div><div class="stat-label">待处理</div></div>
+          <div class="stat-card"><div class="stat-value cyan">72.7%</div><div class="stat-label">处理率</div></div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title">实时预警事件列表</div>
+            <div style="overflow-x:auto">
+            <table>
+              <thead><tr>
+                <th>时间</th><th>区域</th><th>行为类型</th><th>涉及学员</th><th>课堂归属</th><th>推送状态</th><th>推送对象</th><th>操作</th>
+              </tr></thead>
+              <tbody id="alertTableBody"></tbody>
+            </table>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-title">违规行为统计</div>
+              <div id="violationChart" style="width:100%;height:240px"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">摄像头点位状态</div>
+              <div class="cam-grid" id="cameraGrid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE 2: 课堂分析记录 -->
+      <div id="page-records" class="hidden">
+        <div class="page-title">课堂分析记录</div>
+        <div class="card">
+          <div class="filter-bar">
+            <select><option value="">全部区域</option><option>A区域-候车大厅</option><option>B区域-普速25T</option><option>C区域-CR400BF-GS</option><option>D区域-CR400BF-G</option><option>E区域-消防实训室</option><option>F区域-CR200J/CRH5G</option><option>G区域-保洁实训区</option></select>
+            <input type="date" value="2026-06-15" />
+            <span style="color:rgba(0,0,0,.45)">至</span>
+            <input type="date" value="2026-06-15" />
+            <select><option value="">全部行为类型</option><option>睡觉</option><option>玩手机</option><option>离岗</option><option>交头接耳</option><option>疑似抽烟</option></select>
+            <select><option value="">全部复审状态</option><option>待复审</option><option>已记档</option><option>已撤销</option></select>
+            <button class="btn btn-primary">查询</button>
+          </div>
+          <table>
+            <thead><tr>
+              <th>记录编号</th><th>学员姓名</th><th>所在区域</th><th>行为类型</th><th>发生时间</th><th>抓拍照片</th><th>摄像头ID</th><th>复审状态</th><th>操作</th>
+            </tr></thead>
+            <tbody id="recordsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAGE 3: 教师提醒模拟 -->
+      <div id="page-teacher" class="hidden">
+        <div class="page-title">教师提醒模拟 (Pad端轻量提醒)</div>
+        <div style="display:flex;gap:32px;align-items:flex-start">
+          <div class="ipad-frame" id="ipadFrame">
+            <div class="ipad-statusbar">09:23 &nbsp;&nbsp; Wi-Fi &nbsp;&nbsp; 85%</div>
+            <div class="ipad-header">李老师 - C区域-CR400BF-GS 第2节</div>
+            <div class="toast-notification" id="toastNotif">
+              <div class="toast-avatar">&#128100;</div>
+              <div class="toast-content">
+                <div class="toast-title">张三 疑似睡觉</div>
+                <div class="toast-desc">C区域 09:23</div>
+              </div>
+              <div class="toast-actions">
+                <button class="toast-ignore" onclick="dismissToast()">忽略</button>
+                <button class="toast-view" onclick="dismissToast()">查看</button>
+              </div>
+            </div>
+            <div class="ipad-body">
+              <div style="color:rgba(0,0,0,.85);font-weight:600;font-size:15px;margin-bottom:12px">当前课堂概览</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+                <div style="background:#f6ffed;border:1px solid #b7eb8f;border-radius:8px;padding:12px;text-align:center">
+                  <div style="font-size:22px;font-weight:700;color:#52c41a">28</div>
+                  <div style="font-size:12px;color:rgba(0,0,0,.45)">在位学员</div>
+                </div>
+                <div style="background:#fff7e6;border:1px solid #ffd591;border-radius:8px;padding:12px;text-align:center">
+                  <div style="font-size:22px;font-weight:700;color:#fa8c16">3</div>
+                  <div style="font-size:12px;color:rgba(0,0,0,.45)">今日提醒</div>
+                </div>
+              </div>
+              <div style="font-size:13px;color:rgba(0,0,0,.45);margin-bottom:8px">最近提醒</div>
+              <div style="border:1px solid #f0f0f0;border-radius:8px;overflow:hidden">
+                <div style="padding:10px 12px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center">
+                  <div><span style="font-weight:500">张三</span> <span class="tag tag-orange" style="font-size:11px">疑似睡觉</span></div>
+                  <span style="font-size:12px;color:rgba(0,0,0,.45)">09:23</span>
+                </div>
+                <div style="padding:10px 12px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center">
+                  <div><span style="font-weight:500">李四</span> <span class="tag tag-red" style="font-size:11px">玩手机</span></div>
+                  <span style="font-size:12px;color:rgba(0,0,0,.45)">09:15</span>
+                </div>
+                <div style="padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+                  <div><span style="font-weight:500">王五</span> <span class="tag tag-purple" style="font-size:11px">离岗</span></div>
+                  <span style="font-size:12px;color:rgba(0,0,0,.45)">09:02</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="flex:1">
+            <div class="card">
+              <div class="card-title">模拟说明</div>
+              <p style="font-size:14px;color:rgba(0,0,0,.65);line-height:1.8;margin-bottom:16px">
+                教师端 Pad 在授课过程中收到轻量提醒通知。通知以浮层形式从顶部滑入，显示学员姓名、违规行为和区域信息。<br/><br/>
+                教师可选择「查看」进入详情或「忽略」关闭通知。通知在 3-5 秒内未操作将自动消失，不打断授课节奏。<br/><br/>
+                教师也可开启「免打扰模式」暂停所有提醒推送，或对特定行为类型设置「不再提醒」。
+              </p>
+              <div class="sim-btns">
+                <button class="btn btn-primary" onclick="simulatePush()">模拟推送提醒</button>
+                <button class="btn" onclick="simulateDND()">模拟免打扰模式</button>
+                <button class="btn" onclick="simulateMute()">模拟不再提醒</button>
+              </div>
+              <div id="simMsg" style="margin-top:16px;text-align:center;font-size:14px;color:#52c41a;display:none"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE 4: 课后回看 -->
+      <div id="page-review" class="hidden">
+        <div class="page-title">课后回看</div>
+        <div class="course-selector">
+          <span style="font-weight:600">&#128218;</span>
+          2026年第三期客运培训 &middot; 第2节 &middot; 李老师 &middot; C区域-CR400BF-GS
+          <button class="btn" style="margin-left:auto;padding:4px 12px;font-size:13px">切换课堂</button>
+        </div>
+        <div class="card">
+          <div class="card-title">课堂提醒时间线</div>
+          <div id="reviewTimeline"></div>
+          <div class="summary-card" id="reviewSummary"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// === Page switching ===
+var pageMap = {
+  overview: '预警总览',
+  records: '课堂分析记录',
+  teacher: '教师提醒模拟',
+  review: '课后回看'
+};
+function switchPage(page, el) {
+  Object.keys(pageMap).forEach(function(k) {
+    document.getElementById('page-' + k).classList.add('hidden');
+  });
+  document.getElementById('page-' + page).classList.remove('hidden');
+  document.querySelectorAll('.menu-item').forEach(function(m) { m.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('breadcrumb-current').textContent = pageMap[page];
+}
+
+// === PAGE 1: Alert table data ===
+var alertData = [
+  { time: '14:32', zone: 'A区域-候车大厅', type: '睡觉', student: '王建国', classRef: '第3节/张建华', pushStatus: 'pushed', pushTarget: '张建华' },
+  { time: '14:28', zone: 'B区域-普速25T', type: '玩手机', student: '李明辉', classRef: '第2节/李晓明', pushStatus: 'success', pushTarget: '李晓明' },
+  { time: '14:25', zone: 'C区域-CR400BF-GS', type: '离岗', student: '赵丽娜', classRef: '第2节/王秀芳', pushStatus: 'pending', pushTarget: '王秀芳' },
+  { time: '14:20', zone: 'A区域-候车大厅', type: '交头接耳', student: '陈志强', classRef: '第3节/张建华', pushStatus: 'pushed', pushTarget: '张建华' },
+  { time: '14:18', zone: 'D区域-CR400BF-G', type: '玩手机', student: '张文博', classRef: '第1节/刘德军', pushStatus: 'success', pushTarget: '刘德军' },
+  { time: '14:15', zone: 'E区域-消防实训室', type: '疑似抽烟', student: '刘雨婷', classRef: '第4节/赵敏', pushStatus: 'pushed', pushTarget: '赵敏' },
+  { time: '14:10', zone: 'C区域-CR400BF-GS', type: '睡觉', student: '孙鹏飞', classRef: '第2节/王秀芳', pushStatus: 'ignored', pushTarget: '王秀芳' },
+  { time: '14:06', zone: 'F区域-CR200J/CRH5G', type: '离岗', student: '吴晓东', classRef: '第3节/周志远', pushStatus: 'pending', pushTarget: '周志远' },
+  { time: '14:02', zone: 'G区域-保洁实训区', type: '玩手机', student: '周海涛', classRef: '第1节/孙红梅', pushStatus: 'success', pushTarget: '孙红梅' },
+  { time: '13:58', zone: 'A区域-候车大厅', type: '睡觉', student: '马晓峰', classRef: '第3节/张建华', pushStatus: 'success', pushTarget: '张建华' },
+  { time: '13:55', zone: 'B区域-普速25T', type: '交头接耳', student: '杨思远', classRef: '第2节/李晓明', pushStatus: 'ignored', pushTarget: '李晓明' },
+  { time: '13:50', zone: 'D区域-CR400BF-G', type: '睡觉', student: '韩雪琴', classRef: '第1节/刘德军', pushStatus: 'pushed', pushTarget: '刘德军' },
+  { time: '13:45', zone: 'E区域-消防实训室', type: '离岗', student: '郑伟民', classRef: '第4节/赵敏', pushStatus: 'pending', pushTarget: '赵敏' },
+  { time: '13:40', zone: 'F区域-CR200J/CRH5G', type: '玩手机', student: '徐佳宁', classRef: '第3节/周志远', pushStatus: 'success', pushTarget: '周志远' },
+];
+var pushStatusTag = {
+  pushed: ['已推送', 'tag-blue'],
+  success: ['推送成功', 'tag-green'],
+  ignored: ['已忽略', 'tag-gray'],
+  pending: ['待处理', 'tag-orange']
+};
+function renderAlertTable() {
+  var html = '';
+  alertData.forEach(function(a) {
+    var s = pushStatusTag[a.pushStatus];
+    html += '<tr><td>' + a.time + '</td><td>' + a.zone + '</td><td>' + a.type + '</td><td>' + a.student + '</td><td>' + a.classRef + '</td><td><span class="tag ' + s[1] + '">' + s[0] + '</span></td><td>' + a.pushTarget + '</td><td><button class="link-btn">记档</button><button class="link-btn" style="color:#ff4d4f">撤销</button></td></tr>';
+  });
+  document.getElementById('alertTableBody').innerHTML = html;
+}
+renderAlertTable();
+
+// === Violation bar chart ===
+function initViolationChart() {
+  var chart = echarts.init(document.getElementById('violationChart'));
+  chart.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    grid: { top: 20, right: 20, bottom: 30, left: 50 },
+    xAxis: { type: 'category', data: ['睡觉', '玩手机', '离岗', '交头接耳', '疑似抽烟', '其他'], axisLine: { lineStyle: { color: '#f0f0f0' } }, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 12 } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#f0f0f0' } }, axisLine: { show: false }, axisLabel: { color: 'rgba(0,0,0,.45)' } },
+    series: [{ type: 'bar', barWidth: 32, data: [
+      { value: 23, itemStyle: { color: '#1677ff' } },
+      { value: 18, itemStyle: { color: '#ff4d4f' } },
+      { value: 12, itemStyle: { color: '#722ed1' } },
+      { value: 8, itemStyle: { color: '#52c41a' } },
+      { value: 3, itemStyle: { color: '#fa8c16' } },
+      { value: 2, itemStyle: { color: '#13c2c2' } }
+    ], label: { show: true, position: 'top', color: 'rgba(0,0,0,.65)', fontSize: 12, fontWeight: 600 } }]
+  });
+}
+
+// === Camera grid ===
+var cameras = [
+  { name: 'A区域-候车大厅', id: 'CAM-A01', status: 'online' },
+  { name: 'B区域-普速25T', id: 'CAM-B01', status: 'alert' },
+  { name: 'C区域-CR400BF-GS', id: 'CAM-C01', status: 'online' },
+  { name: 'D区域-CR400BF-G', id: 'CAM-D01', status: 'online' },
+  { name: 'E区域-消防实训室', id: 'CAM-E01', status: 'offline' },
+  { name: 'F区域-CR200J/CRH5G', id: 'CAM-F01', status: 'online' },
+  { name: 'G区域-保洁实训区', id: 'CAM-G01', status: 'online' },
+  { name: 'A区域-候车大厅', id: 'CAM-A02', status: 'alert' },
+];
+var camStatusMap = { online: ['在线', 'cam-online'], offline: ['离线', 'cam-offline'], alert: ['告警', 'cam-alert'] };
+function renderCameras() {
+  var html = '';
+  cameras.forEach(function(c) {
+    var s = camStatusMap[c.status];
+    html += '<div class="cam-card"><div class="cam-icon">' + (c.status === 'alert' ? '&#9888;' : c.status === 'offline' ? '&#128247;' : '&#127909;') + '</div><div class="cam-name">' + c.name + '</div><div style="font-size:12px;color:rgba(0,0,0,.45);margin-bottom:6px">' + c.id + '</div><span class="cam-badge ' + s[1] + '">' + s[0] + '</span></div>';
+  });
+  document.getElementById('cameraGrid').innerHTML = html;
+}
+renderCameras();
+
+// === PAGE 2: Records table ===
+var recordsData = [
+  { id: 'REC-20260615-001', name: '王建国', zone: 'A区域-候车大厅', type: '睡觉', time: '2026-06-15 14:32', cam: 'CAM-A01', status: 'pending' },
+  { id: 'REC-20260615-002', name: '李明辉', zone: 'B区域-普速25T', type: '玩手机', time: '2026-06-15 14:28', cam: 'CAM-B01', status: 'filed' },
+  { id: 'REC-20260615-003', name: '赵丽娜', zone: 'C区域-CR400BF-GS', type: '离岗', time: '2026-06-15 14:25', cam: 'CAM-C01', status: 'pending' },
+  { id: 'REC-20260615-004', name: '陈志强', zone: 'A区域-候车大厅', type: '交头接耳', time: '2026-06-15 14:20', cam: 'CAM-A02', status: 'revoked' },
+  { id: 'REC-20260615-005', name: '张文博', zone: 'D区域-CR400BF-G', type: '玩手机', time: '2026-06-15 14:18', cam: 'CAM-D01', status: 'filed' },
+  { id: 'REC-20260615-006', name: '刘雨婷', zone: 'E区域-消防实训室', type: '疑似抽烟', time: '2026-06-15 14:15', cam: 'CAM-E01', status: 'pending' },
+  { id: 'REC-20260615-007', name: '孙鹏飞', zone: 'C区域-CR400BF-GS', type: '睡觉', time: '2026-06-15 14:10', cam: 'CAM-C01', status: 'filed' },
+  { id: 'REC-20260615-008', name: '吴晓东', zone: 'F区域-CR200J/CRH5G', type: '离岗', time: '2026-06-15 14:06', cam: 'CAM-F01', status: 'pending' },
+  { id: 'REC-20260615-009', name: '周海涛', zone: 'G区域-保洁实训区', type: '玩手机', time: '2026-06-15 14:02', cam: 'CAM-G01', status: 'filed' },
+  { id: 'REC-20260615-010', name: '马晓峰', zone: 'A区域-候车大厅', type: '睡觉', time: '2026-06-15 13:58', cam: 'CAM-A01', status: 'revoked' },
+  { id: 'REC-20260615-011', name: '杨思远', zone: 'B区域-普速25T', type: '交头接耳', time: '2026-06-15 13:55', cam: 'CAM-B01', status: 'filed' },
+];
+var recStatusTag = {
+  pending: ['待复审', 'tag-orange'],
+  filed: ['已记档', 'tag-green'],
+  revoked: ['已撤销', 'tag-gray']
+};
+function renderRecordsTable() {
+  var html = '';
+  recordsData.forEach(function(r) {
+    var s = recStatusTag[r.status];
+    html += '<tr><td>' + r.id + '</td><td>' + r.name + '</td><td>' + r.zone + '</td><td>' + r.type + '</td><td>' + r.time + '</td><td><div style="width:40px;height:40px;background:#f5f5f5;border-radius:4px;display:flex;align-items:center;justify-content:center;color:rgba(0,0,0,.25);font-size:16px;border:1px solid #f0f0f0">&#128247;</div></td><td>' + r.cam + '</td><td><span class="tag ' + s[1] + '">' + s[0] + '</span></td><td><button class="link-btn">记档</button><button class="link-btn" style="color:#ff4d4f">撤销</button></td></tr>';
+  });
+  document.getElementById('recordsTableBody').innerHTML = html;
+}
+renderRecordsTable();
+
+// === PAGE 3: Teacher simulation ===
+var toastTimer = null;
+function simulatePush() {
+  var toast = document.getElementById('toastNotif');
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 4000);
+  showSimMsg('');
+}
+function dismissToast() {
+  document.getElementById('toastNotif').classList.remove('show');
+  clearTimeout(toastTimer);
+}
+function simulateDND() {
+  showSimMsg('已开启免打扰模式，课堂期间将暂停所有提醒推送');
+}
+function simulateMute() {
+  showSimMsg('已对「疑似睡觉」类型设置不再提醒');
+}
+function showSimMsg(msg) {
+  var el = document.getElementById('simMsg');
+  if (msg) { el.textContent = msg; el.style.display = 'block'; } else { el.style.display = 'none'; }
+}
+
+// === PAGE 4: Review timeline ===
+var reviewData = [
+  { time: '09:05', name: '张三', type: '疑似睡觉', status: 'filed', statusName: '已记档' },
+  { time: '09:12', name: '李四', type: '玩手机', status: 'ignored', statusName: '已忽略' },
+  { time: '09:23', name: '张三', type: '疑似睡觉', status: 'filed', statusName: '已记档' },
+  { time: '09:35', name: '王五', type: '离岗', status: 'revoked', statusName: '已撤销' },
+  { time: '09:42', name: '赵六', type: '交头接耳', status: 'ignored', statusName: '已忽略' },
+  { time: '09:50', name: '钱七', type: '玩手机', status: 'unhandled', statusName: '未处理' },
+];
+var revStatusTag = {
+  filed: ['已记档', 'tag-green'],
+  ignored: ['已忽略', 'tag-gray'],
+  revoked: ['已撤销', 'tag-orange'],
+  unhandled: ['未处理', 'tag-red']
+};
+function renderReview() {
+  var html = '';
+  reviewData.forEach(function(r) {
+    var s = revStatusTag[r.status];
+    html += '<div class="timeline-item"><div class="timeline-time">' + r.time + '</div><div class="timeline-body"><div><span class="timeline-name">' + r.name + '</span><span class="tag timeline-type ' + s[1] + '" style="margin-right:8px">' + r.type + '</span><span class="tag ' + s[1] + '">' + s[0] + '</span></div><div class="timeline-photo">&#128247;</div><div class="timeline-ops">' + (r.status === 'unhandled' || r.status === 'ignored' ? '<button class="link-btn">补充记档</button>' : '') + (r.status === 'filed' ? '<button class="link-btn" style="color:#ff4d4f">撤销</button>' : '') + '</div></div></div>';
+  });
+  document.getElementById('reviewTimeline').innerHTML = html;
+
+  var filed = 0, revoked = 0, ignored = 0, unhandled = 0;
+  reviewData.forEach(function(r) {
+    if (r.status === 'filed') filed++;
+    else if (r.status === 'revoked') revoked++;
+    else if (r.status === 'ignored') ignored++;
+    else if (r.status === 'unhandled') unhandled++;
+  });
+  document.getElementById('reviewSummary').innerHTML = '本节课共 <strong>' + reviewData.length + '</strong> 条提醒，已记档 <strong>' + filed + '</strong> 条，已撤销 <strong>' + revoked + '</strong> 条，已忽略 <strong>' + ignored + '</strong> 条，未处理 <strong>' + unhandled + '</strong> 条';
+}
+renderReview();
+
+// Init
+window.onload = function() { initViolationChart(); };
+</script>
+</body>
+</html>

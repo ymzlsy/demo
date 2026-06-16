@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实训考核管理 - 单次实做考试结果分析</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f0f2f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; }
+    .page-header { background: #fff; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+    .page-header h2 { font-size: 18px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .page-header .breadcrumb { font-size: 13px; color: rgba(0,0,0,.45); margin-bottom: 4px; }
+    .btn { display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all .2s; }
+    .btn:hover { border-color: #1677ff; color: #1677ff; }
+    .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
+    .btn-primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
+    .exam-info-bar { background: #fff; margin: 16px 24px 0; padding: 16px 24px; border-radius: 6px; display: flex; gap: 48px; align-items: center; border: 1px solid #f0f0f0; flex-wrap: wrap; }
+    .exam-info-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: rgba(0,0,0,.65); }
+    .exam-info-item .label { color: rgba(0,0,0,.45); }
+    .exam-info-item .value { color: rgba(0,0,0,.85); font-weight: 500; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; line-height: 20px; }
+    .tag-blue { background: #e6f7ff; color: #1677ff; border: 1px solid #91caff; }
+    .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+    .tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+    .tag-red { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
+    .main-content { margin: 16px 24px 24px; }
+    .tab-bar { display: flex; background: #fafafa; border: 1px solid #f0f0f0; border-bottom: none; border-radius: 6px 6px 0 0; overflow: hidden; }
+    .tab-item { padding: 12px 24px; cursor: pointer; font-size: 14px; color: rgba(0,0,0,.65); background: #fafafa; border-right: 1px solid #f0f0f0; transition: all .2s; }
+    .tab-item:hover { color: #1677ff; }
+    .tab-item.active { color: #1677ff; background: #fff; font-weight: 500; border-bottom: 2px solid #1677ff; }
+    .tab-content { background: #fff; border: 1px solid #f0f0f0; border-radius: 0 0 6px 6px; padding: 24px; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 16px; }
+    .stat-card { background: #fff; border-radius: 6px; padding: 20px 24px; border: 1px solid #f0f0f0; }
+    .stat-card .stat-label { font-size: 13px; color: rgba(0,0,0,.45); margin-bottom: 8px; }
+    .stat-card .stat-value { font-size: 28px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .stat-card .stat-sub { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 4px; }
+    .stat-card.highlight .stat-value { color: #1677ff; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .chart-card { background: #fff; border-radius: 6px; padding: 20px 24px; border: 1px solid #f0f0f0; }
+    .chart-card h4 { font-size: 15px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 16px; }
+    .chart-container { width: 100%; height: 300px; }
+    .eval-card { background: #fff; border-radius: 6px; padding: 20px 24px; border: 1px solid #f0f0f0; margin-bottom: 16px; }
+    .eval-card h4 { font-size: 15px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 12px; }
+    .eval-text { font-size: 14px; line-height: 1.8; color: rgba(0,0,0,.65); }
+    .eval-text strong { color: rgba(0,0,0,.85); }
+    .eval-text p + p { margin-top: 8px; }
+    .filter-bar { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; }
+    .filter-bar input, .filter-bar select { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; font-family: inherit; outline: none; transition: border-color .2s; }
+    .filter-bar input:focus, .filter-bar select:focus { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    table th { background: #fafafa; padding: 12px 16px; text-align: left; font-weight: 600; color: rgba(0,0,0,.85); border-bottom: 1px solid #f0f0f0; cursor: default; white-space: nowrap; }
+    table th.sortable { cursor: pointer; user-select: none; }
+    table th.sortable:hover { background: #f0f0f0; }
+    table th .sort-icon { font-size: 11px; margin-left: 4px; color: rgba(0,0,0,.3); }
+    table th.sort-asc .sort-icon, table th.sort-desc .sort-icon { color: #1677ff; }
+    table td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; color: rgba(0,0,0,.65); }
+    table tr:hover td { background: #f5f7fa; }
+    a { color: #1677ff; cursor: pointer; text-decoration: none; }
+    a:hover { color: #4096ff; }
+    .weakness-chart-container { width: 100%; height: 350px; margin-top: 16px; }
+    .progress-bar { background: #f5f5f5; border-radius: 100px; height: 8px; overflow: hidden; width: 120px; display: inline-block; vertical-align: middle; margin-right: 8px; }
+    .progress-bar-inner { height: 100%; border-radius: 100px; transition: width .3s; }
+    /* Drawer / slide-in panel */
+    .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; transition: opacity .3s; }
+    .drawer-overlay.open { display: block; }
+    .drawer-panel { position: fixed; top: 0; right: -700px; width: 680px; height: 100%; background: #fff; z-index: 1001; box-shadow: -6px 0 16px rgba(0,0,0,.08); transition: right .3s ease; overflow-y: auto; }
+    .drawer-panel.open { right: 0; }
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; }
+    .drawer-header h3 { font-size: 16px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .drawer-close { font-size: 20px; cursor: pointer; color: rgba(0,0,0,.45); background: none; border: none; padding: 4px 8px; }
+    .drawer-close:hover { color: rgba(0,0,0,.85); }
+    .drawer-body { padding: 24px; }
+    .drawer-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .drawer-summary-item { background: #fafafa; border-radius: 4px; padding: 12px; text-align: center; }
+    .drawer-summary-item .val { font-size: 22px; font-weight: 600; color: #1677ff; }
+    .drawer-summary-item .lbl { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 4px; }
+    .desc-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .desc-table td { padding: 10px 16px; border: 1px solid #f0f0f0; font-size: 14px; }
+    .desc-table .dt-label { background: #fafafa; color: rgba(0,0,0,.45); width: 100px; font-weight: 500; }
+    .desc-table .dt-value { color: rgba(0,0,0,.85); }
+    .toast { display: none; position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: #52c41a; color: #fff; padding: 10px 24px; border-radius: 8px; font-size: 14px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <div class="breadcrumb">实训考核管理 / 考试管理 / 考试结果分析</div>
+    <h2>单次实做考试结果分析</h2>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn" onclick="showToast('报告导出中，请稍候...')">导出报告</button>
+    <button class="btn btn-primary" onclick="window.print()">打印</button>
+  </div>
+</div>
+
+<div class="exam-info-bar">
+  <div class="exam-info-item"><span class="label">考试名称：</span><span class="value">2026年第三期客运岗位实操考试</span></div>
+  <div class="exam-info-item"><span class="label">考试时间：</span><span class="value">2026-06-10 09:00</span></div>
+  <div class="exam-info-item"><span class="label">考试类型：</span><span class="tag tag-blue">实操考试</span></div>
+  <div class="exam-info-item"><span class="label">参考人数：</span><span class="value">18 / 20</span></div>
+  <div class="exam-info-item"><span class="label">状态：</span><span class="tag tag-green">已完成</span></div>
+</div>
+
+<div class="main-content">
+  <div class="tab-bar">
+    <div class="tab-item active" onclick="switchTab('overview', this)">结果总览</div>
+    <div class="tab-item" onclick="switchTab('detail', this)">成绩明细</div>
+    <div class="tab-item" onclick="switchTab('weakness', this)">薄弱项分析</div>
+  </div>
+  <div class="tab-content">
+    <!-- Tab 1: 结果总览 -->
+    <div id="tab-overview" class="tab-pane active">
+      <div class="stats-row">
+        <div class="stat-card highlight"><div class="stat-label">参考人数</div><div class="stat-value">18<span style="font-size:14px;color:rgba(0,0,0,.45);font-weight:400"> / 20人</span></div><div class="stat-sub">出勤率 90%</div></div>
+        <div class="stat-card"><div class="stat-label">平均分</div><div class="stat-value">82.5</div><div class="stat-sub">较上期 +3.2</div></div>
+        <div class="stat-card"><div class="stat-label">最高分</div><div class="stat-value" style="color:#52c41a">97</div><div class="stat-sub">王建国 - 沈阳站</div></div>
+        <div class="stat-card"><div class="stat-label">最低分</div><div class="stat-value" style="color:#ff4d4f">45</div><div class="stat-sub">赵志强 - 沈阳南站</div></div>
+        <div class="stat-card"><div class="stat-label">标准差</div><div class="stat-value">12.3</div><div class="stat-sub">成绩离散度中等</div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card"><h4>成绩等级分布</h4><div id="gradeChart" class="chart-container"></div></div>
+        <div class="chart-card"><h4>分数段分布</h4><div id="scoreChart" class="chart-container"></div></div>
+      </div>
+      <div class="eval-card">
+        <h4><span style="color:#1677ff">&#9733;</span> 整体评价</h4>
+        <div class="eval-text">
+          <p>本次<strong>「2026年第三期客运岗位实操考试」</strong>共有 20 名学员报名，实际参考 18 人，出勤率 90%。考试整体水平<strong>良好</strong>，平均分 82.5 分，较上期提升 3.2 分。</p>
+          <p>成绩分布方面：优秀（90分以上）5人，占比 27.8%；良好（80-89分）6人，占比 33.3%；合格（60-79分）5人，占比 27.8%；不合格（60分以下）2人，占比 11.1%。合格率达 <strong>88.9%</strong>。</p>
+          <p>主要薄弱环节集中在 <strong>D1 签封作业规范操作</strong>（人均失分 8.2 分）和 <strong>D3 转辙机故障处理</strong>（人均失分 6.5 分），建议针对以上两项安排强化实训。不合格的 2 名学员（赵志强、周小明）建议安排补考前辅导。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: 成绩明细 -->
+    <div id="tab-detail" class="tab-pane">
+      <div class="filter-bar">
+        <input type="text" id="searchInput" placeholder="搜索学员姓名" style="width:220px" oninput="renderStudentTable()">
+        <select id="filterStation" style="width:160px" onchange="renderStudentTable()">
+          <option value="">所在单位</option>
+          <option value="沈阳站">沈阳站</option>
+          <option value="沈阳北站">沈阳北站</option>
+          <option value="沈阳南站">沈阳南站</option>
+        </select>
+        <select id="filterGrade" style="width:140px" onchange="renderStudentTable()">
+          <option value="">成绩等级</option>
+          <option value="优秀">优秀</option>
+          <option value="良好">良好</option>
+          <option value="合格">合格</option>
+          <option value="不合格">不合格</option>
+        </select>
+        <button class="btn" onclick="document.getElementById('searchInput').value='';document.getElementById('filterStation').value='';document.getElementById('filterGrade').value='';renderStudentTable()">重置</button>
+      </div>
+      <table id="studentTable">
+        <thead><tr>
+          <th class="sortable" data-key="rank" data-type="num">排名 <span class="sort-icon">&#9650;&#9660;</span></th>
+          <th>姓名</th><th>所在单位</th><th>班级</th><th>岗位</th>
+          <th class="sortable sort-desc" data-key="score" data-type="num">成绩 <span class="sort-icon">&#9650;&#9660;</span></th>
+          <th>等级</th>
+          <th class="sortable" data-key="deductions" data-type="num">扣分项数 <span class="sort-icon">&#9650;&#9660;</span></th>
+          <th class="sortable" data-key="duration" data-type="num">耗时(分钟) <span class="sort-icon">&#9650;&#9660;</span></th>
+          <th>操作</th>
+        </tr></thead>
+        <tbody id="studentBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Tab 3: 薄弱项分析 -->
+    <div id="tab-weakness" class="tab-pane">
+      <div class="chart-card" style="margin-bottom:16px"><h4>高频扣分步骤 TOP 10</h4><div id="weaknessChart" class="weakness-chart-container"></div></div>
+      <table>
+        <thead><tr><th>排序</th><th>扣分任务</th><th>总分</th><th>人均失分</th><th>最低分</th><th>失分人数</th><th>失分占比</th></tr></thead>
+        <tbody id="weaknessBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Drawer overlay + panel -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer-panel" id="drawerPanel">
+  <div class="drawer-header"><h3 id="drawerTitle"></h3><button class="drawer-close" onclick="closeDrawer()">&#10005;</button></div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== Data ===== */
+var students = [
+  { rank:1, name:'王建国', station:'沈阳站', className:'客运三班', job:'客运员', score:97, deductions:1, duration:38, grade:'优秀' },
+  { rank:2, name:'李淑芬', station:'沈阳北站', className:'客运一班', job:'售票员', score:95, deductions:2, duration:42, grade:'优秀' },
+  { rank:3, name:'张伟', station:'沈阳站', className:'客运二班', job:'值班员', score:93, deductions:2, duration:40, grade:'优秀' },
+  { rank:4, name:'刘洋', station:'沈阳北站', className:'客运三班', job:'客运员', score:91, deductions:3, duration:44, grade:'优秀' },
+  { rank:5, name:'陈晓红', station:'沈阳站', className:'客运一班', job:'客运值班站长', score:90, deductions:3, duration:41, grade:'优秀' },
+  { rank:6, name:'孙丽', station:'沈阳北站', className:'客运二班', job:'售票员', score:88, deductions:4, duration:45, grade:'良好' },
+  { rank:7, name:'马超', station:'沈阳站', className:'客运三班', job:'客运员', score:86, deductions:4, duration:43, grade:'良好' },
+  { rank:8, name:'杨帆', station:'沈阳南站', className:'客运一班', job:'值班员', score:85, deductions:4, duration:46, grade:'良好' },
+  { rank:9, name:'吴强', station:'沈阳北站', className:'客运二班', job:'客运员', score:83, deductions:5, duration:48, grade:'良好' },
+  { rank:10, name:'高明', station:'沈阳站', className:'客运三班', job:'售票员', score:81, deductions:5, duration:47, grade:'良好' },
+  { rank:11, name:'林静', station:'沈阳南站', className:'客运一班', job:'客运员', score:80, deductions:5, duration:49, grade:'良好' },
+  { rank:12, name:'黄磊', station:'沈阳北站', className:'客运二班', job:'客运值班站长', score:78, deductions:6, duration:50, grade:'合格' },
+  { rank:13, name:'郑军', station:'沈阳站', className:'客运三班', job:'客运员', score:75, deductions:6, duration:51, grade:'合格' },
+  { rank:14, name:'何雪', station:'沈阳南站', className:'客运一班', job:'售票员', score:72, deductions:7, duration:52, grade:'合格' },
+  { rank:15, name:'罗敏', station:'沈阳北站', className:'客运二班', job:'值班员', score:68, deductions:8, duration:53, grade:'合格' },
+  { rank:16, name:'谢涛', station:'沈阳站', className:'客运三班', job:'客运员', score:65, deductions:8, duration:55, grade:'合格' },
+  { rank:17, name:'周小明', station:'沈阳南站', className:'客运一班', job:'客运员', score:52, deductions:11, duration:58, grade:'不合格' },
+  { rank:18, name:'赵志强', station:'沈阳南站', className:'客运二班', job:'值班员', score:45, deductions:13, duration:60, grade:'不合格' }
+];
+
+var deductionMap = {
+  '王建国': [{ task:'D5 行车信号识别', total:10, got:8, avgLoss:1.2, minScore:6, lossCount:'5人', lossRatio:'27.8%' }],
+  '李淑芬': [
+    { task:'D1 签封作业规范操作', total:15, got:12, avgLoss:8.2, minScore:5, lossCount:'14人', lossRatio:'77.8%' },
+    { task:'D7 应急广播操作', total:10, got:8, avgLoss:2.1, minScore:5, lossCount:'8人', lossRatio:'44.4%' }
+  ],
+  '赵志强': [
+    { task:'D1 签封作业规范操作', total:15, got:3, avgLoss:8.2, minScore:3, lossCount:'14人', lossRatio:'77.8%' },
+    { task:'D3 转辙机故障处理', total:15, got:4, avgLoss:6.5, minScore:4, lossCount:'12人', lossRatio:'66.7%' },
+    { task:'D2 道岔操作规程', total:10, got:3, avgLoss:4.8, minScore:2, lossCount:'10人', lossRatio:'55.6%' },
+    { task:'D4 接发列车作业', total:15, got:7, avgLoss:3.9, minScore:5, lossCount:'9人', lossRatio:'50.0%' },
+    { task:'D5 行车信号识别', total:10, got:4, avgLoss:1.2, minScore:4, lossCount:'5人', lossRatio:'27.8%' },
+    { task:'D6 客运安全检查', total:10, got:5, avgLoss:2.8, minScore:4, lossCount:'7人', lossRatio:'38.9%' },
+    { task:'D7 应急广播操作', total:10, got:5, avgLoss:2.1, minScore:5, lossCount:'8人', lossRatio:'44.4%' },
+    { task:'D8 站台安全防护', total:5, got:2, avgLoss:1.5, minScore:1, lossCount:'6人', lossRatio:'33.3%' },
+    { task:'D9 票务终端操作', total:5, got:3, avgLoss:0.8, minScore:2, lossCount:'4人', lossRatio:'22.2%' },
+    { task:'D10 消防器材使用', total:5, got:2, avgLoss:1.1, minScore:1, lossCount:'5人', lossRatio:'27.8%' }
+  ]
+};
+
+var defaultDeductions = [
+  { task:'D1 签封作业规范操作', total:15, got:10, avgLoss:8.2, minScore:5, lossCount:'14人', lossRatio:'77.8%' },
+  { task:'D3 转辙机故障处理', total:15, got:9, avgLoss:6.5, minScore:4, lossCount:'12人', lossRatio:'66.7%' },
+  { task:'D2 道岔操作规程', total:10, got:7, avgLoss:4.8, minScore:3, lossCount:'10人', lossRatio:'55.6%' },
+  { task:'D5 行车信号识别', total:10, got:8, avgLoss:1.2, minScore:6, lossCount:'5人', lossRatio:'27.8%' }
+];
+
+var weaknessData = [
+  { rank:1, task:'D1 签封作业规范操作', total:15, avgLoss:8.2, minScore:3, lossCount:14, lossRatio:78 },
+  { rank:2, task:'D3 转辙机故障处理', total:15, avgLoss:6.5, minScore:4, lossCount:12, lossRatio:67 },
+  { rank:3, task:'D2 道岔操作规程', total:10, avgLoss:4.8, minScore:2, lossCount:10, lossRatio:56 },
+  { rank:4, task:'D4 接发列车作业', total:15, avgLoss:3.9, minScore:5, lossCount:9, lossRatio:50 },
+  { rank:5, task:'D6 客运安全检查', total:10, avgLoss:2.8, minScore:4, lossCount:7, lossRatio:39 },
+  { rank:6, task:'D7 应急广播操作', total:10, avgLoss:2.1, minScore:5, lossCount:8, lossRatio:44 },
+  { rank:7, task:'D8 站台安全防护', total:5, avgLoss:1.5, minScore:1, lossCount:6, lossRatio:33 },
+  { rank:8, task:'D5 行车信号识别', total:10, avgLoss:1.2, minScore:4, lossCount:5, lossRatio:28 },
+  { rank:9, task:'D10 消防器材使用', total:5, avgLoss:1.1, minScore:1, lossCount:5, lossRatio:28 },
+  { rank:10, task:'D9 票务终端操作', total:5, avgLoss:0.8, minScore:2, lossCount:4, lossRatio:22 }
+];
+
+/* ===== Sorting state ===== */
+var sortKey = 'score', sortDir = 'desc';
+
+/* ===== Helpers ===== */
+function gradeTagClass(g) { return {'优秀':'tag-blue','良好':'tag-green','合格':'tag-orange','不合格':'tag-red'}[g]||''; }
+function scoreColor(s) { return s >= 90 ? '#1677ff' : s < 60 ? '#ff4d4f' : 'rgba(0,0,0,.85)'; }
+function barColor(r) { return r > 50 ? '#ff4d4f' : r > 30 ? '#faad14' : '#52c41a'; }
+
+/* ===== Tabs ===== */
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-item').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+  if (id === 'weakness' && !window._weaknessChartDone) { initWeaknessChart(); window._weaknessChartDone = true; }
+}
+
+/* ===== Student Table ===== */
+function getFilteredStudents() {
+  var q = document.getElementById('searchInput').value.trim();
+  var st = document.getElementById('filterStation').value;
+  var gr = document.getElementById('filterGrade').value;
+  var list = students.filter(function(s) {
+    if (q && s.name.indexOf(q) === -1) return false;
+    if (st && s.station !== st) return false;
+    if (gr && s.grade !== gr) return false;
+    return true;
+  });
+  list.sort(function(a, b) { var d = sortDir === 'asc' ? 1 : -1; return (a[sortKey] - b[sortKey]) * d; });
+  return list;
+}
+
+function renderStudentTable() {
+  var list = getFilteredStudents();
+  var html = list.map(function(s) {
+    return '<tr>' +
+      '<td>' + s.rank + '</td>' +
+      '<td>' + s.name + '</td>' +
+      '<td>' + s.station + '</td>' +
+      '<td>' + s.className + '</td>' +
+      '<td>' + s.job + '</td>' +
+      '<td style="font-weight:600;color:' + scoreColor(s.score) + '">' + s.score + '</td>' +
+      '<td><span class="tag ' + gradeTagClass(s.grade) + '">' + s.grade + '</span></td>' +
+      '<td>' + s.deductions + '</td>' +
+      '<td>' + s.duration + '</td>' +
+      '<td><a onclick="openDrawer(\'' + s.name + '\')">查看明细</a></td>' +
+      '</tr>';
+  }).join('');
+  document.getElementById('studentBody').innerHTML = html;
+}
+
+/* ===== Column sort ===== */
+document.addEventListener('click', function(e) {
+  var th = e.target.closest('th.sortable');
+  if (!th) return;
+  var key = th.getAttribute('data-key');
+  if (sortKey === key) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; } else { sortKey = key; sortDir = 'asc'; }
+  document.querySelectorAll('#studentTable th.sortable').forEach(function(h) { h.classList.remove('sort-asc','sort-desc'); });
+  th.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+  renderStudentTable();
+});
+
+/* ===== Weakness Table ===== */
+function renderWeaknessTable() {
+  document.getElementById('weaknessBody').innerHTML = weaknessData.map(function(d) {
+    var c = barColor(d.lossRatio);
+    return '<tr><td>' + d.rank + '</td><td>' + d.task + '</td><td>' + d.total + '</td><td>' + d.avgLoss + '</td><td>' + d.minScore + '</td><td>' + d.lossCount + '</td>' +
+      '<td><span class="progress-bar"><span class="progress-bar-inner" style="width:' + d.lossRatio + '%;background:' + c + '"></span></span>' + d.lossRatio + '%</td></tr>';
+  }).join('');
+}
+
+/* ===== Drawer ===== */
+function openDrawer(name) {
+  var s = students.find(function(x){ return x.name === name; });
+  if (!s) return;
+  var deds = deductionMap[name] || defaultDeductions;
+  document.getElementById('drawerTitle').textContent = s.name + ' - 扣分明细';
+  document.getElementById('drawerBody').innerHTML =
+    '<div class="drawer-summary">' +
+      '<div class="drawer-summary-item"><div class="val">' + s.score + '</div><div class="lbl">总成绩</div></div>' +
+      '<div class="drawer-summary-item"><div class="val">' + s.rank + '</div><div class="lbl">排名</div></div>' +
+      '<div class="drawer-summary-item"><div class="val">' + s.deductions + '</div><div class="lbl">扣分项数</div></div>' +
+      '<div class="drawer-summary-item"><div class="val">' + s.duration + '</div><div class="lbl">耗时(分钟)</div></div>' +
+    '</div>' +
+    '<table class="desc-table">' +
+      '<tr><td class="dt-label">姓名</td><td class="dt-value">' + s.name + '</td><td class="dt-label">所在单位</td><td class="dt-value">' + s.station + '</td></tr>' +
+      '<tr><td class="dt-label">班级</td><td class="dt-value">' + s.className + '</td><td class="dt-label">岗位</td><td class="dt-value">' + s.job + '</td></tr>' +
+      '<tr><td class="dt-label">成绩等级</td><td class="dt-value"><span class="tag ' + gradeTagClass(s.grade) + '">' + s.grade + '</span></td><td class="dt-label">考试时间</td><td class="dt-value">2026-06-10 09:00</td></tr>' +
+    '</table>' +
+    '<h4 style="font-size:14px;font-weight:600;margin-bottom:12px;color:rgba(0,0,0,.85)">扣分明细</h4>' +
+    '<table><thead><tr><th>扣分任务名称</th><th>总分</th><th>得分</th><th>人均失分</th><th>最低分</th><th>失分人数/占比</th></tr></thead><tbody>' +
+    deds.map(function(d){ return '<tr><td>'+d.task+'</td><td>'+d.total+'</td><td>'+d.got+'</td><td>'+d.avgLoss+'</td><td>'+d.minScore+'</td><td>'+d.lossCount+'/'+d.lossRatio+'</td></tr>'; }).join('') +
+    '</tbody></table>';
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawerPanel').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawerPanel').classList.remove('open');
+}
+
+/* ===== Toast ===== */
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block'; t.style.opacity = '1';
+  setTimeout(function(){ t.style.opacity = '0'; setTimeout(function(){ t.style.display = 'none'; t.style.opacity = '1'; }, 300); }, 2000);
+}
+
+/* ===== Charts ===== */
+function initCharts() {
+  var gc = echarts.init(document.getElementById('gradeChart'));
+  gc.setOption({
+    tooltip: { trigger:'item', formatter:'{b}: {c}人 ({d}%)' },
+    legend: { bottom:10, itemWidth:14, itemHeight:14, textStyle:{ fontSize:13 } },
+    color: ['#1677ff','#52c41a','#faad14','#ff4d4f'],
+    series: [{ type:'pie', radius:['40%','70%'], center:['50%','45%'],
+      label: { formatter:'{b}\n{c}人', fontSize:12 },
+      data: [{ value:5, name:'优秀(90+)' },{ value:6, name:'良好(80-89)' },{ value:5, name:'合格(60-79)' },{ value:2, name:'不合格(<60)' }]
+    }]
+  });
+  var sc = echarts.init(document.getElementById('scoreChart'));
+  sc.setOption({
+    tooltip: { trigger:'axis', axisPointer:{ type:'shadow' } },
+    grid: { left:50, right:20, top:20, bottom:40 },
+    xAxis: { type:'category', data:['40-49','50-59','60-69','70-79','80-89','90-100'], axisLabel:{ fontSize:12 } },
+    yAxis: { type:'value', name:'人数', minInterval:1, axisLabel:{ fontSize:12 } },
+    series: [{ type:'bar', barWidth:'50%',
+      data: [
+        { value:1, itemStyle:{color:'#ff4d4f'} },{ value:1, itemStyle:{color:'#ff4d4f'} },
+        { value:3, itemStyle:{color:'#faad14'} },{ value:2, itemStyle:{color:'#faad14'} },
+        { value:6, itemStyle:{color:'#52c41a'} },{ value:5, itemStyle:{color:'#1677ff'} }
+      ],
+      label: { show:true, position:'top', fontSize:13, fontWeight:600 }
+    }]
+  });
+  window.addEventListener('resize', function(){ gc.resize(); sc.resize(); });
+}
+
+function initWeaknessChart() {
+  var el = document.getElementById('weaknessChart');
+  if (!el) return;
+  var chart = echarts.init(el);
+  chart.setOption({
+    tooltip: { trigger:'axis', axisPointer:{ type:'shadow' } },
+    grid: { left:180, right:40, top:10, bottom:30 },
+    xAxis: { type:'value', name:'人均失分', axisLabel:{ fontSize:12 } },
+    yAxis: { type:'category', data: weaknessData.map(function(d){return d.task}).reverse(), axisLabel:{ fontSize:12, width:160, overflow:'truncate' } },
+    series: [{ type:'bar', barWidth:20,
+      data: weaknessData.map(function(d){return d.avgLoss}).reverse(),
+      itemStyle: { color: function(p){ var v=p.value; return v>6?'#ff4d4f':v>3?'#faad14':'#52c41a'; } },
+      label: { show:true, position:'right', fontSize:12, formatter:'{c}分' }
+    }]
+  });
+  window.addEventListener('resize', function(){ chart.resize(); });
+}
+
+/* ===== Init ===== */
+window.addEventListener('DOMContentLoaded', function() {
+  initCharts();
+  renderStudentTable();
+  renderWeaknessTable();
+});
+</script>
+</body>
+</html>

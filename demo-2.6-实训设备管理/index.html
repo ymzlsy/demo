@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.6 实训设备管理 — 沈阳客运职培基地</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f0f2f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; }
+    .page-header { background: #fff; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+    .page-header h2 { font-size: 20px; font-weight: 600; color: #1d2129; }
+    .page-header .subtitle { color: #86909c; font-size: 13px; margin-left: 12px; }
+    .header-btns { display: flex; gap: 8px; }
+    .main-content { max-width: 1440px; margin: 0 auto; padding: 20px 24px; }
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr) 280px; gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: #fff; border-radius: 8px; padding: 20px; }
+    .stat-card .label { font-size: 13px; color: #86909c; margin-bottom: 8px; }
+    .stat-card .value { font-size: 28px; font-weight: 600; color: #1d2129; }
+    .stat-card .sub { font-size: 12px; color: #86909c; margin-top: 4px; }
+    .v-danger { color: #ff4d4f !important; } .v-warning { color: #faad14 !important; }
+    .v-processing { color: #1677ff !important; } .v-success { color: #52c41a !important; }
+    .chart-card { background: #fff; border-radius: 8px; padding: 16px; }
+    #miniChart { width: 100%; height: 100px; }
+    .content-card { background: #fff; border-radius: 8px; }
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: #333; transition: all .2s; }
+    .btn:hover { border-color: #1677ff; color: #1677ff; }
+    .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
+    .btn-primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
+    .btn-link { background: none; border: none; color: #1677ff; padding: 2px 6px; cursor: pointer; font-size: 14px; }
+    .btn-link:hover { color: #4096ff; }
+    /* Tabs */
+    .tab-bar { display: flex; border-bottom: 1px solid #f0f0f0; padding: 0 20px; }
+    .tab-item { padding: 12px 20px; cursor: pointer; font-size: 14px; color: #666; border-bottom: 2px solid transparent; transition: all .2s; }
+    .tab-item:hover { color: #1677ff; }
+    .tab-item.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 500; }
+    /* Tags & Badges */
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; line-height: 1.6; }
+    .tag-red { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffa39e; }
+    .tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+    .tag-blue { background: #e6f7ff; color: #1677ff; border: 1px solid #91d5ff; }
+    .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+    .tag-default { background: #fafafa; color: #666; border: 1px solid #d9d9d9; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
+    .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge-default::before { background: #d9d9d9; } .badge-processing::before { background: #1677ff; animation: pulse 1.5s infinite; }
+    .badge-warning::before { background: #faad14; } .badge-success::before { background: #52c41a; }
+    .badge-error::before { background: #ff4d4f; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    /* Filter bar */
+    .filter-bar { display: flex; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #f0f0f0; flex-wrap: wrap; align-items: center; }
+    .filter-bar .spacer { flex: 1; }
+    .form-select, .form-input { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; font-family: inherit; background: #fff; }
+    .form-select:focus, .form-input:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+    /* Table */
+    .table-wrap { padding: 0 20px 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    table th { background: #fafafa; padding: 12px 16px; text-align: left; font-weight: 600; color: #1d2129; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+    table td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; color: #333; }
+    table tr:hover td { background: #f5f7fa; }
+    .td-ellipsis { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pagination { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; font-size: 14px; color: #666; }
+    .page-btns { display: flex; gap: 4px; }
+    .page-btn { min-width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d9d9d9; border-radius: 6px; cursor: pointer; background: #fff; font-size: 14px; }
+    .page-btn.active { border-color: #1677ff; color: #1677ff; }
+    .page-btn:hover { border-color: #1677ff; color: #1677ff; }
+    .hidden { display: none !important; }
+    /* Overlay / Drawer */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; opacity: 0; transition: opacity .3s; pointer-events: none; }
+    .overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer { position: fixed; top: 0; right: -580px; width: 560px; height: 100%; background: #fff; z-index: 1001; box-shadow: -6px 0 16px rgba(0,0,0,.08); transition: right .3s; display: flex; flex-direction: column; }
+    .drawer.open { right: 0; }
+    .drawer-header { padding: 16px 24px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; }
+    .drawer-close { cursor: pointer; font-size: 20px; color: #999; background: none; border: none; }
+    .drawer-body { padding: 24px; overflow-y: auto; flex: 1; }
+    .drawer-info { background: #fafafa; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .drawer-info .row { display: flex; margin-bottom: 8px; }
+    .drawer-info .row:last-child { margin-bottom: 0; }
+    .drawer-info .lbl { width: 80px; color: #86909c; flex-shrink: 0; }
+    .drawer-info .val { color: #1d2129; }
+    /* Steps */
+    .steps { display: flex; gap: 0; margin-bottom: 24px; }
+    .step { flex: 1; text-align: center; position: relative; }
+    .step-dot { width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; color: #fff; margin-bottom: 4px; background: #d9d9d9; position: relative; z-index: 1; }
+    .step.done .step-dot { background: #1677ff; }
+    .step.current .step-dot { background: #1677ff; box-shadow: 0 0 0 3px rgba(22,119,255,.2); }
+    .step.error .step-dot { background: #ff4d4f; }
+    .step-title { font-size: 13px; color: #666; } .step-desc { font-size: 11px; color: #aaa; }
+    .step::after { content:''; position: absolute; top: 12px; left: calc(50% + 16px); width: calc(100% - 32px); height: 2px; background: #e8e8e8; }
+    .step:last-child::after { display: none; }
+    .step.done::after { background: #1677ff; }
+    /* Timeline */
+    .timeline-item { display: flex; gap: 12px; position: relative; padding-bottom: 20px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; position: relative; z-index: 1; }
+    .timeline-item:not(:last-child) .timeline-dot::after { content:''; position: absolute; left: 4px; top: 12px; width: 2px; height: calc(100% + 12px); background: #e8e8e8; }
+    .tl-blue { background: #1677ff; } .tl-gray { background: #d9d9d9; } .tl-green { background: #52c41a; }
+    .tl-orange { background: #faad14; } .tl-red { background: #ff4d4f; }
+    /* Modal */
+    .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .modal-mask.open { display: flex; }
+    .modal { background: #fff; border-radius: 8px; width: 600px; max-height: 90vh; overflow-y: auto; }
+    .modal-header { padding: 16px 24px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; }
+    .modal-body { padding: 24px; }
+    .modal-footer { padding: 12px 24px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 8px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 14px; color: #333; margin-bottom: 6px; font-weight: 500; }
+    .form-label .req { color: #ff4d4f; }
+    .form-textarea { width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; font-family: inherit; resize: vertical; }
+    .form-textarea:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .radio-group { display: flex; gap: 16px; padding-top: 4px; }
+    .radio-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 14px; }
+    /* Toast */
+    #toast { display:none; position:fixed; top:24px; left:50%; transform:translateX(-50%); background:#52c41a; color:#fff; padding:10px 24px; border-radius:8px; font-size:14px; z-index:9999; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div style="display:flex;align-items:baseline;">
+    <h2>实训设备管理</h2>
+    <span class="subtitle">设备故障登记 / 维修跟踪 / 保养提醒</span>
+  </div>
+  <div class="header-btns">
+    <button class="btn" onclick="openImportModal()">导入数据</button>
+    <button class="btn" onclick="showMsg('导出功能仅在正式系统中可用')">导出报表</button>
+    <button class="btn btn-primary" onclick="openModal()">+ 新增故障</button>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="stat-row">
+    <div class="stat-card"><div class="label">故障总数</div><div class="value">32</div><div class="sub">较上月 +4</div></div>
+    <div class="stat-card"><div class="label">待处理</div><div class="value v-danger">5</div><div class="sub">其中紧急 2 件</div></div>
+    <div class="stat-card"><div class="label">处理中</div><div class="value v-processing">8</div><div class="sub">平均处理 2.3 天</div></div>
+    <div class="stat-card"><div class="label">本月已完成</div><div class="value v-success">19</div><div class="sub">完成率 86%</div></div>
+    <div class="chart-card"><div style="font-size:13px;color:#86909c;margin-bottom:4px;">近7日故障趋势</div><div id="miniChart"></div></div>
+  </div>
+
+  <div class="content-card">
+    <div class="tab-bar">
+      <div class="tab-item active" onclick="switchTab('fault',this)">故障管理</div>
+      <div class="tab-item" onclick="switchTab('maintain',this)">保养提醒</div>
+    </div>
+
+    <div id="tab-fault">
+      <div class="filter-bar">
+        <select class="form-select" id="f-status" style="width:130px;" onchange="renderFaultTable()"><option value="">状态筛选</option><option>待处理</option><option>处理中</option><option>待验收</option><option>已完成</option><option>需返工</option></select>
+        <select class="form-select" id="f-area" style="width:130px;" onchange="renderFaultTable()"><option value="">区域筛选</option><option>实训区A</option><option>实训区B</option><option>实训区C</option></select>
+        <select class="form-select" id="f-severity" style="width:130px;" onchange="renderFaultTable()"><option value="">严重程度</option><option>紧急</option><option>一般</option><option>轻微</option></select>
+        <input class="form-input" id="f-keyword" style="width:240px;" placeholder="搜索设备名称/故障描述" oninput="renderFaultTable()">
+        <span class="spacer"></span>
+        <button class="btn" onclick="resetFilter()">重置</button>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>故障编号</th><th>设备名称</th><th>所在区域</th><th>故障描述</th><th>严重程度</th><th>状态</th><th>登记人</th><th>登记时间</th><th>操作</th></tr></thead><tbody id="fault-tbody"></tbody></table>
+        <div class="pagination"><span id="fault-total"></span><div class="page-btns" id="fault-pages"></div></div>
+      </div>
+    </div>
+
+    <div id="tab-maintain" class="hidden" style="padding:0 20px 20px;">
+      <table><thead><tr><th>设备名称</th><th>所在区域</th><th>上次保养日期</th><th>保养周期</th><th>下次保养日期</th><th>状态</th><th>操作</th></tr></thead><tbody id="maintain-tbody"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- Drawer -->
+<div class="overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header"><span id="drawer-title">故障详情</span><button class="drawer-close" onclick="closeDrawer()">&times;</button></div>
+  <div class="drawer-body" id="drawer-body"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal-mask" id="modal">
+  <div class="modal">
+    <div class="modal-header"><span>新增故障登记</span><button class="drawer-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label"><span class="req">* </span>设备名称</label><select class="form-select" id="m-device" style="width:100%"><option value="">请选择设备</option><option>售票机模拟器</option><option>转辙机操作台</option><option>安检仪模拟设备</option><option>客运广播系统</option><option>闸机模拟器</option><option>LED信息显示屏</option><option>应急疏散模拟系统</option><option>站台门模拟器</option></select></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label"><span class="req">* </span>所在区域</label><select class="form-select" id="m-area" style="width:100%"><option value="">请选择区域</option><option>实训区A</option><option>实训区B</option><option>实训区C</option></select></div>
+        <div class="form-group"><label class="form-label"><span class="req">* </span>严重程度</label><div class="radio-group"><label><input type="radio" name="m-sev" value="紧急">紧急</label><label><input type="radio" name="m-sev" value="一般" checked>一般</label><label><input type="radio" name="m-sev" value="轻微">轻微</label></div></div>
+      </div>
+      <div class="form-group"><label class="form-label"><span class="req">* </span>故障描述</label><textarea class="form-textarea" id="m-desc" rows="3" placeholder="请描述故障现象"></textarea></div>
+      <div class="form-group"><label class="form-label">发现人</label><input class="form-input" id="m-reporter" style="width:100%" placeholder="请输入发现人姓名"></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="submitFault()">提交</button></div>
+  </div>
+</div>
+
+<!-- Import Modal -->
+<div class="modal-mask" id="import-modal">
+  <div class="modal" style="width:520px;">
+    <div class="modal-header"><span>导入故障/维修记录</span><button class="drawer-close" onclick="closeImportModal()">&times;</button></div>
+    <div class="modal-body">
+      <div id="import-upload-area" style="border:2px dashed #d9d9d9;border-radius:8px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;" onmouseenter="this.style.borderColor='#1677ff'" onmouseleave="this.style.borderColor='#d9d9d9'" onclick="document.getElementById('import-file-input').click()">
+        <div style="font-size:32px;color:#bfbfbf;margin-bottom:8px;">&#8682;</div>
+        <div style="font-size:14px;color:#333;">点击或拖拽文件到此处</div>
+        <div style="font-size:12px;color:#86909c;margin-top:4px;">支持 CSV, Excel 格式</div>
+        <input type="file" id="import-file-input" accept=".csv,.xls,.xlsx" style="display:none;" onchange="handleImportFile(this)">
+      </div>
+      <div id="import-file-name" style="margin-top:12px;font-size:13px;color:#52c41a;display:none;"></div>
+      <div style="margin-top:16px;"><button class="btn-link" style="padding:0;font-size:13px;" onclick="showMsg('模板下载功能仅在正式系统中可用')">下载导入模板</button></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeImportModal()">取消</button><button class="btn btn-primary" onclick="submitImport()">开始导入</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ===== DATA =====
+var faultData = [
+  { id:1,code:'GZ-2026-001',device:'售票机模拟器',area:'实训区A',desc:'触摸屏右下角区域无响应，已排除软件问题',severity:'紧急',status:'处理中',reporter:'张伟',time:'2026-06-10 09:15',timeline:[{action:'故障登记',user:'张伟',time:'2026-06-10 09:15',color:'gray',note:'培训中发现触摸屏局部失灵'},{action:'分配维修人员',user:'系统',time:'2026-06-10 09:30',color:'blue',note:'已分配给维修技师李强'},{action:'开始维修',user:'李强',time:'2026-06-10 14:00',color:'blue',note:'初步判断为触摸面板排线接触不良'}]},
+  { id:2,code:'GZ-2026-002',device:'转辙机操作台',area:'实训区B',desc:'手柄操作时有明显卡顿，影响正常实训',severity:'一般',status:'待验收',reporter:'王芳',time:'2026-06-09 14:30',timeline:[{action:'故障登记',user:'王芳',time:'2026-06-09 14:30',color:'gray',note:'学员反馈操作手感异常'},{action:'分配维修人员',user:'系统',time:'2026-06-09 15:00',color:'blue',note:'已分配给维修技师陈明'},{action:'开始维修',user:'陈明',time:'2026-06-10 08:30',color:'blue',note:'更换内部传动齿轮组'},{action:'提交验收',user:'陈明',time:'2026-06-11 10:00',color:'orange',note:'已更换齿轮组并润滑，请验收'}]},
+  { id:3,code:'GZ-2026-003',device:'客运广播系统',area:'实训区A',desc:'3号扬声器无声音输出，其余正常',severity:'轻微',status:'已完成',reporter:'李娟',time:'2026-06-08 11:20',timeline:[{action:'故障登记',user:'李娟',time:'2026-06-08 11:20',color:'gray',note:'日常巡检发现'},{action:'分配维修人员',user:'系统',time:'2026-06-08 11:45',color:'blue',note:'已分配给维修技师赵刚'},{action:'开始维修',user:'赵刚',time:'2026-06-08 14:00',color:'blue',note:'扬声器连接线松动'},{action:'提交验收',user:'赵刚',time:'2026-06-08 15:30',color:'orange',note:'已重新连接并测试'},{action:'验收通过',user:'李娟',time:'2026-06-08 16:00',color:'green',note:'播放测试正常'}]},
+  { id:4,code:'GZ-2026-004',device:'安检仪模拟设备',area:'实训区C',desc:'显示屏图像出现横纹干扰，影响识别训练',severity:'紧急',status:'待处理',reporter:'刘洋',time:'2026-06-12 08:45',timeline:[{action:'故障登记',user:'刘洋',time:'2026-06-12 08:45',color:'gray',note:'晨检发现显示异常'}]},
+  { id:5,code:'GZ-2026-005',device:'闸机模拟器',area:'实训区B',desc:'二维码扫描模块识别率低于50%',severity:'一般',status:'处理中',reporter:'孙磊',time:'2026-06-11 10:00',timeline:[{action:'故障登记',user:'孙磊',time:'2026-06-11 10:00',color:'gray',note:'多名学员反馈扫码困难'},{action:'分配维修人员',user:'系统',time:'2026-06-11 10:30',color:'blue',note:'已分配给维修技师李强'},{action:'开始维修',user:'李强',time:'2026-06-11 14:00',color:'blue',note:'清洁扫描窗口并校准模块'}]},
+  { id:6,code:'GZ-2026-006',device:'LED信息显示屏',area:'实训区A',desc:'部分LED灯珠不亮，左上角区域约10%面积黑屏',severity:'一般',status:'需返工',reporter:'周婷',time:'2026-06-07 16:20',timeline:[{action:'故障登记',user:'周婷',time:'2026-06-07 16:20',color:'gray',note:'实训课后发现显示异常'},{action:'分配维修人员',user:'系统',time:'2026-06-07 16:40',color:'blue',note:'已分配给维修技师赵刚'},{action:'开始维修',user:'赵刚',time:'2026-06-08 09:00',color:'blue',note:'更换故障LED模组'},{action:'提交验收',user:'赵刚',time:'2026-06-09 11:00',color:'orange',note:'已更换模组'},{action:'验收未通过',user:'周婷',time:'2026-06-09 14:00',color:'red',note:'更换后仍有约5%区域显示异常，需返工'}]},
+  { id:7,code:'GZ-2026-007',device:'应急疏散模拟系统',area:'实训区C',desc:'烟雾发生器无法正常启动',severity:'紧急',status:'处理中',reporter:'张伟',time:'2026-06-12 13:50',timeline:[{action:'故障登记',user:'张伟',time:'2026-06-12 13:50',color:'gray',note:'应急演练前检查发现'},{action:'分配维修人员',user:'系统',time:'2026-06-12 14:00',color:'blue',note:'紧急分配给维修技师陈明'},{action:'开始维修',user:'陈明',time:'2026-06-12 14:30',color:'blue',note:'检查电路和雾化模块'}]},
+  { id:8,code:'GZ-2026-008',device:'站台门模拟器',area:'实训区B',desc:'2号门关闭时有异响，运行不顺畅',severity:'轻微',status:'已完成',reporter:'王芳',time:'2026-06-06 09:30',timeline:[{action:'故障登记',user:'王芳',time:'2026-06-06 09:30',color:'gray',note:'日常巡检发现'},{action:'分配维修人员',user:'系统',time:'2026-06-06 10:00',color:'blue',note:'已分配给维修技师李强'},{action:'开始维修',user:'李强',time:'2026-06-06 14:00',color:'blue',note:'导轨清洁润滑'},{action:'提交验收',user:'李强',time:'2026-06-06 16:30',color:'orange',note:'导轨已清洁润滑，运行顺畅'},{action:'验收通过',user:'王芳',time:'2026-06-07 09:00',color:'green',note:'运行正常'}]},
+  { id:9,code:'GZ-2026-009',device:'售票机模拟器',area:'实训区C',desc:'打印模块卡纸频繁，每3-4张出现一次',severity:'一般',status:'处理中',reporter:'李娟',time:'2026-06-11 15:40',timeline:[{action:'故障登记',user:'李娟',time:'2026-06-11 15:40',color:'gray',note:'实训过程中学员多次反馈'},{action:'分配维修人员',user:'系统',time:'2026-06-11 16:00',color:'blue',note:'已分配给维修技师赵刚'},{action:'开始维修',user:'赵刚',time:'2026-06-12 09:00',color:'blue',note:'拆解打印模块检查送纸机构'}]},
+  { id:10,code:'GZ-2026-010',device:'客运广播系统',area:'实训区B',desc:'主控台音量旋钮失灵，无法调节',severity:'轻微',status:'待处理',reporter:'孙磊',time:'2026-06-13 08:20',timeline:[{action:'故障登记',user:'孙磊',time:'2026-06-13 08:20',color:'gray',note:'晨检时发现'}]},
+  { id:11,code:'GZ-2026-011',device:'闸机模拟器',area:'实训区A',desc:'翼门开合速度异常缓慢',severity:'一般',status:'待处理',reporter:'刘洋',time:'2026-06-13 10:15',timeline:[{action:'故障登记',user:'刘洋',time:'2026-06-13 10:15',color:'gray',note:'培训中发现响应迟缓'}]},
+  { id:12,code:'GZ-2026-012',device:'安检仪模拟设备',area:'实训区A',desc:'传送带运行时有异响',severity:'轻微',status:'处理中',reporter:'周婷',time:'2026-06-10 11:00',timeline:[{action:'故障登记',user:'周婷',time:'2026-06-10 11:00',color:'gray',note:'巡检发现轻微异响'},{action:'分配维修人员',user:'系统',time:'2026-06-10 11:30',color:'blue',note:'已分配给维修技师陈明'},{action:'开始维修',user:'陈明',time:'2026-06-11 09:00',color:'blue',note:'检查传送带张紧装置'}]},
+  { id:13,code:'GZ-2026-013',device:'转辙机操作台',area:'实训区C',desc:'指示灯面板3个灯不亮',severity:'轻微',status:'待处理',reporter:'张伟',time:'2026-06-14 09:00',timeline:[{action:'故障登记',user:'张伟',time:'2026-06-14 09:00',color:'gray',note:'晨检发现'}]},
+  { id:14,code:'GZ-2026-014',device:'应急疏散模拟系统',area:'实训区C',desc:'应急照明模拟灯组不亮',severity:'一般',status:'处理中',reporter:'王芳',time:'2026-06-09 16:00',timeline:[{action:'故障登记',user:'王芳',time:'2026-06-09 16:00',color:'gray',note:'演练前检查'},{action:'分配维修人员',user:'系统',time:'2026-06-09 16:20',color:'blue',note:'已分配给维修技师李强'},{action:'开始维修',user:'李强',time:'2026-06-10 09:00',color:'blue',note:'检查灯组供电线路'}]},
+  { id:15,code:'GZ-2026-015',device:'站台门模拟器',area:'实训区A',desc:'控制面板显示屏黑屏，按键无反应',severity:'紧急',status:'待处理',reporter:'李娟',time:'2026-06-14 14:30',timeline:[{action:'故障登记',user:'李娟',time:'2026-06-14 14:30',color:'gray',note:'下午实训前发现完全无法使用'}]}
+];
+
+var maintainData = [
+  { id:1,device:'售票机模拟器',area:'实训区A',lastDate:'2026-05-15',cycle:'30天',nextDate:'2026-06-14',mStatus:'已逾期'},
+  { id:2,device:'转辙机操作台',area:'实训区B',lastDate:'2026-05-20',cycle:'30天',nextDate:'2026-06-19',mStatus:'即将到期'},
+  { id:3,device:'安检仪模拟设备',area:'实训区C',lastDate:'2026-05-25',cycle:'30天',nextDate:'2026-06-24',mStatus:'正常'},
+  { id:4,device:'客运广播系统',area:'实训区A',lastDate:'2026-04-10',cycle:'60天',nextDate:'2026-06-09',mStatus:'已逾期'},
+  { id:5,device:'闸机模拟器',area:'实训区B',lastDate:'2026-05-30',cycle:'30天',nextDate:'2026-06-29',mStatus:'正常'},
+  { id:6,device:'LED信息显示屏',area:'实训区A',lastDate:'2026-05-18',cycle:'30天',nextDate:'2026-06-17',mStatus:'即将到期'},
+  { id:7,device:'应急疏散模拟系统',area:'实训区C',lastDate:'2026-04-15',cycle:'60天',nextDate:'2026-06-14',mStatus:'已逾期'},
+  { id:8,device:'站台门模拟器',area:'实训区B',lastDate:'2026-06-01',cycle:'30天',nextDate:'2026-07-01',mStatus:'正常'},
+  { id:9,device:'售票机模拟器',area:'实训区C',lastDate:'2026-06-05',cycle:'30天',nextDate:'2026-07-05',mStatus:'正常'},
+  { id:10,device:'闸机模拟器',area:'实训区A',lastDate:'2026-05-22',cycle:'30天',nextDate:'2026-06-21',mStatus:'即将到期'}
+];
+
+var PAGE_SIZE = 8, currentPage = 1;
+var sevTagMap = {'紧急':'tag-red','一般':'tag-orange','轻微':'tag-blue'};
+var statusBadgeMap = {'待处理':'badge-default','处理中':'badge-processing','待验收':'badge-warning','已完成':'badge-success','需返工':'badge-error'};
+var mStatusTagMap = {'已逾期':'tag-red','即将到期':'tag-orange','正常':'tag-green'};
+
+// ===== FILTER & RENDER =====
+function getFiltered() {
+  var s = document.getElementById('f-status').value;
+  var a = document.getElementById('f-area').value;
+  var sv = document.getElementById('f-severity').value;
+  var kw = document.getElementById('f-keyword').value.toLowerCase();
+  return faultData.filter(function(f) {
+    if (s && f.status !== s) return false;
+    if (a && f.area !== a) return false;
+    if (sv && f.severity !== sv) return false;
+    if (kw && f.device.toLowerCase().indexOf(kw) < 0 && f.desc.toLowerCase().indexOf(kw) < 0) return false;
+    return true;
+  });
+}
+
+function renderFaultTable() {
+  var filtered = getFiltered();
+  var total = filtered.length;
+  var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (currentPage > pages) currentPage = pages;
+  var start = (currentPage - 1) * PAGE_SIZE;
+  var pageData = filtered.slice(start, start + PAGE_SIZE);
+  var tbody = document.getElementById('fault-tbody');
+  tbody.innerHTML = pageData.map(function(f) {
+    var handleBtn = f.status === '待处理' ? '<button class="btn-link" onclick="event.stopPropagation();handleFault('+f.id+')">处理</button>' : '';
+    return '<tr style="cursor:pointer" onclick="openDrawer('+f.id+')">' +
+      '<td>' + f.code + '</td><td>' + f.device + '</td><td>' + f.area + '</td>' +
+      '<td class="td-ellipsis" title="'+f.desc.replace(/"/g,'&quot;')+'">' + f.desc + '</td>' +
+      '<td><span class="tag '+sevTagMap[f.severity]+'">' + f.severity + '</span></td>' +
+      '<td><span class="badge '+statusBadgeMap[f.status]+'">' + f.status + '</span></td>' +
+      '<td>' + f.reporter + '</td><td>' + f.time + '</td>' +
+      '<td><button class="btn-link" onclick="event.stopPropagation();openDrawer('+f.id+')">查看</button>' + handleBtn + '</td></tr>';
+  }).join('');
+  document.getElementById('fault-total').textContent = '共 ' + total + ' 条';
+  var pb = document.getElementById('fault-pages');
+  var html = '';
+  for (var i = 1; i <= pages; i++) html += '<button class="page-btn'+(i===currentPage?' active':'')+'" onclick="currentPage='+i+';renderFaultTable()">'+i+'</button>';
+  pb.innerHTML = html;
+}
+
+function resetFilter() {
+  document.getElementById('f-status').value = '';
+  document.getElementById('f-area').value = '';
+  document.getElementById('f-severity').value = '';
+  document.getElementById('f-keyword').value = '';
+  currentPage = 1;
+  renderFaultTable();
+}
+
+function renderMaintainTable() {
+  document.getElementById('maintain-tbody').innerHTML = maintainData.map(function(m) {
+    return '<tr><td>'+m.device+'</td><td>'+m.area+'</td><td>'+m.lastDate+'</td><td>'+m.cycle+'</td><td>'+m.nextDate+'</td>' +
+      '<td><span class="tag '+mStatusTagMap[m.mStatus]+'">'+m.mStatus+'</span></td>' +
+      '<td><button class="btn-link" onclick="markDone('+m.id+')">标记完成</button></td></tr>';
+  }).join('');
+}
+
+// ===== TABS =====
+function switchTab(tab, el) {
+  document.getElementById('tab-fault').classList.toggle('hidden', tab !== 'fault');
+  document.getElementById('tab-maintain').classList.toggle('hidden', tab !== 'maintain');
+  document.querySelectorAll('.tab-bar .tab-item').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+// ===== DRAWER =====
+function findFault(id) { return faultData.find(function(f){ return f.id === id; }); }
+
+function openDrawer(id) {
+  var f = findFault(id);
+  if (!f) return;
+  document.getElementById('drawer-title').textContent = '故障详情 — ' + f.code;
+  var stepMap = {'待处理':0,'处理中':1,'待验收':2,'已完成':3,'需返工':2};
+  var cur = stepMap[f.status] || 0;
+  var labels = ['待处理','处理中','待验收','已完成'];
+  var descs = ['故障登记','维修进行','提交验收','验收通过'];
+  var stepsHtml = '<div class="steps">' + labels.map(function(l,i){
+    var cls = i < cur ? 'done' : i === cur ? (f.status==='需返工'?'error':'current') : '';
+    return '<div class="step '+cls+'"><div class="step-dot">'+(i+1)+'</div><div class="step-title">'+l+'</div><div class="step-desc">'+descs[i]+'</div></div>';
+  }).join('') + '</div>';
+  var reworkHtml = f.status === '需返工' ? '<div style="margin-top:-12px;margin-bottom:16px;"><span class="tag tag-red">需返工 — 验收未通过，已退回处理</span></div>' : '';
+  var tlHtml = f.timeline.map(function(t){
+    return '<div class="timeline-item"><div class="timeline-dot tl-'+t.color+'"></div><div><div style="font-weight:500;">'+t.action+'</div><div style="color:#86909c;font-size:12px;">'+t.user+' &middot; '+t.time+'</div>'+(t.note?'<div style="color:#4e5969;font-size:13px;margin-top:4px;">'+t.note+'</div>':'')+'</div></div>';
+  }).join('');
+  document.getElementById('drawer-body').innerHTML =
+    '<div class="drawer-info">'+
+      '<div class="row"><span class="lbl">故障编号</span><span class="val">'+f.code+'</span></div>'+
+      '<div class="row"><span class="lbl">设备名称</span><span class="val">'+f.device+'</span></div>'+
+      '<div class="row"><span class="lbl">所在区域</span><span class="val">'+f.area+'</span></div>'+
+      '<div class="row"><span class="lbl">严重程度</span><span class="val"><span class="tag '+sevTagMap[f.severity]+'">'+f.severity+'</span></span></div>'+
+      '<div class="row"><span class="lbl">故障描述</span><span class="val">'+f.desc+'</span></div>'+
+      '<div class="row"><span class="lbl">登记人</span><span class="val">'+f.reporter+'</span></div>'+
+      '<div class="row"><span class="lbl">登记时间</span><span class="val">'+f.time+'</span></div>'+
+    '</div>'+
+    '<div style="font-weight:600;margin-bottom:12px;">维修流程</div>' + stepsHtml + reworkHtml +
+    '<div style="font-weight:600;margin-bottom:12px;">操作记录</div>' + tlHtml;
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+function closeDrawer() {
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+// ===== MODAL =====
+function openModal() { document.getElementById('modal').classList.add('open'); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function submitFault() {
+  var dv = document.getElementById('m-device').value;
+  var ar = document.getElementById('m-area').value;
+  var ds = document.getElementById('m-desc').value;
+  var sv = (document.querySelector('input[name="m-sev"]:checked')||{}).value||'一般';
+  var rp = document.getElementById('m-reporter').value || '当前用户';
+  if (!dv||!ar||!ds) { showMsg('请填写必填项'); return; }
+  var nid = faultData.length + 1;
+  var code = 'GZ-2026-' + String(nid).padStart(3,'0');
+  var now = '2026-06-15 ' + new Date().toTimeString().slice(0,5);
+  faultData.unshift({id:nid,code:code,device:dv,area:ar,desc:ds,severity:sv,status:'待处理',reporter:rp,time:now,timeline:[{action:'故障登记',user:rp,time:now,color:'gray',note:ds}]});
+  closeModal(); currentPage=1; renderFaultTable(); showMsg('故障登记成功');
+  document.getElementById('m-device').value=''; document.getElementById('m-area').value='';
+  document.getElementById('m-desc').value=''; document.getElementById('m-reporter').value='';
+}
+
+// ===== ACTIONS =====
+function handleFault(id) {
+  var f = findFault(id);
+  if (!f) return;
+  f.status = '处理中';
+  f.timeline.push({action:'分配维修人员',user:'系统',time:'2026-06-15 '+new Date().toTimeString().slice(0,5),color:'blue',note:'已自动分配'});
+  renderFaultTable(); showMsg('已开始处理');
+}
+function markDone(id) {
+  var m = maintainData.find(function(r){ return r.id===id; });
+  if (!m) return;
+  m.mStatus = '正常'; m.lastDate = '2026-06-15';
+  m.nextDate = m.cycle==='30天' ? '2026-07-15' : '2026-08-14';
+  renderMaintainTable(); showMsg('已标记保养完成');
+}
+
+// ===== TOAST =====
+function showMsg(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block'; t.style.opacity = '1';
+  setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.style.display='none'; t.style.opacity='1'; },300); },2000);
+}
+
+// ===== IMPORT MODAL =====
+function openImportModal() { document.getElementById('import-modal').classList.add('open'); }
+function closeImportModal() {
+  document.getElementById('import-modal').classList.remove('open');
+  document.getElementById('import-file-input').value = '';
+  document.getElementById('import-file-name').style.display = 'none';
+}
+function handleImportFile(input) {
+  if (input.files && input.files[0]) {
+    var fn = document.getElementById('import-file-name');
+    fn.textContent = '已选择: ' + input.files[0].name;
+    fn.style.display = 'block';
+  }
+}
+function submitImport() {
+  if (!document.getElementById('import-file-input').value) { showMsg('请先选择文件'); return; }
+  closeImportModal();
+  showMsg('导入成功，共新增 3 条故障记录');
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', function() {
+  renderFaultTable();
+  renderMaintainTable();
+  var chart = echarts.init(document.getElementById('miniChart'));
+  chart.setOption({
+    grid:{top:5,right:10,bottom:20,left:30},
+    xAxis:{type:'category',data:['6/9','6/10','6/11','6/12','6/13','6/14','6/15'],axisLine:{lineStyle:{color:'#e5e6eb'}},axisLabel:{color:'#86909c',fontSize:10}},
+    yAxis:{type:'value',splitLine:{lineStyle:{color:'#f0f0f0'}},axisLabel:{color:'#86909c',fontSize:10}},
+    series:[{data:[3,5,4,6,3,4,2],type:'line',smooth:true,symbol:'circle',symbolSize:6,lineStyle:{color:'#1677ff',width:2},itemStyle:{color:'#1677ff'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(22,119,255,0.15)'},{offset:1,color:'rgba(22,119,255,0)'}])}}]
+  });
+  window.addEventListener('resize', function(){ chart.resize(); });
+});
+</script>
+</body>
+</html>
