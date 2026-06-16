@@ -191,7 +191,9 @@
   .osub b{color:var(--accent)}
   .opening .copy{flex:1}
   .opening .kicker{color:var(--accent);letter-spacing:4px;font-size:clamp(10px,1vw,15px);font-weight:800;margin-bottom:10px}
-  .opening h1{font-size:clamp(22px,2.5vw,42px);font-weight:900;line-height:1.18;margin:0 0 14px;color:var(--ink)}
+  .opening h1{font-weight:900;line-height:1.18;margin:0 0 14px;color:var(--ink)}
+  .opening h1 .line1{display:block;font-size:clamp(20px,2.2vw,36px);font-style:normal}
+  .opening h1 .line2{display:block;font-size:clamp(26px,3.2vw,54px);font-style:normal;margin-top:4px}
   .opening h1 span{color:var(--accent)}
   .opening .sub{color:var(--sub);font-size:clamp(11px,1vw,17px);line-height:1.7;margin-bottom:18px}
   .opening .narr{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;
@@ -217,9 +219,17 @@
   .report .rwrap{position:relative;display:flex;width:min(1020px,92%);max-height:92%}
   .report .box{width:100%;max-height:92vh;overflow:auto;background:var(--panel);border:1px solid var(--line);
     border-radius:16px;padding:26px 32px;box-shadow:0 24px 70px rgba(20,40,80,.28);font-size:clamp(12px,.92vw,15px)}
-  /* 数字人在总结框外（左侧探出），与流程里人像同尺寸 */
-  .report .rface{position:absolute;top:8px;left:-152px;width:180px;height:189px;object-fit:cover;object-position:top center;
+  /* 数字人在总结框外（左侧探出） */
+  .report .rface{position:absolute;top:0;left:-180px;width:220px;object-fit:cover;object-position:top center;
     border-radius:10px;background:transparent;filter:drop-shadow(0 8px 18px rgba(30,50,90,.32));z-index:2}
+  /* 报告生成加载 */
+  .rpt-loading{position:absolute;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(20,30,55,.45);backdrop-filter:blur(6px);border-radius:0;transition:opacity .3s}
+  .rpt-loading.fade{opacity:0;pointer-events:none}
+  .rpt-spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,.18);border-top-color:var(--accent);
+    border-radius:50%;animation:rptSpin .8s linear infinite}
+  @keyframes rptSpin{to{transform:rotate(360deg)}}
+  .rpt-loading span{margin-top:16px;color:#fff;font-size:clamp(13px,1.1vw,17px);font-weight:600;letter-spacing:2px}
   .report .rhead{display:flex;align-items:flex-end;gap:16px;margin-bottom:16px}
   .report h2{margin:0;font-size:clamp(18px,1.4vw,24px);color:var(--ink)}
   .report .rsub{color:var(--muted);font-size:.85em;margin-top:2px}
@@ -381,7 +391,7 @@
           </div>
           <div class="copy">
             <div class="kicker">JIEAN · 城轨大联合 × AI 数字人</div>
-            <h1>多岗位协同演练 · <span>道岔挤岔应急处置</span> 实训</h1>
+            <h1><em class="line1">多岗位协同演练 ·</em><em class="line2"><span>道岔挤岔应急处置</span> 实训</em></h1>
           </div>
         </div>
         <div id="openNarr" class="osub"></div>
@@ -408,6 +418,7 @@
     </div>
 
     <div class="report" id="report">
+      <div class="rpt-loading" id="rptLoading"><div class="rpt-spinner"></div><span>智能考评报告生成中</span></div>
       <div class="rwrap">
       <img class="rface" src="assets/avatar.png" alt="小安">
       <div class="box">
@@ -716,6 +727,10 @@ function sparkline(scores){
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>${pts.map((p,i)=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${i===pts.length-1?3.4:1.9}" fill="${i===pts.length-1?c:'#9fb3d8'}"/>`).join('')}</svg>`;
 }
 function showReport(){
+  const ld=$('rptLoading'),rw=document.querySelector('.rwrap');
+  ld.classList.remove('fade');rw.style.opacity='0';
+  $('report').classList.add('show');
+  setTimeout(()=>{ld.classList.add('fade');rw.style.opacity='1';rw.style.transition='opacity .4s'},2000);
   const base={dispatch:96,station:94,driver:95,signal:97},weak=[];
   Object.keys(injErr).forEach(i=>{const E=beatError(+i);base[E.role]=Math.max(60,base[E.role]-18);weak.push({role:E.role,sid:E.sid,title:E.title,cause:E.cause,suggest:E.suggest});});
   const vals=ROLE_ORDER.map(r=>base[r]),total=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
