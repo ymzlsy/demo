@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人技能画像 + 数字人智能分析</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f0f2f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; color: #1f1f1f; }
+
+    /* Header */
+    .page-header { background: #fff; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+    .page-header .left h2 { font-size: 18px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .page-header .breadcrumb { font-size: 13px; color: rgba(0,0,0,.45); margin-bottom: 4px; }
+    .page-header .breadcrumb span { cursor: pointer; }
+    .page-header .breadcrumb span:hover { color: #1677ff; }
+    .page-header .breadcrumb .sep { margin: 0 6px; }
+    .page-header .breadcrumb .current { color: rgba(0,0,0,.85); cursor: default; }
+    .header-actions { display: flex; gap: 10px; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all .2s; font-family: inherit; }
+    .btn:hover { border-color: #1677ff; color: #1677ff; }
+    .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
+    .btn-primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
+    .btn-sm { padding: 4px 12px; font-size: 13px; }
+    .btn svg { width: 14px; height: 14px; }
+
+    /* Main */
+    .main-content { margin: 16px 24px 24px; }
+
+    /* Grid layouts */
+    .top-row { display: grid; grid-template-columns: 280px 1fr 320px; gap: 16px; margin-bottom: 16px; }
+    .bottom-row { display: grid; grid-template-columns: 1fr 380px; gap: 16px; }
+
+    /* Cards */
+    .card { background: #fff; border-radius: 8px; border: 1px solid #f0f0f0; overflow: hidden; }
+    .card-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+    .card-header h4 { font-size: 15px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .card-body { padding: 20px; }
+
+    /* Profile card */
+    .profile-card .card-body { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #1677ff 0%, #69b1ff 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 28px; font-weight: 600; margin-bottom: 12px; }
+    .profile-name { font-size: 18px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 4px; }
+    .profile-position { font-size: 13px; color: rgba(0,0,0,.45); margin-bottom: 16px; }
+    .profile-info { width: 100%; }
+    .profile-info-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
+    .profile-info-item:last-child { border-bottom: none; }
+    .profile-info-item .label { color: rgba(0,0,0,.45); }
+    .profile-info-item .value { color: rgba(0,0,0,.85); font-weight: 500; }
+    .profile-score { margin-top: 16px; padding: 12px; background: linear-gradient(135deg, #e6f7ff 0%, #f0f5ff 100%); border-radius: 8px; width: 100%; }
+    .profile-score .score-label { font-size: 12px; color: rgba(0,0,0,.45); }
+    .profile-score .score-value { font-size: 32px; font-weight: 700; color: #1677ff; }
+    .profile-score .score-unit { font-size: 13px; color: rgba(0,0,0,.45); }
+
+    /* Tags */
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; line-height: 20px; }
+    .tag-blue { background: #e6f7ff; color: #1677ff; border: 1px solid #91caff; }
+    .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+    .tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+    .tag-red { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
+
+    /* Radar chart */
+    .radar-container { width: 100%; height: 320px; }
+
+    /* Donut chart area */
+    .donut-container { width: 100%; height: 200px; }
+    .mastery-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .mastery-stat { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(0,0,0,.65); padding: 6px 10px; background: #fafafa; border-radius: 4px; }
+    .mastery-stat .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .mastery-stat .num { font-weight: 600; color: rgba(0,0,0,.85); margin-left: auto; }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table th { background: #fafafa; padding: 10px 14px; text-align: left; font-weight: 600; color: rgba(0,0,0,.85); border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+    table td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; color: rgba(0,0,0,.65); }
+    table tr:hover td { background: #f5f7fa; }
+    table tr.highlighted td { background: #e6f7ff; }
+
+    /* Tab bar inside card */
+    .card-tabs { display: flex; border-bottom: 1px solid #f0f0f0; padding: 0 20px; }
+    .card-tab { padding: 12px 16px; cursor: pointer; font-size: 14px; color: rgba(0,0,0,.65); position: relative; transition: color .2s; }
+    .card-tab:hover { color: #1677ff; }
+    .card-tab.active { color: #1677ff; font-weight: 500; }
+    .card-tab.active::after { content: ''; position: absolute; bottom: 0; left: 16px; right: 16px; height: 2px; background: #1677ff; border-radius: 1px; }
+    .card-tab-content { display: none; }
+    .card-tab-content.active { display: block; }
+
+    /* Progress bar */
+    .progress-bar { background: #f5f5f5; border-radius: 100px; height: 6px; overflow: hidden; width: 100px; display: inline-block; vertical-align: middle; margin-right: 6px; }
+    .progress-bar-inner { height: 100%; border-radius: 100px; transition: width .3s; }
+
+    /* Weakness indicators */
+    .weakness-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .weakness-high { background: #fff2f0; color: #ff4d4f; }
+    .weakness-medium { background: #fff7e6; color: #fa8c16; }
+    .weakness-low { background: #e6f7ff; color: #1677ff; }
+
+    /* ============ Digital Human Assistant ============ */
+    .assistant-fab { position: fixed; bottom: 28px; right: 28px; z-index: 900; cursor: pointer; transition: transform .3s, box-shadow .3s; }
+    .assistant-fab:hover { transform: scale(1.08); }
+    .assistant-fab-inner { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #1677ff 0%, #69b1ff 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(22,119,255,.35); position: relative; }
+    .assistant-fab-inner svg { width: 28px; height: 28px; fill: #fff; }
+    .assistant-fab-label { position: absolute; top: -8px; right: -8px; background: #ff4d4f; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 600; white-space: nowrap; }
+    .fab-pulse { position: absolute; inset: -4px; border-radius: 50%; border: 2px solid #1677ff; animation: fabPulse 2s ease-out infinite; }
+    @keyframes fabPulse {
+      0% { transform: scale(1); opacity: .6; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    /* Panel */
+    .assistant-panel { position: fixed; bottom: 28px; right: 28px; width: 380px; max-height: 580px; background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.15); z-index: 901; display: flex; flex-direction: column; transform: scale(0.3) translateY(40px); transform-origin: bottom right; opacity: 0; pointer-events: none; transition: transform .35s cubic-bezier(.4,0,.2,1), opacity .25s ease; }
+    .assistant-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+    .assistant-panel-header { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+    .assistant-avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #1677ff 0%, #69b1ff 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .assistant-avatar-sm svg { width: 18px; height: 18px; fill: #fff; }
+    .assistant-panel-header .title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,.85); flex: 1; }
+    .assistant-panel-header .subtitle { font-size: 11px; color: rgba(0,0,0,.45); }
+    .assistant-close { background: none; border: none; font-size: 18px; cursor: pointer; color: rgba(0,0,0,.35); padding: 4px 6px; border-radius: 4px; transition: all .2s; }
+    .assistant-close:hover { background: #f5f5f5; color: rgba(0,0,0,.85); }
+
+    .assistant-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+    .assistant-section { margin-bottom: 16px; }
+    .assistant-section-title { font-size: 13px; font-weight: 600; color: #1677ff; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .assistant-section-title .icon { width: 16px; height: 16px; background: #e6f7ff; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+    .assistant-section-title .icon svg { width: 10px; height: 10px; fill: #1677ff; }
+    .assistant-text { font-size: 13px; line-height: 1.8; color: rgba(0,0,0,.65); }
+    .assistant-text .highlight { color: #1677ff; font-weight: 500; }
+    .assistant-text .warn { color: #fa8c16; font-weight: 500; }
+    .assistant-text .danger { color: #ff4d4f; font-weight: 500; }
+
+    .assistant-actions { padding: 12px 18px; border-top: 1px solid #f0f0f0; display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+    .assistant-btn { padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all .2s; font-family: inherit; display: inline-flex; align-items: center; gap: 4px; }
+    .assistant-btn:hover { border-color: #1677ff; color: #1677ff; }
+    .assistant-btn.active { background: #1677ff; color: #fff; border-color: #1677ff; }
+    .assistant-btn svg { width: 14px; height: 14px; }
+
+    /* Typing effect cursor */
+    .typing-cursor { display: inline-block; width: 2px; height: 14px; background: #1677ff; margin-left: 2px; animation: blink .8s step-end infinite; vertical-align: text-bottom; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Broadcasting overlay effect */
+    .broadcasting-indicator { display: none; align-items: center; gap: 6px; padding: 6px 12px; background: #e6f7ff; border-radius: 6px; font-size: 12px; color: #1677ff; margin-bottom: 12px; }
+    .broadcasting-indicator.active { display: flex; }
+    .sound-wave { display: flex; align-items: center; gap: 2px; height: 14px; }
+    .sound-wave span { display: block; width: 3px; background: #1677ff; border-radius: 2px; animation: soundWave 1s ease-in-out infinite; }
+    .sound-wave span:nth-child(1) { height: 4px; animation-delay: 0s; }
+    .sound-wave span:nth-child(2) { height: 8px; animation-delay: .15s; }
+    .sound-wave span:nth-child(3) { height: 12px; animation-delay: .3s; }
+    .sound-wave span:nth-child(4) { height: 8px; animation-delay: .45s; }
+    .sound-wave span:nth-child(5) { height: 4px; animation-delay: .6s; }
+    @keyframes soundWave {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1); }
+    }
+
+    /* Dimension walkthrough highlight */
+    .dimension-highlight { background: linear-gradient(90deg, #e6f7ff 0%, transparent 100%); border-left: 3px solid #1677ff; padding: 8px 12px; border-radius: 0 6px 6px 0; margin-bottom: 8px; font-size: 13px; color: rgba(0,0,0,.75); }
+    .dimension-highlight .dim-name { font-weight: 600; color: #1677ff; }
+    .dimension-highlight .dim-score { font-size: 20px; font-weight: 700; color: rgba(0,0,0,.85); }
+
+    /* Scrollbar */
+    .assistant-body::-webkit-scrollbar { width: 4px; }
+    .assistant-body::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 4px; }
+    .assistant-body::-webkit-scrollbar-thumb:hover { background: #bbb; }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .top-row { grid-template-columns: 1fr; }
+      .bottom-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="page-header">
+  <div class="left">
+    <div class="breadcrumb">
+      <span>培训管理</span><span class="sep">/</span>
+      <span>技能评价</span><span class="sep">/</span>
+      <span class="current">个人画像</span>
+    </div>
+    <h2>学员岗位评价 - 一人一档</h2>
+  </div>
+  <div class="header-actions">
+    <button class="btn" onclick="handleExportPDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+      导出PDF
+    </button>
+    <button class="btn" onclick="handleShare()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      分享
+    </button>
+    <button class="btn btn-primary" onclick="toggleAssistant()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2H8V6a4 4 0 0 1 4-4z"/><rect x="4" y="8" width="16" height="12" rx="2"/><circle cx="9" cy="14" r="1.5" fill="currentColor"/><circle cx="15" cy="14" r="1.5" fill="currentColor"/><path d="M9 18h6"/></svg>
+      数字人分析
+    </button>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <!-- Top Row: Profile + Radar + Mastery -->
+  <div class="top-row">
+    <!-- Profile Card -->
+    <div class="card profile-card">
+      <div class="card-header">
+        <h4>基本信息</h4>
+        <span class="tag tag-blue">中级</span>
+      </div>
+      <div class="card-body">
+        <div class="avatar">安</div>
+        <div class="profile-name">安涛</div>
+        <div class="profile-position">调车长 / 延安北车站</div>
+        <div class="profile-info">
+          <div class="profile-info-item"><span class="label">工号</span><span class="value">YB20180156</span></div>
+          <div class="profile-info-item"><span class="label">所属单位</span><span class="value">延安北车站</span></div>
+          <div class="profile-info-item"><span class="label">岗位</span><span class="value">调车长</span></div>
+          <div class="profile-info-item"><span class="label">技能等级</span><span class="value">中级</span></div>
+          <div class="profile-info-item"><span class="label">入职时间</span><span class="value">2018-07-01</span></div>
+          <div class="profile-info-item"><span class="label">累计考试</span><span class="value">21 次</span></div>
+        </div>
+        <div class="profile-score">
+          <div class="score-label">综合画像值</div>
+          <div class="score-value">79.00 <span class="score-unit">分</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Radar Chart -->
+    <div class="card">
+      <div class="card-header">
+        <h4>能力雷达图</h4>
+        <span style="font-size:12px;color:rgba(0,0,0,.45);">点击维度可联动下方表格</span>
+      </div>
+      <div class="card-body">
+        <div id="radarChart" class="radar-container"></div>
+      </div>
+    </div>
+
+    <!-- Mastery Donut -->
+    <div class="card">
+      <div class="card-header">
+        <h4>能力项掌握情况</h4>
+      </div>
+      <div class="card-body">
+        <div id="donutChart" class="donut-container"></div>
+        <div class="mastery-stats">
+          <div class="mastery-stat"><span class="dot" style="background:#52c41a;"></span>优秀能力项<span class="num">9 个 / 50%</span></div>
+          <div class="mastery-stat"><span class="dot" style="background:#1677ff;"></span>良好能力项<span class="num">4 个 / 22%</span></div>
+          <div class="mastery-stat"><span class="dot" style="background:#fa8c16;"></span>一般能力项<span class="num">4 个 / 22%</span></div>
+          <div class="mastery-stat"><span class="dot" style="background:#ff4d4f;"></span>未掌握能力项<span class="num">1 个 / 6%</span></div>
+        </div>
+        <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div style="background:#fafafa;padding:10px;border-radius:6px;text-align:center;">
+            <div style="font-size:12px;color:rgba(0,0,0,.45);">涉及能力项数</div>
+            <div style="font-size:20px;font-weight:600;color:rgba(0,0,0,.85);">18 <span style="font-size:12px;color:rgba(0,0,0,.45);">个</span></div>
+          </div>
+          <div style="background:#fafafa;padding:10px;border-radius:6px;text-align:center;">
+            <div style="font-size:12px;color:rgba(0,0,0,.45);">考试次数</div>
+            <div style="font-size:20px;font-weight:600;color:#1677ff;">21 <span style="font-size:12px;color:rgba(0,0,0,.45);">次</span></div>
+          </div>
+          <div style="background:#fafafa;padding:10px;border-radius:6px;text-align:center;">
+            <div style="font-size:12px;color:rgba(0,0,0,.45);">练习次数</div>
+            <div style="font-size:20px;font-weight:600;color:rgba(0,0,0,.85);">0 <span style="font-size:12px;color:rgba(0,0,0,.45);">次</span></div>
+          </div>
+          <div style="background:#fafafa;padding:10px;border-radius:6px;text-align:center;">
+            <div style="font-size:12px;color:rgba(0,0,0,.45);">未测评能力项</div>
+            <div style="font-size:20px;font-weight:600;color:rgba(0,0,0,.85);">0 <span style="font-size:12px;color:rgba(0,0,0,.45);">个</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Row: Training Data Table + Weak Points -->
+  <div class="bottom-row">
+    <!-- Training Data Table -->
+    <div class="card">
+      <div class="card-tabs">
+        <div class="card-tab active" data-tab="tab-ability" onclick="switchTab(this,'tab-ability')">能力项评测明细</div>
+        <div class="card-tab" data-tab="tab-exam" onclick="switchTab(this,'tab-exam')">考试记录</div>
+        <div class="card-tab" data-tab="tab-problem" onclick="switchTab(this,'tab-problem')">问题类型分析</div>
+      </div>
+      <div class="card-body" style="padding-top:12px;">
+        <!-- Tab: Ability Items -->
+        <div id="tab-ability" class="card-tab-content active">
+          <table id="abilityTable">
+            <thead>
+              <tr>
+                <th style="width:50px;">序号</th>
+                <th>能力项种类</th>
+                <th>能力项名称</th>
+                <th style="width:90px;">测评值</th>
+                <th style="width:80px;">等级</th>
+                <th style="width:150px;">掌握程度</th>
+              </tr>
+            </thead>
+            <tbody id="abilityTableBody"></tbody>
+          </table>
+        </div>
+        <!-- Tab: Exam Records -->
+        <div id="tab-exam" class="card-tab-content">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:50px;">序号</th>
+                <th>考试名称</th>
+                <th>考试日期</th>
+                <th style="width:80px;">得分</th>
+                <th style="width:80px;">结果</th>
+              </tr>
+            </thead>
+            <tbody id="examTableBody"></tbody>
+          </table>
+        </div>
+        <!-- Tab: Problem Types -->
+        <div id="tab-problem" class="card-tab-content">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:50px;">序号</th>
+                <th>能力项名称</th>
+                <th>H 类问题</th>
+                <th>A1 类问题</th>
+                <th>A2 类问题</th>
+                <th>B 类问题</th>
+              </tr>
+            </thead>
+            <tbody id="problemTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weak Points -->
+    <div class="card">
+      <div class="card-header">
+        <h4>薄弱项分析</h4>
+        <span class="tag tag-red">需关注</span>
+      </div>
+      <div class="card-body" style="padding-top:12px;">
+        <div id="weaknessBarChart" style="width:100%;height:180px;"></div>
+        <table style="margin-top:12px;">
+          <thead>
+            <tr>
+              <th style="width:40px;">序号</th>
+              <th>薄弱知识点</th>
+              <th>所属考核项</th>
+              <th style="width:80px;">紧迫度</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>调车信号机故障处理</td><td>非正常作业</td><td><span class="weakness-tag weakness-high">高</span></td></tr>
+            <tr><td>2</td><td>制动机故障排查</td><td>特殊作业</td><td><span class="weakness-tag weakness-high">高</span></td></tr>
+            <tr><td>3</td><td>脱轨应急处置</td><td>非正常作业</td><td><span class="weakness-tag weakness-medium">中</span></td></tr>
+            <tr><td>4</td><td>道岔故障判断</td><td>设备设施</td><td><span class="weakness-tag weakness-medium">中</span></td></tr>
+            <tr><td>5</td><td>恶劣天气作业规定</td><td>安全知识</td><td><span class="weakness-tag weakness-low">低</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Digital Human Assistant FAB ============ -->
+<div class="assistant-fab" id="assistantFab" onclick="toggleAssistant()">
+  <div class="fab-pulse"></div>
+  <div class="assistant-fab-inner">
+    <svg viewBox="0 0 24 24"><path d="M12 2C9.24 2 7 4.24 7 7v1H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V7c0-2.76-2.24-5-5-5zm-3.5 12a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm7 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM9 18h6v1H9v-1z"/></svg>
+  </div>
+  <div class="assistant-fab-label">小安</div>
+</div>
+
+<!-- ============ Digital Human Assistant Panel ============ -->
+<div class="assistant-panel" id="assistantPanel">
+  <div class="assistant-panel-header">
+    <div class="assistant-avatar-sm">
+      <svg viewBox="0 0 24 24"><path d="M12 2C9.24 2 7 4.24 7 7v1H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V7c0-2.76-2.24-5-5-5zm-3.5 12a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm7 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM9 18h6v1H9v-1z"/></svg>
+    </div>
+    <div>
+      <div class="title">小安 &middot; 智能分析</div>
+      <div class="subtitle">数字人智能助手</div>
+    </div>
+    <button class="assistant-close" onclick="toggleAssistant()">&times;</button>
+  </div>
+
+  <div class="assistant-body" id="assistantBody">
+    <div class="broadcasting-indicator" id="broadcastIndicator">
+      <div class="sound-wave"><span></span><span></span><span></span><span></span><span></span></div>
+      <span>小安正在播报...</span>
+    </div>
+    <div id="assistantContent"></div>
+  </div>
+
+  <div class="assistant-actions">
+    <button class="assistant-btn" onclick="handleGenPlan()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      生成培训计划
+    </button>
+    <button class="assistant-btn" onclick="handleExportReport()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      导出分析报告
+    </button>
+    <button class="assistant-btn" id="broadcastBtn" onclick="handleBroadcast()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      语音播报
+    </button>
+    <button class="assistant-btn" id="walkthroughBtn" onclick="startWalkthrough()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      逐项解读
+    </button>
+  </div>
+</div>
+
+<script>
+// ========== DATA ==========
+const radarData = {
+  labels: ['非正常作业', '特殊作业', '设备设施', '车站差异化', '安全知识', '专业技能'],
+  values: [79, 79, 91.2, 82, 94, 81]
+};
+
+const abilityItems = [
+  { category: '非正常作业', name: '调车信号机故障处理', score: 62, level: '未掌握' },
+  { category: '非正常作业', name: '脱轨应急处置', score: 75, level: '一般' },
+  { category: '非正常作业', name: '挤岔应急处理', score: 81, level: '良好' },
+  { category: '特殊作业', name: '制动机故障排查', score: 68, level: '一般' },
+  { category: '特殊作业', name: '超限货物装载检查', score: 82, level: '良好' },
+  { category: '特殊作业', name: '危险货物处理', score: 87, level: '良好' },
+  { category: '设备设施', name: '道岔结构与操作', score: 88, level: '良好' },
+  { category: '设备设施', name: '信号机识别与应用', score: 92, level: '优秀' },
+  { category: '设备设施', name: '车辆制动系统', score: 93, level: '优秀' },
+  { category: '车站差异化', name: '延安北站场结构', score: 85, level: '优秀' },
+  { category: '车站差异化', name: '特殊线路限制', score: 79, level: '一般' },
+  { category: '车站差异化', name: '站场设备分布', score: 82, level: '良好' },
+  { category: '安全知识', name: '人身安全防护', score: 96, level: '优秀' },
+  { category: '安全知识', name: '作业安全规程', score: 95, level: '优秀' },
+  { category: '安全知识', name: '应急处置流程', score: 91, level: '优秀' },
+  { category: '专业技能', name: '调车作业标准', score: 85, level: '优秀' },
+  { category: '专业技能', name: '手信号运用', score: 78, level: '一般' },
+  { category: '专业技能', name: '调车联控', score: 80, level: '优秀' },
+];
+
+const examRecords = [
+  { name: '2025年一季度综合考核', date: '2025-03-15', score: 82, result: '合格' },
+  { name: '非正常情况应急处置专项', date: '2025-03-01', score: 71, result: '不合格' },
+  { name: '安全知识季度测试', date: '2025-02-20', score: 95, result: '优秀' },
+  { name: '设备设施操作考核', date: '2025-02-10', score: 90, result: '合格' },
+  { name: '调车作业规范考试', date: '2025-01-25', score: 84, result: '合格' },
+  { name: '2024年四季度综合考核', date: '2024-12-20', score: 78, result: '合格' },
+  { name: '危险货物知识专项', date: '2024-12-05', score: 88, result: '合格' },
+  { name: '冬季安全作业考核', date: '2024-11-18', score: 91, result: '优秀' },
+  { name: '车站差异化知识测试', date: '2024-11-01', score: 76, result: '合格' },
+  { name: '三季度综合技能考核', date: '2024-09-25', score: 80, result: '合格' },
+];
+
+const problemData = [
+  { name: '调车信号机故障处理', h: 3, a1: 2, a2: 1, b: 0 },
+  { name: '脱轨应急处置', h: 1, a1: 2, a2: 2, b: 1 },
+  { name: '制动机故障排查', h: 2, a1: 1, a2: 3, b: 0 },
+  { name: '道岔故障判断', h: 0, a1: 2, a2: 1, b: 2 },
+  { name: '手信号运用', h: 0, a1: 1, a2: 2, b: 1 },
+  { name: '超限货物装载检查', h: 0, a1: 0, a2: 1, b: 2 },
+  { name: '特殊线路限制', h: 0, a1: 1, a2: 1, b: 1 },
+];
+
+// ========== CHARTS ==========
+let radarChart, donutChart, weaknessChart;
+
+function initRadarChart() {
+  radarChart = echarts.init(document.getElementById('radarChart'));
+  const option = {
+    tooltip: { trigger: 'item' },
+    radar: {
+      indicator: radarData.labels.map((name, i) => ({
+        name: name + '\n' + radarData.values[i],
+        max: 100
+      })),
+      shape: 'polygon',
+      splitNumber: 4,
+      axisName: { color: 'rgba(0,0,0,.65)', fontSize: 12 },
+      splitArea: { areaStyle: { color: ['#fff', '#f5f7fa', '#eef2f8', '#e6edf5'] } },
+      splitLine: { lineStyle: { color: '#d9e2ec' } },
+      axisLine: { lineStyle: { color: '#d9e2ec' } }
+    },
+    series: [{
+      type: 'radar',
+      data: [{
+        value: radarData.values,
+        name: '能力值',
+        areaStyle: { color: 'rgba(22,119,255,.15)' },
+        lineStyle: { color: '#1677ff', width: 2 },
+        itemStyle: { color: '#1677ff' },
+        symbol: 'circle',
+        symbolSize: 6
+      }]
+    }]
+  };
+  radarChart.setOption(option);
+
+  // Click interaction on radar
+  radarChart.on('click', function(params) {
+    if (params.componentType === 'radar') {
+      // Nothing
+    }
+  });
+
+  // Click on radar chart canvas to detect which axis was clicked
+  document.getElementById('radarChart').addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const angle = Math.atan2(y - centerY, x - centerX);
+    const deg = ((angle * 180 / Math.PI) + 360 + 90) % 360;
+    const sectorSize = 360 / 6;
+    const index = Math.floor(deg / sectorSize);
+    if (index >= 0 && index < 6) {
+      highlightDimension(index);
+    }
+  });
+}
+
+function initDonutChart() {
+  donutChart = echarts.init(document.getElementById('donutChart'));
+  const option = {
+    tooltip: { trigger: 'item', formatter: '{b}: {c}个 ({d}%)' },
+    legend: { show: false },
+    series: [{
+      type: 'pie',
+      radius: ['50%', '75%'],
+      center: ['50%', '50%'],
+      avoidLabelOverlap: false,
+      itemStyle: { borderRadius: 4, borderColor: '#fff', borderWidth: 2 },
+      label: { show: true, formatter: '{b}\n{c}个', fontSize: 11 },
+      labelLine: { length: 10, length2: 8 },
+      data: [
+        { value: 9, name: '优秀', itemStyle: { color: '#52c41a' } },
+        { value: 4, name: '良好', itemStyle: { color: '#1677ff' } },
+        { value: 4, name: '一般', itemStyle: { color: '#fa8c16' } },
+        { value: 1, name: '未掌握', itemStyle: { color: '#ff4d4f' } }
+      ]
+    }]
+  };
+  donutChart.setOption(option);
+}
+
+function initWeaknessChart() {
+  weaknessChart = echarts.init(document.getElementById('weaknessBarChart'));
+  const items = ['调车信号机故障', '制动机故障排查', '脱轨应急处置', '道岔故障判断', '恶劣天气作业'];
+  const scores = [62, 68, 75, 78, 82];
+  const option = {
+    tooltip: { trigger: 'axis' },
+    grid: { left: 110, right: 30, top: 10, bottom: 20 },
+    xAxis: { type: 'value', max: 100, splitLine: { lineStyle: { type: 'dashed', color: '#eee' } }, axisLabel: { fontSize: 11 } },
+    yAxis: { type: 'category', data: items.reverse(), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' }, axisLine: { show: false }, axisTick: { show: false } },
+    series: [{
+      type: 'bar',
+      data: scores.reverse().map(v => ({
+        value: v,
+        itemStyle: { color: v < 70 ? '#ff4d4f' : v < 80 ? '#fa8c16' : '#1677ff', borderRadius: [0, 4, 4, 0] }
+      })),
+      barWidth: 16,
+      label: { show: true, position: 'right', fontSize: 11, color: 'rgba(0,0,0,.65)' }
+    }]
+  };
+  weaknessChart.setOption(option);
+}
+
+// ========== TABLES ==========
+let currentHighlightCategory = null;
+
+function renderAbilityTable(filterCategory) {
+  const tbody = document.getElementById('abilityTableBody');
+  const items = filterCategory ? abilityItems.filter(i => i.category === filterCategory) : abilityItems;
+  tbody.innerHTML = items.map((item, i) => {
+    const colorClass = item.score >= 90 ? '#52c41a' : item.score >= 80 ? '#1677ff' : item.score >= 70 ? '#fa8c16' : '#ff4d4f';
+    const levelTag = item.level === '优秀' ? 'tag-green' : item.level === '良好' ? 'tag-blue' : item.level === '一般' ? 'tag-orange' : 'tag-red';
+    const highlighted = filterCategory && item.category === filterCategory ? ' class="highlighted"' : '';
+    return `<tr${highlighted}>
+      <td>${i + 1}</td>
+      <td>${item.category}</td>
+      <td>${item.name}</td>
+      <td><div class="progress-bar"><div class="progress-bar-inner" style="width:${item.score}%;background:${colorClass};"></div></div>${item.score}</td>
+      <td><span class="tag ${levelTag}">${item.level}</span></td>
+      <td style="color:${colorClass};font-weight:500;">${item.score >= 90 ? '熟练掌握' : item.score >= 80 ? '基本掌握' : item.score >= 70 ? '需加强' : '未掌握'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderExamTable() {
+  const tbody = document.getElementById('examTableBody');
+  tbody.innerHTML = examRecords.map((r, i) => {
+    const resultTag = r.result === '优秀' ? 'tag-green' : r.result === '合格' ? 'tag-blue' : 'tag-red';
+    return `<tr>
+      <td>${i + 1}</td>
+      <td>${r.name}</td>
+      <td>${r.date}</td>
+      <td style="font-weight:600;">${r.score}</td>
+      <td><span class="tag ${resultTag}">${r.result}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderProblemTable() {
+  const tbody = document.getElementById('problemTableBody');
+  tbody.innerHTML = problemData.map((p, i) => `<tr>
+    <td>${i + 1}</td>
+    <td>${p.name}</td>
+    <td>${p.h > 0 ? '<span style="color:#ff4d4f;font-weight:600;">' + p.h + '</span>' : '0'}</td>
+    <td>${p.a1 > 0 ? '<span style="color:#fa8c16;font-weight:600;">' + p.a1 + '</span>' : '0'}</td>
+    <td>${p.a2 > 0 ? '<span style="color:#fa8c16;">' + p.a2 + '</span>' : '0'}</td>
+    <td>${p.b}</td>
+  </tr>`).join('');
+}
+
+// ========== INTERACTIONS ==========
+function switchTab(el, tabId) {
+  el.parentElement.querySelectorAll('.card-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  el.closest('.card').querySelectorAll('.card-tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+}
+
+function highlightDimension(index) {
+  const category = radarData.labels[index];
+  currentHighlightCategory = currentHighlightCategory === category ? null : category;
+  renderAbilityTable(currentHighlightCategory);
+
+  // Update radar chart to highlight the selected axis
+  const newData = radarData.values.map((v, i) => v);
+  radarChart.setOption({
+    series: [{
+      data: [{
+        value: newData,
+        areaStyle: { color: 'rgba(22,119,255,.15)' },
+        lineStyle: { color: '#1677ff', width: 2 },
+        itemStyle: {
+          color: function(params) { return params.dataIndex === index ? '#ff4d4f' : '#1677ff'; }
+        }
+      }]
+    }]
+  });
+}
+
+// ========== ASSISTANT ==========
+let assistantOpen = false;
+let isBroadcasting = false;
+let isTyping = false;
+let walkthroughMode = false;
+let walkthroughIndex = 0;
+
+function toggleAssistant() {
+  assistantOpen = !assistantOpen;
+  const panel = document.getElementById('assistantPanel');
+  const fab = document.getElementById('assistantFab');
+  if (assistantOpen) {
+    panel.classList.add('open');
+    fab.style.display = 'none';
+    if (!document.getElementById('assistantContent').innerHTML) {
+      showInitialAnalysis();
+    }
+  } else {
+    panel.classList.remove('open');
+    fab.style.display = '';
+    isBroadcasting = false;
+    document.getElementById('broadcastIndicator').classList.remove('active');
+  }
+}
+
+const analysisData = {
+  overview: {
+    title: '综合分析',
+    icon: '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+    text: '安涛同志整体技能水平<span class="highlight">中等偏上</span>（画像值<span class="highlight">79分</span>），安全知识掌握<span class="highlight">突出（94分）</span>，但非正常作业和特殊作业得分偏低（均<span class="warn">79分</span>），建议重点加强非正常情况下的应急处置训练。'
+  },
+  weakness: {
+    title: '薄弱项提醒',
+    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
+    text: '检测到<span class="danger">1项未掌握</span>能力项：<span class="danger">调车信号机故障处理</span>（得分62分，低于及格线）。另有制动机故障排查（68分）接近警戒线。建议安排专项练习，优先解决信号机故障科目。'
+  },
+  suggestion: {
+    title: '训练建议',
+    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>',
+    text: '根据近期<span class="highlight">21次考试</span>数据分析，车辆、制动机故障等应急情况下的处置方法为主要扣分点，建议下一轮培训重点覆盖：<br>1. <span class="warn">非正常作业</span>模块的信号机故障和脱轨应急场景<br>2. <span class="warn">特殊作业</span>模块的制动机故障排查<br>3. 适当增加<span class="highlight">实操练习</span>次数（当前练习次数为0）'
+  },
+  trend: {
+    title: '趋势分析',
+    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>',
+    text: '最近5次考试成绩呈<span class="highlight">波动上升</span>趋势（76→80→91→71→82），但非正常作业专项考核成绩<span class="danger">不合格（71分）</span>，说明综合能力在进步，但薄弱项短板仍突出，需要针对性强化。'
+  }
+};
+
+function showInitialAnalysis() {
+  const container = document.getElementById('assistantContent');
+  container.innerHTML = '';
+
+  const sections = ['overview', 'weakness', 'suggestion', 'trend'];
+  let delay = 0;
+
+  sections.forEach((key, idx) => {
+    const data = analysisData[key];
+    const section = document.createElement('div');
+    section.className = 'assistant-section';
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(10px)';
+    section.style.transition = 'opacity .4s, transform .4s';
+
+    section.innerHTML = `
+      <div class="assistant-section-title">
+        <span class="icon">${data.icon}</span>
+        ${data.title}
+      </div>
+      <div class="assistant-text" id="analysis-text-${key}"></div>
+    `;
+    container.appendChild(section);
+
+    setTimeout(() => {
+      section.style.opacity = '1';
+      section.style.transform = 'translateY(0)';
+      typeText(`analysis-text-${key}`, data.text, 15);
+    }, delay);
+    delay += 800;
+  });
+}
+
+function typeText(elementId, html, speed) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  isTyping = true;
+  el.innerHTML = '<span class="typing-cursor"></span>';
+
+  // Parse html into segments for typing
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  const textContent = temp.textContent;
+  const tags = [];
+  let textIndex = 0;
+  const regex = /(<[^>]+>)/g;
+  let lastIndex = 0;
+  let match;
+  const segments = [];
+
+  while ((match = regex.exec(html)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ type: 'text', content: html.substring(lastIndex, match.index) });
+    }
+    segments.push({ type: 'tag', content: match[1] });
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < html.length) {
+    segments.push({ type: 'text', content: html.substring(lastIndex) });
+  }
+
+  let currentSegment = 0;
+  let currentChar = 0;
+  let output = '';
+
+  function tick() {
+    if (currentSegment >= segments.length) {
+      el.innerHTML = html;
+      isTyping = false;
+      return;
+    }
+    const seg = segments[currentSegment];
+    if (seg.type === 'tag') {
+      output += seg.content;
+      currentSegment++;
+      tick();
+      return;
+    }
+    if (currentChar < seg.content.length) {
+      output += seg.content[currentChar];
+      currentChar++;
+      el.innerHTML = output + '<span class="typing-cursor"></span>';
+      // Auto-scroll
+      const body = document.getElementById('assistantBody');
+      body.scrollTop = body.scrollHeight;
+      setTimeout(tick, speed);
+    } else {
+      currentSegment++;
+      currentChar = 0;
+      tick();
+    }
+  }
+  tick();
+}
+
+function handleBroadcast() {
+  isBroadcasting = !isBroadcasting;
+  const indicator = document.getElementById('broadcastIndicator');
+  const btn = document.getElementById('broadcastBtn');
+  if (isBroadcasting) {
+    indicator.classList.add('active');
+    btn.classList.add('active');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 停止播报';
+    // Simulate broadcast ending after some time
+    setTimeout(() => {
+      if (isBroadcasting) {
+        isBroadcasting = false;
+        indicator.classList.remove('active');
+        btn.classList.remove('active');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> 语音播报';
+      }
+    }, 8000);
+  } else {
+    indicator.classList.remove('active');
+    btn.classList.remove('active');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> 语音播报';
+  }
+}
+
+// ========== WALKTHROUGH MODE ==========
+const walkthroughDimensions = radarData.labels.map((label, i) => {
+  const score = radarData.values[i];
+  const categoryItems = abilityItems.filter(a => a.category === label);
+  const weakItems = categoryItems.filter(a => a.score < 80);
+  let comment = '';
+  if (score >= 90) comment = '表现优秀，继续保持。';
+  else if (score >= 85) comment = '表现良好，略有提升空间。';
+  else if (score >= 80) comment = '达到合格水平，建议适当巩固。';
+  else comment = '低于平均水平，建议重点关注和加强训练。';
+
+  return {
+    name: label,
+    score: score,
+    comment: comment,
+    itemCount: categoryItems.length,
+    weakItems: weakItems.map(w => w.name),
+    weakCount: weakItems.length
+  };
+});
+
+function startWalkthrough() {
+  walkthroughMode = true;
+  walkthroughIndex = 0;
+  const btn = document.getElementById('walkthroughBtn');
+  btn.classList.add('active');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 停止解读';
+  btn.onclick = stopWalkthrough;
+  showWalkthroughStep();
+}
+
+function stopWalkthrough() {
+  walkthroughMode = false;
+  const btn = document.getElementById('walkthroughBtn');
+  btn.classList.remove('active');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 逐项解读';
+  btn.onclick = startWalkthrough;
+  currentHighlightCategory = null;
+  renderAbilityTable(null);
+  showInitialAnalysis();
+}
+
+function showWalkthroughStep() {
+  if (!walkthroughMode || walkthroughIndex >= walkthroughDimensions.length) {
+    stopWalkthrough();
+    return;
+  }
+
+  const dim = walkthroughDimensions[walkthroughIndex];
+  const container = document.getElementById('assistantContent');
+
+  // Highlight on radar
+  highlightDimension(walkthroughIndex);
+
+  // Build walkthrough content
+  const scoreColor = dim.score >= 90 ? '#52c41a' : dim.score >= 80 ? '#1677ff' : '#fa8c16';
+  let weakHtml = '';
+  if (dim.weakItems.length > 0) {
+    weakHtml = `<div style="margin-top:8px;padding:8px 12px;background:#fff7e6;border-radius:4px;font-size:12px;color:#fa8c16;">
+      <strong>薄弱子项：</strong>${dim.weakItems.join('、')}
+    </div>`;
+  }
+
+  container.innerHTML = `
+    <div style="text-align:center;margin-bottom:12px;font-size:12px;color:rgba(0,0,0,.45);">
+      维度解读 ${walkthroughIndex + 1} / ${walkthroughDimensions.length}
+    </div>
+    <div class="dimension-highlight">
+      <div class="dim-name">${dim.name}</div>
+      <div style="margin:8px 0;"><span class="dim-score" style="color:${scoreColor}">${dim.score}</span><span style="color:rgba(0,0,0,.45);font-size:13px;"> / 100</span></div>
+      <div style="font-size:13px;color:rgba(0,0,0,.65);">${dim.comment}</div>
+      <div style="margin-top:6px;font-size:12px;color:rgba(0,0,0,.45);">
+        涉及能力项 ${dim.itemCount} 个，其中薄弱项 ${dim.weakCount} 个
+      </div>
+      ${weakHtml}
+    </div>
+    <div style="display:flex;justify-content:center;gap:12px;margin-top:16px;">
+      <button class="assistant-btn" onclick="prevWalkthrough()" ${walkthroughIndex === 0 ? 'disabled style="opacity:.4;cursor:default;"' : ''}>上一项</button>
+      <button class="assistant-btn" style="background:#1677ff;color:#fff;border-color:#1677ff;" onclick="nextWalkthrough()">
+        ${walkthroughIndex < walkthroughDimensions.length - 1 ? '下一项' : '完成解读'}
+      </button>
+    </div>
+    <div style="display:flex;justify-content:center;gap:4px;margin-top:12px;">
+      ${walkthroughDimensions.map((_, i) => `<div style="width:${i === walkthroughIndex ? '20px' : '8px'};height:4px;border-radius:2px;background:${i === walkthroughIndex ? '#1677ff' : '#d9d9d9'};transition:all .3s;"></div>`).join('')}
+    </div>
+  `;
+}
+
+function nextWalkthrough() {
+  walkthroughIndex++;
+  showWalkthroughStep();
+}
+function prevWalkthrough() {
+  if (walkthroughIndex > 0) {
+    walkthroughIndex--;
+    showWalkthroughStep();
+  }
+}
+
+// ========== ACTION HANDLERS ==========
+function handleGenPlan() {
+  const container = document.getElementById('assistantContent');
+  container.innerHTML = '';
+  const section = document.createElement('div');
+  section.className = 'assistant-section';
+  section.innerHTML = `
+    <div class="assistant-section-title">
+      <span class="icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></span>
+      培训计划生成中...
+    </div>
+    <div class="assistant-text" id="plan-text"></div>
+  `;
+  container.appendChild(section);
+
+  const planText = `已根据安涛的技能画像自动生成个性化培训计划：<br><br>
+<strong>第一阶段（1-2周）- 薄弱项攻坚：</strong><br>
+- 调车信号机故障处理 - 安排3次实操模拟<br>
+- 制动机故障排查 - 安排2次实操模拟<br><br>
+<strong>第二阶段（3-4周）- 巩固提升：</strong><br>
+- 非正常作业综合演练 - 2次场景化考核<br>
+- 特殊作业流程复训 - 1次理论+实操<br><br>
+<strong>预期效果：</strong>画像值提升至<span class="highlight">85分</span>以上，消除未掌握能力项。<br><br>
+<em style="color:rgba(0,0,0,.45);">培训计划已保存，可在"培训计划管理"中查看和调整。</em>`;
+
+  setTimeout(() => typeText('plan-text', planText, 12), 300);
+}
+
+function handleExportReport() {
+  alert('分析报告已生成，将以PDF格式导出。\n\n包含内容：\n- 个人技能画像总览\n- 六维能力分析\n- 薄弱项专项分析\n- AI训练建议\n- 历次考试趋势');
+}
+
+function handleExportPDF() {
+  alert('正在生成PDF文件...\n\n学员画像报告 - 安涛\n生成时间：2025-06-16');
+}
+
+function handleShare() {
+  alert('已生成分享链接，可发送给相关管理人员查看。');
+}
+
+// ========== INIT ==========
+window.addEventListener('load', function() {
+  initRadarChart();
+  initDonutChart();
+  initWeaknessChart();
+  renderAbilityTable(null);
+  renderExamTable();
+  renderProblemTable();
+});
+
+window.addEventListener('resize', function() {
+  radarChart && radarChart.resize();
+  donutChart && donutChart.resize();
+  weaknessChart && weaknessChart.resize();
+});
+</script>
+</body>
+</html>
