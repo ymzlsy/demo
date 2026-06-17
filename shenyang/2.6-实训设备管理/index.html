@@ -49,8 +49,19 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .badge-red{background:var(--danger)}
 .badge-orange{background:var(--warning)}
 .badge-purple{background:var(--purple)}
-.filter-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
-.filter-row select,.filter-row input[type="text"]{padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;min-width:140px;background:#fff}
+.filter-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.filter-row select,.filter-row input[type="text"]{padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;min-width:110px;max-width:160px;background:#fff}
+.usage-icon-btn{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;transition:background .2s;position:relative}
+.usage-icon-btn:hover{background:#e6f7ff}
+.usage-icon-btn .usage-count{position:absolute;top:-4px;right:-6px;min-width:16px;height:16px;border-radius:8px;background:var(--primary);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0 3px}
+.usage-modal{width:900px;max-width:95vw;max-height:90vh}
+.usage-modal-body{padding:20px;overflow-y:auto;max-height:calc(90vh - 120px)}
+.usage-filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.usage-filter-bar select,.usage-filter-bar input{padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;min-width:100px}
+.usage-table{width:100%;border-collapse:collapse;font-size:13px}
+.usage-table th{background:#fafafa;padding:8px 10px;text-align:left;font-weight:600;border-bottom:1px solid var(--border);white-space:nowrap;font-size:12px}
+.usage-table td{padding:8px 10px;border-bottom:1px solid #f0f0f0}
+.usage-table tr:hover{background:#fafafa}
 .table-wrap{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 th{background:#fafafa;padding:10px 12px;text-align:left;font-weight:600;font-size:13px;border-bottom:1px solid var(--border);white-space:nowrap;user-select:none}
@@ -260,6 +271,17 @@ tr{cursor:pointer}
 <!-- Modal overlay -->
 <div class="overlay" id="modalOverlay" onclick="closeModal()">
   <div class="modal" id="modalContent" onclick="event.stopPropagation()"></div>
+</div>
+
+<!-- Usage List Modal (separate, wider) -->
+<div class="overlay" id="usageListOverlay" onclick="closeUsageListModal()">
+  <div class="modal usage-modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="usageListTitle">使用记录</h3>
+      <button class="close-btn" onclick="closeUsageListModal()">&times;</button>
+    </div>
+    <div class="usage-modal-body" id="usageListBody"></div>
+  </div>
 </div>
 
 <!-- Toast -->
@@ -549,12 +571,10 @@ function renderAdvancedFilters() {
       <select onchange="setFilter('location',this.value)"><option value="">安装位置</option>${locs.map(l=>`<option value="${l}" ${f.location===l?'selected':''}>${l}</option>`).join('')}</select>
       <select onchange="setFilter('system',this.value)"><option value="">适用系统</option>${systems.map(s=>`<option value="${s}" ${f.system===s?'selected':''}>${s}</option>`).join('')}</select>
       <select onchange="setFilter('onlineStatus',this.value)"><option value="">在线状态</option><option value="在线" ${f.onlineStatus==='在线'?'selected':''}>在线</option><option value="离线" ${f.onlineStatus==='离线'?'selected':''}>离线</option><option value="维护中" ${f.onlineStatus==='维护中'?'selected':''}>维护中</option></select>
-    </div>
-    <div class="filter-row">
-      <select onchange="setFilter('health',this.value)"><option value="">健康度</option><option value="high" ${f.health==='high'?'selected':''}>>=80% 良好</option><option value="mid" ${f.health==='mid'?'selected':''}>60-79% 一般</option><option value="low" ${f.health==='low'?'selected':''}>< 60% 偏低</option></select>
+      <select onchange="setFilter('health',this.value)"><option value="">健康度</option><option value="high" ${f.health==='high'?'selected':''}>≥80%</option><option value="mid" ${f.health==='mid'?'selected':''}>60-79%</option><option value="low" ${f.health==='low'?'selected':''}>< 60%</option></select>
       <select onchange="setFilter('maintStatus',this.value)"><option value="">保养状态</option><option value="正常" ${f.maintStatus==='正常'?'selected':''}>正常</option><option value="即将到期" ${f.maintStatus==='即将到期'?'selected':''}>即将到期</option><option value="已逾期" ${f.maintStatus==='已逾期'?'selected':''}>已逾期</option><option value="无计划" ${f.maintStatus==='无计划'?'selected':''}>无计划</option></select>
       <select onchange="setFilter('lifecycle',this.value)"><option value="">生命周期</option><option value="在用" ${f.lifecycle==='在用'?'selected':''}>在用</option><option value="闲置" ${f.lifecycle==='闲置'?'selected':''}>闲置</option><option value="报废" ${f.lifecycle==='报废'?'selected':''}>报废</option><option value="待验收" ${f.lifecycle==='待验收'?'selected':''}>待验收</option></select>
-      <input type="text" placeholder="搜索编号/名称..." value="${f.keyword}" oninput="setFilter('keyword',this.value)" style="min-width:180px">
+      <input type="text" placeholder="搜索编号/名称..." value="${f.keyword}" oninput="setFilter('keyword',this.value)" style="min-width:150px">
       <button class="btn btn-sm" onclick="resetFilters()">重置</button>
     </div>
   `;
@@ -590,13 +610,14 @@ function renderTable() {
     <th class="sortable" onclick="toggleSort('onlineStatus')">在线状态${sortIcon('onlineStatus')}</th>
     <th class="sortable" onclick="toggleSort('health')">健康度${sortIcon('health')}</th>
     <th class="sortable" onclick="toggleSort('faultCount')">故障${sortIcon('faultCount')}</th>
+    <th style="text-align:center">使用</th>
     <th>保养状态</th>
     <th>生命周期</th>
     <th>操作</th>
   </tr>`;
 
   if (pageData.length === 0) {
-    document.getElementById('tableBody').innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text3)">暂无匹配设备</td></tr>';
+    document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--text3)">暂无匹配设备</td></tr>';
   } else {
     document.getElementById('tableBody').innerHTML = pageData.map(d => {
       const openFaults = getDeviceOpenFaults(d.id).length;
@@ -618,6 +639,7 @@ function renderTable() {
         <td><span class="status-badge"><span class="status-dot ${onDot}"></span>${d.onlineStatus}</span></td>
         <td><div class="health-bar"><div class="health-bar-inner" style="width:${d.health}%;background:${getHealthColor(d.health)}"></div></div>${d.health}%</td>
         <td style="text-align:center">${openFaults > 0 ? `<span style="color:var(--danger);font-weight:700">${openFaults}</span>` : '<span style="color:var(--text3)">—</span>'}</td>
+        <td style="text-align:center" onclick="event.stopPropagation()"><button class="usage-icon-btn" onclick="openUsageListModal('${d.id}')" title="查看使用记录">&#x1F4CA;${(() => { const uc = getDeviceUsage(d.id).length; return uc > 0 ? '<span class="usage-count">'+uc+'</span>' : ''; })()}</button></td>
         <td>${msTag}</td>
         <td>${lcTag}</td>
         <td onclick="event.stopPropagation()">
@@ -843,6 +865,137 @@ function renderUsageChart(deviceId) {
 function toggleUsageCard(id) {
   const el = document.getElementById('usage-' + id);
   if (el) el.classList.toggle('expanded');
+}
+
+// ==================== Usage List Modal ====================
+let usageListState = { deviceId: '', page: 1, pageSize: 8, filters: { status: '', keyword: '', period: '' } };
+
+function openUsageListModal(deviceId) {
+  usageListState.deviceId = deviceId;
+  usageListState.page = 1;
+  usageListState.filters = { status: '', keyword: '', period: '' };
+  const d = state.devices.find(x => x.id === deviceId);
+  document.getElementById('usageListTitle').textContent = d.name + ' — 使用记录';
+  renderUsageListModal();
+  document.getElementById('usageListOverlay').classList.add('open');
+  setTimeout(() => renderUsageListChart(), 100);
+}
+function closeUsageListModal() { document.getElementById('usageListOverlay').classList.remove('open'); }
+
+function getFilteredUsageRecords() {
+  let list = getDeviceUsage(usageListState.deviceId);
+  const f = usageListState.filters;
+  if (f.status) list = list.filter(r => r.status === f.status);
+  if (f.keyword) { const kw = f.keyword.toLowerCase(); list = list.filter(r => (r.person + r.classGroup + r.subject + (r.detail||'')).toLowerCase().includes(kw)); }
+  if (f.period === 'today') list = list.filter(r => r.date === '2026-06-17');
+  else if (f.period === 'week') list = list.filter(r => r.date >= '2026-06-11');
+  else if (f.period === 'month') list = list.filter(r => r.date >= '2026-06-01');
+  return list;
+}
+
+function renderUsageListModal() {
+  const allRecords = getDeviceUsage(usageListState.deviceId);
+  const filtered = getFilteredUsageRecords();
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / usageListState.pageSize) || 1;
+  if (usageListState.page > totalPages) usageListState.page = totalPages;
+  const start = (usageListState.page - 1) * usageListState.pageSize;
+  const pageData = filtered.slice(start, start + usageListState.pageSize);
+  const f = usageListState.filters;
+
+  const today = allRecords.filter(r => r.date === '2026-06-17');
+  const week = allRecords.filter(r => r.date >= '2026-06-11');
+  const month = allRecords.filter(r => r.date >= '2026-06-01');
+  const todayH = today.reduce((s, r) => s + r.duration, 0);
+  const weekH = week.reduce((s, r) => s + r.duration, 0);
+  const monthH = month.reduce((s, r) => s + r.duration, 0);
+  const totalH = allRecords.reduce((s, r) => s + r.duration, 0);
+  const abnormal = allRecords.filter(r => r.status === '异常').length;
+
+  document.getElementById('usageListBody').innerHTML = `
+    <div class="mini-stats" style="margin-bottom:16px">
+      <div class="mini-stat"><div class="ms-label">本日</div><div class="ms-value">${today.length}次 / ${todayH}h</div></div>
+      <div class="mini-stat"><div class="ms-label">本周</div><div class="ms-value">${week.length}次 / ${weekH}h</div></div>
+      <div class="mini-stat"><div class="ms-label">本月</div><div class="ms-value">${month.length}次 / ${monthH}h</div></div>
+      <div class="mini-stat"><div class="ms-label">累计</div><div class="ms-value">${allRecords.length}次 / ${totalH}h</div></div>
+      <div class="mini-stat"><div class="ms-label">异常次数</div><div class="ms-value" style="color:${abnormal>0?'var(--danger)':'var(--success)'}">${abnormal}</div></div>
+    </div>
+    <div id="usageListChart" style="height:180px;margin-bottom:16px"></div>
+    <div class="usage-filter-bar">
+      <select onchange="setUsageFilter('period',this.value)">
+        <option value="">全部时间</option>
+        <option value="today" ${f.period==='today'?'selected':''}>今日</option>
+        <option value="week" ${f.period==='week'?'selected':''}>本周</option>
+        <option value="month" ${f.period==='month'?'selected':''}>本月</option>
+      </select>
+      <select onchange="setUsageFilter('status',this.value)">
+        <option value="">全部状态</option>
+        <option value="正常" ${f.status==='正常'?'selected':''}>正常</option>
+        <option value="异常" ${f.status==='异常'?'selected':''}>异常</option>
+      </select>
+      <input type="text" placeholder="搜索人员/班级/科目..." value="${f.keyword}" oninput="setUsageFilter('keyword',this.value)" style="min-width:180px">
+      <button class="btn btn-sm" onclick="resetUsageFilters()">重置</button>
+      <span style="margin-left:auto;font-size:12px;color:var(--text3)">共 ${total} 条记录</span>
+    </div>
+    <table class="usage-table">
+      <thead><tr>
+        <th>日期</th><th>时长</th><th>使用人员</th><th>班级/部门</th><th>训练科目</th><th>运行状态</th><th>操作</th>
+      </tr></thead>
+      <tbody>${pageData.length > 0 ? pageData.map(r => `<tr>
+        <td style="white-space:nowrap">${r.date}</td>
+        <td>${r.duration}h</td>
+        <td>${r.person}</td>
+        <td>${r.classGroup}</td>
+        <td>${r.subject}</td>
+        <td><span class="tag ${r.status==='正常'?'tag-green':'tag-red'}">${r.status}</span></td>
+        <td><button class="btn-link" onclick="toggleUsageDetail(this)" style="font-size:12px">详情</button></td>
+      </tr>
+      <tr class="usage-detail-row" style="display:none"><td colspan="7" style="background:#fafafa;padding:10px 12px">
+        <div style="font-size:13px;color:var(--text2)"><strong>运行日志：</strong>${r.detail||'无'}</div>
+        ${r.remark?'<div style="font-size:12px;color:var(--text3);margin-top:4px">备注：'+r.remark+'</div>':''}
+      </td></tr>`).join('') : '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text3)">无匹配记录</td></tr>'}</tbody>
+    </table>
+    ${totalPages > 1 ? `<div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-top:12px;padding:8px 0">
+      <button class="btn btn-sm" onclick="usageListPage(${usageListState.page-1})" ${usageListState.page<=1?'disabled':''}>上一页</button>
+      ${Array.from({length:totalPages},(_,i)=>`<button class="btn btn-sm ${i+1===usageListState.page?'btn-primary':''}" onclick="usageListPage(${i+1})">${i+1}</button>`).join('')}
+      <button class="btn btn-sm" onclick="usageListPage(${usageListState.page+1})" ${usageListState.page>=totalPages?'disabled':''}>下一页</button>
+    </div>` : ''}
+  `;
+}
+
+function setUsageFilter(k, v) { usageListState.filters[k] = v; usageListState.page = 1; renderUsageListModal(); setTimeout(() => renderUsageListChart(), 50); }
+function resetUsageFilters() { usageListState.filters = { status: '', keyword: '', period: '' }; usageListState.page = 1; renderUsageListModal(); setTimeout(() => renderUsageListChart(), 50); }
+function usageListPage(p) { if (p < 1) return; usageListState.page = p; renderUsageListModal(); setTimeout(() => renderUsageListChart(), 50); }
+
+function toggleUsageDetail(btn) {
+  const detailRow = btn.closest('tr').nextElementSibling;
+  if (detailRow) { const vis = detailRow.style.display === 'none'; detailRow.style.display = vis ? 'table-row' : 'none'; btn.textContent = vis ? '收起' : '详情'; }
+}
+
+function renderUsageListChart() {
+  const el = document.getElementById('usageListChart');
+  if (!el || !el.offsetParent) return;
+  const records = getDeviceUsage(usageListState.deviceId);
+  const days = ['6/11','6/12','6/13','6/14','6/15','6/16','6/17'];
+  const dates = ['2026-06-11','2026-06-12','2026-06-13','2026-06-14','2026-06-15','2026-06-16','2026-06-17'];
+  const hours = dates.map(dt => records.filter(r => r.date === dt).reduce((s, r) => s + r.duration, 0));
+  const counts = dates.map(dt => records.filter(r => r.date === dt).length);
+  const chart = echarts.init(el);
+  chart.setOption({
+    title: { text: '近7天使用趋势', textStyle: { fontSize: 13, fontWeight: 500 }, left: 0 },
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['使用时长(h)', '使用次数'], right: 0, textStyle: { fontSize: 11 } },
+    grid: { left: 40, right: 40, top: 40, bottom: 24 },
+    xAxis: { type: 'category', data: days, axisLabel: { fontSize: 11 } },
+    yAxis: [
+      { type: 'value', name: '时长(h)', axisLabel: { fontSize: 10 }, splitLine: { lineStyle: { type: 'dashed' } } },
+      { type: 'value', name: '次数', axisLabel: { fontSize: 10 }, splitLine: { show: false } }
+    ],
+    series: [
+      { name: '使用时长(h)', type: 'bar', data: hours, barWidth: 18, itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] } },
+      { name: '使用次数', type: 'line', yAxisIndex: 1, data: counts, smooth: true, lineStyle: { color: '#faad14' }, itemStyle: { color: '#faad14' } }
+    ]
+  });
 }
 
 // Panel 4: Fault Records
