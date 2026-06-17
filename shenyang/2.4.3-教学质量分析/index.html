@@ -89,6 +89,19 @@
     .research-table th { background: #fafafa; padding: 8px 10px; text-align: left; font-weight: 600; border-bottom: 1px solid #f0f0f0; }
     .research-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
 
+    /* Overview Section */
+    .overview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+    .overview-kpi { text-align: center; padding: 20px 12px; }
+    .kpi-value { font-size: 32px; font-weight: 700; color: #1677ff; line-height: 1.1; }
+    .kpi-label { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 6px; }
+    .kpi-trend { font-size: 12px; margin-top: 4px; }
+    .kpi-trend.up { color: #52c41a; }
+    .kpi-trend.down { color: #ff4d4f; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .chart-box { height: 280px; }
+    .section-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
+    .section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
+
     /* Weight Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
     .modal-overlay.open { opacity: 1; pointer-events: all; }
@@ -284,7 +297,33 @@
     </div>
   </div>
 
+  <!-- Overview Section -->
+  <div class="overview-grid" id="overviewKpis"></div>
+  <div class="charts-row">
+    <div class="card">
+      <div class="section-title">四维能力全站均值</div>
+      <div class="chart-box" id="chartDimAvg"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">部门教学质量对比</div>
+      <div class="chart-box" id="chartDeptCompare"></div>
+    </div>
+  </div>
+  <div class="charts-row">
+    <div class="card">
+      <div class="section-title">教师综合评分分布</div>
+      <div class="chart-box" id="chartScoreDist"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">全站教学质量趋势</div>
+      <div class="chart-box" id="chartTrend"></div>
+    </div>
+  </div>
+
   <!-- Teacher Grid -->
+  <div style="margin-bottom:12px;">
+    <div class="section-title">教师个人分析</div>
+  </div>
   <div class="teacher-grid" id="teacherGrid"></div>
 </div>
 
@@ -749,7 +788,7 @@ function saveWeights() {
   weights = { teach: v1, feedback: v2, profess: v3, research: v4 };
   closeWeightModal();
   if (currentTeacher) showDetail(currentTeacher.id);
-  else renderList();
+  else { renderOverview(); renderList(); }
 }
 
 // ===== Xiaoan Conversational Digital Human =====
@@ -1294,7 +1333,134 @@ const analysisHandlers = {
   }
 };
 
+// ===== Overview Charts =====
+let overviewCharts = [];
+function renderOverview() {
+  overviewCharts.forEach(c => { try { c.dispose(); } catch(e){} });
+  overviewCharts = [];
+
+  const scores = teachers.map(t => ({ name: t.name, score: calcScore(t) }));
+  const avgScore = +(scores.reduce((s,x) => s + x.score, 0) / scores.length).toFixed(1);
+  const excellent = scores.filter(x => x.score >= 85).length;
+  const avgPassRate = +(teachers.reduce((s,t) => s + t.passRate, 0) / teachers.length).toFixed(1);
+  const avgSatisfaction = +(teachers.reduce((s,t) => s + t.satisfaction, 0) / teachers.length).toFixed(1);
+
+  // KPI cards
+  document.getElementById('overviewKpis').innerHTML = [
+    { label: '教师总数', value: teachers.length, unit: '人', trend: '', up: true },
+    { label: '平均综合评分', value: avgScore, unit: '分', trend: '+2.3 较上期', up: true },
+    { label: '优秀教师占比', value: Math.round(excellent / teachers.length * 100), unit: '%', trend: excellent + '/' + teachers.length + ' 达优秀', up: true },
+    { label: '平均学员满意度', value: avgSatisfaction, unit: '', trend: avgPassRate + '% 平均通过率', up: true },
+  ].map(k => `<div class="card overview-kpi">
+    <div class="kpi-value">${k.value}<span style="font-size:14px;font-weight:400;color:rgba(0,0,0,.45);margin-left:4px">${k.unit}</span></div>
+    <div class="kpi-label">${k.label}</div>
+    <div class="kpi-trend ${k.up ? 'up' : 'down'}">${k.up ? '&#9650;' : '&#9660;'} ${k.trend}</div>
+  </div>`).join('');
+
+  // Chart 1: Four-dimension average radar
+  const dimAvg = {
+    teach: +(teachers.reduce((s,t) => s + t.dims.teach, 0) / teachers.length).toFixed(1),
+    feedback: +(teachers.reduce((s,t) => s + t.dims.feedback, 0) / teachers.length).toFixed(1),
+    profess: +(teachers.reduce((s,t) => s + t.dims.profess, 0) / teachers.length).toFixed(1),
+    research: +(teachers.reduce((s,t) => s + t.dims.research, 0) / teachers.length).toFixed(1),
+  };
+  const dimMax = teachers.reduce((m, t) => ({
+    teach: Math.max(m.teach, t.dims.teach), feedback: Math.max(m.feedback, t.dims.feedback),
+    profess: Math.max(m.profess, t.dims.profess), research: Math.max(m.research, t.dims.research)
+  }), { teach: 0, feedback: 0, profess: 0, research: 0 });
+  const c1 = echarts.init(document.getElementById('chartDimAvg'));
+  c1.setOption({
+    radar: { indicator: [
+      { name: '教学效果('+weights.teach+'%)', max: 100 }, { name: '学员反馈('+weights.feedback+'%)', max: 100 },
+      { name: '职业素养('+weights.profess+'%)', max: 100 }, { name: '教研成果('+weights.research+'%)', max: 100 }
+    ], radius: '65%' },
+    legend: { bottom: 0, data: ['全站均值','最高水平'] },
+    series: [{ type: 'radar', data: [
+      { value: [dimAvg.teach, dimAvg.feedback, dimAvg.profess, dimAvg.research], name: '全站均值', areaStyle: { color: 'rgba(22,119,255,.15)' }, lineStyle: { color: '#1677ff' }, itemStyle: { color: '#1677ff' } },
+      { value: [dimMax.teach, dimMax.feedback, dimMax.profess, dimMax.research], name: '最高水平', lineStyle: { color: '#52c41a', type: 'dashed' }, itemStyle: { color: '#52c41a' } }
+    ] }],
+    tooltip: {}
+  });
+  overviewCharts.push(c1);
+
+  // Chart 2: Department comparison grouped bar
+  const depts = [...new Set(teachers.map(t => t.dept))];
+  const deptData = depts.map(d => {
+    const dt = teachers.filter(t => t.dept === d);
+    return {
+      name: d, count: dt.length,
+      score: +(dt.reduce((s,t) => s + calcScore(t), 0) / dt.length).toFixed(1),
+      pass: +(dt.reduce((s,t) => s + t.passRate, 0) / dt.length).toFixed(1)
+    };
+  });
+  const c2 = echarts.init(document.getElementById('chartDeptCompare'));
+  c2.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { bottom: 0 },
+    grid: { left: 50, right: 20, top: 20, bottom: 40 },
+    xAxis: { type: 'category', data: deptData.map(d => d.name), axisLabel: { fontSize: 12, color: 'rgba(0,0,0,.65)' } },
+    yAxis: [
+      { type: 'value', name: '评分', min: 60, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+      { type: 'value', name: '通过率%', min: 60, max: 100, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { show: false } }
+    ],
+    series: [
+      { name: '综合评分', type: 'bar', data: deptData.map(d => d.score), itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 28 },
+      { name: '通过率', type: 'line', yAxisIndex: 1, data: deptData.map(d => d.pass), itemStyle: { color: '#52c41a' }, lineStyle: { color: '#52c41a' }, symbol: 'circle', symbolSize: 6 }
+    ]
+  });
+  overviewCharts.push(c2);
+
+  // Chart 3: Score distribution
+  const bins = [
+    { range: '<70', min: 0, max: 70 }, { range: '70-75', min: 70, max: 75 },
+    { range: '75-80', min: 75, max: 80 }, { range: '80-85', min: 80, max: 85 },
+    { range: '85-90', min: 85, max: 90 }, { range: '>=90', min: 90, max: 200 }
+  ];
+  const binCounts = bins.map(b => scores.filter(s => s.score >= b.min && s.score < b.max).length);
+  const c3 = echarts.init(document.getElementById('chartScoreDist'));
+  c3.setOption({
+    tooltip: { trigger: 'axis', formatter: '{b}: {c} 人' },
+    grid: { left: 40, right: 20, top: 20, bottom: 30 },
+    xAxis: { type: 'category', data: bins.map(b => b.range), axisLabel: { fontSize: 12, color: 'rgba(0,0,0,.65)' } },
+    yAxis: { type: 'value', minInterval: 1, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+    series: [{ type: 'bar', data: binCounts, itemStyle: {
+      color: (p) => ['#ff4d4f','#fa8c16','#faad14','#1677ff','#52c41a','#13c2c2'][p.dataIndex],
+      borderRadius: [4,4,0,0]
+    }, barMaxWidth: 36, label: { show: true, position: 'top', fontSize: 12, color: 'rgba(0,0,0,.65)' } }]
+  });
+  overviewCharts.push(c3);
+
+  // Chart 4: Overall trend (average score across periods)
+  const periods = ['2025 Q1','2025 Q2','2025 Q3','2025 Q4','2026 Q1'];
+  const trendAvg = periods.map((_, i) => {
+    const avg = teachers.reduce((s,t) => s + t.trends[i], 0) / teachers.length;
+    return +avg.toFixed(1);
+  });
+  const trendMax = periods.map((_, i) => Math.max(...teachers.map(t => t.trends[i])));
+  const trendMin = periods.map((_, i) => Math.min(...teachers.map(t => t.trends[i])));
+  const c4 = echarts.init(document.getElementById('chartTrend'));
+  c4.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { bottom: 0 },
+    grid: { left: 45, right: 20, top: 20, bottom: 40 },
+    xAxis: { type: 'category', data: periods, axisLabel: { fontSize: 12, color: 'rgba(0,0,0,.65)' } },
+    yAxis: { type: 'value', min: 60, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+    series: [
+      { name: '全站均值', type: 'line', data: trendAvg, smooth: true, lineStyle: { color: '#1677ff', width: 3 }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 6,
+        areaStyle: { color: { type: 'linear', x:0,y:0,x2:0,y2:1, colorStops: [{offset:0,color:'rgba(22,119,255,.15)'},{offset:1,color:'rgba(22,119,255,.02)'}] } } },
+      { name: '最高分', type: 'line', data: trendMax, lineStyle: { color: '#52c41a', type: 'dashed', width: 1 }, itemStyle: { color: '#52c41a' }, symbol: 'none' },
+      { name: '最低分', type: 'line', data: trendMin, lineStyle: { color: '#ff4d4f', type: 'dashed', width: 1 }, itemStyle: { color: '#ff4d4f' }, symbol: 'none' }
+    ]
+  });
+  overviewCharts.push(c4);
+}
+
+window.addEventListener('resize', function() {
+  overviewCharts.forEach(c => { if (c && !c.isDisposed()) c.resize(); });
+});
+
 // Init
+renderOverview();
 renderList();
 </script>
 </body>
