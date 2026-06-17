@@ -56,7 +56,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .usage-icon-btn .usage-count{position:absolute;top:-4px;right:-6px;min-width:16px;height:16px;border-radius:8px;background:var(--primary);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0 3px}
 .usage-modal{width:900px;max-width:95vw;max-height:90vh}
 .usage-modal-body{padding:20px;overflow-y:auto;max-height:calc(90vh - 120px)}
-.fault-modal{width:1200px;max-width:96vw;max-height:92vh}
+.fault-modal{width:1400px;max-width:97vw;max-height:92vh}
 .fault-modal-body{padding:16px;overflow-y:auto;max-height:calc(92vh - 120px)}
 .fault-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius)}
 .fault-table{width:100%;border-collapse:collapse;font-size:12px;min-width:1100px}
@@ -79,6 +79,19 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .fault-expand-form textarea{resize:vertical;min-height:60px}
 .fault-expand-form .radio-group{display:flex;gap:16px}
 .fault-expand-form .radio-group label{display:inline-flex;align-items:center;gap:4px;font-weight:400}
+.fault-photo-upload{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px}
+.fault-photo-upload .photo-thumb{width:56px;height:56px;border-radius:4px;object-fit:cover;border:1px solid var(--border)}
+.fault-photo-upload .photo-add-btn{width:56px;height:56px;border:1px dashed var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--text3);background:#fafafa;transition:border-color .2s}
+.fault-photo-upload .photo-add-btn:hover{border-color:var(--primary);color:var(--primary)}
+.maint-bar-wrap{position:relative;width:80px;cursor:pointer}
+.maint-bar{width:100%;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden;border:1.5px solid transparent}
+.maint-bar.overdue{border-color:var(--danger);background:#fff2f0}
+.maint-bar-inner{height:100%;border-radius:4px;transition:width .3s}
+.maint-bar-label{font-size:10px;color:var(--text3);margin-top:1px;text-align:center;white-space:nowrap}
+.maint-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#333;color:#fff;font-size:11px;padding:6px 10px;border-radius:6px;white-space:nowrap;z-index:99;pointer-events:none;line-height:1.6}
+.maint-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#333}
+.maint-bar-wrap:hover .maint-tooltip{display:block}
+.maint-noplan{font-size:11px;color:var(--text3);text-align:center}
 .fault-filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
 .fault-filter-bar select,.fault-filter-bar input{padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;min-width:100px}
 .fault-summary-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -501,6 +514,30 @@ function getMaintStatus(device) {
   return '正常';
 }
 
+function renderMaintBar(deviceId) {
+  const plans = getDevicePlans(deviceId);
+  if (plans.length === 0) return '<div class="maint-noplan" onclick="event.stopPropagation();openMaintListModal(\'' + deviceId + '\')">无计划</div>';
+  const earliest = plans.reduce((a, b) => a.nextDate < b.nextDate ? a : b);
+  const today = new Date('2026-06-17');
+  const next = new Date(earliest.nextDate);
+  const last = earliest.lastDate ? new Date(earliest.lastDate) : new Date(today.getTime() - 30 * 86400000);
+  const totalSpan = Math.max((next - last) / 86400000, 1);
+  const elapsed = (today - last) / 86400000;
+  const remaining = (next - today) / 86400000;
+  const pct = Math.min(Math.max(elapsed / totalSpan * 100, 0), 100);
+  const overdue = remaining < 0;
+  const isWarn = remaining <= 7 && remaining >= 0;
+  const barColor = overdue ? 'var(--danger)' : isWarn ? 'var(--warning)' : 'var(--success)';
+  const label = overdue ? '逾期' + Math.abs(Math.round(remaining)) + '天' : Math.round(remaining) + '天后';
+  const lastStr = earliest.lastDate || '-';
+  const nextStr = earliest.nextDate;
+  return `<div class="maint-bar-wrap" onclick="event.stopPropagation();openMaintListModal('${deviceId}')">
+    <div class="maint-tooltip">上次: ${lastStr}<br>下次: ${nextStr}</div>
+    <div class="maint-bar ${overdue ? 'overdue' : ''}"><div class="maint-bar-inner" style="width:${pct}%;background:${barColor}"></div></div>
+    <div class="maint-bar-label" style="color:${overdue ? 'var(--danger)' : isWarn ? 'var(--warning)' : 'var(--text3)'}">${label}</div>
+  </div>`;
+}
+
 function getHealthColor(h) {
   if (h >= 80) return 'var(--success)';
   if (h >= 60) return 'var(--warning)';
@@ -697,7 +734,7 @@ function renderTable() {
         <td><div class="health-bar"><div class="health-bar-inner" style="width:${d.health}%;background:${getHealthColor(d.health)}"></div></div>${d.health}%</td>
         <td style="text-align:center" onclick="event.stopPropagation()"><button class="usage-icon-btn" onclick="openFaultListModal('${d.id}')" title="查看故障/报修记录" style="font-size:14px">${openFaults > 0 ? `&#x1F6A8;` : `&#x1F6E0;`}${openFaults > 0 ? '<span class="usage-count" style="background:var(--danger)">'+openFaults+'</span>' : ''}</button></td>
         <td style="text-align:center" onclick="event.stopPropagation()"><button class="usage-icon-btn" onclick="openUsageListModal('${d.id}')" title="查看使用记录">&#x1F4CA;${(() => { const uc = getDeviceUsage(d.id).length; return uc > 0 ? '<span class="usage-count">'+uc+'</span>' : ''; })()}</button></td>
-        <td style="text-align:center" onclick="event.stopPropagation()"><button class="usage-icon-btn" onclick="openMaintListModal('${d.id}')" title="查看保养管理" style="font-size:14px">${ms === '已逾期' ? '&#x1F534;' : ms === '即将到期' ? '&#x1F7E0;' : ms === '无计划' ? '&#x1F7E3;' : '&#x1F7E2;'}${(() => { const pc = getDevicePlans(d.id).length; return pc > 0 ? '<span class="usage-count" style="background:' + (ms==='已逾期'?'var(--danger)':ms==='即将到期'?'var(--warning)':'var(--success)') + '">' + pc + '</span>' : ''; })()}</button></td>
+        <td style="text-align:center">${renderMaintBar(d.id)}</td>
         <td>${lcTag}</td>
         <td onclick="event.stopPropagation()">
           <button class="btn-link" onclick="openDrawer('${d.id}')">详情</button>
@@ -1126,6 +1163,10 @@ function renderFaultListModal() {
           <div class="form-group"><label>维修人员 <span style="color:var(--danger)">*</span></label><input id="fault-repair-person-${f.id}" placeholder="维修人员姓名"></div>
           <div class="form-group"><label>维修结果描述 <span style="color:var(--danger)">*</span></label><textarea id="fault-repair-desc-${f.id}" placeholder="请描述维修过程和结果..."></textarea></div>
           <div class="form-group"><label>更换部件</label><input id="fault-repair-parts-${f.id}" placeholder="如无则留空"></div>
+          <div class="form-group"><label>维修照片</label>
+            <div class="fault-photo-upload" id="fault-repair-photos-${f.id}">
+              <label class="photo-add-btn" title="上传照片"><input type="file" accept="image/*" multiple style="display:none" onchange="previewRepairPhotos(${f.id},this)">+</label>
+            </div></div>
           <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-sm btn-primary" onclick="doRepairFault(${f.id})">确认提交</button><button class="btn btn-sm" onclick="toggleFaultForm(${f.id},'repair')">取消</button></div>
         </div></td></tr>`;
     } else if (faultListState.expandedForms[f.id + '-accept']) {
@@ -1195,18 +1236,35 @@ function renderFaultListModal() {
   `;
 }
 
+function previewRepairPhotos(faultId, input) {
+  const container = document.getElementById('fault-repair-photos-' + faultId);
+  const addBtn = container.querySelector('.photo-add-btn');
+  Array.from(input.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'photo-thumb';
+      container.insertBefore(img, addBtn);
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
 function doRepairFault(faultId) {
   const person = document.getElementById('fault-repair-person-' + faultId)?.value;
   const desc = document.getElementById('fault-repair-desc-' + faultId)?.value;
   const parts = document.getElementById('fault-repair-parts-' + faultId)?.value || '';
   if (!person || !desc) { showToast('请填写维修人员和结果描述','error'); return; }
+  const photoCount = document.querySelectorAll('#fault-repair-photos-' + faultId + ' .photo-thumb').length;
   const f = state.faults.find(x => x.id === faultId);
   if (f) {
     f.status = '待验收';
     f.repairPerson = person;
     f.repairDesc = desc;
     f.repairParts = parts;
-    f.repairPhotos = 0;
+    f.repairPhotos = photoCount;
     f.repairTime = '2026-06-17 ' + new Date().toTimeString().slice(0,5);
     f.timeline.push({time: f.repairTime, content: person + '维修完成: ' + desc + (parts ? '（更换部件: ' + parts + ')' : '') + '，提交验收'});
     showToast('维修结果已提交，待报修人验收','success');
