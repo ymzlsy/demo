@@ -11,111 +11,112 @@
     .header { background: #fff; padding: 0 24px; height: 56px; display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; }
     .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
     .breadcrumb a { color: #1677ff; text-decoration: none; }
-    .content { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
-    .page-title { font-size: 20px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 16px; }
-    .card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
-    .card-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
-    .card-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
-    .tab-bar { display: flex; border-bottom: 2px solid #f0f0f0; margin-bottom: 20px; gap: 4px; }
-    .tab-item { padding: 10px 24px; cursor: pointer; font-size: 14px; color: rgba(0,0,0,.65); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; border-radius: 4px 4px 0 0; }
+    .content { max-width: 1400px; margin: 0 auto; padding: 10px 24px 10px; }
+    .page-title { font-size: 18px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 8px; }
+    .card { background: #fff; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
+    .card-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 6px; }
+    .card-title::before { content: ''; display: inline-block; width: 3px; height: 12px; background: #1677ff; border-radius: 2px; }
+    .tab-bar { display: flex; border-bottom: 2px solid #f0f0f0; margin-bottom: 0; gap: 4px; }
+    .tab-item { padding: 8px 20px; cursor: pointer; font-size: 13px; color: rgba(0,0,0,.65); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; border-radius: 4px 4px 0 0; }
     .tab-item:hover { color: #1677ff; background: #f0f5ff; }
     .tab-item.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 500; background: #f0f5ff; }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    table th { background: #fafafa; padding: 10px 12px; text-align: left; font-weight: 600; color: rgba(0,0,0,.85); border-bottom: 1px solid #f0f0f0; }
-    table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: rgba(0,0,0,.65); }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    table th { background: #fafafa; padding: 6px 8px; text-align: left; font-weight: 600; color: rgba(0,0,0,.85); border-bottom: 1px solid #f0f0f0; }
+    table td { padding: 6px 8px; border-bottom: 1px solid #f0f0f0; color: rgba(0,0,0,.65); }
     table tr:hover td { background: #fafafa; }
-    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 11px; }
     .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
     .tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
     .tag-red { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
     .tag-blue { background: #e6f7ff; color: #1677ff; border: 1px solid #91d5ff; }
     .tag-purple { background: #f9f0ff; color: #722ed1; border: 1px solid #d3adf7; }
-    .btn { display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all .2s; gap: 6px; }
+    .btn { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all .2s; gap: 6px; }
     .btn:hover { border-color: #1677ff; color: #1677ff; }
     .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
     .btn-primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
-    .btn-sm { padding: 3px 10px; font-size: 13px; }
-    .form-select { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; background: #fff; color: rgba(0,0,0,.85); }
+    .btn-sm { padding: 2px 8px; font-size: 12px; }
+    .form-select { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; color: rgba(0,0,0,.85); }
     .form-select:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
-    .form-input { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; background: #fff; }
+    .form-input { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; }
     .form-input:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
 
     /* Time selector bar */
-    .time-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; padding: 12px 16px; background: #fafafa; border-radius: 6px; border: 1px solid #f0f0f0; }
-    .time-bar label { font-size: 14px; color: rgba(0,0,0,.65); font-weight: 500; white-space: nowrap; }
-    .time-quick-btn { padding: 4px 12px; border-radius: 4px; border: 1px solid #d9d9d9; background: #fff; font-size: 13px; cursor: pointer; color: rgba(0,0,0,.65); transition: all .2s; }
+    .time-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 0; padding: 0; background: transparent; border: none; }
+    .time-bar label { font-size: 13px; color: rgba(0,0,0,.65); font-weight: 500; white-space: nowrap; }
+    .time-quick-btn { padding: 3px 10px; border-radius: 4px; border: 1px solid #d9d9d9; background: #fff; font-size: 12px; cursor: pointer; color: rgba(0,0,0,.65); transition: all .2s; }
     .time-quick-btn:hover { border-color: #1677ff; color: #1677ff; }
     .time-quick-btn.active { background: #1677ff; color: #fff; border-color: #1677ff; }
 
-    /* Summary bar */
-    .summary-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 20px; }
-    .summary-item { background: #fff; border-radius: 8px; padding: 16px; text-align: center; border: 1px solid #f0f0f0; }
-    .summary-item .s-val { font-size: 26px; font-weight: 700; color: #1677ff; }
-    .summary-item .s-val .unit { font-size: 13px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
-    .summary-item .s-lbl { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 4px; }
-    .summary-item .s-trend { font-size: 12px; margin-top: 2px; }
+    /* Summary bar - compact horizontal strip */
+    .summary-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 10px; }
+    .summary-item { background: #fff; border-radius: 6px; padding: 8px 10px; text-align: center; border: 1px solid #f0f0f0; }
+    .summary-item .s-val { font-size: 22px; font-weight: 700; color: #1677ff; line-height: 1.2; }
+    .summary-item .s-val .unit { font-size: 12px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
+    .summary-item .s-lbl { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
+    .summary-item .s-trend { font-size: 11px; margin-top: 1px; }
 
-    /* Charts row */
-    .charts-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .charts-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .charts-row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .chart-box { min-height: 320px; }
-    .chart-box-sm { min-height: 260px; }
+    /* Charts grid layouts */
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .charts-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .charts-row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .chart-box { min-height: 210px; height: 210px; }
+    .chart-box-sm { min-height: 180px; height: 180px; }
+    .chart-box-xs { min-height: 160px; height: 160px; }
 
     /* Filter bar */
-    .filter-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; font-size: 14px; color: rgba(0,0,0,.65); flex-wrap: wrap; }
+    .filter-bar { display: flex; gap: 10px; align-items: center; font-size: 13px; color: rgba(0,0,0,.65); flex-wrap: wrap; }
 
     /* Person card */
-    .person-grid { display: grid; grid-template-columns: 280px 1fr 340px; gap: 16px; margin-bottom: 16px; }
+    .person-grid { display: grid; grid-template-columns: 240px 1fr 1fr; gap: 10px; margin-bottom: 10px; }
     .info-list { list-style: none; padding: 0; }
-    .info-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+    .info-list li { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f5f5f5; font-size: 12px; }
     .info-list li .lbl { color: rgba(0,0,0,.45); }
     .info-list li .val { color: rgba(0,0,0,.85); font-weight: 500; }
-    .big-score { text-align: center; padding: 16px 0; }
-    .big-score .number { font-size: 48px; font-weight: 700; color: #1677ff; }
-    .big-score .level { display: inline-block; margin-top: 8px; padding: 4px 16px; border-radius: 20px; background: #f0f5ff; color: #1677ff; font-size: 14px; border: 1px solid #adc6ff; }
-    .weak-item { padding: 10px 12px; background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; margin-bottom: 8px; font-size: 13px; color: rgba(0,0,0,.85); }
+    .big-score { text-align: center; padding: 8px 0; }
+    .big-score .number { font-size: 36px; font-weight: 700; color: #1677ff; }
+    .big-score .level { display: inline-block; margin-top: 4px; padding: 2px 12px; border-radius: 20px; background: #f0f5ff; color: #1677ff; font-size: 12px; border: 1px solid #adc6ff; }
+    .weak-item { padding: 6px 10px; background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; margin-bottom: 6px; font-size: 12px; color: rgba(0,0,0,.85); }
     .weak-item .w-title { font-weight: 600; color: #fa8c16; }
 
     .hidden { display: none !important; }
     .trend-up { color: #52c41a; font-weight: 600; }
     .trend-down { color: #ff4d4f; font-weight: 600; }
-    .rank-num { color: #1677ff; font-weight: 700; min-width: 24px; display: inline-block; }
+    .rank-num { color: #1677ff; font-weight: 700; min-width: 20px; display: inline-block; }
 
-    .search-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .search-bar .form-input { width: 280px; }
+    .search-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .search-bar .form-input { width: 240px; }
 
     /* Ranking cards */
-    .rank-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
-    .rank-card { background: #fafafa; border-radius: 8px; padding: 14px; text-align: center; border: 1px solid #f0f0f0; }
-    .rank-card .r-scope { font-size: 13px; color: rgba(0,0,0,.45); margin-bottom: 6px; }
-    .rank-card .r-val { font-size: 24px; font-weight: 700; color: #1677ff; }
-    .rank-card .r-total { font-size: 13px; color: rgba(0,0,0,.45); }
-    .rank-card .r-pct { font-size: 12px; color: #52c41a; margin-top: 4px; }
+    .rank-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .rank-card { background: #fafafa; border-radius: 6px; padding: 8px; text-align: center; border: 1px solid #f0f0f0; }
+    .rank-card .r-scope { font-size: 11px; color: rgba(0,0,0,.45); margin-bottom: 2px; }
+    .rank-card .r-val { font-size: 20px; font-weight: 700; color: #1677ff; }
+    .rank-card .r-total { font-size: 11px; color: rgba(0,0,0,.45); }
+    .rank-card .r-pct { font-size: 11px; color: #52c41a; margin-top: 2px; }
 
     /* Modal overlay */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.45); z-index: 1000; display: flex; align-items: center; justify-content: center; }
     .modal-box { background: #fff; border-radius: 8px; width: 520px; max-height: 80vh; overflow-y: auto; }
-    .modal-header { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-    .modal-header h3 { font-size: 16px; font-weight: 600; }
-    .modal-close { cursor: pointer; font-size: 18px; color: rgba(0,0,0,.45); background: none; border: none; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+    .modal-header { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { font-size: 15px; font-weight: 600; }
+    .modal-close { cursor: pointer; font-size: 18px; color: rgba(0,0,0,.45); background: none; border: none; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
     .modal-close:hover { background: #f5f5f5; color: rgba(0,0,0,.85); }
-    .modal-body { padding: 20px; }
-    .modal-footer { padding: 12px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 8px; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 14px; color: rgba(0,0,0,.85); margin-bottom: 6px; font-weight: 500; }
+    .modal-body { padding: 16px; }
+    .modal-footer { padding: 10px 16px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 8px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 13px; color: rgba(0,0,0,.85); margin-bottom: 4px; font-weight: 500; }
     .form-group .form-input, .form-group .form-select { width: 100%; }
-    .form-group .hint { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 4px; }
+    .form-group .hint { font-size: 11px; color: rgba(0,0,0,.45); margin-top: 3px; }
 
     /* Progress bar style for weakness */
-    .progress-bar { height: 18px; background: #f0f0f0; border-radius: 10px; overflow: hidden; display: flex; }
+    .progress-bar { height: 14px; background: #f0f0f0; border-radius: 8px; overflow: hidden; display: flex; }
     .progress-bar .seg { height: 100%; transition: width .3s; }
     .progress-bar .seg-green { background: #52c41a; }
     .progress-bar .seg-blue { background: #1677ff; }
     .progress-bar .seg-orange { background: #faad14; }
     .progress-bar .seg-red { background: #ff4d4f; }
-    .progress-legend { display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: rgba(0,0,0,.45); }
-    .progress-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+    .progress-legend { display: flex; gap: 12px; margin-top: 6px; font-size: 11px; color: rgba(0,0,0,.45); }
+    .progress-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 3px; vertical-align: middle; }
 
     /* ========== XiaoAn Digital Human ========== */
     .xiaoan-fab {
@@ -293,9 +294,9 @@
 <div class="content">
   <div class="page-title">实训考核数据分析</div>
 
-  <!-- Global time selector -->
-  <div class="card" style="padding: 12px 20px;">
-    <div class="time-bar" style="margin-bottom:0;padding:0;background:transparent;border:none;">
+  <!-- Global time selector + Level tabs merged into one compact bar -->
+  <div class="card" style="padding: 8px 16px; margin-bottom: 8px;">
+    <div class="time-bar">
       <label>统计周期：</label>
       <select class="form-select" id="timeYear">
         <option>2026年</option><option>2025年</option><option>2024年</option>
@@ -313,12 +314,12 @@
       <button class="time-quick-btn active" onclick="setQuickTime(this,'quarter')">本季度</button>
       <button class="time-quick-btn" onclick="setQuickTime(this,'year')">本年度</button>
       <span style="flex:1;"></span>
-      <span style="font-size:12px;color:rgba(0,0,0,.35);">数据更新时间：2026-06-15 08:30</span>
+      <span style="font-size:11px;color:rgba(0,0,0,.35);">数据更新：2026-06-15 08:30</span>
     </div>
   </div>
 
   <!-- Level tabs -->
-  <div class="card" style="padding: 0 20px;">
+  <div class="card" style="padding: 0 16px; margin-bottom: 8px;">
     <div class="tab-bar" id="levelTabs" style="margin-bottom: 0;">
       <div class="tab-item active" onclick="switchLevel(0, this)">站段总览</div>
       <div class="tab-item" onclick="switchLevel(1, this)">车间维度</div>
@@ -327,32 +328,32 @@
     </div>
   </div>
 
-  <!-- ===== Tab 0: Station Overview (single 沈阳客运) ===== -->
+  <!-- ===== Tab 0: Station Overview ===== -->
   <div id="level-0">
     <div class="summary-row" id="summaryRow"></div>
-    <div class="charts-row">
+    <!-- Row 1: 4 charts -->
+    <div class="charts-row-4">
       <div class="card"><div class="card-title">六维能力雷达图</div><div id="radar0" class="chart-box"></div></div>
       <div class="card"><div class="card-title">成绩分布曲线</div><div id="dist0" class="chart-box"></div></div>
       <div class="card"><div class="card-title">模块科目掌握情况</div><div id="mastery0" class="chart-box"></div></div>
-    </div>
-    <div class="charts-row-2">
-      <div class="card"><div class="card-title">各车间综合得分对比</div><div id="workshopBar0" class="chart-box"></div></div>
-      <div class="card"><div class="card-title">各车间合格率趋势（按月）</div><div id="trendLine0" class="chart-box"></div></div>
-    </div>
-    <div class="charts-row-2">
       <div class="card"><div class="card-title">各岗位综合能力对比</div><div id="postRadar0" class="chart-box"></div></div>
-      <div class="card"><div class="card-title">培训批次与参培人次</div><div id="batchBar0" class="chart-box"></div></div>
     </div>
-    <div class="card">
-      <div class="card-title">各车间核心指标一览</div>
-      <table id="stationDetailTable"></table>
+    <!-- Row 2: 3 charts + table -->
+    <div class="charts-row-4">
+      <div class="card"><div class="card-title">各车间综合得分对比</div><div id="workshopBar0" class="chart-box"></div></div>
+      <div class="card"><div class="card-title">合格率趋势（按月）</div><div id="trendLine0" class="chart-box"></div></div>
+      <div class="card"><div class="card-title">培训批次与参培人次</div><div id="batchBar0" class="chart-box"></div></div>
+      <div class="card" style="overflow-y: auto;">
+        <div class="card-title">各车间核心指标</div>
+        <table id="stationDetailTable"></table>
+      </div>
     </div>
   </div>
 
   <!-- ===== Tab 1: Workshop ===== -->
   <div id="level-1" class="hidden">
-    <div class="card">
-      <div class="filter-bar">
+    <div class="card" style="padding: 8px 16px; margin-bottom: 8px;">
+      <div class="filter-bar" style="margin-bottom:0;">
         <span>选择车间：</span>
         <select class="form-select" id="ws-workshop" onchange="renderWorkshop()">
           <option>客运一车间</option><option>客运二车间</option><option>客运三车间</option><option>客运四车间</option>
@@ -364,7 +365,7 @@
       <div class="card">
         <div class="card-title">优秀班组 Top 5</div>
         <table id="wsTopTable"></table>
-        <div style="margin-top: 20px;">
+        <div style="margin-top: 10px;">
           <div class="card-title" style="color:#ff4d4f;">需关注班组 Top 5</div>
           <table id="wsBottomTable"></table>
         </div>
@@ -379,13 +380,13 @@
 
   <!-- ===== Tab 2: Team ===== -->
   <div id="level-2" class="hidden">
-    <div class="card">
-      <div class="filter-bar">
+    <div class="card" style="padding: 8px 16px; margin-bottom: 8px;">
+      <div class="filter-bar" style="margin-bottom:0;">
         <span>选择车间：</span>
         <select class="form-select" id="tm-workshop" onchange="renderTeam()">
           <option>客运一车间</option><option>客运二车间</option><option>客运三车间</option><option>客运四车间</option>
         </select>
-        <span style="margin-left:12px;">选择班组：</span>
+        <span style="margin-left:8px;">选择班组：</span>
         <select class="form-select" id="tm-team" onchange="renderTeam()">
           <option>甲班</option><option>乙班</option><option>丙班</option><option>丁班</option>
         </select>
@@ -396,14 +397,14 @@
       <div class="card">
         <div class="card-title">优秀职工 Top 5</div>
         <table id="tmTopTable"></table>
-        <div style="margin-top: 20px;">
+        <div style="margin-top: 10px;">
           <div class="card-title" style="color:#ff4d4f;">关键职工（需重点关注）Top 5</div>
           <table id="tmBottomTable"></table>
         </div>
       </div>
       <div class="card"><div class="card-title">模块科目掌握情况</div><div id="mastery2" class="chart-box"></div></div>
     </div>
-    <div class="charts-row-2">
+    <div class="charts-row">
       <div class="card">
         <div class="card-title">薄弱技能模块分析</div>
         <div id="tmWeakChart" class="chart-box"></div>
@@ -412,19 +413,19 @@
         <div class="card-title">各科目掌握率分布</div>
         <div id="tmMasteryPie" class="chart-box"></div>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-title">薄弱技能模块明细</div>
-      <table id="tmWeakTable"></table>
-      <div id="tmWeakBars" style="margin-top: 16px;"></div>
+      <div class="card" style="overflow-y: auto;">
+        <div class="card-title">薄弱技能模块明细</div>
+        <table id="tmWeakTable"></table>
+        <div id="tmWeakBars" style="margin-top: 8px;"></div>
+      </div>
     </div>
   </div>
 
   <!-- ===== Tab 3: Personal ===== -->
   <div id="level-3" class="hidden">
-    <div class="card">
+    <div class="card" style="padding: 8px 16px; margin-bottom: 8px;">
       <div class="search-bar">
-        <span style="color:rgba(0,0,0,.65);">搜索职工：</span>
+        <span style="color:rgba(0,0,0,.65);font-size:13px;">搜索职工：</span>
         <input class="form-input" placeholder="输入姓名或工号搜索..." id="personSearch" />
         <button class="btn btn-primary" onclick="searchPerson()">查询</button>
         <span style="flex:1;"></span>
@@ -442,23 +443,23 @@
           <li><span class="lbl">工号</span><span class="val">SY2024-0318</span></li>
           <li><span class="lbl">入职日期</span><span class="val">2020-03-15</span></li>
         </ul>
-        <div style="margin-top:16px;">
+        <div style="margin-top:8px;">
           <div class="card-title">排名分析</div>
           <div class="rank-cards">
             <div class="rank-card">
-              <div class="r-scope">班组排名</div>
+              <div class="r-scope">班组</div>
               <div class="r-val">3</div>
               <div class="r-total">/ 18人</div>
               <div class="r-pct">前 16.7%</div>
             </div>
             <div class="rank-card">
-              <div class="r-scope">车间排名</div>
+              <div class="r-scope">车间</div>
               <div class="r-val">12</div>
               <div class="r-total">/ 96人</div>
               <div class="r-pct">前 12.5%</div>
             </div>
             <div class="rank-card">
-              <div class="r-scope">站段排名</div>
+              <div class="r-scope">站段</div>
               <div class="r-val">45</div>
               <div class="r-total">/ 386人</div>
               <div class="r-pct">前 11.7%</div>
@@ -470,15 +471,15 @@
         <div class="card-title" style="justify-content:center;">综合画像值</div>
         <div class="big-score">
           <div class="number">87.5</div>
-          <div style="font-size:14px;color:rgba(0,0,0,.45);">分</div>
+          <div style="font-size:13px;color:rgba(0,0,0,.45);">分</div>
           <div class="level">良好</div>
         </div>
-        <div id="radar3" style="width:100%;height:220px;margin-top:8px;"></div>
+        <div id="radar3" style="width:100%;height:180px;margin-top:4px;"></div>
       </div>
       <div class="card">
         <div class="card-title">考试成绩</div>
         <table>
-          <thead><tr><th>考试类型</th><th>成绩</th><th>满分</th><th>等级</th><th>考试时间</th></tr></thead>
+          <thead><tr><th>考试类型</th><th>成绩</th><th>满分</th><th>等级</th><th>时间</th></tr></thead>
           <tbody>
             <tr><td>入学考试</td><td>85</td><td>100</td><td><span class="tag tag-blue">良好</span></td><td>2026-03-10</td></tr>
             <tr><td>安全考试</td><td>92</td><td>100</td><td><span class="tag tag-green">优秀</span></td><td>2026-04-15</td></tr>
@@ -486,34 +487,33 @@
             <tr><td>实作考试</td><td>94</td><td>100</td><td><span class="tag tag-green">优秀</span></td><td>2026-06-01</td></tr>
           </tbody>
         </table>
-        <div style="margin-top: 16px;">
+        <div style="margin-top: 8px;">
           <div class="card-title">薄弱项分析</div>
-          <div class="weak-item"><span class="w-title">应急处置：</span>得分偏低（68分），建议加强演练频次，重点关注火灾应急和旅客疏散场景</div>
-          <div class="weak-item"><span class="w-title">理论知识：</span>第三章掌握不牢固（72分），建议复习《铁路客运服务规范》相关章节</div>
+          <div class="weak-item"><span class="w-title">应急处置：</span>得分偏低（68分），建议加强演练频次</div>
+          <div class="weak-item"><span class="w-title">理论知识：</span>第三章掌握不牢固（72分），建议复习相关章节</div>
         </div>
       </div>
     </div>
 
-    <!-- Score trend -->
-    <div class="charts-row-2">
-      <div class="card"><div class="card-title">个人成绩趋势</div><div id="personTrend" class="chart-box-sm"></div></div>
-      <div class="card"><div class="card-title">同岗位排名变化</div><div id="personRankTrend" class="chart-box-sm"></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title" style="justify-content:space-between;">
-        两委扣分记录
-        <button class="btn btn-sm" onclick="showAddRecordModal()">添加记录</button>
+    <!-- Score trend + rank trend + deduction table in one row -->
+    <div class="charts-row">
+      <div class="card"><div class="card-title">个人成绩趋势</div><div id="personTrend" class="chart-box-xs"></div></div>
+      <div class="card"><div class="card-title">同岗位排名变化</div><div id="personRankTrend" class="chart-box-xs"></div></div>
+      <div class="card" style="overflow-y: auto;">
+        <div class="card-title" style="justify-content:space-between;">
+          两委扣分记录
+          <button class="btn btn-sm" onclick="showAddRecordModal()">添加记录</button>
+        </div>
+        <table>
+          <thead><tr><th>日期</th><th>类型</th><th>扣分</th><th>原因</th><th>记录人</th></tr></thead>
+          <tbody>
+            <tr><td>2026-05-28</td><td><span class="tag tag-red">安全违章</span></td><td>-5</td><td>未按规定佩戴安全帽</td><td>张志刚</td></tr>
+            <tr><td>2026-05-15</td><td><span class="tag tag-orange">服务投诉</span></td><td>-3</td><td>旅客投诉服务态度</td><td>李明远</td></tr>
+            <tr><td>2026-04-22</td><td><span class="tag tag-red">操作违规</span></td><td>-5</td><td>实训设备操作未按标准</td><td>王海波</td></tr>
+            <tr><td>2026-03-10</td><td><span class="tag tag-orange">考勤异常</span></td><td>-2</td><td>培训课程迟到超15分钟</td><td>赵文婷</td></tr>
+          </tbody>
+        </table>
       </div>
-      <table>
-        <thead><tr><th>日期</th><th>扣分类型</th><th>扣分值</th><th>原因</th><th>记录人</th></tr></thead>
-        <tbody>
-          <tr><td>2026-05-28</td><td><span class="tag tag-red">安全违章</span></td><td>-5</td><td>未按规定佩戴安全帽进入站台区域</td><td>张志刚</td></tr>
-          <tr><td>2026-05-15</td><td><span class="tag tag-orange">服务投诉</span></td><td>-3</td><td>旅客投诉服务态度问题，经核实扣分</td><td>李明远</td></tr>
-          <tr><td>2026-04-22</td><td><span class="tag tag-red">操作违规</span></td><td>-5</td><td>实训设备操作未按标准流程执行</td><td>王海波</td></tr>
-          <tr><td>2026-03-10</td><td><span class="tag tag-orange">考勤异常</span></td><td>-2</td><td>培训课程迟到超过15分钟</td><td>赵文婷</td></tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -535,10 +535,10 @@
       </div>
       <div class="form-group">
         <label>选择文件</label>
-        <div style="border:2px dashed #d9d9d9;border-radius:8px;padding:32px;text-align:center;color:rgba(0,0,0,.45);cursor:pointer;" onclick="alert('文件选择演示')">
-          <div style="font-size:28px;margin-bottom:8px;">+</div>
+        <div style="border:2px dashed #d9d9d9;border-radius:8px;padding:24px;text-align:center;color:rgba(0,0,0,.45);cursor:pointer;" onclick="alert('文件选择演示')">
+          <div style="font-size:24px;margin-bottom:6px;">+</div>
           <div>点击或拖拽上传 CSV / Excel 文件</div>
-          <div style="font-size:12px;margin-top:8px;">必须包含"姓名"列，系统自动匹配人员</div>
+          <div style="font-size:11px;margin-top:6px;">必须包含"姓名"列，系统自动匹配人员</div>
         </div>
       </div>
       <div class="form-group">
@@ -728,11 +728,11 @@ var charts = {};
 function makeRadarOption(rd, label) {
   return {
     color: ['#1677ff', '#faad14'],
-    legend: { data: [label || '当前选择', '全站平均'], bottom: 0, textStyle: { color: 'rgba(0,0,0,.45)', fontSize: 12 } },
+    legend: { data: [label || '当前选择', '全站平均'], bottom: 0, textStyle: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
     radar: {
       indicator: radarDims.map(function(d) { return { name: d, max: 100 }; }),
-      shape: 'polygon', splitNumber: 4, radius: '60%',
-      axisName: { color: 'rgba(0,0,0,.65)', fontSize: 12 },
+      shape: 'polygon', splitNumber: 4, radius: '58%',
+      axisName: { color: 'rgba(0,0,0,.65)', fontSize: 11 },
       splitLine: { lineStyle: { color: '#e8e8e8' } },
       splitArea: { areaStyle: { color: ['#fff', '#fafafa'] } },
       axisLine: { lineStyle: { color: '#d9d9d9' } }
@@ -758,10 +758,10 @@ function makeDistOption() {
   }
   return {
     tooltip: { trigger: 'axis' },
-    legend: { data: ['实际分布', '正态拟合'], top: 5, right: 20, textStyle: { color: 'rgba(0,0,0,.45)', fontSize: 12 } },
-    grid: { left: 50, right: 30, top: 40, bottom: 35 },
-    xAxis: { type: 'category', data: xLabels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, axisLine: { lineStyle: { color: '#d9d9d9' } }, name: '分数' },
-    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } }, axisLine: { lineStyle: { color: '#d9d9d9' } }, name: '人数' },
+    legend: { data: ['实际分布', '正态拟合'], top: 2, right: 10, textStyle: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
+    grid: { left: 40, right: 20, top: 30, bottom: 25 },
+    xAxis: { type: 'category', data: xLabels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 10, interval: 4 }, axisLine: { lineStyle: { color: '#d9d9d9' } }, name: '分数' },
+    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } }, axisLine: { lineStyle: { color: '#d9d9d9' } }, name: '人数' },
     series: [
       { name: '实际分布', type: 'bar', data: distScores, itemStyle: { color: '#1677ff', borderRadius: [2, 2, 0, 0] }, barWidth: '60%' },
       { name: '正态拟合', type: 'line', data: normalY, smooth: true, lineStyle: { color: '#faad14', width: 2, type: 'dashed' }, symbol: 'none', areaStyle: { color: 'rgba(250,173,20,.06)' } }
@@ -772,12 +772,12 @@ function makeDistOption() {
 function makeMasteryOption() {
   return {
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    legend: { data: ['优秀', '良好', '一般', '未掌握'], top: 2, right: 10, textStyle: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
-    grid: { left: 80, right: 20, top: 36, bottom: 25 },
-    xAxis: { type: 'value', max: 100, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11, formatter: '{value}%' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-    yAxis: { type: 'category', data: modules, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 12 }, axisLine: { lineStyle: { color: '#d9d9d9' } } },
+    legend: { data: ['优秀', '良好', '一般', '未掌握'], top: 0, right: 4, textStyle: { color: 'rgba(0,0,0,.45)', fontSize: 10 } },
+    grid: { left: 70, right: 14, top: 28, bottom: 18 },
+    xAxis: { type: 'value', max: 100, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 10, formatter: '{value}%' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    yAxis: { type: 'category', data: modules, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 11 }, axisLine: { lineStyle: { color: '#d9d9d9' } } },
     series: [
-      { name: '优秀', type: 'bar', stack: 'total', data: masteryData.excellent, itemStyle: { color: '#1677ff' }, barWidth: 20 },
+      { name: '优秀', type: 'bar', stack: 'total', data: masteryData.excellent, itemStyle: { color: '#1677ff' }, barWidth: 16 },
       { name: '良好', type: 'bar', stack: 'total', data: masteryData.good, itemStyle: { color: '#69b1ff' } },
       { name: '一般', type: 'bar', stack: 'total', data: masteryData.normal, itemStyle: { color: '#faad14' } },
       { name: '未掌握', type: 'bar', stack: 'total', data: masteryData.poor, itemStyle: { color: '#ff4d4f' } }
@@ -806,13 +806,13 @@ function renderSummary() {
 }
 
 function renderStationDetailTable() {
-  var html = '<thead><tr><th>车间</th><th>职工人数</th><th>班组数</th><th>综合得分</th><th>合格率</th><th>优秀率</th><th>薄弱科目</th><th>较上期</th></tr></thead><tbody>';
+  var html = '<thead><tr><th>车间</th><th>人数</th><th>班组</th><th>得分</th><th>合格率</th><th>优秀率</th><th>薄弱科目</th><th>较上期</th></tr></thead><tbody>';
   var weakModules = ['应急处置', '设备操作', '安全规程', '理论知识'];
   workshops.forEach(function(w, i) {
     var excellent = (w.rate * 0.4 + 10).toFixed(1);
     var diff = ['+1.5', '-0.3', '+2.1', '+0.8'][i];
     var diffClass = diff.charAt(0) === '+' ? 'trend-up' : 'trend-down';
-    html += '<tr><td><b>' + w.name + '</b></td><td>' + w.total + '人</td><td>' + w.teams + '</td><td>' + w.score + '</td>' +
+    html += '<tr><td><b>' + w.name + '</b></td><td>' + w.total + '</td><td>' + w.teams + '</td><td>' + w.score + '</td>' +
       '<td><span class="tag ' + (w.rate >= 95 ? 'tag-green' : w.rate >= 90 ? 'tag-blue' : 'tag-orange') + '">' + w.rate + '%</span></td>' +
       '<td>' + excellent + '%</td><td><span class="tag tag-orange">' + weakModules[i] + '</span></td>' +
       '<td><span class="' + diffClass + '">' + diff + '</span></td></tr>';
@@ -836,15 +836,15 @@ function initLevel0Charts() {
   if (!charts.workshopBar0) charts.workshopBar0 = echarts.init(document.getElementById('workshopBar0'));
   charts.workshopBar0.setOption({
     tooltip: { trigger: 'axis' },
-    legend: { data: ['综合得分', '合格率'], top: 5, right: 20, textStyle: { fontSize: 12 } },
-    grid: { left: 80, right: 40, top: 40, bottom: 30 },
-    yAxis: { type: 'category', data: workshops.map(function(w) { return w.name; }), axisLabel: { fontSize: 12 } },
+    legend: { data: ['综合得分', '合格率'], top: 2, right: 10, textStyle: { fontSize: 11 } },
+    grid: { left: 70, right: 30, top: 28, bottom: 20 },
+    yAxis: { type: 'category', data: workshops.map(function(w) { return w.name; }), axisLabel: { fontSize: 11 } },
     xAxis: [
-      { type: 'value', max: 100, position: 'bottom', axisLabel: { formatter: '{value}分', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } }
+      { type: 'value', max: 100, position: 'bottom', axisLabel: { formatter: '{value}分', fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } }
     ],
     series: [
-      { name: '综合得分', type: 'bar', data: workshops.map(function(w) { return w.score; }), itemStyle: { color: '#1677ff', borderRadius: [0, 4, 4, 0] }, barWidth: 16, label: { show: true, position: 'right', fontSize: 11 } },
-      { name: '合格率', type: 'bar', data: workshops.map(function(w) { return w.rate; }), itemStyle: { color: '#52c41a', borderRadius: [0, 4, 4, 0] }, barWidth: 16, label: { show: true, position: 'right', fontSize: 11, formatter: '{c}%' } }
+      { name: '综合得分', type: 'bar', data: workshops.map(function(w) { return w.score; }), itemStyle: { color: '#1677ff', borderRadius: [0, 4, 4, 0] }, barWidth: 14, label: { show: true, position: 'right', fontSize: 10 } },
+      { name: '合格率', type: 'bar', data: workshops.map(function(w) { return w.rate; }), itemStyle: { color: '#52c41a', borderRadius: [0, 4, 4, 0] }, barWidth: 14, label: { show: true, position: 'right', fontSize: 10, formatter: '{c}%' } }
     ]
   });
 
@@ -853,10 +853,10 @@ function initLevel0Charts() {
   var months = ['1月', '2月', '3月', '4月', '5月', '6月'];
   charts.trendLine0.setOption({
     tooltip: { trigger: 'axis' },
-    legend: { data: workshops.map(function(w) { return w.name; }), top: 5, right: 20, textStyle: { fontSize: 11 } },
-    grid: { left: 50, right: 30, top: 40, bottom: 30 },
-    xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11 } },
-    yAxis: { type: 'value', min: 80, max: 100, axisLabel: { formatter: '{value}%', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    legend: { data: workshops.map(function(w) { return w.name; }), top: 2, right: 10, textStyle: { fontSize: 10 } },
+    grid: { left: 40, right: 20, top: 28, bottom: 22 },
+    xAxis: { type: 'category', data: months, axisLabel: { fontSize: 10 } },
+    yAxis: { type: 'value', min: 80, max: 100, axisLabel: { formatter: '{value}%', fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [
       { name: '客运一车间', type: 'line', data: [93.2, 94.1, 94.5, 95.0, 95.5, 95.8], smooth: true, lineStyle: { width: 2 } },
       { name: '客运二车间', type: 'line', data: [90.5, 91.2, 91.8, 92.5, 93.0, 93.2], smooth: true, lineStyle: { width: 2 } },
@@ -869,11 +869,11 @@ function initLevel0Charts() {
   if (!charts.postRadar0) charts.postRadar0 = echarts.init(document.getElementById('postRadar0'));
   charts.postRadar0.setOption({
     color: ['#1677ff', '#52c41a', '#fa8c16', '#722ed1'],
-    legend: { data: ['客运值班员', '售票员', '安检员', '客运员'], bottom: 0, textStyle: { fontSize: 11 } },
+    legend: { data: ['客运值班员', '售票员', '安检员', '客运员'], bottom: 0, textStyle: { fontSize: 10 } },
     radar: {
       indicator: radarDims.map(function(d) { return { name: d, max: 100 }; }),
-      shape: 'polygon', splitNumber: 4, radius: '55%',
-      axisName: { color: 'rgba(0,0,0,.65)', fontSize: 11 },
+      shape: 'polygon', splitNumber: 4, radius: '52%',
+      axisName: { color: 'rgba(0,0,0,.65)', fontSize: 10 },
       splitLine: { lineStyle: { color: '#e8e8e8' } },
       splitArea: { areaStyle: { color: ['#fff', '#fafafa'] } }
     },
@@ -892,15 +892,15 @@ function initLevel0Charts() {
   if (!charts.batchBar0) charts.batchBar0 = echarts.init(document.getElementById('batchBar0'));
   charts.batchBar0.setOption({
     tooltip: { trigger: 'axis' },
-    legend: { data: ['考核批次', '参培人次'], top: 5, right: 20, textStyle: { fontSize: 11 } },
-    grid: { left: 50, right: 50, top: 40, bottom: 30 },
-    xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11 } },
+    legend: { data: ['考核批次', '参培人次'], top: 2, right: 10, textStyle: { fontSize: 10 } },
+    grid: { left: 40, right: 40, top: 28, bottom: 22 },
+    xAxis: { type: 'category', data: months, axisLabel: { fontSize: 10 } },
     yAxis: [
-      { type: 'value', name: '批次', axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-      { type: 'value', name: '人次', axisLabel: { fontSize: 11 }, splitLine: { show: false } }
+      { type: 'value', name: '批次', axisLabel: { fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+      { type: 'value', name: '人次', axisLabel: { fontSize: 10 }, splitLine: { show: false } }
     ],
     series: [
-      { name: '考核批次', type: 'bar', data: [4, 5, 6, 7, 6, 8], itemStyle: { color: '#1677ff', borderRadius: [4, 4, 0, 0] }, barWidth: 24 },
+      { name: '考核批次', type: 'bar', data: [4, 5, 6, 7, 6, 8], itemStyle: { color: '#1677ff', borderRadius: [4, 4, 0, 0] }, barWidth: 20 },
       { name: '参培人次', type: 'line', yAxisIndex: 1, data: [120, 156, 185, 210, 198, 245], smooth: true, lineStyle: { color: '#fa8c16', width: 2 }, itemStyle: { color: '#fa8c16' } }
     ]
   });
@@ -916,16 +916,16 @@ function renderWorkshop() {
   charts.mastery1.setOption(makeMasteryOption());
 
   // Top teams table
-  var html = '<thead><tr><th style="width:36px"></th><th>班组</th><th>人数</th><th>综合得分</th><th>合格率</th></tr></thead><tbody>';
+  var html = '<thead><tr><th style="width:30px"></th><th>班组</th><th>人数</th><th>得分</th><th>合格率</th></tr></thead><tbody>';
   wsTopTeams.forEach(function(t, i) {
-    html += '<tr><td><span class="rank-num">' + (i + 1) + '</span></td><td>' + t.name + '</td><td>' + t.count + '人</td><td>' + t.score + '</td><td><span class="tag tag-green">' + t.rate + '</span></td></tr>';
+    html += '<tr><td><span class="rank-num">' + (i + 1) + '</span></td><td>' + t.name + '</td><td>' + t.count + '</td><td>' + t.score + '</td><td><span class="tag tag-green">' + t.rate + '</span></td></tr>';
   });
   html += '</tbody>';
   document.getElementById('wsTopTable').innerHTML = html;
 
-  html = '<thead><tr><th style="width:36px"></th><th>班组</th><th>人数</th><th>综合得分</th><th>合格率</th></tr></thead><tbody>';
+  html = '<thead><tr><th style="width:30px"></th><th>班组</th><th>人数</th><th>得分</th><th>合格率</th></tr></thead><tbody>';
   wsBottomTeams.forEach(function(t, i) {
-    html += '<tr><td><span class="rank-num" style="color:#ff4d4f">' + (i + 1) + '</span></td><td>' + t.name + '</td><td>' + t.count + '人</td><td>' + t.score + '</td><td><span class="tag tag-red">' + t.rate + '</span></td></tr>';
+    html += '<tr><td><span class="rank-num" style="color:#ff4d4f">' + (i + 1) + '</span></td><td>' + t.name + '</td><td>' + t.count + '</td><td>' + t.score + '</td><td><span class="tag tag-red">' + t.rate + '</span></td></tr>';
   });
   html += '</tbody>';
   document.getElementById('wsBottomTable').innerHTML = html;
@@ -936,16 +936,16 @@ function renderWorkshop() {
   var teamScores = [91.2, 89.5, 87.3, 68.5];
   charts.wsTeamRank.setOption({
     tooltip: { trigger: 'axis' },
-    grid: { left: 60, right: 40, top: 20, bottom: 30 },
-    yAxis: { type: 'category', data: teamNames, axisLabel: { fontSize: 12 } },
-    xAxis: { type: 'value', max: 100, axisLabel: { formatter: '{value}分', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    grid: { left: 50, right: 30, top: 14, bottom: 22 },
+    yAxis: { type: 'category', data: teamNames, axisLabel: { fontSize: 11 } },
+    xAxis: { type: 'value', max: 100, axisLabel: { formatter: '{value}分', fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [{
       type: 'bar',
       data: teamScores.map(function(s) {
         return { value: s, itemStyle: { color: s >= 85 ? '#52c41a' : s >= 75 ? '#1677ff' : s >= 60 ? '#faad14' : '#ff4d4f', borderRadius: [0, 4, 4, 0] } };
       }),
-      barWidth: 20,
-      label: { show: true, position: 'right', fontSize: 12 }
+      barWidth: 18,
+      label: { show: true, position: 'right', fontSize: 11 }
     }]
   });
 
@@ -953,9 +953,9 @@ function renderWorkshop() {
   if (!charts.wsTrend) charts.wsTrend = echarts.init(document.getElementById('wsTrend'));
   charts.wsTrend.setOption({
     tooltip: { trigger: 'axis' },
-    grid: { left: 50, right: 30, top: 20, bottom: 30 },
-    xAxis: { type: 'category', data: ['1月', '2月', '3月', '4月', '5月', '6月'], axisLabel: { fontSize: 11 } },
-    yAxis: { type: 'value', min: 80, max: 100, axisLabel: { formatter: '{value}%', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    grid: { left: 40, right: 20, top: 14, bottom: 22 },
+    xAxis: { type: 'category', data: ['1月', '2月', '3月', '4月', '5月', '6月'], axisLabel: { fontSize: 10 } },
+    yAxis: { type: 'value', min: 80, max: 100, axisLabel: { formatter: '{value}%', fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [{ type: 'line', data: [92.1, 93.0, 93.5, 94.2, 95.0, 95.8], smooth: true, lineStyle: { color: '#1677ff', width: 2 }, areaStyle: { color: 'rgba(22,119,255,.08)' }, itemStyle: { color: '#1677ff' } }]
   });
 }
@@ -970,7 +970,7 @@ function renderTeam() {
   charts.mastery2.setOption(makeMasteryOption());
 
   // Top workers
-  var html = '<thead><tr><th style="width:36px"></th><th>姓名</th><th>岗位</th><th>综合得分</th><th>趋势</th></tr></thead><tbody>';
+  var html = '<thead><tr><th style="width:30px"></th><th>姓名</th><th>岗位</th><th>得分</th><th>趋势</th></tr></thead><tbody>';
   tmTopWorkers.forEach(function(w, i) {
     var arrow = w.trend === 'up' ? '<span class="trend-up">&#9650;</span>' : '<span class="trend-down">&#9660;</span>';
     html += '<tr><td><span class="rank-num">' + (i + 1) + '</span></td><td>' + w.name + '</td><td>' + w.post + '</td><td>' + w.score + '</td><td>' + arrow + '</td></tr>';
@@ -979,7 +979,7 @@ function renderTeam() {
   document.getElementById('tmTopTable').innerHTML = html;
 
   // Bottom workers
-  html = '<thead><tr><th style="width:36px"></th><th>姓名</th><th>岗位</th><th>综合得分</th><th>薄弱项</th><th>建议</th></tr></thead><tbody>';
+  html = '<thead><tr><th style="width:30px"></th><th>姓名</th><th>岗位</th><th>得分</th><th>薄弱项</th><th>建议</th></tr></thead><tbody>';
   tmBottomWorkers.forEach(function(w, i) {
     var arrow = w.trend === 'up' ? '<span class="trend-up">&#9650;</span>' : '<span class="trend-down">&#9660;</span>';
     html += '<tr><td><span class="rank-num" style="color:#ff4d4f">' + (i + 1) + '</span></td><td>' + w.name + '</td><td>' + w.post + '</td><td>' + w.score + ' ' + arrow + '</td><td><span class="tag tag-orange">' + w.weak + '</span></td><td>' + w.suggest + '</td></tr>';
@@ -991,12 +991,12 @@ function renderTeam() {
   if (!charts.tmWeakChart) charts.tmWeakChart = echarts.init(document.getElementById('tmWeakChart'));
   charts.tmWeakChart.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    legend: { data: ['已掌握', '良好', '一般', '未掌握'], top: 5, right: 10, textStyle: { fontSize: 11 } },
-    grid: { left: 80, right: 40, top: 36, bottom: 25 },
-    yAxis: { type: 'category', data: tmWeakModules.map(function(m) { return m.name; }), axisLabel: { fontSize: 12 } },
-    xAxis: { type: 'value', axisLabel: { formatter: '{value}人', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    legend: { data: ['已掌握', '良好', '一般', '未掌握'], top: 2, right: 4, textStyle: { fontSize: 10 } },
+    grid: { left: 70, right: 30, top: 28, bottom: 18 },
+    yAxis: { type: 'category', data: tmWeakModules.map(function(m) { return m.name; }), axisLabel: { fontSize: 11 } },
+    xAxis: { type: 'value', axisLabel: { formatter: '{value}人', fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [
-      { name: '已掌握', type: 'bar', stack: 'total', data: tmWeakModules.map(function(m) { return m.mastered; }), itemStyle: { color: '#52c41a' }, barWidth: 18 },
+      { name: '已掌握', type: 'bar', stack: 'total', data: tmWeakModules.map(function(m) { return m.mastered; }), itemStyle: { color: '#52c41a' }, barWidth: 16 },
       { name: '良好', type: 'bar', stack: 'total', data: tmWeakModules.map(function(m) { return m.good; }), itemStyle: { color: '#1677ff' } },
       { name: '一般', type: 'bar', stack: 'total', data: tmWeakModules.map(function(m) { return m.normal; }), itemStyle: { color: '#faad14' } },
       { name: '未掌握', type: 'bar', stack: 'total', data: tmWeakModules.map(function(m) { return m.poor; }), itemStyle: { color: '#ff4d4f' } }
@@ -1011,31 +1011,31 @@ function renderTeam() {
   var totalPoor = tmWeakModules.reduce(function(a, m) { return a + m.poor; }, 0);
   charts.tmMasteryPie.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
-    legend: { orient: 'vertical', right: 20, top: 'center', textStyle: { fontSize: 12 } },
+    legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 11 } },
     series: [{
-      type: 'pie', radius: ['40%', '65%'], center: ['35%', '50%'],
+      type: 'pie', radius: ['38%', '62%'], center: ['35%', '50%'],
       data: [
         { value: totalMastered, name: '已掌握', itemStyle: { color: '#52c41a' } },
         { value: totalGood, name: '良好', itemStyle: { color: '#1677ff' } },
         { value: totalNormal, name: '一般', itemStyle: { color: '#faad14' } },
         { value: totalPoor, name: '未掌握', itemStyle: { color: '#ff4d4f' } }
       ],
-      label: { formatter: '{b}\n{d}%', fontSize: 12 },
+      label: { formatter: '{b}\n{d}%', fontSize: 11 },
       emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,.2)' } }
     }]
   });
 
   // Weak table
-  html = '<thead><tr><th>模块名称</th><th>已掌握</th><th>良好</th><th>一般</th><th>未掌握</th><th>掌握率</th><th>掌握分布</th></tr></thead><tbody>';
+  html = '<thead><tr><th>模块</th><th>已掌握</th><th>良好</th><th>一般</th><th>未掌握</th><th>掌握率</th><th>分布</th></tr></thead><tbody>';
   tmWeakModules.forEach(function(m) {
     var total = m.mastered + m.good + m.normal + m.poor;
     var rateColor = parseFloat(m.rate) < 40 ? 'tag-red' : parseFloat(m.rate) < 60 ? 'tag-orange' : 'tag-green';
-    var bar = '<div class="progress-bar" style="min-width:120px;">' +
+    var bar = '<div class="progress-bar" style="min-width:80px;">' +
       '<div class="seg seg-green" style="width:' + (m.mastered / total * 100) + '%"></div>' +
       '<div class="seg seg-blue" style="width:' + (m.good / total * 100) + '%"></div>' +
       '<div class="seg seg-orange" style="width:' + (m.normal / total * 100) + '%"></div>' +
       '<div class="seg seg-red" style="width:' + (m.poor / total * 100) + '%"></div></div>';
-    html += '<tr><td>' + m.name + '</td><td>' + m.mastered + '人</td><td>' + m.good + '人</td><td>' + m.normal + '人</td><td><span style="color:#ff4d4f;font-weight:600;">' + m.poor + '人</span></td><td><span class="tag ' + rateColor + '">' + m.rate + '</span></td><td>' + bar + '</td></tr>';
+    html += '<tr><td>' + m.name + '</td><td>' + m.mastered + '</td><td>' + m.good + '</td><td>' + m.normal + '</td><td><span style="color:#ff4d4f;font-weight:600;">' + m.poor + '</span></td><td><span class="tag ' + rateColor + '">' + m.rate + '</span></td><td>' + bar + '</td></tr>';
   });
   html += '</tbody>';
   document.getElementById('tmWeakTable').innerHTML = html;
@@ -1049,8 +1049,8 @@ function initPersonCharts() {
     color: ['#1677ff'],
     radar: {
       indicator: radarDims.map(function(d) { return { name: d, max: 100 }; }),
-      shape: 'polygon', splitNumber: 4, radius: '70%',
-      axisName: { color: 'rgba(0,0,0,.65)', fontSize: 11 },
+      shape: 'polygon', splitNumber: 4, radius: '68%',
+      axisName: { color: 'rgba(0,0,0,.65)', fontSize: 10 },
       splitLine: { lineStyle: { color: '#e8e8e8' } },
       splitArea: { areaStyle: { color: ['#fff', '#fafafa'] } },
       axisLine: { lineStyle: { color: '#d9d9d9' } }
@@ -1062,10 +1062,10 @@ function initPersonCharts() {
   if (!charts.personTrend) charts.personTrend = echarts.init(document.getElementById('personTrend'));
   charts.personTrend.setOption({
     tooltip: { trigger: 'axis' },
-    legend: { data: ['入学', '安全', '理论', '实作'], top: 5, right: 20, textStyle: { fontSize: 11 } },
-    grid: { left: 50, right: 30, top: 40, bottom: 30 },
-    xAxis: { type: 'category', data: ['2025Q3', '2025Q4', '2026Q1', '2026Q2'], axisLabel: { fontSize: 11 } },
-    yAxis: { type: 'value', min: 60, max: 100, axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    legend: { data: ['入学', '安全', '理论', '实作'], top: 2, right: 10, textStyle: { fontSize: 10 } },
+    grid: { left: 40, right: 20, top: 28, bottom: 22 },
+    xAxis: { type: 'category', data: ['2025Q3', '2025Q4', '2026Q1', '2026Q2'], axisLabel: { fontSize: 10 } },
+    yAxis: { type: 'value', min: 60, max: 100, axisLabel: { fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [
       { name: '入学', type: 'line', data: [78, 80, 82, 85], smooth: true, lineStyle: { width: 2 } },
       { name: '安全', type: 'line', data: [85, 88, 90, 92], smooth: true, lineStyle: { width: 2 } },
@@ -1078,9 +1078,9 @@ function initPersonCharts() {
   if (!charts.personRankTrend) charts.personRankTrend = echarts.init(document.getElementById('personRankTrend'));
   charts.personRankTrend.setOption({
     tooltip: { trigger: 'axis', formatter: function(p) { return p[0].name + '<br/>' + p[0].seriesName + ': 第 ' + p[0].value + ' 名'; } },
-    grid: { left: 60, right: 30, top: 20, bottom: 30 },
-    xAxis: { type: 'category', data: ['2025Q3', '2025Q4', '2026Q1', '2026Q2'], axisLabel: { fontSize: 11 } },
-    yAxis: { type: 'value', inverse: true, min: 1, max: 20, name: '排名', axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    grid: { left: 50, right: 20, top: 14, bottom: 22 },
+    xAxis: { type: 'category', data: ['2025Q3', '2025Q4', '2026Q1', '2026Q2'], axisLabel: { fontSize: 10 } },
+    yAxis: { type: 'value', inverse: true, min: 1, max: 20, name: '排名', axisLabel: { fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [{ name: '同岗位排名', type: 'line', data: [8, 6, 5, 3], smooth: true, lineStyle: { color: '#1677ff', width: 2 }, areaStyle: { color: 'rgba(22,119,255,.08)' }, itemStyle: { color: '#1677ff' }, markLine: { data: [{ type: 'average', name: '平均' }], lineStyle: { color: '#faad14', type: 'dashed' } } }]
   });
 }

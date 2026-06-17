@@ -7,45 +7,45 @@
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1440px; color: rgba(0,0,0,.85); }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1440px; color: rgba(0,0,0,.85); padding-bottom: 40px; }
     .header { background: #fff; padding: 0 24px; height: 56px; display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; }
     .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
     .breadcrumb a { color: #1677ff; text-decoration: none; }
     .breadcrumb a:hover { text-decoration: underline; }
-    .content { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
-    .page-title { font-size: 20px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 16px; }
-    .card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
-    .card-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
-    .card-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
-    .form-select { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; background: #fff; color: rgba(0,0,0,.85); cursor: pointer; }
+    .content { max-width: 1400px; margin: 0 auto; padding: 10px 24px 8px; }
+    .page-title { font-size: 18px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 8px; }
+    .card { background: #fff; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
+    .card-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 6px; }
+    .card-title::before { content: ''; display: inline-block; width: 3px; height: 12px; background: #1677ff; border-radius: 2px; }
+    .form-select { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; color: rgba(0,0,0,.85); cursor: pointer; }
     .form-select:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
 
     /* Time selector bar */
-    .time-bar { display: flex; gap: 12px; align-items: center; padding: 0; background: transparent; border: none; }
-    .time-bar label { font-size: 14px; color: rgba(0,0,0,.65); font-weight: 500; white-space: nowrap; }
-    .time-quick-btn { padding: 4px 12px; border-radius: 4px; border: 1px solid #d9d9d9; background: #fff; font-size: 13px; cursor: pointer; color: rgba(0,0,0,.65); transition: all .2s; }
+    .time-bar { display: flex; gap: 10px; align-items: center; padding: 0; background: transparent; border: none; }
+    .time-bar label { font-size: 13px; color: rgba(0,0,0,.65); font-weight: 500; white-space: nowrap; }
+    .time-quick-btn { padding: 3px 10px; border-radius: 4px; border: 1px solid #d9d9d9; background: #fff; font-size: 12px; cursor: pointer; color: rgba(0,0,0,.65); transition: all .2s; }
     .time-quick-btn:hover { border-color: #1677ff; color: #1677ff; }
     .time-quick-btn.active { background: #1677ff; color: #fff; border-color: #1677ff; }
     .update-time { font-size: 12px; color: rgba(0,0,0,.35); margin-left: auto; }
 
     /* KPI Cards */
-    .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 16px; }
-    .kpi-card { background: #fff; border-radius: 8px; padding: 20px; text-align: center; border: 1px solid #f0f0f0; cursor: default; transition: box-shadow .2s; position: relative; }
+    .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 12px; }
+    .kpi-card { background: #fff; border-radius: 8px; padding: 10px 12px; text-align: center; border: 1px solid #f0f0f0; cursor: default; transition: box-shadow .2s; position: relative; }
     .kpi-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
-    .kpi-label { font-size: 13px; color: rgba(0,0,0,.45); margin-bottom: 8px; }
-    .kpi-value { font-size: 28px; font-weight: 700; color: #1677ff; }
-    .kpi-value .unit { font-size: 13px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
-    .kpi-trend { font-size: 12px; margin-top: 6px; }
+    .kpi-label { font-size: 12px; color: rgba(0,0,0,.45); margin-bottom: 4px; }
+    .kpi-value { font-size: 22px; font-weight: 700; color: #1677ff; line-height: 1.2; }
+    .kpi-value .unit { font-size: 12px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
+    .kpi-trend { font-size: 11px; margin-top: 2px; }
     .trend-up { color: #52c41a; }
     .trend-down { color: #ff4d4f; }
     .kpi-tooltip { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.75); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; white-space: nowrap; z-index: 10; pointer-events: none; }
     .kpi-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: rgba(0,0,0,.75); }
     .kpi-card:hover .kpi-tooltip { display: block; }
 
-    /* Charts layout */
-    .charts-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .chart-box { min-height: 340px; }
+    /* Charts layout - compressed 2-row grid */
+    .charts-row-4 { display: grid; grid-template-columns: 1fr 1.5fr 1.5fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .chart-box { height: 220px; }
 
     /* Xiaoan FAB */
     .xiaoan-fab {
@@ -189,12 +189,10 @@
     .xiaoan-send:disabled { background: #d9d9d9; cursor: not-allowed; }
 
     /* Notice bar */
-    .notice-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fffbe6; border-top: 1px solid #ffe58f; padding: 10px 24px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(0,0,0,.85); z-index: 900; }
+    .notice-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fffbe6; border-top: 1px solid #ffe58f; padding: 8px 24px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(0,0,0,.85); z-index: 900; }
     .notice-icon { color: #faad14; font-size: 16px; flex-shrink: 0; }
     .notice-close { margin-left: auto; cursor: pointer; color: rgba(0,0,0,.35); background: none; border: none; font-size: 16px; }
     .notice-close:hover { color: rgba(0,0,0,.65); }
-
-    body { padding-bottom: 48px; }
   </style>
 </head>
 <body>
@@ -208,7 +206,7 @@
   <div class="page-title">培训综合分析</div>
 
   <!-- Time selector -->
-  <div class="card" style="padding: 12px 20px;">
+  <div class="card" style="padding: 8px 16px;">
     <div class="time-bar">
       <label>统计周期：</label>
       <select class="form-select" id="selYear">
@@ -235,8 +233,8 @@
     <!-- JS rendered -->
   </div>
 
-  <!-- Row 1: 2 charts -->
-  <div class="charts-row-2">
+  <!-- Row 1: 4 charts -->
+  <div class="charts-row-4">
     <div class="card">
       <div class="card-title">年度计划完成度</div>
       <div id="chartPlanRing" class="chart-box"></div>
@@ -245,10 +243,6 @@
       <div class="card-title">月度办班计划 vs 实际</div>
       <div id="chartMonthlyClass" class="chart-box"></div>
     </div>
-  </div>
-
-  <!-- Row 2: 3 charts -->
-  <div class="charts-row-3">
     <div class="card">
       <div class="card-title">培训人天数走势</div>
       <div id="chartPersonDays" class="chart-box"></div>
@@ -257,14 +251,14 @@
       <div class="card-title">培训人数完成度（按岗位）</div>
       <div id="chartJobCompletion" class="chart-box"></div>
     </div>
+  </div>
+
+  <!-- Row 2: 3 charts -->
+  <div class="charts-row-3">
     <div class="card">
       <div class="card-title">各车间培训参与对比</div>
       <div id="chartWorkshop" class="chart-box"></div>
     </div>
-  </div>
-
-  <!-- Row 3: 2 charts -->
-  <div class="charts-row-2">
     <div class="card">
       <div class="card-title">群体薄弱点 TOP 5</div>
       <div id="chartWeakTop5" class="chart-box"></div>
@@ -482,16 +476,16 @@ function renderCharts(data) {
   const gap = data.planRing.total - data.planRing.completed;
   charts.chartPlanRing.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}项 ({d}%)' },
-    legend: { bottom: 10, textStyle: { color: 'rgba(0,0,0,.65)' } },
+    legend: { bottom: 4, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
     series: [{
-      type: 'pie', radius: ['50%', '72%'], center: ['50%', '45%'],
+      type: 'pie', radius: ['48%', '70%'], center: ['50%', '44%'],
       avoidLabelOverlap: false,
       label: {
         show: true, position: 'center',
         formatter: () => `{val|${data.planRing.completed}%}\n{lbl|完成率}`,
         rich: {
-          val: { fontSize: 28, fontWeight: 700, color: '#1677ff', lineHeight: 36 },
-          lbl: { fontSize: 13, color: 'rgba(0,0,0,.45)', lineHeight: 20 },
+          val: { fontSize: 22, fontWeight: 700, color: '#1677ff', lineHeight: 28 },
+          lbl: { fontSize: 12, color: 'rgba(0,0,0,.45)', lineHeight: 18 },
         }
       },
       emphasis: { label: { show: true } },
@@ -505,19 +499,19 @@ function renderCharts(data) {
   // 2. Monthly class plan vs actual
   const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
   const mLen = currentPeriod === 'month' ? 1 : currentPeriod === 'quarter' ? 3 : 12;
-  const mOffset = currentPeriod === 'quarter' ? 3 : 0; // Q2 starts at index 3 for yearly view
+  const mOffset = currentPeriod === 'quarter' ? 3 : 0;
   const mLabels = currentPeriod === 'year' ? months : currentPeriod === 'quarter' ? ['4月','5月','6月'] : ['6月'];
   const mPlan = data.monthlyClass.plan.slice(0, mLen);
   const mActual = data.monthlyClass.actual.slice(0, mLen);
   charts.chartMonthlyClass.setOption({
     tooltip: { trigger: 'axis' },
-    legend: { bottom: 10, textStyle: { color: 'rgba(0,0,0,.65)' } },
-    grid: { left: 50, right: 20, top: 20, bottom: 50 },
-    xAxis: { type: 'category', data: mLabels, axisLabel: { color: 'rgba(0,0,0,.45)' } },
-    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    legend: { bottom: 4, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    grid: { left: 40, right: 16, top: 16, bottom: 40 },
+    xAxis: { type: 'category', data: mLabels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
+    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [
-      { name: '计划班次', type: 'bar', data: mPlan, itemStyle: { color: '#bae0ff', borderRadius: [4,4,0,0] }, barGap: '10%', barMaxWidth: 32 },
-      { name: '实际班次', type: 'bar', data: mActual, itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 32 },
+      { name: '计划班次', type: 'bar', data: mPlan, itemStyle: { color: '#bae0ff', borderRadius: [4,4,0,0] }, barGap: '10%', barMaxWidth: 28 },
+      { name: '实际班次', type: 'bar', data: mActual, itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 28 },
     ],
   });
 
@@ -526,9 +520,9 @@ function renderCharts(data) {
   const pdData = data.personDays.slice(0, mLen);
   charts.chartPersonDays.setOption({
     tooltip: { trigger: 'axis', formatter: '{b}<br/>{a}: {c} 人天' },
-    grid: { left: 60, right: 20, top: 20, bottom: 40 },
-    xAxis: { type: 'category', data: pdLabels, axisLabel: { color: 'rgba(0,0,0,.45)' } },
-    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    grid: { left: 50, right: 16, top: 16, bottom: 30 },
+    xAxis: { type: 'category', data: pdLabels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
+    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [{
       name: '培训人天数', type: 'line', data: pdData,
       smooth: true, symbol: 'circle', symbolSize: 6,
@@ -542,13 +536,13 @@ function renderCharts(data) {
   const jd = data.jobCompletion;
   charts.chartJobCompletion.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    legend: { bottom: 10, textStyle: { color: 'rgba(0,0,0,.65)' } },
-    grid: { left: 100, right: 30, top: 10, bottom: 50 },
-    xAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-    yAxis: { type: 'category', data: jd.jobs, axisLabel: { color: 'rgba(0,0,0,.65)' }, inverse: true },
+    legend: { bottom: 4, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    grid: { left: 80, right: 20, top: 8, bottom: 40 },
+    xAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    yAxis: { type: 'category', data: jd.jobs, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 11 }, inverse: true },
     series: [
-      { name: '计划人数', type: 'bar', data: jd.plan, itemStyle: { color: '#bae0ff', borderRadius: [0,4,4,0] }, barMaxWidth: 18 },
-      { name: '实际人数', type: 'bar', data: jd.actual, itemStyle: { color: '#1677ff', borderRadius: [0,4,4,0] }, barMaxWidth: 18 },
+      { name: '计划人数', type: 'bar', data: jd.plan, itemStyle: { color: '#bae0ff', borderRadius: [0,4,4,0] }, barMaxWidth: 14 },
+      { name: '实际人数', type: 'bar', data: jd.actual, itemStyle: { color: '#1677ff', borderRadius: [0,4,4,0] }, barMaxWidth: 14 },
     ],
   });
 
@@ -556,13 +550,13 @@ function renderCharts(data) {
   const wd = data.workshop;
   charts.chartWorkshop.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    legend: { bottom: 10, textStyle: { color: 'rgba(0,0,0,.65)' } },
-    grid: { left: 50, right: 20, top: 10, bottom: 50 },
-    xAxis: { type: 'category', data: wd.names, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11, rotate: 15 } },
-    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    legend: { bottom: 4, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    grid: { left: 44, right: 16, top: 10, bottom: 40 },
+    xAxis: { type: 'category', data: wd.names, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 10, rotate: 15 } },
+    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [
-      { name: '计划人数', type: 'bar', data: wd.plan, itemStyle: { color: '#bae0ff', borderRadius: [4,4,0,0] }, barMaxWidth: 28 },
-      { name: '实际人数', type: 'bar', data: wd.actual, itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 28 },
+      { name: '计划人数', type: 'bar', data: wd.plan, itemStyle: { color: '#bae0ff', borderRadius: [4,4,0,0] }, barMaxWidth: 24 },
+      { name: '实际人数', type: 'bar', data: wd.actual, itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 24 },
     ],
   });
 
@@ -570,9 +564,9 @@ function renderCharts(data) {
   const wk = data.weakTop5;
   charts.chartWeakTop5.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/>人均失分: ' + p[0].value + ' 分'; } },
-    grid: { left: 140, right: 50, top: 10, bottom: 30 },
-    xAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', formatter: '{value} 分' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-    yAxis: { type: 'category', data: wk.subjects, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 12 }, inverse: true },
+    grid: { left: 120, right: 44, top: 8, bottom: 20 },
+    xAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', formatter: '{value} 分', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    yAxis: { type: 'category', data: wk.subjects, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 11 }, inverse: true },
     series: [{
       type: 'bar', data: wk.scores,
       itemStyle: {
@@ -582,40 +576,39 @@ function renderCharts(data) {
         },
         borderRadius: [0,4,4,0],
       },
-      barMaxWidth: 22,
-      label: { show: true, position: 'right', formatter: '{c} 分', color: 'rgba(0,0,0,.45)', fontSize: 12 },
+      barMaxWidth: 18,
+      label: { show: true, position: 'right', formatter: '{c} 分', color: 'rgba(0,0,0,.45)', fontSize: 11 },
     }],
   });
 
   // 7. Score distribution histogram + normal curve
   const sd = data.scoreDist;
-  // Normal distribution curve points
   const normX = [], normY = [];
   const totalCount = sd.counts.reduce((a,b) => a + b, 0);
   for (let x = 30; x <= 105; x += 1) {
     normX.push(x);
     const z = (x - sd.mean) / sd.std;
     const pdf = (1 / (sd.std * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
-    normY.push(Math.round(pdf * totalCount * 10 * 100) / 100); // scaled to match histogram bin width ~10
+    normY.push(Math.round(pdf * totalCount * 10 * 100) / 100);
   }
 
   charts.chartScoreDist.setOption({
     tooltip: { trigger: 'axis' },
-    legend: { bottom: 10, data: ['人数', '正态分布'], textStyle: { color: 'rgba(0,0,0,.65)' } },
-    grid: { left: 50, right: 30, top: 20, bottom: 50 },
+    legend: { bottom: 4, data: ['人数', '正态分布'], textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    grid: { left: 40, right: 20, top: 16, bottom: 40 },
     xAxis: [
-      { type: 'category', data: sd.ranges, axisLabel: { color: 'rgba(0,0,0,.45)' } },
+      { type: 'category', data: sd.ranges, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
       { type: 'category', data: normX.map(String), show: false },
     ],
     yAxis: [
-      { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+      { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
       { type: 'value', show: false },
     ],
     series: [
       {
         name: '人数', type: 'bar', data: sd.counts, xAxisIndex: 0, yAxisIndex: 0,
-        itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 40,
-        label: { show: true, position: 'top', color: 'rgba(0,0,0,.45)', fontSize: 11 },
+        itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 32,
+        label: { show: true, position: 'top', color: 'rgba(0,0,0,.45)', fontSize: 10 },
       },
       {
         name: '正态分布', type: 'line', data: normY, xAxisIndex: 1, yAxisIndex: 1,

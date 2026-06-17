@@ -12,20 +12,20 @@
     .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
     .breadcrumb a { color: #1677ff; text-decoration: none; }
     .breadcrumb a:hover { text-decoration: underline; }
-    .content { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
-    .page-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .page-title { font-size: 20px; font-weight: 600; color: rgba(0,0,0,.85); }
-    .card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
-    .card-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
+    .content { max-width: 1400px; margin: 0 auto; padding: 10px 24px 0; }
+    .page-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .page-title { font-size: 18px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .card { background: #fff; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
+    .card-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
     .card-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
-    .btn { display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all .2s; gap: 6px; }
+    .btn { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all .2s; gap: 6px; }
     .btn:hover { border-color: #1677ff; color: #1677ff; }
     .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
     .btn-primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
     .btn-sm { padding: 3px 10px; font-size: 13px; }
-    .form-select { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; background: #fff; color: rgba(0,0,0,.85); min-width: 140px; }
+    .form-select { padding: 5px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; color: rgba(0,0,0,.85); min-width: 130px; }
     .form-select:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
-    .form-input { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; background: #fff; min-width: 200px; }
+    .form-input { padding: 5px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; min-width: 180px; }
     .form-input:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
     .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
     .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
@@ -34,29 +34,37 @@
     .tag-red { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
     .tag-purple { background: #f9f0ff; color: #722ed1; border: 1px solid #d3adf7; }
 
-    .filter-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .filter-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+    /* Tabs */
+    .tab-bar { display: flex; gap: 0; margin-bottom: 10px; border-bottom: 2px solid #f0f0f0; }
+    .tab-item { padding: 8px 24px; font-size: 14px; font-weight: 500; color: rgba(0,0,0,.45); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; user-select: none; }
+    .tab-item:hover { color: #1677ff; }
+    .tab-item.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 600; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
     /* Teacher Card Grid */
-    .teacher-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .teacher-card { background: #fff; border-radius: 8px; border: 1px solid #f0f0f0; padding: 20px; cursor: pointer; transition: all .25s; position: relative; overflow: hidden; }
+    .teacher-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .teacher-card { background: #fff; border-radius: 8px; border: 1px solid #f0f0f0; padding: 12px 14px; cursor: pointer; transition: all .25s; position: relative; overflow: hidden; }
     .teacher-card:hover { border-color: #1677ff; box-shadow: 0 4px 12px rgba(22,119,255,.12); transform: translateY(-2px); }
-    .teacher-card-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-    .avatar { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .teacher-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0; }
     .teacher-info { flex: 1; }
-    .teacher-name { font-size: 16px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 2px; }
-    .teacher-meta { font-size: 13px; color: rgba(0,0,0,.45); }
-    .teacher-card-mid { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
-    .mini-radar { width: 120px; height: 100px; flex-shrink: 0; }
+    .teacher-name { font-size: 14px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 1px; }
+    .teacher-meta { font-size: 12px; color: rgba(0,0,0,.45); }
+    .teacher-card-mid { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .mini-radar { width: 90px; height: 70px; flex-shrink: 0; }
     .score-block { text-align: center; flex: 1; }
-    .score-number { font-size: 36px; font-weight: 700; color: #1677ff; line-height: 1.1; }
-    .score-label { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
+    .score-number { font-size: 28px; font-weight: 700; color: #1677ff; line-height: 1.1; }
+    .score-label { font-size: 11px; color: rgba(0,0,0,.45); margin-top: 1px; }
     .teacher-card-bottom { display: flex; align-items: center; justify-content: space-between; }
-    .view-detail-btn { padding: 5px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 1px solid #1677ff; background: #fff; color: #1677ff; transition: all .2s; }
+    .view-detail-btn { padding: 3px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid #1677ff; background: #fff; color: #1677ff; transition: all .2s; }
     .view-detail-btn:hover { background: #1677ff; color: #fff; }
 
     /* Detail Page */
     .detail-layout { display: grid; grid-template-columns: 280px 1fr 360px; gap: 16px; }
-    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #1677ff; cursor: pointer; margin-bottom: 16px; padding: 4px 0; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #1677ff; cursor: pointer; margin-bottom: 12px; padding: 4px 0; }
     .back-btn:hover { text-decoration: underline; }
     .profile-card { text-align: center; }
     .profile-avatar { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: #fff; margin: 0 auto 12px; border: 3px solid #e6f0ff; }
@@ -90,16 +98,16 @@
     .research-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
 
     /* Overview Section */
-    .overview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
-    .overview-kpi { text-align: center; padding: 20px 12px; }
-    .kpi-value { font-size: 32px; font-weight: 700; color: #1677ff; line-height: 1.1; }
-    .kpi-label { font-size: 13px; color: rgba(0,0,0,.45); margin-top: 6px; }
-    .kpi-trend { font-size: 12px; margin-top: 4px; }
+    .overview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 10px; }
+    .overview-kpi { text-align: center; padding: 10px 8px; }
+    .kpi-value { font-size: 24px; font-weight: 700; color: #1677ff; line-height: 1.1; }
+    .kpi-label { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 4px; }
+    .kpi-trend { font-size: 11px; margin-top: 2px; }
     .kpi-trend.up { color: #52c41a; }
     .kpi-trend.down { color: #ff4d4f; }
-    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .chart-box { height: 280px; }
-    .section-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0; }
+    .chart-box { height: 220px; }
+    .section-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
     .section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
 
     /* Weight Modal */
@@ -277,7 +285,7 @@
   </div>
 
   <!-- Filter Bar -->
-  <div class="card" style="padding: 16px 20px;">
+  <div class="card" style="padding: 10px 16px; margin-bottom: 10px;">
     <div class="filter-bar" style="margin-bottom:0;">
       <input class="form-input" id="searchName" placeholder="搜索教师姓名..." oninput="filterTeachers()">
       <select class="form-select" id="filterDept" onchange="filterTeachers()">
@@ -297,34 +305,44 @@
     </div>
   </div>
 
-  <!-- Overview Section -->
-  <div class="overview-grid" id="overviewKpis"></div>
-  <div class="charts-row">
-    <div class="card">
-      <div class="section-title">四维能力全站均值</div>
-      <div class="chart-box" id="chartDimAvg"></div>
-    </div>
-    <div class="card">
-      <div class="section-title">部门教学质量对比</div>
-      <div class="chart-box" id="chartDeptCompare"></div>
-    </div>
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <div class="tab-item active" onclick="switchTab('overview')">整体概览</div>
+    <div class="tab-item" onclick="switchTab('teachers')">教师分析</div>
   </div>
-  <div class="charts-row">
-    <div class="card">
-      <div class="section-title">教师综合评分分布</div>
-      <div class="chart-box" id="chartScoreDist"></div>
+
+  <!-- Tab 1: Overview -->
+  <div class="tab-panel active" id="tabOverview">
+    <div class="overview-grid" id="overviewKpis"></div>
+    <div class="charts-row" style="margin-bottom: 10px;">
+      <div class="card" style="margin-bottom:0;">
+        <div class="section-title">四维能力全站均值</div>
+        <div class="chart-box" id="chartDimAvg"></div>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <div class="section-title">部门教学质量对比</div>
+        <div class="chart-box" id="chartDeptCompare"></div>
+      </div>
     </div>
-    <div class="card">
-      <div class="section-title">全站教学质量趋势</div>
-      <div class="chart-box" id="chartTrend"></div>
+    <div class="charts-row">
+      <div class="card" style="margin-bottom:0;">
+        <div class="section-title">教师综合评分分布</div>
+        <div class="chart-box" id="chartScoreDist"></div>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <div class="section-title">全站教学质量趋势</div>
+        <div class="chart-box" id="chartTrend"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Teacher Grid -->
-  <div style="margin-bottom:12px;">
-    <div class="section-title">教师个人分析</div>
+  <!-- Tab 2: Teacher Grid -->
+  <div class="tab-panel" id="tabTeachers">
+    <div style="margin-bottom:8px;">
+      <div class="section-title">教师个人分析 <span style="font-size:12px;font-weight:400;color:rgba(0,0,0,.45);margin-left:8px;">点击卡片查看详情</span></div>
+    </div>
+    <div class="teacher-grid" id="teacherGrid"></div>
   </div>
-  <div class="teacher-grid" id="teacherGrid"></div>
 </div>
 
 <!-- Detail View -->
@@ -411,6 +429,24 @@
 </div>
 
 <script>
+// ===== Tab Switching =====
+let currentTab = 'overview';
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
+  if (tab === 'overview') {
+    document.querySelector('.tab-item:nth-child(1)').classList.add('active');
+    document.getElementById('tabOverview').classList.add('active');
+    // Resize charts after tab switch
+    setTimeout(() => { overviewCharts.forEach(c => { if (c && !c.isDisposed()) c.resize(); }); }, 50);
+  } else {
+    document.querySelector('.tab-item:nth-child(2)').classList.add('active');
+    document.getElementById('tabTeachers').classList.add('active');
+    renderList();
+  }
+}
+
 // ===== Mock Data =====
 const COLORS = ['#1677ff','#52c41a','#fa8c16','#722ed1','#eb2f96','#13c2c2','#2f54eb','#faad14','#f5222d'];
 const teachers = [
@@ -532,7 +568,7 @@ function renderList() {
           <span class="tag ${level.cls}">${level.text}</span>
         </div>
         <div class="teacher-card-bottom">
-          <span style="font-size:12px;color:rgba(0,0,0,.45);">入职${t.years}年 | 本期${t.courses}门课</span>
+          <span style="font-size:11px;color:rgba(0,0,0,.45);">入职${t.years}年 | 本期${t.courses}门课</span>
           <button class="view-detail-btn" onclick="event.stopPropagation();showDetail('${t.id}')">查看详情</button>
         </div>
       </div>`;
@@ -562,7 +598,9 @@ function renderList() {
   });
 }
 
-function filterTeachers() { renderList(); }
+function filterTeachers() {
+  if (currentTab === 'teachers') renderList();
+}
 
 // ===== Detail View =====
 function showDetail(id) {
@@ -742,7 +780,8 @@ function showList() {
   document.getElementById('listView').classList.remove('hidden');
   currentTeacher = null;
   if (xiaoanOpen) closeXiaoan();
-  renderList();
+  // Switch to teachers tab when returning
+  switchTab('teachers');
 }
 
 // ===== Weight Modal =====
@@ -788,7 +827,7 @@ function saveWeights() {
   weights = { teach: v1, feedback: v2, profess: v3, research: v4 };
   closeWeightModal();
   if (currentTeacher) showDetail(currentTeacher.id);
-  else { renderOverview(); renderList(); }
+  else { renderOverview(); if (currentTab === 'teachers') renderList(); }
 }
 
 // ===== Xiaoan Conversational Digital Human =====
@@ -1087,7 +1126,6 @@ const analysisHandlers = {
   },
 
   attention: function() {
-    // Teachers with score < 80 or declining trends
     const needAtt = teachers.filter(t => {
       const s = calcScore(t);
       const trend = t.trends;
@@ -1352,7 +1390,7 @@ function renderOverview() {
     { label: '优秀教师占比', value: Math.round(excellent / teachers.length * 100), unit: '%', trend: excellent + '/' + teachers.length + ' 达优秀', up: true },
     { label: '平均学员满意度', value: avgSatisfaction, unit: '', trend: avgPassRate + '% 平均通过率', up: true },
   ].map(k => `<div class="card overview-kpi">
-    <div class="kpi-value">${k.value}<span style="font-size:14px;font-weight:400;color:rgba(0,0,0,.45);margin-left:4px">${k.unit}</span></div>
+    <div class="kpi-value">${k.value}<span style="font-size:13px;font-weight:400;color:rgba(0,0,0,.45);margin-left:3px">${k.unit}</span></div>
     <div class="kpi-label">${k.label}</div>
     <div class="kpi-trend ${k.up ? 'up' : 'down'}">${k.up ? '&#9650;' : '&#9660;'} ${k.trend}</div>
   </div>`).join('');
@@ -1373,7 +1411,7 @@ function renderOverview() {
     radar: { indicator: [
       { name: '教学效果('+weights.teach+'%)', max: 100 }, { name: '学员反馈('+weights.feedback+'%)', max: 100 },
       { name: '职业素养('+weights.profess+'%)', max: 100 }, { name: '教研成果('+weights.research+'%)', max: 100 }
-    ], radius: '65%' },
+    ], radius: '60%' },
     legend: { bottom: 0, data: ['全站均值','最高水平'] },
     series: [{ type: 'radar', data: [
       { value: [dimAvg.teach, dimAvg.feedback, dimAvg.profess, dimAvg.research], name: '全站均值', areaStyle: { color: 'rgba(22,119,255,.15)' }, lineStyle: { color: '#1677ff' }, itemStyle: { color: '#1677ff' } },
@@ -1398,7 +1436,7 @@ function renderOverview() {
     tooltip: { trigger: 'axis' },
     legend: { bottom: 0 },
     grid: { left: 50, right: 20, top: 20, bottom: 40 },
-    xAxis: { type: 'category', data: deptData.map(d => d.name), axisLabel: { fontSize: 12, color: 'rgba(0,0,0,.65)' } },
+    xAxis: { type: 'category', data: deptData.map(d => d.name), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' } },
     yAxis: [
       { type: 'value', name: '评分', min: 60, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
       { type: 'value', name: '通过率%', min: 60, max: 100, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { show: false } }
@@ -1421,12 +1459,12 @@ function renderOverview() {
   c3.setOption({
     tooltip: { trigger: 'axis', formatter: '{b}: {c} 人' },
     grid: { left: 40, right: 20, top: 20, bottom: 30 },
-    xAxis: { type: 'category', data: bins.map(b => b.range), axisLabel: { fontSize: 12, color: 'rgba(0,0,0,.65)' } },
+    xAxis: { type: 'category', data: bins.map(b => b.range), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' } },
     yAxis: { type: 'value', minInterval: 1, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
     series: [{ type: 'bar', data: binCounts, itemStyle: {
       color: (p) => ['#ff4d4f','#fa8c16','#faad14','#1677ff','#52c41a','#13c2c2'][p.dataIndex],
       borderRadius: [4,4,0,0]
-    }, barMaxWidth: 36, label: { show: true, position: 'top', fontSize: 12, color: 'rgba(0,0,0,.65)' } }]
+    }, barMaxWidth: 36, label: { show: true, position: 'top', fontSize: 11, color: 'rgba(0,0,0,.65)' } }]
   });
   overviewCharts.push(c3);
 
@@ -1443,7 +1481,7 @@ function renderOverview() {
     tooltip: { trigger: 'axis' },
     legend: { bottom: 0 },
     grid: { left: 45, right: 20, top: 20, bottom: 40 },
-    xAxis: { type: 'category', data: periods, axisLabel: { fontSize: 12, color: 'rgba(0,0,0,.65)' } },
+    xAxis: { type: 'category', data: periods, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' } },
     yAxis: { type: 'value', min: 60, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
     series: [
       { name: '全站均值', type: 'line', data: trendAvg, smooth: true, lineStyle: { color: '#1677ff', width: 3 }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 6,
@@ -1461,7 +1499,6 @@ window.addEventListener('resize', function() {
 
 // Init
 renderOverview();
-renderList();
 </script>
 </body>
 </html>
