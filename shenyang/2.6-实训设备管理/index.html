@@ -3,837 +3,1429 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>实训设备管理</title>
+<title>实训设备管理 — 维护保养中心</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#1677ff;--success:#52c41a;--warning:#faad14;--danger:#ff4d4f;--bg:#f5f5f5;--card:#fff;--border:#e8e8e8;--text:#333;--text2:#666;--text3:#999;--radius:8px}
+:root{--primary:#1677ff;--success:#52c41a;--warning:#faad14;--danger:#ff4d4f;--purple:#722ed1;--bg:#f5f5f5;--card:#fff;--border:#e8e8e8;--text:#333;--text2:#666;--text3:#999;--radius:8px;--blue:#1890ff}
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
 .header{background:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.header h1{font-size:20px;font-weight:600}
+.header h1{font-size:20px;font-weight:600;white-space:nowrap}
 .header-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .btn{padding:6px 16px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap}
 .btn:hover{border-color:var(--primary);color:var(--primary)}
 .btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
-.btn-primary:hover{background:#4096ff}
+.btn-primary:hover{background:#4096ff;color:#fff}
 .btn-success{background:var(--success);color:#fff;border-color:var(--success)}
-.btn-success:hover{opacity:.85}
+.btn-success:hover{opacity:.85;color:#fff}
 .btn-danger{background:var(--danger);color:#fff;border-color:var(--danger)}
-.btn-danger:hover{opacity:.85}
+.btn-danger:hover{opacity:.85;color:#fff}
+.btn-warning{background:var(--warning);color:#fff;border-color:var(--warning)}
+.btn-warning:hover{opacity:.85;color:#fff}
+.btn-purple{background:var(--purple);color:#fff;border-color:var(--purple)}
+.btn-purple:hover{opacity:.85;color:#fff}
 .btn-link{border:none;background:none;color:var(--primary);padding:2px 4px;cursor:pointer;font-size:12px;white-space:nowrap}
 .btn-link:hover{color:#4096ff}
+.btn-link.danger{color:var(--danger)}
+.btn-link.danger:hover{color:#ff7875}
 .btn-sm{padding:4px 10px;font-size:12px;white-space:nowrap}
-.container{padding:16px 24px;max-width:1400px;margin:0 auto}
-.stats-row{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
-.stat-card{background:#fff;border-radius:var(--radius);padding:16px 20px;flex:1;min-width:160px;border:1px solid var(--border)}
-.stat-card .label{font-size:13px;color:var(--text2)}
-.stat-card .value{font-size:28px;font-weight:700;margin-top:4px}
+.btn-ghost{background:transparent;border:1px dashed var(--border);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
+.container{padding:16px 24px;max-width:1480px;margin:0 auto}
+.stats-row{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;align-items:stretch}
+.stat-card{background:#fff;border-radius:var(--radius);padding:16px 20px;flex:1;min-width:140px;border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.stat-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.stat-card .label{font-size:13px;color:var(--text2);white-space:nowrap}
+.stat-card .value{font-size:28px;font-weight:700;margin-top:4px;white-space:nowrap}
 .stat-card .value.green{color:var(--success)}
 .stat-card .value.red{color:var(--danger)}
 .stat-card .value.orange{color:var(--warning)}
-.chart-card{background:#fff;border-radius:var(--radius);padding:16px;border:1px solid var(--border);min-width:280px;flex:1.5}
+.stat-card .value.purple{color:var(--purple)}
+.chart-card{background:#fff;border-radius:var(--radius);padding:16px;border:1px solid var(--border);min-width:300px;flex:2}
 .quick-filters{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.qf-btn{padding:6px 16px;border-radius:16px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:13px;position:relative}
+.qf-btn{padding:6px 16px;border-radius:16px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:13px;position:relative;white-space:nowrap;transition:all .2s}
 .qf-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-.badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:9px;font-size:11px;display:flex;align-items:center;justify-content:center;color:#fff;padding:0 5px}
+.badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:9px;font-size:11px;display:flex;align-items:center;justify-content:center;color:#fff;padding:0 5px;white-space:nowrap}
 .badge-red{background:var(--danger)}
 .badge-orange{background:var(--warning)}
-.filter-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.filter-row select,.filter-row input{padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;min-width:140px}
+.badge-purple{background:var(--purple)}
+.filter-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.filter-row select,.filter-row input[type="text"]{padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;min-width:140px;background:#fff}
 .table-wrap{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 th{background:#fafafa;padding:10px 12px;text-align:left;font-weight:600;font-size:13px;border-bottom:1px solid var(--border);white-space:nowrap;user-select:none}
 th.sortable{cursor:pointer}
 th.sortable:hover{background:#f0f0f0}
-td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:13px}
+th .sort-icon{margin-left:4px;color:var(--text3);font-size:11px}
+th .sort-icon.asc::after{content:' ↑'}
+th .sort-icon.desc::after{content:' ↓'}
+td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:13px;vertical-align:middle}
 td:last-child{white-space:nowrap}
 tr:hover{background:#fafafa}
-tr.clickable{cursor:pointer}
-.status-badge{padding:2px 8px;border-radius:10px;font-size:12px;display:inline-block;font-weight:500;white-space:nowrap}
-.status-online{background:#f6ffed;color:var(--success);border:1px solid #b7eb8f}
-.status-offline{background:#f5f5f5;color:#999;border:1px solid #d9d9d9}
-.status-maintenance{background:#e6f7ff;color:#1890ff;border:1px solid #91d5ff}
-.health-bar{width:80px;height:8px;background:#f0f0f0;border-radius:4px;display:inline-block;vertical-align:middle;margin-right:6px}
-.health-fill{height:100%;border-radius:4px;transition:width .3s}
-.tag{padding:1px 8px;border-radius:4px;font-size:12px;display:inline-block;white-space:nowrap}
-.tag-green{background:#f6ffed;color:var(--success);border:1px solid #b7eb8f}
-.tag-orange{background:#fff7e6;color:#d48806;border:1px solid #ffd591}
-.tag-red{background:#fff2f0;color:var(--danger);border:1px solid #ffccc7}
-.tag-blue{background:#e6f7ff;color:#1890ff;border:1px solid #91d5ff}
-.tag-gray{background:#fafafa;color:#999;border:1px solid #d9d9d9}
-.pagination{display:flex;justify-content:space-between;align-items:center;padding:12px 16px}
-.pagination .info{color:var(--text3);font-size:13px}
-.page-btns{display:flex;gap:4px}
-.page-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
-.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-.page-btn:hover:not(.active){border-color:var(--primary);color:var(--primary)}
-.drawer-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:200;display:none;opacity:0;transition:opacity .3s}
-.drawer-overlay.open{display:block;opacity:1}
-.drawer{position:fixed;top:0;right:-660px;width:640px;height:100%;background:#fff;z-index:201;transition:right .3s;overflow-y:auto;box-shadow:-4px 0 12px rgba(0,0,0,.1)}
-.drawer.open{right:0}
-.drawer-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1}
-.drawer-header h3{font-size:16px}
-.drawer-close{width:32px;height:32px;border:none;background:none;cursor:pointer;font-size:20px;color:#999;border-radius:4px}
-.drawer-close:hover{background:#f5f5f5;color:#333}
-.drawer-body{padding:20px}
-.collapse{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px}
-.collapse-head{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:#fafafa;border-radius:var(--radius) var(--radius) 0 0;font-weight:600}
-.collapse-head .arrow{transition:transform .2s;font-size:12px}
-.collapse-head .arrow.down{transform:rotate(90deg)}
-.collapse-body{padding:16px;display:none}
-.collapse-body.open{display:block}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.info-item{display:flex;flex-direction:column}
-.info-item .lbl{font-size:12px;color:var(--text3)}
-.info-item .val{font-size:14px;font-weight:500;margin-top:2px}
-.fault-card{border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px}
-.fault-top{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
-.fault-desc{color:var(--text2);font-size:13px;margin-bottom:6px}
-.fault-meta{font-size:12px;color:var(--text3);display:flex;gap:16px}
-.fault-expand{color:var(--primary);font-size:12px;cursor:pointer;margin-top:6px;display:inline-block}
-.fault-expand:hover{text-decoration:underline}
-.fault-detail{margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;display:none}
-.fault-detail.open{display:block}
-.steps{display:flex;gap:0;margin-bottom:16px;position:relative}
-.step{flex:1;text-align:center;position:relative;padding-bottom:8px}
-.step-dot{width:24px;height:24px;border-radius:50%;border:2px solid #d9d9d9;background:#fff;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;position:relative;z-index:1}
-.step.done .step-dot{background:var(--primary);border-color:var(--primary);color:#fff}
-.step.current .step-dot{border-color:var(--primary);color:var(--primary);animation:pulse 1.5s infinite}
-.step.rework .step-dot{border-color:var(--danger);color:var(--danger);animation:pulse-red 1.5s infinite}
-.step-label{font-size:11px;color:var(--text3);margin-top:4px}
-.step.done .step-label,.step.current .step-label{color:var(--primary)}
-.step.rework .step-label{color:var(--danger)}
-.step-line{position:absolute;top:12px;left:calc(50% + 12px);right:calc(-50% + 12px);height:2px;background:#d9d9d9}
-.step.done .step-line{background:var(--primary)}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(22,119,255,.4)}50%{box-shadow:0 0 0 6px rgba(22,119,255,0)}}
-@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(255,77,79,.4)}50%{box-shadow:0 0 0 6px rgba(255,77,79,0)}}
-.timeline{padding-left:20px;border-left:2px solid #f0f0f0;margin:12px 0}
-.tl-item{position:relative;padding:0 0 16px 16px}
-.tl-item:last-child{padding-bottom:0}
-.tl-item::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--primary);position:absolute;left:-25px;top:4px}
-.tl-item.green::before{background:var(--success)}
-.tl-item.red::before{background:var(--danger)}
-.tl-time{font-size:12px;color:var(--text3)}
-.tl-content{font-size:13px;margin-top:2px}
-.tl-note{font-size:12px;color:var(--text2);margin-top:2px;font-style:italic}
-.action-area{background:#fafafa;border-radius:var(--radius);padding:14px;margin-top:12px}
-.action-area h4{font-size:14px;margin-bottom:10px;color:var(--text)}
-.form-group{margin-bottom:10px}
-.form-group label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px}
+tr{cursor:pointer}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;white-space:nowrap}
+.tag-green{background:#f6ffed;color:#389e0d;border:1px solid #b7eb8f}
+.tag-red{background:#fff2f0;color:#cf1322;border:1px solid #ffccc7}
+.tag-orange{background:#fff7e6;color:#d46b08;border:1px solid #ffd591}
+.tag-blue{background:#e6f7ff;color:#096dd9;border:1px solid #91d5ff}
+.tag-gray{background:#f5f5f5;color:#8c8c8c;border:1px solid #d9d9d9}
+.tag-purple{background:#f9f0ff;color:#531dab;border:1px solid #d3adf7}
+.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap}
+.status-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.dot-green{background:var(--success)}
+.dot-gray{background:#bfbfbf}
+.dot-blue{background:var(--blue)}
+.health-bar{width:60px;height:6px;background:#f0f0f0;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:6px}
+.health-bar-inner{height:100%;border-radius:3px}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-size:13px;color:var(--text2)}
+.pagination .pages{display:flex;gap:4px}
+.pagination .page-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
+.pagination .page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.pagination .page-btn:hover:not(.active){border-color:var(--primary);color:var(--primary)}
+
+/* Overlay */
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1000;display:none;justify-content:center;align-items:center}
+.overlay.show{display:flex}
+.modal{background:#fff;border-radius:var(--radius);width:580px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.modal-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{font-size:16px;font-weight:600;white-space:nowrap}
+.modal-close{width:32px;height:32px;border:none;background:none;cursor:pointer;font-size:18px;color:var(--text3);display:flex;align-items:center;justify-content:center;border-radius:4px}
+.modal-close:hover{background:#f5f5f5}
+.modal-body{padding:20px 24px}
+.modal-footer{padding:12px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;margin-bottom:4px;font-size:13px;font-weight:500;white-space:nowrap}
 .form-group label .req{color:var(--danger)}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit}
-.form-group textarea{resize:vertical;min-height:60px}
-.radio-group{display:flex;gap:16px;flex-wrap:wrap}
-.radio-group label{display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:13px;color:var(--text);white-space:nowrap}
-.upload-zone{border:1px dashed #d9d9d9;border-radius:6px;padding:16px;text-align:center;cursor:pointer;color:var(--text3);font-size:13px;transition:border-color .2s}
-.upload-zone:hover{border-color:var(--primary)}
-.upload-preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.upload-thumb{width:80px;height:80px;background:#f0f0f0;border-radius:6px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#999}
-.upload-thumb .del{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--danger);color:#fff;font-size:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:300;display:none;justify-content:center;align-items:center}
-.modal-overlay.open{display:flex}
-.modal{background:#fff;border-radius:var(--radius);width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 4px 24px rgba(0,0,0,.15)}
-.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.modal-header h3{font-size:16px}
-.modal-body{padding:20px}
-.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
-.maint-plan{border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px}
-.maint-record{border:1px solid #f0f0f0;border-radius:6px;padding:10px;margin-bottom:8px;font-size:13px}
-.maint-record-detail{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;font-size:12px;color:var(--text2)}
-.maint-record-detail.open{display:block}
-.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--success);color:#fff;padding:10px 24px;border-radius:6px;font-size:14px;z-index:999;display:none;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-.toast.show{display:block;animation:fadeInOut 2.5s ease}
-@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(-10px)}10%{opacity:1;transform:translateX(-50%) translateY(0)}80%{opacity:1}100%{opacity:0}}
-.empty{text-align:center;padding:24px;color:var(--text3);font-size:14px}
-.hidden{display:none!important}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit}
+.form-group textarea{resize:vertical;min-height:80px}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(22,119,255,.1)}
+.form-group input[readonly],.form-group input:disabled{background:#f5f5f5;color:var(--text2);cursor:not-allowed}
+.form-row{display:flex;gap:16px}
+.form-row .form-group{flex:1}
+.radio-group{display:flex;gap:12px;flex-wrap:wrap}
+.radio-group label{display:inline-flex;align-items:center;gap:4px;font-weight:400;cursor:pointer;white-space:nowrap}
+.checkbox-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0}
+.checkbox-row label{font-weight:400;cursor:pointer;white-space:nowrap}
+
+/* Drawer */
+.drawer-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:500;display:none}
+.drawer-overlay.show{display:block}
+.drawer{position:fixed;top:0;right:-700px;width:680px;height:100%;background:#fff;z-index:501;transition:right .3s ease;overflow-y:auto;box-shadow:-2px 0 8px rgba(0,0,0,.1)}
+.drawer.show{right:0}
+.drawer-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:10}
+.drawer-header h3{font-size:16px;font-weight:600;white-space:nowrap}
+.drawer-header .actions{display:flex;gap:8px;align-items:center}
+.drawer-body{padding:0}
+
+/* Collapse panels */
+.collapse-panel{border-bottom:1px solid var(--border)}
+.collapse-header{padding:12px 24px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:#fafafa;user-select:none}
+.collapse-header:hover{background:#f0f0f0}
+.collapse-header h4{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.collapse-arrow{transition:transform .2s;font-size:12px;color:var(--text3)}
+.collapse-panel.open .collapse-arrow{transform:rotate(90deg)}
+.collapse-content{display:none;padding:16px 24px}
+.collapse-panel.open .collapse-content{display:block}
+
+/* Info grid */
+.info-section{margin-bottom:16px;border-radius:6px;padding:16px;position:relative}
+.info-section.synced{background:#f7f8fa;border:1px solid #e8e8e8}
+.info-section.editable{background:#fff;border:1px solid var(--border)}
+.info-section .section-label{font-size:12px;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
+.info-item{display:flex;flex-direction:column;gap:2px}
+.info-item .field-label{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px;white-space:nowrap}
+.info-item .field-value{font-size:13px;color:var(--text);word-break:break-all}
+.lock-icon{font-size:10px;color:#bfbfbf}
+.info-item.full{grid-column:1/-1}
+
+/* Param table */
+.param-table{width:100%;border-collapse:collapse;font-size:13px}
+.param-table th{background:#fafafa;padding:8px 12px;font-size:12px;text-align:left;border:1px solid var(--border)}
+.param-table td{padding:6px 12px;border:1px solid #f0f0f0}
+.param-table input{border:1px solid transparent;background:transparent;padding:4px 8px;width:100%;font-size:13px;font-family:inherit}
+.param-table input:focus{border-color:var(--primary);background:#fff;outline:none;border-radius:4px}
+.param-table tr:hover{background:#fafafa}
+
+/* Usage record cards */
+.usage-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:12px 16px;margin-bottom:8px}
+.usage-card-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.usage-card-header .date{font-weight:600;font-size:13px;white-space:nowrap}
+.usage-card-body{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--text2)}
+.usage-card-body .item{white-space:nowrap}
+.usage-card-detail{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;font-size:13px;color:var(--text2)}
+.usage-card.expanded .usage-card-detail{display:block}
+.mini-stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+.mini-stat{background:#fafafa;border:1px solid var(--border);border-radius:6px;padding:10px 16px;flex:1;min-width:100px;text-align:center}
+.mini-stat .ms-label{font-size:12px;color:var(--text3);white-space:nowrap}
+.mini-stat .ms-value{font-size:18px;font-weight:700;color:var(--text);margin-top:2px;white-space:nowrap}
+
+/* Fault status steps */
+.fault-steps{display:flex;gap:0;margin:12px 0;align-items:center}
+.fault-step{display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap}
+.fault-step .step-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;flex-shrink:0}
+.fault-step .step-dot.done{background:var(--success)}
+.fault-step .step-dot.current{background:var(--primary)}
+.fault-step .step-dot.pending{background:#d9d9d9}
+.fault-step .step-line{width:30px;height:2px;background:#d9d9d9;flex-shrink:0}
+.fault-step .step-line.done{background:var(--success)}
+
+/* Timeline */
+.timeline{margin:8px 0 8px 12px;border-left:2px solid var(--border);padding-left:16px}
+.timeline-item{padding:8px 0;position:relative}
+.timeline-item::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--primary);position:absolute;left:-21px;top:12px}
+.timeline-item .tl-time{font-size:12px;color:var(--text3);white-space:nowrap}
+.timeline-item .tl-content{font-size:13px;margin-top:2px}
+
+/* Maintenance card */
+.maint-card{border:1px solid var(--border);border-radius:6px;padding:12px 16px;margin-bottom:8px}
+.maint-card-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.maint-card .maint-info{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--text2);margin-top:8px}
+
+/* Prediction alert */
+.predict-alert{padding:12px 16px;border-radius:6px;margin-bottom:12px;font-size:13px;display:flex;align-items:flex-start;gap:8px}
+.predict-alert.warn{background:#fffbe6;border:1px solid #ffe58f;color:#ad6800}
+.predict-alert.danger{background:#fff2f0;border:1px solid #ffccc7;color:#a8071a}
+.predict-alert.info{background:#e6f7ff;border:1px solid #91d5ff;color:#096dd9}
+.predict-alert .alert-icon{font-size:16px;flex-shrink:0}
+
+/* Archive file list */
+.file-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0}
+.file-item:last-child{border-bottom:none}
+.file-info{display:flex;align-items:center;gap:12px;flex:1}
+.file-icon{font-size:20px}
+.file-detail .file-name{font-size:13px;font-weight:500}
+.file-detail .file-meta{font-size:12px;color:var(--text3);white-space:nowrap}
+
+/* Toast */
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:6px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.toast.success{background:var(--success)}
+.toast.error{background:var(--danger)}
+
+/* Scrollbar */
+.drawer::-webkit-scrollbar{width:6px}
+.drawer::-webkit-scrollbar-thumb{background:#d9d9d9;border-radius:3px}
+.modal::-webkit-scrollbar{width:6px}
+.modal::-webkit-scrollbar-thumb{background:#d9d9d9;border-radius:3px}
+
+/* Responsive */
+@media(max-width:768px){
+.header{flex-direction:column;gap:8px}
+.stats-row{flex-direction:column}
+.chart-card{min-width:auto}
+.drawer{width:100%}
+.info-grid{grid-template-columns:1fr}
+.form-row{flex-direction:column}
+}
 </style>
 </head>
 <body>
-<div id="toast" class="toast"></div>
 
 <div class="header">
-  <h1>实训设备管理</h1>
+  <h1>实训设备管理 — 维护保养中心</h1>
   <div class="header-actions">
-    <button class="btn" onclick="showToast('数据导入成功')">导入数据</button>
-    <button class="btn" onclick="showToast('报表已导出')">导出报表</button>
-    <button class="btn btn-danger" onclick="openFaultModal()">+ 报修</button>
-    <button class="btn btn-primary" onclick="openMaintPlanModal()">+ 新增保养计划</button>
-    <button class="btn btn-primary" onclick="openDeviceModal()">+ 新增设备</button>
+    <button class="btn" onclick="openSyncModal()">&#x1F504; 同步设备</button>
+    <button class="btn" onclick="showToast('已导入设备数据','success')">&#x1F4E5; 导入数据</button>
+    <button class="btn" onclick="showToast('报表导出中...','success')">&#x1F4E4; 导出报表</button>
+    <button class="btn btn-danger btn-sm" onclick="openFaultModal()">+ 报修</button>
+    <button class="btn btn-primary btn-sm" onclick="openMaintPlanModal()">+ 新增保养计划</button>
   </div>
 </div>
 
 <div class="container">
-  <div class="stats-row">
-    <div class="stat-card"><div class="label">设备总数</div><div class="value" id="s-total">12</div></div>
-    <div class="stat-card"><div class="label">在线设备</div><div class="value green" id="s-online">9</div></div>
-    <div class="stat-card"><div class="label">故障设备</div><div class="value red" id="s-fault">0</div></div>
-    <div class="stat-card"><div class="label">待保养设备</div><div class="value orange" id="s-maint">0</div></div>
-    <div class="chart-card"><div id="healthChart" style="height:100px;width:100%"></div></div>
-  </div>
+  <!-- Stats -->
+  <div class="stats-row" id="statsRow"></div>
 
-  <div class="quick-filters">
-    <button class="qf-btn active" onclick="setQuickFilter('all',this)">全部设备</button>
-    <button class="qf-btn" onclick="setQuickFilter('fault',this)">待处理故障<span class="badge badge-red" id="badge-fault">0</span></button>
-    <button class="qf-btn" onclick="setQuickFilter('maint',this)">待保养设备<span class="badge badge-orange" id="badge-maint">0</span></button>
-  </div>
+  <!-- Quick filters -->
+  <div class="quick-filters" id="quickFilters"></div>
 
-  <div class="filter-row">
-    <select id="f-area" onchange="applyFilters()"><option value="">全部区域</option><option>实训区A</option><option>实训区B</option><option>实训区C</option></select>
-    <select id="f-status" onchange="applyFilters()"><option value="">全部状态</option><option>在线</option><option>离线</option><option>维护中</option></select>
-    <select id="f-health" onchange="applyFilters()"><option value="">全部健康度</option><option value="high">&gt;=80% 良好</option><option value="mid">60%-79% 一般</option><option value="low">&lt;60% 较差</option></select>
-    <input type="text" id="f-keyword" placeholder="搜索设备名称/编号/型号" oninput="applyFilters()" style="min-width:200px">
-    <button class="btn btn-sm" onclick="resetFilters()">重置</button>
-  </div>
+  <!-- Advanced filters -->
+  <div id="advancedFilters"></div>
 
+  <!-- Table -->
   <div class="table-wrap">
-    <table>
-      <thead><tr>
-        <th class="sortable" onclick="sortBy('id')">设备编号 <span id="sort-id">&#8693;</span></th>
-        <th>设备名称</th><th>设备型号</th><th>所属区域</th>
-        <th class="sortable" onclick="sortBy('status')">在线状态 <span id="sort-status">&#8693;</span></th>
-        <th class="sortable" onclick="sortBy('health')">健康度 <span id="sort-health">&#8693;</span></th>
-        <th>故障</th><th>保养状态</th><th style="width:260px">操作</th>
-      </tr></thead>
+    <table id="deviceTable">
+      <thead id="tableHead"></thead>
       <tbody id="tableBody"></tbody>
     </table>
-    <div class="pagination"><span class="info" id="pageInfo"></span><div class="page-btns" id="pageBtns"></div></div>
+    <div class="pagination" id="pagination"></div>
   </div>
 </div>
 
+<!-- Drawer overlay -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="drawer">
-  <div class="drawer-header"><h3 id="drawerTitle">设备详情</h3><button class="drawer-close" onclick="closeDrawer()">&times;</button></div>
-  <div class="drawer-body" id="drawerBody"></div>
+<div class="drawer" id="drawer"></div>
+
+<!-- Modal overlay -->
+<div class="overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal" id="modalContent" onclick="event.stopPropagation()"></div>
 </div>
 
-<div class="modal-overlay" id="faultModal">
-  <div class="modal">
-    <div class="modal-header"><h3>故障登记</h3><button class="drawer-close" onclick="closeFaultModal()">&times;</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label>设备 <span class="req">*</span></label><select id="fm-device"></select></div>
-      <div class="form-group"><label>故障类型 <span class="req">*</span></label><select id="fm-type"><option>硬件故障</option><option>软件故障</option><option>其他</option></select></div>
-      <div class="form-group"><label>紧急程度 <span class="req">*</span></label><div class="radio-group"><label><input type="radio" name="fm-urgency" value="紧急" checked>紧急</label><label><input type="radio" name="fm-urgency" value="一般">一般</label><label><input type="radio" name="fm-urgency" value="轻微">轻微</label></div></div>
-      <div class="form-group"><label>故障描述 <span class="req">*</span></label><textarea id="fm-desc" placeholder="请描述故障现象..."></textarea></div>
-      <div class="form-group"><label>故障照片</label><div class="upload-zone" onclick="addPhoto('fm-photos')">点击上传照片</div><div class="upload-preview" id="fm-photos"></div></div>
-      <div class="form-group"><label>发现人</label><input id="fm-reporter" value="当前用户"></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeFaultModal()">取消</button><button class="btn btn-primary" onclick="submitFault()">提交</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="maintPlanModal">
-  <div class="modal">
-    <div class="modal-header"><h3>新增保养计划</h3><button class="drawer-close" onclick="closeMaintPlanModal()">&times;</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label>设备 <span class="req">*</span></label><select id="mp-device"></select></div>
-      <div class="form-group"><label>保养类型 <span class="req">*</span></label><div class="radio-group"><label><input type="radio" name="mp-type" value="日常保养" checked>日常保养</label><label><input type="radio" name="mp-type" value="定期保养">定期保养</label><label><input type="radio" name="mp-type" value="专项保养">专项保养</label></div></div>
-      <div class="form-group"><label>保养周期 <span class="req">*</span></label><select id="mp-cycle" onchange="toggleCustomDays()"><option>每周</option><option>每月</option><option>每季度</option><option>每半年</option><option>每年</option><option>自定义</option></select></div>
-      <div class="form-group hidden" id="mp-custom-wrap"><label>自定义天数</label><input type="number" id="mp-custom-days" min="1" value="30"></div>
-      <div class="form-group"><label>标准保养内容 <span class="req">*</span></label><textarea id="mp-content" placeholder="如：清洁传感器、检查线路连接、校准参数"></textarea></div>
-      <div class="form-group"><label>责任人 <span class="req">*</span></label><select id="mp-person"><option>赵刚</option><option>李强</option><option>周婷</option><option>孙磊</option></select></div>
-      <div class="form-group"><label>备注</label><textarea id="mp-remark"></textarea></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeMaintPlanModal()">取消</button><button class="btn btn-primary" onclick="submitMaintPlan()">提交</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="execMaintModal">
-  <div class="modal">
-    <div class="modal-header"><h3>执行保养</h3><button class="drawer-close" onclick="closeExecMaintModal()">&times;</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label>设备名称</label><input id="em-device" readonly></div>
-      <div class="form-group"><label>保养类型</label><input id="em-type" readonly></div>
-      <div class="form-group"><label>执行日期</label><input type="date" id="em-date"></div>
-      <div class="form-group"><label>实际保养内容 <span class="req">*</span></label><textarea id="em-content"></textarea></div>
-      <div class="form-group"><label>更换部件</label><textarea id="em-parts" placeholder="如：传感器模块 x1、滤网 x2"></textarea></div>
-      <div class="form-group"><label>保养人员 <span class="req">*</span></label><select id="em-person"><option>赵刚</option><option>李强</option><option>周婷</option><option>孙磊</option></select></div>
-      <div class="form-group"><label>保养照片</label><div class="upload-zone" onclick="addPhoto('em-photos')">点击上传照片</div><div class="upload-preview" id="em-photos"></div></div>
-      <div class="form-group"><label>保养结果 <span class="req">*</span></label><div class="radio-group"><label><input type="radio" name="em-result" value="正常" checked>正常</label><label><input type="radio" name="em-result" value="需关注">需关注</label><label><input type="radio" name="em-result" value="需维修">需维修</label></div></div>
-      <div class="form-group"><label>备注</label><textarea id="em-remark"></textarea></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeExecMaintModal()">取消</button><button class="btn btn-primary" onclick="submitExecMaint()">提交</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="deviceModal">
-  <div class="modal" style="width:560px">
-    <div class="modal-header"><h3 id="deviceModalTitle">新增设备</h3><button class="drawer-close" onclick="closeDeviceModal()">&times;</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label>设备编号 <span class="req">*</span></label><input id="dm-id" placeholder="如 SB-013"></div>
-      <div class="form-group"><label>设备名称 <span class="req">*</span></label><input id="dm-name" placeholder="如 售票机模拟器"></div>
-      <div class="form-group"><label>设备型号 <span class="req">*</span></label><input id="dm-model" placeholder="如 TVM-3000"></div>
-      <div class="form-group"><label>序列号 <span class="req">*</span></label><input id="dm-sn" placeholder="如 SN20250013"></div>
-      <div class="form-group"><label>所属区域 <span class="req">*</span></label><select id="dm-area"><option>实训区A</option><option>实训区B</option><option>实训区C</option></select></div>
-      <div class="form-group"><label>设备类型 <span class="req">*</span></label><input id="dm-type" placeholder="如 模拟终端"></div>
-      <div class="form-group"><label>采购日期 <span class="req">*</span></label><input type="date" id="dm-purchase"></div>
-      <div class="form-group"><label>在线状态</label><select id="dm-status"><option>在线</option><option>离线</option><option>维护中</option></select></div>
-      <div class="form-group"><label>健康度 (%)</label><input type="number" id="dm-health" min="0" max="100" value="100"></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeDeviceModal()">取消</button><button class="btn btn-primary" onclick="submitDevice()">确定</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="deleteConfirmModal">
-  <div class="modal" style="width:400px">
-    <div class="modal-header"><h3>确认删除</h3><button class="drawer-close" onclick="closeDeleteConfirm()">&times;</button></div>
-    <div class="modal-body"><p id="deleteConfirmText" style="font-size:14px;color:var(--text)"></p><p style="font-size:13px;color:var(--danger);margin-top:8px">删除后该设备的故障记录和保养计划也将一并移除，此操作不可撤销。</p></div>
-    <div class="modal-footer"><button class="btn" onclick="closeDeleteConfirm()">取消</button><button class="btn btn-danger" onclick="confirmDeleteDevice()">确认删除</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="reworkModal">
-  <div class="modal" style="width:400px">
-    <div class="modal-header"><h3>返工原因</h3><button class="drawer-close" onclick="closeReworkModal()">&times;</button></div>
-    <div class="modal-body"><div class="form-group"><label>返工原因 <span class="req">*</span></label><textarea id="rw-reason" placeholder="请填写返工原因..."></textarea></div></div>
-    <div class="modal-footer"><button class="btn" onclick="closeReworkModal()">取消</button><button class="btn btn-danger" onclick="submitRework()">确认返工</button></div>
-  </div>
-</div>
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <script>
-const repairers=['李强','陈明','赵刚','王磊'];
-const maintPersons=['赵刚','李强','周婷','孙磊'];
-let faultIdCounter=100;
-
-const devices=[
-  {id:'SB-001',name:'售票机模拟器',model:'TVM-3000',sn:'SN20250001',area:'实训区A',purchaseDate:'2024-03-15',status:'在线',health:92,type:'模拟终端'},
-  {id:'SB-002',name:'转辙机操作台',model:'ZDJ-9',sn:'SN20250002',area:'实训区B',purchaseDate:'2024-05-20',status:'在线',health:78,type:'操控设备'},
-  {id:'SB-003',name:'安检仪模拟设备',model:'AX-8500',sn:'SN20250003',area:'实训区C',purchaseDate:'2023-08-10',status:'离线',health:45,type:'安检设备'},
-  {id:'SB-004',name:'客运广播系统',model:'PA-2000',sn:'SN20250004',area:'实训区A',purchaseDate:'2023-11-25',status:'在线',health:85,type:'广播系统'},
-  {id:'SB-005',name:'闸机模拟器',model:'AG-300',sn:'SN20250005',area:'实训区B',purchaseDate:'2024-01-08',status:'在线',health:88,type:'闸机设备'},
-  {id:'SB-006',name:'LED信息显示屏',model:'LD-4800',sn:'SN20250006',area:'实训区A',purchaseDate:'2024-06-12',status:'在线',health:65,type:'显示设备'},
-  {id:'SB-007',name:'应急疏散模拟系统',model:'EM-1200',sn:'SN20250007',area:'实训区C',purchaseDate:'2023-05-18',status:'维护中',health:38,type:'应急系统'},
-  {id:'SB-008',name:'站台门模拟器',model:'PSD-500',sn:'SN20250008',area:'实训区B',purchaseDate:'2024-08-22',status:'在线',health:95,type:'站台设备'},
-  {id:'SB-009',name:'售票机模拟器',model:'TVM-3000',sn:'SN20250009',area:'实训区C',purchaseDate:'2024-09-05',status:'在线',health:82,type:'模拟终端'},
-  {id:'SB-010',name:'闸机模拟器',model:'AG-300',sn:'SN20250010',area:'实训区A',purchaseDate:'2024-02-28',status:'在线',health:70,type:'闸机设备'},
-  {id:'SB-011',name:'转辙机操作台',model:'ZDJ-9',sn:'SN20250011',area:'实训区C',purchaseDate:'2023-12-15',status:'离线',health:55,type:'操控设备'},
-  {id:'SB-012',name:'客运广播系统',model:'PA-2000',sn:'SN20250012',area:'实训区B',purchaseDate:'2024-04-10',status:'在线',health:90,type:'广播系统'}
+// ==================== DATA ====================
+const DEVICES = [
+  {id:'PE00556',name:'铁路机车车辆驾驶人员资格考试系统(J6)',shortName:'J6类电力机车实作考试设备',deviceType:'铁路运输类',productName:'铁路机车车辆驾驶人员资格考试系统(J6)',location:'仿真基地/二楼东区',manufacturer:'捷安高科',applicableSystem:'J6考试系统',workstations:1,platformInteraction:'可交互',manager:'张伟',department:'实训教学部',assetValue:85.00,syncTime:'2026-06-17 08:30',sn:'SN-J6-20240315',purchaseDate:'2024-03-15',expectedRetireDate:'2034-03-15',lifecycle:'在用',majorCategory:'机车驾驶',usageCategory:'考试考核',onlineStatus:'在线',health:92,warrantyInfo:'保修期至 2027-03-15',remark:'',params:[{name:'额定电压',value:'380',unit:'V',note:'三相交流'},{name:'额定功率',value:'5.5',unit:'kW',note:''},{name:'工作温度范围',value:'-20~50',unit:'℃',note:''},{name:'重量',value:'2500',unit:'kg',note:''},{name:'外形尺寸',value:'3000x1500x2000',unit:'mm',note:'长x宽x高'}]},
+  {id:'PE00623',name:'CRH380A型动车组模拟驾驶系统',shortName:'CRH380A模拟驾驶',deviceType:'铁路运输类',productName:'CRH380A型动车组模拟驾驶系统',location:'仿真基地/一楼大厅',manufacturer:'捷安高科',applicableSystem:'动车模拟驾驶系统',workstations:2,platformInteraction:'可交互',manager:'李明',department:'实训教学部',assetValue:220.00,syncTime:'2026-06-17 08:30',sn:'SN-CRH380A-20230810',purchaseDate:'2023-08-10',expectedRetireDate:'2033-08-10',lifecycle:'在用',majorCategory:'机车驾驶',usageCategory:'教学实训',onlineStatus:'在线',health:88,warrantyInfo:'保修期至 2026-08-10',remark:'即将出保',params:[{name:'额定电压',value:'380',unit:'V',note:'三相交流'},{name:'运行平台',value:'Windows 10',unit:'',note:'专用工控机'},{name:'显示分辨率',value:'5760x1080',unit:'px',note:'三联屏'},{name:'重量',value:'4200',unit:'kg',note:'含底座'}]},
+  {id:'PE00701',name:'HXD1型电力机车模拟操纵系统',shortName:'HXD1电力机车模拟',deviceType:'铁路运输类',productName:'HXD1型电力机车模拟操纵系统',location:'仿真基地/二楼西区',manufacturer:'捷安高科',applicableSystem:'电力机车模拟系统',workstations:1,platformInteraction:'可交互',manager:'张伟',department:'实训教学部',assetValue:165.00,syncTime:'2026-06-17 08:30',sn:'SN-HXD1-20230620',purchaseDate:'2023-06-20',expectedRetireDate:'2033-06-20',lifecycle:'在用',majorCategory:'机车驾驶',usageCategory:'教学实训',onlineStatus:'离线',health:45,warrantyInfo:'保修期至 2026-06-20',remark:'健康度偏低，需重点关注',params:[{name:'额定电压',value:'380',unit:'V',note:''},{name:'液压系统压力',value:'16',unit:'MPa',note:''},{name:'重量',value:'3800',unit:'kg',note:''}]},
+  {id:'PE00802',name:'车辆转向架检修实训装置',shortName:'转向架检修装置',deviceType:'铁路运输类',productName:'车辆转向架检修实训装置',location:'仿真基地/一楼西侧',manufacturer:'中车株洲',applicableSystem:'车辆检修系统',workstations:4,platformInteraction:'不可交互',manager:'王芳',department:'车辆检修教研室',assetValue:120.00,syncTime:'2026-06-17 08:30',sn:'SN-ZJ-20220105',purchaseDate:'2022-01-05',expectedRetireDate:'2032-01-05',lifecycle:'在用',majorCategory:'车辆检修',usageCategory:'教学实训',onlineStatus:'在线',health:78,warrantyInfo:'保修期至 2025-01-05（已过保）',remark:'',params:[{name:'承载重量',value:'5000',unit:'kg',note:'最大承载'},{name:'液压升降行程',value:'1200',unit:'mm',note:''},{name:'工作台面积',value:'4000x2500',unit:'mm',note:''}]},
+  {id:'PE00915',name:'6502电气集中联锁实训系统',shortName:'6502联锁实训',deviceType:'信号设备类',productName:'6502电气集中联锁实训系统',location:'仿真基地/三楼信号室',manufacturer:'捷安高科',applicableSystem:'信号联锁系统',workstations:8,platformInteraction:'可交互',manager:'赵刚',department:'信号通信教研室',assetValue:95.00,syncTime:'2026-06-17 08:30',sn:'SN-6502-20240601',purchaseDate:'2024-06-01',expectedRetireDate:'2034-06-01',lifecycle:'在用',majorCategory:'信号通信',usageCategory:'教学实训',onlineStatus:'在线',health:96,warrantyInfo:'保修期至 2027-06-01',remark:'',params:[{name:'继电器数量',value:'128',unit:'个',note:'包含各类型'},{name:'轨道电路数',value:'24',unit:'区段',note:''},{name:'信号机数',value:'16',unit:'架',note:''}]},
+  {id:'PE00933',name:'CTCS-2级列控系统实训平台',shortName:'CTCS-2列控平台',deviceType:'信号设备类',productName:'CTCS-2级列控系统实训平台',location:'仿真基地/三楼列控室',manufacturer:'卡斯柯',applicableSystem:'列控系统',workstations:6,platformInteraction:'可交互',manager:'赵刚',department:'信号通信教研室',assetValue:180.00,syncTime:'2026-06-17 08:30',sn:'SN-CTCS2-20240301',purchaseDate:'2024-03-01',expectedRetireDate:'2034-03-01',lifecycle:'在用',majorCategory:'信号通信',usageCategory:'教学实训',onlineStatus:'维护中',health:71,warrantyInfo:'保修期至 2027-03-01',remark:'正在进行季度维护',params:[{name:'应答器数量',value:'32',unit:'个',note:''},{name:'LEU数量',value:'8',unit:'台',note:''},{name:'RBC接口',value:'2',unit:'路',note:''}]},
+  {id:'PE01001',name:'客运服务礼仪实训系统',shortName:'客运礼仪实训',deviceType:'客运服务类',productName:'客运服务礼仪实训系统',location:'仿真基地/二楼中区',manufacturer:'捷安高科',applicableSystem:'客运服务系统',workstations:10,platformInteraction:'可交互',manager:'陈静',department:'客运服务教研室',assetValue:45.00,syncTime:'2026-06-17 08:30',sn:'SN-KYLY-20250101',purchaseDate:'2025-01-01',expectedRetireDate:'2035-01-01',lifecycle:'在用',majorCategory:'客运服务',usageCategory:'教学实训',onlineStatus:'在线',health:98,warrantyInfo:'保修期至 2028-01-01',remark:'',params:[{name:'终端数量',value:'10',unit:'台',note:'含平板'},{name:'摄像头',value:'4',unit:'路',note:'高清'}]},
+  {id:'PE01052',name:'客运票务系统模拟实训装置',shortName:'票务模拟装置',deviceType:'客运服务类',productName:'客运票务系统模拟实训装置',location:'仿真基地/二楼中区',manufacturer:'捷安高科',applicableSystem:'票务系统',workstations:6,platformInteraction:'可交互',manager:'陈静',department:'客运服务教研室',assetValue:38.00,syncTime:'2026-06-17 08:30',sn:'SN-PW-20250301',purchaseDate:'2025-03-01',expectedRetireDate:'2035-03-01',lifecycle:'待验收',majorCategory:'客运服务',usageCategory:'教学实训',onlineStatus:'离线',health:100,warrantyInfo:'保修期至 2028-03-01',remark:'新采购设备，待验收',params:[{name:'自助终端',value:'4',unit:'台',note:''},{name:'人工窗口',value:'2',unit:'个',note:''}]},
+  {id:'PE01103',name:'应急疏散演练模拟系统',shortName:'应急疏散演练',deviceType:'安全应急类',productName:'应急疏散演练模拟系统',location:'仿真基地/一楼应急区',manufacturer:'中铁安全',applicableSystem:'应急演练系统',workstations:1,platformInteraction:'可交互',manager:'刘强',department:'安全管理教研室',assetValue:150.00,syncTime:'2026-06-17 08:30',sn:'SN-YJSS-20230915',purchaseDate:'2023-09-15',expectedRetireDate:'2033-09-15',lifecycle:'在用',majorCategory:'安全应急',usageCategory:'教学实训',onlineStatus:'在线',health:83,warrantyInfo:'保修期至 2026-09-15',remark:'',params:[{name:'模拟场景数',value:'12',unit:'个',note:'含火灾/地震等'},{name:'最大同时演练人数',value:'50',unit:'人',note:''},{name:'烟雾发生器',value:'4',unit:'台',note:''}]},
+  {id:'PE01155',name:'消防器材实操训练装置',shortName:'消防实操装置',deviceType:'安全应急类',productName:'消防器材实操训练装置',location:'仿真基地/一楼应急区',manufacturer:'中铁安全',applicableSystem:'消防实训系统',workstations:2,platformInteraction:'不可交互',manager:'刘强',department:'安全管理教研室',assetValue:28.00,syncTime:'2026-06-17 08:30',sn:'SN-XF-20240801',purchaseDate:'2024-08-01',expectedRetireDate:'2034-08-01',lifecycle:'闲置',majorCategory:'安全应急',usageCategory:'技能竞赛',onlineStatus:'离线',health:65,warrantyInfo:'保修期至 2027-08-01',remark:'场地改造中暂停使用',params:[{name:'灭火器类型',value:'干粉/CO2/泡沫',unit:'',note:'三类'},{name:'模拟火源',value:'6',unit:'个',note:'电子火源'}]},
+  {id:'PE01208',name:'DF4B型内燃机车模拟驾驶系统',shortName:'DF4B内燃机车模拟',deviceType:'铁路运输类',productName:'DF4B型内燃机车模拟驾驶系统',location:'仿真基地/二楼东区',manufacturer:'捷安高科',applicableSystem:'内燃机车模拟系统',workstations:1,platformInteraction:'可交互',manager:'李明',department:'实训教学部',assetValue:175.00,syncTime:'2026-06-17 08:30',sn:'',purchaseDate:'2022-11-20',expectedRetireDate:'2032-11-20',lifecycle:'在用',majorCategory:'机车驾驶',usageCategory:'教学实训',onlineStatus:'在线',health:55,warrantyInfo:'保修期至 2025-11-20（已过保）',remark:'老旧设备，故障率偏高',params:[{name:'额定电压',value:'380',unit:'V',note:''},{name:'柴油机模型',value:'16V240ZJB',unit:'',note:'等比缩小'},{name:'重量',value:'3500',unit:'kg',note:''}]},
+  {id:'PE01310',name:'铁路客运安检模拟实训系统',shortName:'客运安检实训',deviceType:'安全应急类',productName:'铁路客运安检模拟实训系统',location:'仿真基地/一楼大厅',manufacturer:'同方威视',applicableSystem:'安检实训系统',workstations:3,platformInteraction:'可交互',manager:'刘强',department:'安全管理教研室',assetValue:92.00,syncTime:'2026-06-17 08:30',sn:'SN-AJ-20250201',purchaseDate:'2025-02-01',expectedRetireDate:'2035-02-01',lifecycle:'在用',majorCategory:'安全应急',usageCategory:'考试考核',onlineStatus:'在线',health:99,warrantyInfo:'保修期至 2028-02-01',remark:'新设备',params:[{name:'X射线源',value:'模拟（LED）',unit:'',note:'非真实射线'},{name:'传送带速度',value:'0.2',unit:'m/s',note:''},{name:'图像分辨率',value:'1920x1080',unit:'px',note:''}]}
 ];
 
-const faults=[
-  {fid:'GZ-001',deviceId:'SB-003',type:'硬件故障',urgency:'紧急',desc:'安检传送带异响，无法正常运转',reporter:'张伟',reportTime:'2026-06-10 09:30',status:'待处理',timeline:[{time:'2026-06-10 09:30',user:'张伟',action:'登记故障',note:'安检传送带异响'}]},
-  {fid:'GZ-002',deviceId:'SB-003',type:'软件故障',urgency:'一般',desc:'图像识别模块偶发崩溃',reporter:'李娜',reportTime:'2026-06-08 14:20',status:'处理中',assignee:'李强',timeline:[{time:'2026-06-08 14:20',user:'李娜',action:'登记故障',note:''},{time:'2026-06-08 15:00',user:'系统',action:'已分配给 李强',note:''}]},
-  {fid:'GZ-003',deviceId:'SB-006',type:'硬件故障',urgency:'一般',desc:'LED屏幕左下角有坏点，显示异常',reporter:'王芳',reportTime:'2026-06-05 10:15',status:'待验收',assignee:'陈明',timeline:[{time:'2026-06-05 10:15',user:'王芳',action:'登记故障',note:''},{time:'2026-06-05 11:00',user:'系统',action:'已分配给 陈明',note:''},{time:'2026-06-07 16:30',user:'陈明',action:'提交维修记录',note:'更换LED模组，已测试正常'}]},
-  {fid:'GZ-004',deviceId:'SB-007',type:'硬件故障',urgency:'紧急',desc:'烟雾发生器无法启动',reporter:'赵磊',reportTime:'2026-06-01 08:45',status:'已完成',assignee:'赵刚',timeline:[{time:'2026-06-01 08:45',user:'赵磊',action:'登记故障',note:''},{time:'2026-06-01 09:15',user:'系统',action:'已分配给 赵刚',note:''},{time:'2026-06-03 14:00',user:'赵刚',action:'提交维修记录',note:'更换加热元件和控制板'},{time:'2026-06-04 10:00',user:'张伟',action:'验收通过',note:'设备恢复正常'}]},
-  {fid:'GZ-005',deviceId:'SB-002',type:'软件故障',urgency:'一般',desc:'操作面板触摸屏偶尔无响应',reporter:'陈芳',reportTime:'2026-06-12 11:30',status:'处理中',assignee:'王磊',timeline:[{time:'2026-06-12 11:30',user:'陈芳',action:'登记故障',note:''},{time:'2026-06-12 13:00',user:'系统',action:'已分配给 王磊',note:''}]},
-  {fid:'GZ-006',deviceId:'SB-007',type:'硬件故障',urgency:'紧急',desc:'声光报警器线路老化',reporter:'刘强',reportTime:'2026-06-10 16:00',status:'需返工',assignee:'李强',reworkReason:'报警音量仍低于标准',timeline:[{time:'2026-06-10 16:00',user:'刘强',action:'登记故障',note:''},{time:'2026-06-10 16:30',user:'系统',action:'已分配给 李强',note:''},{time:'2026-06-12 10:00',user:'李强',action:'提交维修记录',note:'更换喇叭单元'},{time:'2026-06-13 09:00',user:'张伟',action:'验收未通过 - 需返工',note:'报警音量仍低于标准'}]},
-  {fid:'GZ-007',deviceId:'SB-010',type:'硬件故障',urgency:'轻微',desc:'闸机翼门关闭速度偏慢',reporter:'周婷',reportTime:'2026-06-14 09:00',status:'待处理',timeline:[{time:'2026-06-14 09:00',user:'周婷',action:'登记故障',note:'关闭时间约3秒，标准为1.5秒'}]},
-  {fid:'GZ-008',deviceId:'SB-001',type:'软件故障',urgency:'一般',desc:'购票界面偶现闪退',reporter:'孙磊',reportTime:'2026-06-11 15:45',status:'已完成',assignee:'陈明',timeline:[{time:'2026-06-11 15:45',user:'孙磊',action:'登记故障',note:''},{time:'2026-06-11 16:20',user:'系统',action:'已分配给 陈明',note:''},{time:'2026-06-12 11:00',user:'陈明',action:'提交维修记录',note:'更新软件版本，修复内存泄漏'},{time:'2026-06-12 14:00',user:'张伟',action:'验收通过',note:''}]},
-  {fid:'GZ-009',deviceId:'SB-004',type:'硬件故障',urgency:'轻微',desc:'3号扬声器有杂音',reporter:'李娜',reportTime:'2026-06-09 10:30',status:'已完成',assignee:'赵刚',timeline:[{time:'2026-06-09 10:30',user:'李娜',action:'登记故障',note:''},{time:'2026-06-09 11:00',user:'系统',action:'已分配给 赵刚',note:''},{time:'2026-06-10 15:00',user:'赵刚',action:'提交维修记录',note:'更换扬声器单元'},{time:'2026-06-11 09:00',user:'张伟',action:'验收通过',note:''}]},
-  {fid:'GZ-010',deviceId:'SB-011',type:'软件故障',urgency:'一般',desc:'数据采集模块通讯超时',reporter:'王磊',reportTime:'2026-06-15 08:20',status:'待处理',timeline:[{time:'2026-06-15 08:20',user:'王磊',action:'登记故障',note:'重启后可恢复但频繁发生'}]},
-  {fid:'GZ-011',deviceId:'SB-005',type:'硬件故障',urgency:'轻微',desc:'进出口指示灯闪烁不稳定',reporter:'周婷',reportTime:'2026-06-13 14:10',status:'处理中',assignee:'赵刚',timeline:[{time:'2026-06-13 14:10',user:'周婷',action:'登记故障',note:''},{time:'2026-06-13 15:00',user:'系统',action:'已分配给 赵刚',note:''}]},
-  {fid:'GZ-012',deviceId:'SB-009',type:'软件故障',urgency:'一般',desc:'找零功能偶尔失灵',reporter:'陈芳',reportTime:'2026-06-14 16:50',status:'待验收',assignee:'王磊',timeline:[{time:'2026-06-14 16:50',user:'陈芳',action:'登记故障',note:''},{time:'2026-06-15 09:00',user:'系统',action:'已分配给 王磊',note:''},{time:'2026-06-16 11:30',user:'王磊',action:'提交维修记录',note:'校准找零机械臂参数'}]},
-  {fid:'GZ-013',deviceId:'SB-002',type:'硬件故障',urgency:'紧急',desc:'电机异响严重',reporter:'赵磊',reportTime:'2026-06-06 09:00',status:'已完成',assignee:'李强',timeline:[{time:'2026-06-06 09:00',user:'赵磊',action:'登记故障',note:''},{time:'2026-06-06 09:30',user:'系统',action:'已分配给 李强',note:''},{time:'2026-06-08 16:00',user:'李强',action:'提交维修记录',note:'更换轴承和润滑'},{time:'2026-06-09 10:00',user:'张伟',action:'验收通过',note:''}]},
-  {fid:'GZ-014',deviceId:'SB-006',type:'软件故障',urgency:'轻微',desc:'滚动字幕偶尔卡顿',reporter:'李娜',reportTime:'2026-06-16 10:00',status:'待处理',timeline:[{time:'2026-06-16 10:00',user:'李娜',action:'登记故障',note:''}]},
-  {fid:'GZ-015',deviceId:'SB-012',type:'硬件故障',urgency:'一般',desc:'麦克风底噪过大',reporter:'孙磊',reportTime:'2026-06-15 11:00',status:'处理中',assignee:'陈明',timeline:[{time:'2026-06-15 11:00',user:'孙磊',action:'登记故障',note:''},{time:'2026-06-15 14:00',user:'系统',action:'已分配给 陈明',note:''}]}
+// Usage records
+const USAGE_RECORDS = [
+  {id:1,deviceId:'PE00556',date:'2026-06-17',duration:2,person:'王建国',classGroup:'机车2024-1班',subject:'电力机车操纵实训',status:'正常',detail:'学员完成J6类电力机车起车、运行、停车全流程操作，各项指标正常。',remark:''},
+  {id:2,deviceId:'PE00556',date:'2026-06-16',duration:3,person:'李小明',classGroup:'机车2024-2班',subject:'J6资格考试模拟',status:'正常',detail:'模拟考试12人参加，平均分82分，最高95分。',remark:''},
+  {id:3,deviceId:'PE00623',date:'2026-06-17',duration:4,person:'张伟',classGroup:'动车2024-1班',subject:'CRH380A运行操纵实训',status:'正常',detail:'高速区段运行操纵练习，重点训练限速区间处理。',remark:''},
+  {id:4,deviceId:'PE00623',date:'2026-06-15',duration:2.5,person:'陈丽',classGroup:'动车2024-1班',subject:'动车组应急处置实训',status:'异常',detail:'运行中第2工位显示器出现闪屏，已记录故障。训练改为单工位进行。',remark:'已报修'},
+  {id:5,deviceId:'PE00701',date:'2026-06-14',duration:1.5,person:'王芳',classGroup:'机车2023-3班',subject:'HXD1操纵基础',status:'正常',detail:'基础操纵训练，学员熟悉各操纵手柄功能。',remark:''},
+  {id:6,deviceId:'PE00701',date:'2026-06-12',duration:2,person:'赵刚',classGroup:'机车2024-1班',subject:'电力机车故障处理',status:'异常',detail:'训练过程中液压系统压力异常波动，暂停训练排查。',remark:'已报修处理'},
+  {id:7,deviceId:'PE00802',date:'2026-06-16',duration:3,person:'刘洋',classGroup:'车辆2024-1班',subject:'转向架分解组装实训',status:'正常',detail:'4组学员完成转向架分解组装全流程，用时均在标准内。',remark:''},
+  {id:8,deviceId:'PE00802',date:'2026-06-13',duration:2,person:'刘洋',classGroup:'车辆2024-2班',subject:'轴承检修实训',status:'正常',detail:'轴承拆装检修实训，重点讲解游隙测量方法。',remark:''},
+  {id:9,deviceId:'PE00915',date:'2026-06-17',duration:2,person:'赵刚',classGroup:'信号2024-1班',subject:'6502联锁操作实训',status:'正常',detail:'进路排列、信号开放、道岔转换全流程训练。',remark:''},
+  {id:10,deviceId:'PE00915',date:'2026-06-14',duration:3,person:'赵刚',classGroup:'信号2024-2班',subject:'联锁故障分析',status:'正常',detail:'模拟继电器故障场景，学员分组排查。',remark:''},
+  {id:11,deviceId:'PE01001',date:'2026-06-16',duration:1.5,person:'陈静',classGroup:'客运2024-1班',subject:'客运服务礼仪',status:'正常',detail:'站台引导、问询服务、特殊旅客服务等场景模拟。',remark:''},
+  {id:12,deviceId:'PE01001',date:'2026-06-15',duration:2,person:'陈静',classGroup:'客运2024-2班',subject:'旅客投诉处理',status:'正常',detail:'情景模拟旅客投诉场景，考核沟通技巧和处理流程。',remark:''},
+  {id:13,deviceId:'PE01103',date:'2026-06-15',duration:4,person:'刘强',classGroup:'安全2024-1班',subject:'火灾应急疏散演练',status:'正常',detail:'模拟车站火灾场景，50人参与疏散演练，用时3分12秒全部撤离。',remark:'优秀'},
+  {id:14,deviceId:'PE01103',date:'2026-06-11',duration:3,person:'刘强',classGroup:'安全2024-2班',subject:'地震应急响应',status:'正常',detail:'模拟地震场景应急响应训练，包含预警、避险、疏散全流程。',remark:''},
+  {id:15,deviceId:'PE01310',date:'2026-06-17',duration:2,person:'周琳',classGroup:'安全2024-1班',subject:'安检图像识别训练',status:'正常',detail:'X光图像违禁品识别训练，正确率平均87%。',remark:''},
+  {id:16,deviceId:'PE01310',date:'2026-06-14',duration:1.5,person:'周琳',classGroup:'安全2024-2班',subject:'安检操机实训',status:'正常',detail:'安检机操作流程训练，含开机自检、参数设置、图像判读。',remark:''},
+  {id:17,deviceId:'PE00556',date:'2026-06-13',duration:2,person:'王建国',classGroup:'机车2024-1班',subject:'电力机车非正常行车',status:'正常',detail:'非正常行车条件下的操纵方法训练。',remark:''},
+  {id:18,deviceId:'PE00623',date:'2026-06-12',duration:3.5,person:'张伟',classGroup:'动车2024-2班',subject:'动车组日常检查',status:'正常',detail:'出库前检查流程实训，含车下走行部、车上客室设备检查。',remark:''},
+  {id:19,deviceId:'PE01208',date:'2026-06-16',duration:2,person:'李明',classGroup:'机车2023-3班',subject:'DF4B机车操纵',status:'异常',detail:'操纵中模拟画面出现卡顿延迟，重启后恢复。运行日志已保存。',remark:'需检查显卡'},
+  {id:20,deviceId:'PE01208',date:'2026-06-11',duration:1.5,person:'李明',classGroup:'机车2024-1班',subject:'内燃机车基础操纵',status:'正常',detail:'基础起车、加速、制动操纵训练。',remark:''},
+  {id:21,deviceId:'PE00933',date:'2026-06-10',duration:2.5,person:'赵刚',classGroup:'信号2024-1班',subject:'CTCS-2列控操作',status:'正常',detail:'列控系统基本操作训练，含等级转换、临时限速等。',remark:''},
+  {id:22,deviceId:'PE01052',date:'2026-06-09',duration:1,person:'陈静',classGroup:'客运2024-1班',subject:'票务系统操作',status:'正常',detail:'验收前试用，基本功能正常。',remark:'验收测试'}
 ];
 
-const cycleDays={'每周':7,'每月':30,'每季度':90,'每半年':180,'每年':365};
-const maintPlans=[
-  {planId:'MP-001',deviceId:'SB-001',type:'定期保养',cycle:'每月',content:'清洁触摸屏、检查打印模块、校准硬币识别器',person:'赵刚',lastDate:'2026-05-20',nextDate:'2026-06-19'},
-  {planId:'MP-002',deviceId:'SB-002',type:'定期保养',cycle:'每季度',content:'检查电机、润滑传动部件、校准力矩参数',person:'李强',lastDate:'2026-04-15',nextDate:'2026-07-14'},
-  {planId:'MP-003',deviceId:'SB-003',type:'定期保养',cycle:'每月',content:'清洁传送带、检查X光管、校准图像系统',person:'周婷',lastDate:'2026-05-01',nextDate:'2026-05-31'},
-  {planId:'MP-004',deviceId:'SB-004',type:'日常保养',cycle:'每周',content:'检查扬声器、测试各分区播放、清洁面板',person:'孙磊',lastDate:'2026-06-14',nextDate:'2026-06-21'},
-  {planId:'MP-005',deviceId:'SB-005',type:'定期保养',cycle:'每季度',content:'检查翼门机构、清洁传感器、更新固件',person:'赵刚',lastDate:'2026-03-10',nextDate:'2026-06-08'},
-  {planId:'MP-006',deviceId:'SB-006',type:'专项保养',cycle:'每半年',content:'全面检测LED模组、更换散热风扇、校准亮度',person:'李强',lastDate:'2026-01-15',nextDate:'2026-07-15'},
-  {planId:'MP-007',deviceId:'SB-007',type:'定期保养',cycle:'每月',content:'检查烟雾发生器、声光系统、应急指示灯',person:'周婷',lastDate:'2026-05-10',nextDate:'2026-06-09'},
-  {planId:'MP-008',deviceId:'SB-008',type:'定期保养',cycle:'每季度',content:'检查门体运动机构、安全传感器、防夹检测',person:'孙磊',lastDate:'2026-05-01',nextDate:'2026-08-01'},
-  {planId:'MP-009',deviceId:'SB-009',type:'日常保养',cycle:'每周',content:'清洁屏幕、检查出票口、测试支付模块',person:'赵刚',lastDate:'2026-06-10',nextDate:'2026-06-17'},
-  {planId:'MP-010',deviceId:'SB-010',type:'定期保养',cycle:'每月',content:'清洁传感器、检查翼门弹簧、润滑轴承',person:'李强',lastDate:'2026-05-25',nextDate:'2026-06-24'}
+// Fault records
+const FAULTS = [
+  {id:1,deviceId:'PE00701',type:'硬件故障',urgency:'紧急',desc:'液压系统压力异常波动，训练中突然失压',reporter:'赵刚',reportTime:'2026-06-12 14:30',status:'待处理',assignee:'',photos:1,timeline:[{time:'2026-06-12 14:30',content:'赵刚报修：训练中液压系统压力异常波动'}]},
+  {id:2,deviceId:'PE00623',type:'显示故障',urgency:'一般',desc:'第2工位显示器闪屏，偶发',reporter:'陈丽',reportTime:'2026-06-15 16:20',status:'处理中',assignee:'技术部-孙工',photos:2,timeline:[{time:'2026-06-15 16:20',content:'陈丽报修：第2工位显示器闪屏'},{time:'2026-06-15 17:00',content:'已分配给技术部-孙工处理'},{time:'2026-06-16 09:30',content:'孙工到场检查，初步判断显卡驱动问题，正在处理'}]},
+  {id:3,deviceId:'PE01208',type:'软件故障',urgency:'一般',desc:'模拟画面卡顿延迟，重启后恢复但反复出现',reporter:'李明',reportTime:'2026-06-16 15:00',status:'待处理',assignee:'',photos:0,timeline:[{time:'2026-06-16 15:00',content:'李明报修：模拟画面卡顿延迟'}]},
+  {id:4,deviceId:'PE00556',type:'传感器故障',urgency:'一般',desc:'速度传感器偶尔读数跳变',reporter:'王建国',reportTime:'2026-06-10 10:00',status:'待验收',assignee:'技术部-马工',photos:1,timeline:[{time:'2026-06-10 10:00',content:'王建国报修：速度传感器读数跳变'},{time:'2026-06-10 14:00',content:'分配给技术部-马工'},{time:'2026-06-11 09:00',content:'马工检查，更换传感器连接线'},{time:'2026-06-11 16:00',content:'维修完成，提交验收'}]},
+  {id:5,deviceId:'PE00802',type:'机械故障',urgency:'紧急',desc:'液压升降台异响，升降速度不均匀',reporter:'刘洋',reportTime:'2026-05-28 11:00',status:'已完成',assignee:'设备厂家-中车株洲',photos:3,timeline:[{time:'2026-05-28 11:00',content:'刘洋报修：液压升降台异响'},{time:'2026-05-28 14:00',content:'联系厂家中车株洲'},{time:'2026-05-30 09:00',content:'厂家工程师到场检修'},{time:'2026-05-31 17:00',content:'更换液压油缸密封圈，维修完成'},{time:'2026-06-01 10:00',content:'验收通过，运行正常'}]},
+  {id:6,deviceId:'PE00915',type:'网络故障',urgency:'一般',desc:'3号和4号工位网络连接不稳定',reporter:'赵刚',reportTime:'2026-06-05 09:30',status:'已完成',assignee:'网络运维-周工',photos:0,timeline:[{time:'2026-06-05 09:30',content:'赵刚报修：3号4号工位网络不稳'},{time:'2026-06-05 10:00',content:'分配给网络运维-周工'},{time:'2026-06-05 14:00',content:'更换交换机端口和网线'},{time:'2026-06-05 16:00',content:'测试正常，验收通过'}]},
+  {id:7,deviceId:'PE01103',type:'软件故障',urgency:'一般',desc:'烟雾场景渲染偶尔崩溃',reporter:'刘强',reportTime:'2026-06-03 15:00',status:'已完成',assignee:'捷安高科-研发',photos:0,timeline:[{time:'2026-06-03 15:00',content:'刘强报修：烟雾渲染崩溃'},{time:'2026-06-04 10:00',content:'远程排查，升级渲染引擎版本'},{time:'2026-06-05 09:00',content:'测试通过'}]},
+  {id:8,deviceId:'PE00701',type:'电气故障',urgency:'紧急',desc:'主控柜电源模块发热严重',reporter:'张伟',reportTime:'2026-05-20 08:00',status:'已完成',assignee:'技术部-马工',photos:2,timeline:[{time:'2026-05-20 08:00',content:'张伟报修：主控柜电源发热'},{time:'2026-05-20 09:00',content:'紧急断电处理'},{time:'2026-05-20 14:00',content:'更换电源模块'},{time:'2026-05-21 10:00',content:'验收通过'}]},
+  {id:9,deviceId:'PE01001',type:'硬件故障',urgency:'一般',desc:'6号终端平板触屏失灵',reporter:'陈静',reportTime:'2026-06-08 13:00',status:'已完成',assignee:'IT运维-小李',photos:1,timeline:[{time:'2026-06-08 13:00',content:'陈静报修：6号平板触屏失灵'},{time:'2026-06-08 15:00',content:'更换备用平板'},{time:'2026-06-08 16:00',content:'验收通过'}]},
+  {id:10,deviceId:'PE00623',type:'机械故障',urgency:'一般',desc:'座椅液压杆下沉',reporter:'张伟',reportTime:'2026-05-15 10:00',status:'已完成',assignee:'后勤-老王',photos:0,timeline:[{time:'2026-05-15 10:00',content:'报修：座椅液压杆下沉'},{time:'2026-05-16 09:00',content:'更换液压杆'},{time:'2026-05-16 14:00',content:'验收通过'}]},
+  {id:11,deviceId:'PE01208',type:'硬件故障',urgency:'一般',desc:'操纵杆回位弹簧松弛',reporter:'李明',reportTime:'2026-06-01 09:00',status:'处理中',assignee:'技术部-孙工',photos:1,timeline:[{time:'2026-06-01 09:00',content:'李明报修：操纵杆回位弹簧松弛'},{time:'2026-06-02 10:00',content:'分配给孙工，需订购配件'},{time:'2026-06-10 14:00',content:'配件到货，等待安排维修'}]},
+  {id:12,deviceId:'PE00933',type:'软件故障',urgency:'一般',desc:'列控数据加载缓慢',reporter:'赵刚',reportTime:'2026-06-07 11:00',status:'已完成',assignee:'卡斯柯-远程支持',photos:0,timeline:[{time:'2026-06-07 11:00',content:'赵刚报修：数据加载慢'},{time:'2026-06-07 15:00',content:'厂家远程优化数据库'},{time:'2026-06-08 09:00',content:'验收通过'}]},
+  {id:13,deviceId:'PE01310',type:'传感器故障',urgency:'一般',desc:'传送带速度传感器偏差',reporter:'周琳',reportTime:'2026-06-13 14:00',status:'待验收',assignee:'同方威视-售后',photos:1,timeline:[{time:'2026-06-13 14:00',content:'周琳报修：传送带速度偏差'},{time:'2026-06-14 10:00',content:'厂家远程指导校准'},{time:'2026-06-15 09:00',content:'校准完成，待验收'}]},
+  {id:14,deviceId:'PE00556',type:'软件故障',urgency:'一般',desc:'考试成绩统计模块偶发计算错误',reporter:'王建国',reportTime:'2026-05-25 16:00',status:'已完成',assignee:'捷安高科-研发',photos:0,timeline:[{time:'2026-05-25 16:00',content:'报修：成绩计算错误'},{time:'2026-05-26 10:00',content:'研发排查，修复Bug'},{time:'2026-05-27 09:00',content:'验证通过'}]},
+  {id:15,deviceId:'PE01155',type:'硬件故障',urgency:'一般',desc:'2号模拟火源LED灯珠损坏',reporter:'刘强',reportTime:'2026-06-06 10:00',status:'处理中',assignee:'技术部-马工',photos:1,timeline:[{time:'2026-06-06 10:00',content:'刘强报修：LED灯珠损坏'},{time:'2026-06-06 14:00',content:'分配给马工，需采购灯珠'}]}
 ];
 
-const maintRecords=[
-  {deviceId:'SB-001',date:'2026-05-20',person:'赵刚',summary:'月度定期保养',result:'正常',detail:'清洁触摸屏、检查打印模块纸路通畅、硬币识别器校准完成',parts:'',remark:'一切正常'},
-  {deviceId:'SB-001',date:'2026-04-20',person:'赵刚',summary:'月度定期保养',result:'需关注',detail:'触摸屏边缘响应略迟钝',parts:'',remark:'建议下次更换触摸膜'},
-  {deviceId:'SB-002',date:'2026-04-15',person:'李强',summary:'季度保养',result:'正常',detail:'电机运转正常、传动润滑、力矩校准',parts:'润滑脂 200ml',remark:''},
-  {deviceId:'SB-003',date:'2026-05-01',person:'周婷',summary:'月度保养',result:'需维修',detail:'传送带磨损严重，X光管功率下降',parts:'',remark:'建议更换传送带'},
-  {deviceId:'SB-004',date:'2026-06-14',person:'孙磊',summary:'周度检查',result:'正常',detail:'各分区扬声器正常、面板已清洁',parts:'',remark:''},
-  {deviceId:'SB-005',date:'2026-03-10',person:'赵刚',summary:'季度保养',result:'正常',detail:'翼门机构正常、传感器清洁、固件已更新',parts:'',remark:''},
-  {deviceId:'SB-007',date:'2026-05-10',person:'周婷',summary:'月度保养',result:'需关注',detail:'烟雾发生器加热速度变慢',parts:'',remark:'已记录，下月复查'},
-  {deviceId:'SB-009',date:'2026-06-10',person:'赵刚',summary:'周度检查',result:'正常',detail:'屏幕清洁、出票口通畅、支付模块正常',parts:'清洁布 x2',remark:''}
+// Maintenance plans
+const MAINT_PLANS = [
+  {id:1,deviceId:'PE00556',type:'定期',cycle:'每季度',content:'全面检查传感器、操纵部件、软件系统',responsible:'技术部-马工',nextDate:'2026-07-15',lastDate:'2026-04-15'},
+  {id:2,deviceId:'PE00623',type:'定期',cycle:'每月',content:'检查显示系统、操纵台、液压座椅',responsible:'技术部-孙工',nextDate:'2026-07-01',lastDate:'2026-06-01'},
+  {id:3,deviceId:'PE00802',type:'定期',cycle:'每季度',content:'液压系统检查、润滑保养、升降台校准',responsible:'设备厂家',nextDate:'2026-08-01',lastDate:'2026-05-01'},
+  {id:4,deviceId:'PE00915',type:'日常',cycle:'每周',content:'继电器触点检查、清洁',responsible:'赵刚',nextDate:'2026-06-22',lastDate:'2026-06-15'},
+  {id:5,deviceId:'PE01001',type:'日常',cycle:'每月',content:'终端设备清洁、系统更新',responsible:'IT运维-小李',nextDate:'2026-07-01',lastDate:'2026-06-01'},
+  {id:6,deviceId:'PE01103',type:'定期',cycle:'每半年',content:'烟雾发生器检修、场景系统全面测试',responsible:'中铁安全-售后',nextDate:'2026-09-15',lastDate:'2026-03-15'},
+  {id:7,deviceId:'PE01310',type:'定期',cycle:'每季度',content:'传送带校准、图像系统校正',responsible:'同方威视-售后',nextDate:'2026-08-01',lastDate:'2026-05-01'},
+  {id:8,deviceId:'PE00933',type:'专项',cycle:'一次性',content:'季度维护：全系统软件升级+硬件检查',responsible:'卡斯柯-工程师',nextDate:'2026-06-20',lastDate:'2026-03-20'},
+  {id:9,deviceId:'PE00623',type:'专项',cycle:'一次性',content:'显卡驱动升级及稳定性测试',responsible:'技术部-孙工',nextDate:'2026-06-25',lastDate:''},
+  {id:10,deviceId:'PE01208',type:'定期',cycle:'每季度',content:'全面检查操纵系统、显示系统、音响系统',responsible:'技术部-孙工',nextDate:'2026-07-20',lastDate:'2026-01-20'}
+];
+// Note: PE00701 and PE01155 have NO maintenance plan - triggers prediction alert
+// PE01052 also has no plan (new device)
+
+const MAINT_HISTORY = [
+  {id:1,deviceId:'PE00556',date:'2026-04-15',type:'定期',content:'传感器校准、操纵手柄润滑、系统日志清理',parts:'传感器连接线x1',person:'马工',result:'正常',photos:2},
+  {id:2,deviceId:'PE00623',date:'2026-06-01',type:'定期',content:'三联屏校色、操纵台按键检查、座椅液压检查',parts:'无',person:'孙工',result:'需关注',photos:1},
+  {id:3,deviceId:'PE00802',date:'2026-05-01',type:'定期',content:'液压油更换、升降台校准、安全限位检查',parts:'液压油20L',person:'厂家工程师',result:'正常',photos:3},
+  {id:4,deviceId:'PE00915',date:'2026-06-15',type:'日常',content:'继电器触点清洁、接线检查',parts:'无',person:'赵刚',result:'正常',photos:0},
+  {id:5,deviceId:'PE01001',date:'2026-06-01',type:'日常',content:'10台平板清洁消毒、系统更新、软件检查',parts:'无',person:'IT-小李',result:'正常',photos:0},
+  {id:6,deviceId:'PE01103',date:'2026-03-15',type:'定期',content:'烟雾发生器清洗、电路检查、场景测试',parts:'烟油2L',person:'厂家售后',result:'正常',photos:2},
+  {id:7,deviceId:'PE01310',date:'2026-05-01',type:'定期',content:'传送带张力调整、图像校正',parts:'无',person:'厂家售后',result:'正常',photos:1},
+  {id:8,deviceId:'PE01208',date:'2026-01-20',type:'定期',content:'全面检查，发现操纵杆弹簧老化，显卡散热风扇噪音大',parts:'散热风扇x1',person:'孙工',result:'需维修',photos:2}
 ];
 
-let currentPage=1,pageSize=10,sortField=null,sortDir=null,quickFilter='all';
-let currentDrawerDevice=null,currentReworkFault=null,currentExecMaintDevice=null;
+// Archive files
+const ARCHIVES = [
+  {id:1,deviceId:'PE00556',fileType:'说明书',fileName:'J6考试系统操作手册V3.2.pdf',uploadDate:'2024-03-20',uploader:'张伟'},
+  {id:2,deviceId:'PE00556',fileType:'保修卡',fileName:'PE00556保修凭证.pdf',uploadDate:'2024-03-15',uploader:'采购部'},
+  {id:3,deviceId:'PE00623',fileType:'说明书',fileName:'CRH380A模拟驾驶系统技术手册.pdf',uploadDate:'2023-08-15',uploader:'李明'},
+  {id:4,deviceId:'PE00623',fileType:'维修报告',fileName:'CRH380A-2026年6月座椅液压杆维修报告.pdf',uploadDate:'2026-05-17',uploader:'后勤-老王'},
+  {id:5,deviceId:'PE00802',fileType:'技术参数',fileName:'转向架检修装置技术参数表.xlsx',uploadDate:'2022-01-10',uploader:'王芳'},
+  {id:6,deviceId:'PE00802',fileType:'维修报告',fileName:'液压升降台维修报告-20260531.pdf',uploadDate:'2026-06-02',uploader:'中车株洲'},
+  {id:7,deviceId:'PE01103',fileType:'说明书',fileName:'应急疏散演练系统操作指南.pdf',uploadDate:'2023-09-20',uploader:'刘强'},
+  {id:8,deviceId:'PE01310',fileType:'保修卡',fileName:'PE01310安检系统保修凭证.pdf',uploadDate:'2025-02-05',uploader:'采购部'},
+  {id:9,deviceId:'PE00915',fileType:'技术参数',fileName:'6502联锁系统接线图集.pdf',uploadDate:'2024-06-05',uploader:'赵刚'},
+  {id:10,deviceId:'PE01208',fileType:'维修报告',fileName:'DF4B-2026年1月全面检查报告.pdf',uploadDate:'2026-01-22',uploader:'孙工'}
+];
 
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',2600)}
-function today(){return new Date().toISOString().slice(0,10)}
-function now(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+// Sync-able devices (not yet synced)
+const SYNC_CANDIDATES = [
+  {id:'PE01401',name:'铁路货运装卸模拟系统',location:'仿真基地/一楼西侧'},
+  {id:'PE01502',name:'接触网作业车模拟驾驶装置',location:'仿真基地/三楼'},
+  {id:'PE01603',name:'调车作业模拟实训系统',location:'仿真基地/二楼西区'}
+];
 
-function getDeviceFaults(did){return faults.filter(f=>f.deviceId===did)}
-function getActiveFaults(did){return faults.filter(f=>f.deviceId===did&&f.status!=='已完成')}
-function getDevicePlans(did){return maintPlans.filter(p=>p.deviceId===did)}
-function getDeviceRecords(did){return maintRecords.filter(r=>r.deviceId===did).sort((a,b)=>b.date.localeCompare(a.date))}
+// ==================== STATE ====================
+let state = {
+  devices: JSON.parse(JSON.stringify(DEVICES)),
+  usageRecords: JSON.parse(JSON.stringify(USAGE_RECORDS)),
+  faults: JSON.parse(JSON.stringify(FAULTS)),
+  maintPlans: JSON.parse(JSON.stringify(MAINT_PLANS)),
+  maintHistory: JSON.parse(JSON.stringify(MAINT_HISTORY)),
+  archives: JSON.parse(JSON.stringify(ARCHIVES)),
+  syncCandidates: JSON.parse(JSON.stringify(SYNC_CANDIDATES)),
+  quickFilter: 'all',
+  filters: {deviceType:'',location:'',system:'',onlineStatus:'',health:'',maintStatus:'',lifecycle:'',keyword:''},
+  sort: {field:'id',dir:'asc'},
+  page: 1,
+  pageSize: 10,
+  openDeviceId: null
+};
 
-function getMaintStatus(did){
-  const plans=getDevicePlans(did);if(!plans.length)return'无计划';
-  const t=today();
-  for(const p of plans){
-    if(p.nextDate<=t)return'已逾期';
-  }
-  for(const p of plans){
-    const d=new Date(p.nextDate),n=new Date(t);
-    if((d-n)/(86400000)<=7)return'即将到期';
-  }
-  return'正常';
+// ==================== HELPERS ====================
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => t.className = 'toast', 2000);
 }
 
-function healthColor(h){return h>=80?'var(--success)':h>=60?'var(--warning)':'var(--danger)'}
-function statusClass(s){return s==='在线'?'status-online':s==='离线'?'status-offline':'status-maintenance'}
-function maintTagClass(s){return s==='正常'?'tag-green':s==='即将到期'?'tag-orange':s==='已逾期'?'tag-red':'tag-gray'}
-function urgencyTagClass(u){return u==='紧急'?'tag-red':u==='一般'?'tag-orange':'tag-gray'}
-function faultStatusClass(s){return s==='已完成'?'tag-green':s==='待处理'?'tag-orange':s==='需返工'?'tag-red':'tag-blue'}
-function resultTagClass(r){return r==='正常'?'tag-green':r==='需关注'?'tag-orange':'tag-red'}
+function getDeviceFaults(deviceId) { return state.faults.filter(f => f.deviceId === deviceId); }
+function getDeviceOpenFaults(deviceId) { return state.faults.filter(f => f.deviceId === deviceId && f.status !== '已完成'); }
+function getDeviceUsage(deviceId) { return state.usageRecords.filter(u => u.deviceId === deviceId).sort((a,b) => b.date.localeCompare(a.date)); }
+function getDevicePlans(deviceId) { return state.maintPlans.filter(p => p.deviceId === deviceId); }
+function getDeviceHistory(deviceId) { return state.maintHistory.filter(h => h.deviceId === deviceId).sort((a,b) => b.date.localeCompare(a.date)); }
+function getDeviceArchives(deviceId) { return state.archives.filter(a => a.deviceId === deviceId); }
 
-function updateStats(){
-  document.getElementById('s-total').textContent=devices.length;
-  document.getElementById('s-online').textContent=devices.filter(d=>d.status==='在线').length;
-  const faultDevices=new Set(faults.filter(f=>f.status!=='已完成').map(f=>f.deviceId));
-  document.getElementById('s-fault').textContent=faultDevices.size;
-  const maintDevices=devices.filter(d=>{const s=getMaintStatus(d.id);return s==='即将到期'||s==='已逾期'});
-  document.getElementById('s-maint').textContent=maintDevices.length;
-  document.getElementById('badge-fault').textContent=faultDevices.size;
-  document.getElementById('badge-maint').textContent=maintDevices.length;
+function getMaintStatus(device) {
+  const plans = getDevicePlans(device.id);
+  if (plans.length === 0) return '无计划';
+  const today = '2026-06-17';
+  const soon = '2026-06-24'; // 7 days
+  let hasOverdue = false, hasSoon = false;
+  plans.forEach(p => {
+    if (p.nextDate < today) hasOverdue = true;
+    else if (p.nextDate <= soon) hasSoon = true;
+  });
+  if (hasOverdue) return '已逾期';
+  if (hasSoon) return '即将到期';
+  return '正常';
 }
 
-function getFilteredDevices(){
-  let list=[...devices];
-  const area=document.getElementById('f-area').value;
-  const status=document.getElementById('f-status').value;
-  const health=document.getElementById('f-health').value;
-  const kw=document.getElementById('f-keyword').value.toLowerCase();
-  if(area)list=list.filter(d=>d.area===area);
-  if(status)list=list.filter(d=>d.status===status);
-  if(health==='high')list=list.filter(d=>d.health>=80);
-  else if(health==='mid')list=list.filter(d=>d.health>=60&&d.health<80);
-  else if(health==='low')list=list.filter(d=>d.health<60);
-  if(kw)list=list.filter(d=>(d.name+d.id+d.model).toLowerCase().includes(kw));
-  if(quickFilter==='fault')list=list.filter(d=>getActiveFaults(d.id).length>0);
-  if(quickFilter==='maint')list=list.filter(d=>{const s=getMaintStatus(d.id);return s==='即将到期'||s==='已逾期'});
-  if(sortField){
-    list.sort((a,b)=>{
-      let va,vb;
-      if(sortField==='id'){va=a.id;vb=b.id}
-      else if(sortField==='status'){const o={'在线':1,'维护中':2,'离线':3};va=o[a.status];vb=o[b.status]}
-      else if(sortField==='health'){va=a.health;vb=b.health}
-      if(va<vb)return sortDir==='asc'?-1:1;
-      if(va>vb)return sortDir==='asc'?1:-1;
-      return 0;
-    });
+function getHealthColor(h) {
+  if (h >= 80) return 'var(--success)';
+  if (h >= 60) return 'var(--warning)';
+  return 'var(--danger)';
+}
+
+function getLocationShort(loc) {
+  return loc.replace('捷安高科/','').replace('仿真基地/','');
+}
+
+function formatMoney(v) { return v.toFixed(2) + ' 万元'; }
+
+// ==================== FILTERING & SORTING ====================
+function getFilteredDevices() {
+  let list = [...state.devices];
+  const f = state.filters;
+  const qf = state.quickFilter;
+
+  // Quick filter
+  if (qf === 'fault') list = list.filter(d => getDeviceOpenFaults(d.id).length > 0);
+  else if (qf === 'maint') list = list.filter(d => { const s = getMaintStatus(d); return s === '即将到期' || s === '已逾期'; });
+  else if (qf === 'noplan') list = list.filter(d => getDevicePlans(d.id).length === 0);
+
+  // Advanced filters
+  if (f.deviceType) list = list.filter(d => d.deviceType === f.deviceType);
+  if (f.location) list = list.filter(d => d.location.includes(f.location));
+  if (f.system) list = list.filter(d => d.applicableSystem.includes(f.system));
+  if (f.onlineStatus) list = list.filter(d => d.onlineStatus === f.onlineStatus);
+  if (f.health) {
+    if (f.health === 'high') list = list.filter(d => d.health >= 80);
+    else if (f.health === 'mid') list = list.filter(d => d.health >= 60 && d.health < 80);
+    else list = list.filter(d => d.health < 60);
   }
+  if (f.maintStatus) list = list.filter(d => getMaintStatus(d) === f.maintStatus);
+  if (f.lifecycle) list = list.filter(d => d.lifecycle === f.lifecycle);
+  if (f.keyword) {
+    const kw = f.keyword.toLowerCase();
+    list = list.filter(d => d.id.toLowerCase().includes(kw) || d.name.toLowerCase().includes(kw) || d.shortName.toLowerCase().includes(kw));
+  }
+
+  // Sort
+  const { field, dir } = state.sort;
+  list.sort((a, b) => {
+    let va = a[field], vb = b[field];
+    if (field === 'health') { va = +va; vb = +vb; }
+    if (field === 'faultCount') { va = getDeviceOpenFaults(a.id).length; vb = getDeviceOpenFaults(b.id).length; }
+    if (typeof va === 'string') return dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    return dir === 'asc' ? va - vb : vb - va;
+  });
   return list;
 }
 
-function sortBy(field){
-  if(sortField===field){sortDir=sortDir==='asc'?'desc':sortDir==='desc'?null:'asc'}
-  else{sortField=field;sortDir='asc'}
-  if(!sortDir)sortField=null;
-  ['id','status','health'].forEach(f=>{document.getElementById('sort-'+f).innerHTML=f===sortField?(sortDir==='asc'?'&uarr;':'&darr;'):'&#8693;'});
-  currentPage=1;renderTable();
-}
-
-function setQuickFilter(f,btn){
-  quickFilter=f;currentPage=1;
-  document.querySelectorAll('.qf-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  applyFilters();
-}
-function resetFilters(){
-  document.getElementById('f-area').value='';document.getElementById('f-status').value='';
-  document.getElementById('f-health').value='';document.getElementById('f-keyword').value='';
-  quickFilter='all';document.querySelectorAll('.qf-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
-  currentPage=1;renderTable();
-}
-function applyFilters(){currentPage=1;renderTable()}
-
-function renderTable(){
-  const list=getFilteredDevices();
-  const total=list.length;
-  const pages=Math.max(1,Math.ceil(total/pageSize));
-  if(currentPage>pages)currentPage=pages;
-  const start=(currentPage-1)*pageSize;
-  const pageItems=list.slice(start,start+pageSize);
-  const tbody=document.getElementById('tableBody');
-  tbody.innerHTML=pageItems.map(d=>{
-    const af=getActiveFaults(d.id).length;
-    const ms=getMaintStatus(d.id);
-    const hc=healthColor(d.health);
-    return`<tr class="clickable" onclick="openDrawer('${d.id}')">
-      <td>${d.id}</td><td>${d.name}</td><td>${d.model}</td><td>${d.area}</td>
-      <td><span class="status-badge ${statusClass(d.status)}">${d.status}</span></td>
-      <td><span class="health-bar"><span class="health-fill" style="width:${d.health}%;background:${hc}"></span></span>${d.health}%</td>
-      <td style="color:${af?'var(--danger)':'#ccc'}">${af||'—'}</td>
-      <td><span class="tag ${maintTagClass(ms)}">${ms}</span></td>
-      <td onclick="event.stopPropagation()">
-        <button class="btn-link btn-sm" onclick="openDrawer('${d.id}')">详情</button>
-        <button class="btn-link btn-sm" onclick="openDeviceModal('${d.id}')">编辑</button>
-        <button class="btn-link btn-sm" onclick="openFaultModal('${d.id}')">报修</button>
-        <button class="btn-link btn-sm" onclick="openExecMaintModal('${d.id}')">保养</button>
-        <button class="btn-link btn-sm" style="color:var(--danger)" onclick="openDeleteConfirm('${d.id}')">删除</button>
-      </td></tr>`;
-  }).join('');
-  document.getElementById('pageInfo').textContent='共 '+total+' 条记录';
-  const pb=document.getElementById('pageBtns');
-  pb.innerHTML='';
-  for(let i=1;i<=pages;i++){const b=document.createElement('button');b.className='page-btn'+(i===currentPage?' active':'');b.textContent=i;b.onclick=()=>{currentPage=i;renderTable()};pb.appendChild(b)}
-  updateStats();
-}
-
-function openDrawer(did){
-  currentDrawerDevice=did;
-  const d=devices.find(x=>x.id===did);
-  document.getElementById('drawerTitle').textContent=d.name+' - '+d.id;
-  const body=document.getElementById('drawerBody');
-  const dFaults=getDeviceFaults(did).sort((a,b)=>b.reportTime.localeCompare(a.reportTime));
-  const dPlans=getDevicePlans(did);
-  const dRecords=getDeviceRecords(did);
-  const ms=getMaintStatus(did);
-  const hc=healthColor(d.health);
-  const years=((new Date()-new Date(d.purchaseDate))/31536000000).toFixed(1);
-
-  let html=`<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn btn-sm" onclick="openDeviceModal('${did}')">编辑设备</button><button class="btn btn-sm btn-danger" onclick="openDeleteConfirm('${did}')">删除设备</button></div>`;
-  html+=`<div class="collapse"><div class="collapse-head" onclick="toggleCollapse(this)">基本信息<span class="arrow down">&#9654;</span></div>
-  <div class="collapse-body open" style="background:#fafafa"><div class="info-grid">
-    <div class="info-item"><span class="lbl">设备编号</span><span class="val">${d.id}</span></div>
-    <div class="info-item"><span class="lbl">设备名称</span><span class="val">${d.name}</span></div>
-    <div class="info-item"><span class="lbl">设备型号</span><span class="val">${d.model}</span></div>
-    <div class="info-item"><span class="lbl">序列号</span><span class="val">${d.sn}</span></div>
-    <div class="info-item"><span class="lbl">所属区域</span><span class="val">${d.area}</span></div>
-    <div class="info-item"><span class="lbl">采购日期</span><span class="val">${d.purchaseDate}</span></div>
-    <div class="info-item"><span class="lbl">使用年限</span><span class="val">${years} 年</span></div>
-    <div class="info-item"><span class="lbl">在线状态</span><span class="val"><span class="status-badge ${statusClass(d.status)}">${d.status}</span></span></div>
-    <div class="info-item"><span class="lbl">健康度</span><span class="val"><span class="health-bar"><span class="health-fill" style="width:${d.health}%;background:${hc}"></span></span>${d.health}%</span></div>
-    <div class="info-item"><span class="lbl">设备类型</span><span class="val">${d.type}</span></div>
-  </div></div></div>`;
-
-  html+=`<div class="collapse"><div class="collapse-head" onclick="toggleCollapse(this)">故障记录 (${dFaults.length})<span class="arrow down">&#9654;</span>
-    <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();openFaultModal('${did}')" style="margin-left:auto">+ 报修</button></div>
-  <div class="collapse-body open">${dFaults.length?dFaults.map(f=>renderFaultCard(f)).join(''):'<div class="empty">暂无故障记录</div>'}</div></div>`;
-
-  html+=`<div class="collapse"><div class="collapse-head" onclick="toggleCollapse(this)">保养管理<span class="arrow down">&#9654;</span>
-    <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openMaintPlanModal('${did}')" style="margin-left:auto">+ 新增保养计划</button></div>
-  <div class="collapse-body open">`;
-
-  if(dPlans.length){
-    dPlans.forEach(p=>{
-      const pms=getMaintStatus(did);
-      const canExec=pms==='即将到期'||pms==='已逾期';
-      html+=`<div class="maint-plan">
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
-          <span class="tag tag-blue">${p.type}</span><span style="font-size:13px">周期：${p.cycle}</span>
-          <span class="tag ${maintTagClass(pms)}">${pms}</span></div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:6px">${p.content}</div>
-        <div style="font-size:12px;color:var(--text3)">责任人：${p.person} | 下次保养：${p.nextDate}</div>
-        <button class="btn btn-sm ${canExec?'btn-primary':''}" style="margin-top:8px" onclick="openExecMaintModal('${did}')" ${canExec?'':'disabled'}>执行保养</button></div>`;
-    });
-  }else{
-    html+='<div class="empty">暂未配置保养计划，请先新增</div>';
-  }
-
-  if(dRecords.length){
-    html+='<h4 style="margin:16px 0 8px;font-size:14px">保养历史记录</h4>';
-    dRecords.forEach((r,i)=>{
-      html+=`<div class="maint-record">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>${r.date}</strong> | ${r.person} | ${r.summary} <span class="tag ${resultTagClass(r.result)}">${r.result}</span></div>
-          <span class="fault-expand" onclick="this.parentElement.parentElement.querySelector('.maint-record-detail').classList.toggle('open');this.textContent=this.textContent==='展开详情'?'收起':'展开详情'">展开详情</span></div>
-        <div class="maint-record-detail"><p>${r.detail}</p>${r.parts?'<p>更换部件：'+r.parts+'</p>':''}${r.remark?'<p>备注：'+r.remark+'</p>':''}</div></div>`;
-    });
-  }
-  html+='</div></div>';
-  body.innerHTML=html;
-  document.getElementById('drawerOverlay').classList.add('open');
-  document.getElementById('drawer').classList.add('open');
-}
-
-function closeDrawer(){document.getElementById('drawerOverlay').classList.remove('open');document.getElementById('drawer').classList.remove('open');currentDrawerDevice=null}
-function toggleCollapse(el){el.nextElementSibling.classList.toggle('open');el.querySelector('.arrow').classList.toggle('down')}
-
-function renderFaultCard(f){
-  return`<div class="fault-card" id="fc-${f.fid}">
-    <div class="fault-top"><strong>${f.fid}</strong>
-      <span class="tag ${faultStatusClass(f.status)}">${f.status}</span>
-      <span class="tag ${urgencyTagClass(f.urgency)}">${f.urgency}</span>
-      <span class="tag tag-gray">${f.type}</span></div>
-    <div class="fault-desc">${f.desc}</div>
-    <div class="fault-meta"><span>登记人：${f.reporter}</span><span>${f.reportTime}</span></div>
-    <span class="fault-expand" onclick="toggleFaultDetail('${f.fid}')">展开处理流程</span>
-    <div class="fault-detail" id="fd-${f.fid}">${renderFaultDetail(f)}</div></div>`;
-}
-
-function toggleFaultDetail(fid){
-  const el=document.getElementById('fd-'+fid);
-  el.classList.toggle('open');
-  const card=document.getElementById('fc-'+fid);
-  const link=card.querySelector('.fault-expand');
-  link.textContent=el.classList.contains('open')?'收起处理流程':'展开处理流程';
-}
-
-function renderFaultDetail(f){
-  const stepsArr=['待处理','处理中','待验收','已完成'];
-  let ci=stepsArr.indexOf(f.status);
-  const isRework=f.status==='需返工';
-  if(isRework)ci=1;
-
-  let stepsHtml='<div class="steps">'+stepsArr.map((s,i)=>{
-    let cls='step';
-    if(i<ci)cls+=' done';
-    else if(i===ci){cls+=isRework?' rework':' current'}
-    const line=i<stepsArr.length-1?'<div class="step-line"></div>':'';
-    return`<div class="${cls}">${line}<div class="step-dot">${i+1}</div><div class="step-label">${s}</div></div>`;
-  }).join('')+'</div>';
-
-  let tlHtml='<div class="timeline">'+f.timeline.map(t=>{
-    const cls=t.action.includes('验收通过')?'green':t.action.includes('返工')?'red':'';
-    return`<div class="tl-item ${cls}"><div class="tl-time">${t.time} - ${t.user}</div><div class="tl-content">${t.action}</div>${t.note?'<div class="tl-note">'+t.note+'</div>':''}</div>`;
-  }).join('')+'</div>';
-
-  let actionHtml='';
-  if(f.status==='待处理'){
-    actionHtml=`<div class="action-area"><h4>分配维修人员</h4>
-      <div class="form-group"><select id="assign-${f.fid}">${repairers.map(r=>'<option>'+r+'</option>').join('')}</select></div>
-      <button class="btn btn-primary btn-sm" onclick="assignFault('${f.fid}')">分配</button></div>`;
-  }else if(f.status==='处理中'){
-    actionHtml=renderRepairForm(f.fid);
-  }else if(f.status==='待验收'){
-    actionHtml=`<div class="action-area"><h4>验收</h4>
-      <div style="display:flex;gap:8px"><button class="btn btn-success" onclick="acceptFault('${f.fid}')">验收通过</button>
-      <button class="btn btn-danger" onclick="openReworkModal('${f.fid}')">需返工</button></div></div>`;
-  }else if(f.status==='需返工'){
-    actionHtml=`<div style="background:#fff2f0;padding:10px;border-radius:6px;margin-bottom:10px;font-size:13px;color:var(--danger)">
-      <strong>验收未通过，需返工</strong><br>原因：${f.reworkReason||''}</div>`+renderRepairForm(f.fid);
-  }
-  return stepsHtml+tlHtml+actionHtml;
-}
-
-function renderRepairForm(fid){
-  return`<div class="action-area"><h4>提交维修记录</h4>
-    <div class="form-group"><label>处理措施 <span class="req">*</span></label><textarea id="repair-measure-${fid}" placeholder="请描述维修措施..."></textarea></div>
-    <div class="form-group"><label>更换部件</label><input id="repair-parts-${fid}" placeholder="非必填"></div>
-    <div class="form-group"><label>维修照片</label><div class="upload-zone" onclick="addPhoto('repair-photos-${fid}')">点击上传照片</div><div class="upload-preview" id="repair-photos-${fid}"></div></div>
-    <button class="btn btn-primary btn-sm" onclick="submitRepair('${fid}')">提交验收</button></div>`;
-}
-
-function assignFault(fid){
-  const f=faults.find(x=>x.fid===fid);
-  const person=document.getElementById('assign-'+fid).value;
-  f.status='处理中';f.assignee=person;
-  f.timeline.push({time:now(),user:'系统',action:'已分配给 '+person,note:''});
-  showToast('已分配给 '+person);refreshDrawer();renderTable();
-}
-function submitRepair(fid){
-  const f=faults.find(x=>x.fid===fid);
-  const el=document.getElementById('repair-measure-'+fid);
-  if(!el||!el.value){showToast('请填写处理措施');return}
-  f.status='待验收';
-  const parts=document.getElementById('repair-parts-'+fid)?.value||'';
-  f.timeline.push({time:now(),user:f.assignee||'维修人员',action:'提交维修记录',note:el.value+(parts?' | 更换：'+parts:'')});
-  showToast('已提交验收');refreshDrawer();renderTable();
-}
-function acceptFault(fid){
-  const f=faults.find(x=>x.fid===fid);
-  f.status='已完成';
-  f.timeline.push({time:now(),user:'当前用户',action:'验收通过',note:''});
-  showToast('验收通过');refreshDrawer();renderTable();
-}
-function openReworkModal(fid){currentReworkFault=fid;document.getElementById('rw-reason').value='';document.getElementById('reworkModal').classList.add('open')}
-function closeReworkModal(){document.getElementById('reworkModal').classList.remove('open')}
-function submitRework(){
-  const reason=document.getElementById('rw-reason').value;
-  if(!reason){showToast('请填写返工原因');return}
-  const f=faults.find(x=>x.fid===currentReworkFault);
-  f.status='需返工';f.reworkReason=reason;
-  f.timeline.push({time:now(),user:'当前用户',action:'验收未通过 - 需返工',note:reason});
-  closeReworkModal();showToast('已标记需返工');refreshDrawer();renderTable();
-}
-
-function refreshDrawer(){if(currentDrawerDevice)openDrawer(currentDrawerDevice)}
-
-function openFaultModal(did){
-  const sel=document.getElementById('fm-device');
-  sel.innerHTML=devices.map(d=>`<option value="${d.id}" ${d.id===did?'selected':''}>${d.id} ${d.name}</option>`).join('');
-  document.getElementById('fm-desc').value='';document.getElementById('fm-reporter').value='当前用户';
-  document.getElementById('fm-photos').innerHTML='';photoCounters['fm-photos']=0;
-  document.getElementById('faultModal').classList.add('open');
-}
-function closeFaultModal(){document.getElementById('faultModal').classList.remove('open')}
-function submitFault(){
-  const did=document.getElementById('fm-device').value;
-  const desc=document.getElementById('fm-desc').value;
-  if(!desc){showToast('请填写故障描述');return}
-  const urgency=document.querySelector('input[name="fm-urgency"]:checked').value;
-  const type=document.getElementById('fm-type').value;
-  const reporter=document.getElementById('fm-reporter').value;
-  faultIdCounter++;
-  const fid='GZ-'+String(faultIdCounter).padStart(3,'0');
-  faults.push({fid,deviceId:did,type,urgency,desc,reporter,reportTime:now(),status:'待处理',timeline:[{time:now(),user:reporter,action:'登记故障',note:desc}]});
-  const dev=devices.find(d=>d.id===did);
-  dev.health=Math.max(10,dev.health-Math.floor(Math.random()*8+3));
-  closeFaultModal();showToast('故障登记成功');renderTable();
-  openDrawer(did);
-}
-
-function openMaintPlanModal(did){
-  const sel=document.getElementById('mp-device');
-  sel.innerHTML=devices.map(d=>`<option value="${d.id}" ${d.id===did?'selected':''}>${d.id} ${d.name}</option>`).join('');
-  document.getElementById('mp-content').value='';document.getElementById('mp-remark').value='';
-  document.getElementById('maintPlanModal').classList.add('open');
-}
-function closeMaintPlanModal(){document.getElementById('maintPlanModal').classList.remove('open')}
-function toggleCustomDays(){document.getElementById('mp-custom-wrap').classList.toggle('hidden',document.getElementById('mp-cycle').value!=='自定义')}
-function submitMaintPlan(){
-  const did=document.getElementById('mp-device').value;
-  const content=document.getElementById('mp-content').value;
-  if(!content){showToast('请填写保养内容');return}
-  const type=document.querySelector('input[name="mp-type"]:checked').value;
-  const cycle=document.getElementById('mp-cycle').value;
-  const person=document.getElementById('mp-person').value;
-  const days=cycle==='自定义'?parseInt(document.getElementById('mp-custom-days').value):(cycleDays[cycle]||30);
-  const nd=new Date();nd.setDate(nd.getDate()+days);
-  maintPlans.push({planId:'MP-'+String(maintPlans.length+1).padStart(3,'0'),deviceId:did,type,cycle,content,person,lastDate:today(),nextDate:nd.toISOString().slice(0,10)});
-  closeMaintPlanModal();showToast('保养计划已创建');renderTable();
-  if(currentDrawerDevice===did)refreshDrawer();
-}
-
-function openExecMaintModal(did){
-  currentExecMaintDevice=did;
-  const d=devices.find(x=>x.id===did);
-  const plans=getDevicePlans(did);
-  document.getElementById('em-device').value=d.name;
-  document.getElementById('em-type').value=plans.length?plans[0].type:'定期保养';
-  document.getElementById('em-date').value=today();
-  document.getElementById('em-content').value=plans.length?plans[0].content:'';
-  document.getElementById('em-parts').value='';document.getElementById('em-remark').value='';
-  document.getElementById('em-photos').innerHTML='';photoCounters['em-photos']=0;
-  document.getElementById('execMaintModal').classList.add('open');
-}
-function closeExecMaintModal(){document.getElementById('execMaintModal').classList.remove('open')}
-function submitExecMaint(){
-  const content=document.getElementById('em-content').value;
-  if(!content){showToast('请填写保养内容');return}
-  const did=currentExecMaintDevice;
-  const person=document.getElementById('em-person').value;
-  const result=document.querySelector('input[name="em-result"]:checked').value;
-  const date=document.getElementById('em-date').value;
-  maintRecords.push({deviceId:did,date,person,summary:document.getElementById('em-type').value,result,detail:content,parts:document.getElementById('em-parts').value,remark:document.getElementById('em-remark').value});
-  const plans=getDevicePlans(did);
-  plans.forEach(p=>{
-    p.lastDate=date;
-    const days=p.cycle==='自定义'?30:(cycleDays[p.cycle]||30);
-    const nd=new Date(date);nd.setDate(nd.getDate()+days);
-    p.nextDate=nd.toISOString().slice(0,10);
-  });
-  closeExecMaintModal();showToast('保养记录已提交');
-  if(result==='需维修'&&confirm('保养结果为“需维修”，是否转为故障登记？')){openFaultModal(did)}
-  renderTable();
-  if(currentDrawerDevice===did)refreshDrawer();
-}
-
-let editingDeviceId=null;
-let deleteTargetId=null;
-
-function openDeviceModal(did){
-  editingDeviceId=did||null;
-  const title=document.getElementById('deviceModalTitle');
-  if(did){
-    title.textContent='编辑设备';
-    const d=devices.find(x=>x.id===did);
-    document.getElementById('dm-id').value=d.id;
-    document.getElementById('dm-id').readOnly=true;
-    document.getElementById('dm-name').value=d.name;
-    document.getElementById('dm-model').value=d.model;
-    document.getElementById('dm-sn').value=d.sn;
-    document.getElementById('dm-area').value=d.area;
-    document.getElementById('dm-type').value=d.type;
-    document.getElementById('dm-purchase').value=d.purchaseDate;
-    document.getElementById('dm-status').value=d.status;
-    document.getElementById('dm-health').value=d.health;
-  }else{
-    title.textContent='新增设备';
-    document.getElementById('dm-id').value='SB-'+String(devices.length+1).padStart(3,'0');
-    document.getElementById('dm-id').readOnly=false;
-    document.getElementById('dm-name').value='';
-    document.getElementById('dm-model').value='';
-    document.getElementById('dm-sn').value='SN'+new Date().getFullYear()+String(devices.length+1).padStart(4,'0');
-    document.getElementById('dm-area').value='实训区A';
-    document.getElementById('dm-type').value='';
-    document.getElementById('dm-purchase').value=today();
-    document.getElementById('dm-status').value='在线';
-    document.getElementById('dm-health').value=100;
-  }
-  document.getElementById('deviceModal').classList.add('open');
-}
-function closeDeviceModal(){document.getElementById('deviceModal').classList.remove('open');editingDeviceId=null}
-function submitDevice(){
-  const id=document.getElementById('dm-id').value.trim();
-  const name=document.getElementById('dm-name').value.trim();
-  const model=document.getElementById('dm-model').value.trim();
-  const sn=document.getElementById('dm-sn').value.trim();
-  const type=document.getElementById('dm-type').value.trim();
-  const purchase=document.getElementById('dm-purchase').value;
-  if(!id||!name||!model||!sn||!type||!purchase){showToast('请填写所有必填项');return}
-  if(!editingDeviceId&&devices.find(d=>d.id===id)){showToast('设备编号已存在');return}
-  const area=document.getElementById('dm-area').value;
-  const status=document.getElementById('dm-status').value;
-  const health=Math.min(100,Math.max(0,parseInt(document.getElementById('dm-health').value)||100));
-  if(editingDeviceId){
-    const d=devices.find(x=>x.id===editingDeviceId);
-    d.name=name;d.model=model;d.sn=sn;d.area=area;d.type=type;d.purchaseDate=purchase;d.status=status;d.health=health;
-    closeDeviceModal();showToast('设备信息已更新');
-    if(currentDrawerDevice===editingDeviceId)refreshDrawer();
-  }else{
-    devices.push({id,name,model,sn,area,purchaseDate:purchase,status,health,type});
-    closeDeviceModal();showToast('设备新增成功');
-  }
+// ==================== RENDER ====================
+function render() {
+  renderStats();
+  renderQuickFilters();
+  renderAdvancedFilters();
   renderTable();
 }
 
-function openDeleteConfirm(did){
-  deleteTargetId=did;
-  const d=devices.find(x=>x.id===did);
-  document.getElementById('deleteConfirmText').textContent='确定要删除设备 "'+d.name+'（'+d.id+'）" 吗？';
-  document.getElementById('deleteConfirmModal').classList.add('open');
-}
-function closeDeleteConfirm(){document.getElementById('deleteConfirmModal').classList.remove('open');deleteTargetId=null}
-function confirmDeleteDevice(){
-  const did=deleteTargetId;
-  const idx=devices.findIndex(d=>d.id===did);
-  if(idx>-1)devices.splice(idx,1);
-  for(let i=faults.length-1;i>=0;i--){if(faults[i].deviceId===did)faults.splice(i,1)}
-  for(let i=maintPlans.length-1;i>=0;i--){if(maintPlans[i].deviceId===did)maintPlans.splice(i,1)}
-  for(let i=maintRecords.length-1;i>=0;i--){if(maintRecords[i].deviceId===did)maintRecords.splice(i,1)}
-  closeDeleteConfirm();
-  if(currentDrawerDevice===did)closeDrawer();
-  showToast('设备已删除');renderTable();
+function renderStats() {
+  const d = state.devices;
+  const total = d.length;
+  const online = d.filter(x => x.onlineStatus === '在线').length;
+  const faultDevices = d.filter(x => getDeviceOpenFaults(x.id).length > 0).length;
+  const maintDue = d.filter(x => { const s = getMaintStatus(x); return s === '即将到期' || s === '已逾期'; }).length;
+  const noPlan = d.filter(x => getDevicePlans(x.id).length === 0).length;
+
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card" onclick="setQuickFilter('all')"><div class="label">设备总数</div><div class="value">${total}</div></div>
+    <div class="stat-card" onclick="setQuickFilter('all')"><div class="label">在线设备</div><div class="value green">${online}</div></div>
+    <div class="stat-card" onclick="setQuickFilter('fault')"><div class="label">故障设备</div><div class="value red">${faultDevices}</div></div>
+    <div class="stat-card" onclick="setQuickFilter('maint')"><div class="label">待保养</div><div class="value orange">${maintDue}</div></div>
+    <div class="stat-card" onclick="setQuickFilter('noplan')"><div class="label">无保养计划</div><div class="value purple">${noPlan}</div></div>
+    <div class="chart-card"><div id="healthChart" style="height:120px"></div></div>
+  `;
+  renderHealthChart();
 }
 
-let photoCounters={};
-function addPhoto(containerId){
-  if(!photoCounters[containerId])photoCounters[containerId]=0;
-  if(photoCounters[containerId]>=5)return;
-  photoCounters[containerId]++;
-  const c=document.getElementById(containerId);
-  const idx=photoCounters[containerId];
-  const div=document.createElement('div');div.className='upload-thumb';div.id=containerId+'-p'+idx;
-  div.innerHTML=`<span style="font-size:24px;color:#ccc">&#128247;</span><span>photo_${String(idx).padStart(3,'0')}.jpg</span><button class="del" onclick="event.stopPropagation();removePhoto('${containerId}','${containerId}-p${idx}')">&times;</button>`;
-  c.appendChild(div);
-}
-function removePhoto(containerId,elId){document.getElementById(elId).remove();photoCounters[containerId]--}
-
-function initChart(){
-  const chart=echarts.init(document.getElementById('healthChart'));
+function renderHealthChart() {
+  const el = document.getElementById('healthChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const days = ['6/11','6/12','6/13','6/14','6/15','6/16','6/17'];
+  const data = [81.5, 80.2, 82.1, 79.8, 80.5, 81.0, 80.8];
   chart.setOption({
-    title:{text:'设备健康度趋势',textStyle:{fontSize:13,fontWeight:500}},
-    tooltip:{trigger:'axis'},
-    grid:{left:40,right:16,top:30,bottom:20},
-    xAxis:{type:'category',data:['1月','2月','3月','4月','5月','6月'],axisLabel:{fontSize:11}},
-    yAxis:{type:'value',min:60,max:100,axisLabel:{fontSize:11,formatter:'{value}%'}},
-    series:[{data:[88,86,84,82,80,78],type:'line',smooth:true,lineStyle:{color:'#1677ff'},itemStyle:{color:'#1677ff'},areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(22,119,255,0.15)'},{offset:1,color:'rgba(22,119,255,0)'}]}}}]
+    title: { text: '设备平均健康度趋势', textStyle: { fontSize: 13, fontWeight: 500 }, left: 0, top: 0 },
+    grid: { left: 40, right: 10, top: 30, bottom: 20 },
+    xAxis: { type: 'category', data: days, axisLabel: { fontSize: 11 } },
+    yAxis: { type: 'value', min: 70, max: 100, axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { type: 'dashed' } } },
+    series: [{ type: 'line', data: data, smooth: true, lineStyle: { color: '#1677ff', width: 2 }, itemStyle: { color: '#1677ff' }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(22,119,255,0.15)' }, { offset: 1, color: 'rgba(22,119,255,0)' }] } } }],
+    tooltip: { trigger: 'axis', formatter: '{b}<br/>平均健康度: {c}%' }
   });
-  window.addEventListener('resize',()=>chart.resize());
+  window.addEventListener('resize', () => chart.resize());
 }
 
-document.addEventListener('DOMContentLoaded',()=>{renderTable();initChart()});
-document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')})});
+function renderQuickFilters() {
+  const d = state.devices;
+  const faultCount = d.filter(x => getDeviceOpenFaults(x.id).length > 0).length;
+  const maintCount = d.filter(x => { const s = getMaintStatus(x); return s === '即将到期' || s === '已逾期'; }).length;
+  const noPlanCount = d.filter(x => getDevicePlans(x.id).length === 0).length;
+  const qf = state.quickFilter;
+  document.getElementById('quickFilters').innerHTML = `
+    <button class="qf-btn ${qf==='all'?'active':''}" onclick="setQuickFilter('all')">全部设备</button>
+    <button class="qf-btn ${qf==='fault'?'active':''}" onclick="setQuickFilter('fault')">待处理故障${faultCount?`<span class="badge badge-red">${faultCount}</span>`:''}</button>
+    <button class="qf-btn ${qf==='maint'?'active':''}" onclick="setQuickFilter('maint')">待保养设备${maintCount?`<span class="badge badge-orange">${maintCount}</span>`:''}</button>
+    <button class="qf-btn ${qf==='noplan'?'active':''}" onclick="setQuickFilter('noplan')">无保养计划${noPlanCount?`<span class="badge badge-purple">${noPlanCount}</span>`:''}</button>
+  `;
+}
+
+function setQuickFilter(v) { state.quickFilter = v; state.page = 1; render(); }
+
+function renderAdvancedFilters() {
+  const f = state.filters;
+  const types = [...new Set(state.devices.map(d => d.deviceType))];
+  const locs = [...new Set(state.devices.map(d => {
+    const parts = d.location.split('/');
+    return parts.length > 1 ? parts[parts.length - 1] : d.location;
+  }))];
+  const systems = [...new Set(state.devices.map(d => d.applicableSystem))];
+
+  document.getElementById('advancedFilters').innerHTML = `
+    <div class="filter-row">
+      <select onchange="setFilter('deviceType',this.value)"><option value="">设备类型</option>${types.map(t=>`<option value="${t}" ${f.deviceType===t?'selected':''}>${t}</option>`).join('')}</select>
+      <select onchange="setFilter('location',this.value)"><option value="">安装位置</option>${locs.map(l=>`<option value="${l}" ${f.location===l?'selected':''}>${l}</option>`).join('')}</select>
+      <select onchange="setFilter('system',this.value)"><option value="">适用系统</option>${systems.map(s=>`<option value="${s}" ${f.system===s?'selected':''}>${s}</option>`).join('')}</select>
+      <select onchange="setFilter('onlineStatus',this.value)"><option value="">在线状态</option><option value="在线" ${f.onlineStatus==='在线'?'selected':''}>在线</option><option value="离线" ${f.onlineStatus==='离线'?'selected':''}>离线</option><option value="维护中" ${f.onlineStatus==='维护中'?'selected':''}>维护中</option></select>
+    </div>
+    <div class="filter-row">
+      <select onchange="setFilter('health',this.value)"><option value="">健康度</option><option value="high" ${f.health==='high'?'selected':''}>>=80% 良好</option><option value="mid" ${f.health==='mid'?'selected':''}>60-79% 一般</option><option value="low" ${f.health==='low'?'selected':''}>< 60% 偏低</option></select>
+      <select onchange="setFilter('maintStatus',this.value)"><option value="">保养状态</option><option value="正常" ${f.maintStatus==='正常'?'selected':''}>正常</option><option value="即将到期" ${f.maintStatus==='即将到期'?'selected':''}>即将到期</option><option value="已逾期" ${f.maintStatus==='已逾期'?'selected':''}>已逾期</option><option value="无计划" ${f.maintStatus==='无计划'?'selected':''}>无计划</option></select>
+      <select onchange="setFilter('lifecycle',this.value)"><option value="">生命周期</option><option value="在用" ${f.lifecycle==='在用'?'selected':''}>在用</option><option value="闲置" ${f.lifecycle==='闲置'?'selected':''}>闲置</option><option value="报废" ${f.lifecycle==='报废'?'selected':''}>报废</option><option value="待验收" ${f.lifecycle==='待验收'?'selected':''}>待验收</option></select>
+      <input type="text" placeholder="搜索编号/名称..." value="${f.keyword}" oninput="setFilter('keyword',this.value)" style="min-width:180px">
+      <button class="btn btn-sm" onclick="resetFilters()">重置</button>
+    </div>
+  `;
+}
+
+function setFilter(k, v) { state.filters[k] = v; state.page = 1; renderTable(); }
+function resetFilters() {
+  state.filters = {deviceType:'',location:'',system:'',onlineStatus:'',health:'',maintStatus:'',lifecycle:'',keyword:''};
+  state.quickFilter = 'all';
+  state.page = 1;
+  render();
+}
+
+function renderTable() {
+  const list = getFilteredDevices();
+  const total = list.length;
+  const totalPages = Math.ceil(total / state.pageSize) || 1;
+  if (state.page > totalPages) state.page = totalPages;
+  const start = (state.page - 1) * state.pageSize;
+  const pageData = list.slice(start, start + state.pageSize);
+  const s = state.sort;
+
+  function sortIcon(field) {
+    if (s.field !== field) return '<span class="sort-icon"></span>';
+    return `<span class="sort-icon ${s.dir}"></span>`;
+  }
+
+  document.getElementById('tableHead').innerHTML = `<tr>
+    <th class="sortable" onclick="toggleSort('id')">设备编号${sortIcon('id')}</th>
+    <th>设备名称</th>
+    <th class="sortable" onclick="toggleSort('deviceType')">设备类型${sortIcon('deviceType')}</th>
+    <th>安装位置</th>
+    <th class="sortable" onclick="toggleSort('onlineStatus')">在线状态${sortIcon('onlineStatus')}</th>
+    <th class="sortable" onclick="toggleSort('health')">健康度${sortIcon('health')}</th>
+    <th class="sortable" onclick="toggleSort('faultCount')">故障${sortIcon('faultCount')}</th>
+    <th>保养状态</th>
+    <th>生命周期</th>
+    <th>操作</th>
+  </tr>`;
+
+  if (pageData.length === 0) {
+    document.getElementById('tableBody').innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text3)">暂无匹配设备</td></tr>';
+  } else {
+    document.getElementById('tableBody').innerHTML = pageData.map(d => {
+      const openFaults = getDeviceOpenFaults(d.id).length;
+      const ms = getMaintStatus(d);
+      const msTag = ms === '正常' ? '<span class="tag tag-green">正常</span>' :
+                    ms === '即将到期' ? '<span class="tag tag-orange">即将到期</span>' :
+                    ms === '已逾期' ? '<span class="tag tag-red">已逾期</span>' :
+                    '<span class="tag tag-purple">无计划</span>';
+      const lcTag = d.lifecycle === '在用' ? '<span class="tag tag-green">在用</span>' :
+                    d.lifecycle === '闲置' ? '<span class="tag tag-gray">闲置</span>' :
+                    d.lifecycle === '报废' ? '<span class="tag tag-red">报废</span>' :
+                    '<span class="tag tag-blue">待验收</span>';
+      const onDot = d.onlineStatus === '在线' ? 'dot-green' : d.onlineStatus === '维护中' ? 'dot-blue' : 'dot-gray';
+      return `<tr onclick="openDrawer('${d.id}')">
+        <td style="font-weight:600;color:var(--primary)">${d.id}</td>
+        <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${d.name}">${d.name}</td>
+        <td><span class="tag tag-blue">${d.deviceType}</span></td>
+        <td style="white-space:nowrap">${getLocationShort(d.location)}</td>
+        <td><span class="status-badge"><span class="status-dot ${onDot}"></span>${d.onlineStatus}</span></td>
+        <td><div class="health-bar"><div class="health-bar-inner" style="width:${d.health}%;background:${getHealthColor(d.health)}"></div></div>${d.health}%</td>
+        <td style="text-align:center">${openFaults > 0 ? `<span style="color:var(--danger);font-weight:700">${openFaults}</span>` : '<span style="color:var(--text3)">—</span>'}</td>
+        <td>${msTag}</td>
+        <td>${lcTag}</td>
+        <td onclick="event.stopPropagation()">
+          <button class="btn-link" onclick="openDrawer('${d.id}')">详情</button>
+          <button class="btn-link" onclick="openEditExtModal('${d.id}')">编辑</button>
+          <button class="btn-link" onclick="openFaultModal('${d.id}')">报修</button>
+          <button class="btn-link" onclick="openExecMaintModal('${d.id}')">保养</button>
+          <button class="btn-link danger" onclick="openDeleteModal('${d.id}')">删除</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Pagination
+  let pagesHtml = '';
+  for (let i = 1; i <= totalPages; i++) {
+    pagesHtml += `<button class="page-btn ${i===state.page?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  document.getElementById('pagination').innerHTML = `
+    <span>共 ${total} 条记录，第 ${state.page}/${totalPages} 页</span>
+    <div class="pages">${pagesHtml}</div>
+  `;
+}
+
+function toggleSort(field) {
+  if (state.sort.field === field) state.sort.dir = state.sort.dir === 'asc' ? 'desc' : 'asc';
+  else { state.sort.field = field; state.sort.dir = 'asc'; }
+  renderTable();
+}
+
+function goPage(p) { state.page = p; renderTable(); }
+
+// ==================== DRAWER ====================
+function openDrawer(deviceId) {
+  state.openDeviceId = deviceId;
+  const d = state.devices.find(x => x.id === deviceId);
+  if (!d) return;
+  document.getElementById('drawerOverlay').classList.add('show');
+  const drawer = document.getElementById('drawer');
+  drawer.classList.add('show');
+  renderDrawer(d);
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('show');
+  document.getElementById('drawer').classList.remove('show');
+  state.openDeviceId = null;
+}
+
+function renderDrawer(d) {
+  const drawer = document.getElementById('drawer');
+  drawer.innerHTML = `
+    <div class="drawer-header">
+      <h3>${d.id} ${d.shortName}</h3>
+      <div class="actions">
+        <button class="btn btn-sm" onclick="openEditExtModal('${d.id}')">编辑扩展信息</button>
+        <button class="btn btn-sm btn-danger" onclick="openDeleteModal('${d.id}')">删除设备</button>
+        <button class="modal-close" onclick="closeDrawer()">&times;</button>
+      </div>
+    </div>
+    <div class="drawer-body">
+      ${renderPanel1(d)}
+      ${renderPanel2(d)}
+      ${renderPanel3(d)}
+      ${renderPanel4(d)}
+      ${renderPanel5(d)}
+      ${renderPanel6(d)}
+    </div>
+  `;
+  // Init charts in usage panel after DOM ready
+  setTimeout(() => renderUsageChart(d.id), 100);
+}
+
+// Panel 1: Basic Info
+function renderPanel1(d) {
+  const yearsUsed = d.purchaseDate ? Math.floor((new Date('2026-06-17') - new Date(d.purchaseDate)) / (365.25*86400000*1)) : '';
+  return `<div class="collapse-panel open" id="panel1">
+    <div class="collapse-header" onclick="togglePanel('panel1')">
+      <h4><span class="collapse-arrow">&#9654;</span> 基础信息</h4>
+    </div>
+    <div class="collapse-content">
+      <div class="info-section synced">
+        <div class="section-label">&#x1F512; 同步自设备管理系统 &nbsp;<span style="font-size:11px;color:var(--text3)">最后同步: ${d.syncTime}</span></div>
+        <div class="info-grid">
+          <div class="info-item"><div class="field-label">设备编号 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.id}</div></div>
+          <div class="info-item"><div class="field-label">设备名称 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.name}</div></div>
+          <div class="info-item"><div class="field-label">设备简称 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.shortName}</div></div>
+          <div class="info-item"><div class="field-label">设备类型 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.deviceType}</div></div>
+          <div class="info-item"><div class="field-label">产品名称 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.productName}</div></div>
+          <div class="info-item"><div class="field-label">安装位置 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.location}</div></div>
+          <div class="info-item"><div class="field-label">制造商 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.manufacturer}</div></div>
+          <div class="info-item"><div class="field-label">适用系统 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.applicableSystem}</div></div>
+          <div class="info-item"><div class="field-label">设备工位数 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.workstations}</div></div>
+          <div class="info-item"><div class="field-label">与平台交互 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.platformInteraction}</div></div>
+          <div class="info-item"><div class="field-label">管理人员 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.manager}</div></div>
+          <div class="info-item"><div class="field-label">所属单位 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${d.department}</div></div>
+          <div class="info-item full"><div class="field-label">设施设备总值 <span class="lock-icon">&#x1F512;</span></div><div class="field-value">${formatMoney(d.assetValue)}</div></div>
+        </div>
+      </div>
+      <div class="info-section editable">
+        <div class="section-label">&#x270F;&#xFE0F; 扩展信息（可编辑）</div>
+        <div class="info-grid">
+          <div class="info-item"><div class="field-label">序列号</div><div class="field-value">${d.sn || '<span style="color:var(--text3)">未填写</span>'}</div></div>
+          <div class="info-item"><div class="field-label">采购日期</div><div class="field-value">${d.purchaseDate || '-'}</div></div>
+          <div class="info-item"><div class="field-label">使用年限</div><div class="field-value">${yearsUsed ? yearsUsed + ' 年' : '-'}</div></div>
+          <div class="info-item"><div class="field-label">预计报废日期</div><div class="field-value">${d.expectedRetireDate || '-'}</div></div>
+          <div class="info-item"><div class="field-label">生命周期状态</div><div class="field-value">${d.lifecycle === '在用' ? '<span class="tag tag-green">在用</span>' : d.lifecycle === '闲置' ? '<span class="tag tag-gray">闲置</span>' : d.lifecycle === '报废' ? '<span class="tag tag-red">报废</span>' : '<span class="tag tag-blue">待验收</span>'}</div></div>
+          <div class="info-item"><div class="field-label">专业分类</div><div class="field-value">${d.majorCategory || '-'}</div></div>
+          <div class="info-item"><div class="field-label">用途分类</div><div class="field-value">${d.usageCategory || '-'}</div></div>
+          <div class="info-item"><div class="field-label">健康度</div><div class="field-value"><div class="health-bar" style="width:80px"><div class="health-bar-inner" style="width:${d.health}%;background:${getHealthColor(d.health)}"></div></div> ${d.health}%</div></div>
+          <div class="info-item"><div class="field-label">设备说明书</div><div class="field-value"><button class="btn-link" onclick="showToast('模拟文件预览')">查看附件</button></div></div>
+          <div class="info-item full"><div class="field-label">保修信息</div><div class="field-value">${d.warrantyInfo || '-'}</div></div>
+          <div class="info-item full"><div class="field-label">备注</div><div class="field-value">${d.remark || '<span style="color:var(--text3)">无</span>'}</div></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Panel 2: Hardware Params
+function renderPanel2(d) {
+  const rows = (d.params || []).map((p, i) => `<tr>
+    <td><input value="${p.name}" onchange="updateParam('${d.id}',${i},'name',this.value)"></td>
+    <td><input value="${p.value}" onchange="updateParam('${d.id}',${i},'value',this.value)"></td>
+    <td><input value="${p.unit}" onchange="updateParam('${d.id}',${i},'unit',this.value)" style="width:60px"></td>
+    <td><input value="${p.note}" onchange="updateParam('${d.id}',${i},'note',this.value)"></td>
+    <td style="text-align:center"><button class="btn-link danger" onclick="removeParam('${d.id}',${i})">删除</button></td>
+  </tr>`).join('');
+  return `<div class="collapse-panel" id="panel2">
+    <div class="collapse-header" onclick="togglePanel('panel2')">
+      <h4><span class="collapse-arrow">&#9654;</span> 硬件参数与技术参数</h4>
+      <button class="btn btn-sm" onclick="event.stopPropagation();showToast('参数已进入编辑模式','success')">编辑参数</button>
+    </div>
+    <div class="collapse-content">
+      <table class="param-table">
+        <thead><tr><th>参数名</th><th>参数值</th><th>单位</th><th>备注</th><th style="width:50px">操作</th></tr></thead>
+        <tbody>${rows || '<tr><td colspan="5" style="text-align:center;color:var(--text3)">暂无参数</td></tr>'}</tbody>
+      </table>
+      <div style="margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="addParam('${d.id}')">+ 添加参数</button></div>
+    </div>
+  </div>`;
+}
+
+function updateParam(deviceId, idx, field, val) {
+  const d = state.devices.find(x => x.id === deviceId);
+  if (d && d.params[idx]) { d.params[idx][field] = val; }
+}
+function removeParam(deviceId, idx) {
+  const d = state.devices.find(x => x.id === deviceId);
+  if (d) { d.params.splice(idx, 1); renderDrawer(d); showToast('已删除参数'); }
+}
+function addParam(deviceId) {
+  const d = state.devices.find(x => x.id === deviceId);
+  if (d) { d.params.push({name:'',value:'',unit:'',note:''}); renderDrawer(d); showToast('已添加新参数行','success'); }
+}
+
+// Panel 3: Usage Records
+function renderPanel3(d) {
+  const records = getDeviceUsage(d.id);
+  const today = records.filter(r => r.date === '2026-06-17');
+  const thisWeek = records.filter(r => r.date >= '2026-06-11' && r.date <= '2026-06-17');
+  const thisMonth = records.filter(r => r.date >= '2026-06-01');
+  const thisYear = records;
+  const todayHours = today.reduce((s, r) => s + r.duration, 0);
+  const weekHours = thisWeek.reduce((s, r) => s + r.duration, 0);
+  const monthHours = thisMonth.reduce((s, r) => s + r.duration, 0);
+  const yearHours = thisYear.reduce((s, r) => s + r.duration, 0);
+
+  const cards = records.map((r, i) => `
+    <div class="usage-card ${i < 2 ? 'expanded' : ''}" id="usage-${r.id}">
+      <div class="usage-card-header" onclick="toggleUsageCard(${r.id})">
+        <div class="date">${r.date} &nbsp; ${r.duration}h</div>
+        <span class="tag ${r.status === '正常' ? 'tag-green' : 'tag-red'}">${r.status}</span>
+      </div>
+      <div class="usage-card-body">
+        <div class="item">&#x1F464; ${r.person}</div>
+        <div class="item">&#x1F3EB; ${r.classGroup}</div>
+        <div class="item">&#x1F4D6; ${r.subject}</div>
+      </div>
+      <div class="usage-card-detail">
+        <div style="color:var(--text);margin-bottom:4px"><strong>运行日志：</strong>${r.detail}</div>
+        ${r.remark ? `<div style="color:var(--text3)">备注：${r.remark}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  return `<div class="collapse-panel" id="panel3">
+    <div class="collapse-header" onclick="togglePanel('panel3')">
+      <h4><span class="collapse-arrow">&#9654;</span> 使用记录 <span class="tag tag-blue" style="font-weight:400">${records.length}</span></h4>
+      <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openUsageModal('${d.id}')">+ 新增使用记录</button>
+    </div>
+    <div class="collapse-content">
+      <div class="mini-stats">
+        <div class="mini-stat"><div class="ms-label">本日</div><div class="ms-value">${today.length}次/${todayHours}h</div></div>
+        <div class="mini-stat"><div class="ms-label">本周</div><div class="ms-value">${thisWeek.length}次/${weekHours}h</div></div>
+        <div class="mini-stat"><div class="ms-label">本月</div><div class="ms-value">${thisMonth.length}次/${monthHours}h</div></div>
+        <div class="mini-stat"><div class="ms-label">本年</div><div class="ms-value">${thisYear.length}次/${yearHours}h</div></div>
+      </div>
+      <div id="usageChart-${d.id}" style="height:160px;margin:16px 0"></div>
+      ${records.length > 0 ? cards : '<div style="text-align:center;padding:20px;color:var(--text3)">暂无使用记录</div>'}
+    </div>
+  </div>`;
+}
+
+function renderUsageChart(deviceId) {
+  const el = document.getElementById('usageChart-' + deviceId);
+  if (!el) return;
+  const records = getDeviceUsage(deviceId);
+  const days = ['6/11','6/12','6/13','6/14','6/15','6/16','6/17'];
+  const dates = ['2026-06-11','2026-06-12','2026-06-13','2026-06-14','2026-06-15','2026-06-16','2026-06-17'];
+  const data = dates.map(dt => records.filter(r => r.date === dt).reduce((s, r) => s + r.duration, 0));
+  const chart = echarts.init(el);
+  chart.setOption({
+    title: { text: '近7天使用时长(小时)', textStyle: { fontSize: 12, fontWeight: 500 }, left: 0 },
+    grid: { left: 35, right: 10, top: 30, bottom: 20 },
+    xAxis: { type: 'category', data: days, axisLabel: { fontSize: 11 } },
+    yAxis: { type: 'value', axisLabel: { fontSize: 11 }, splitLine: { lineStyle: { type: 'dashed' } } },
+    series: [{ type: 'bar', data: data, barWidth: 20, itemStyle: { color: '#1677ff', borderRadius: [4, 4, 0, 0] } }],
+    tooltip: { trigger: 'axis' }
+  });
+}
+
+function toggleUsageCard(id) {
+  const el = document.getElementById('usage-' + id);
+  if (el) el.classList.toggle('expanded');
+}
+
+// Panel 4: Fault Records
+function renderPanel4(d) {
+  const faults = getDeviceFaults(d.id).sort((a, b) => b.reportTime.localeCompare(a.reportTime));
+  const statusOrder = {'待处理':0,'处理中':1,'待验收':2,'已完成':3};
+
+  const faultCards = faults.map(f => {
+    const si = statusOrder[f.status];
+    const steps = ['待处理','处理中','待验收','已完成'];
+    const stepsHtml = steps.map((s, i) => {
+      const dotClass = i < si ? 'done' : i === si ? 'current' : 'pending';
+      const lineClass = i < si ? 'done' : '';
+      return `<div class="fault-step"><div class="step-dot ${dotClass}">${i < si ? '✓' : i + 1}</div><span style="font-size:11px;color:${i<=si?'var(--text)':'var(--text3)'}">${s}</span>${i < steps.length - 1 ? `<div class="step-line ${lineClass}"></div>` : ''}</div>`;
+    }).join('');
+
+    const urgTag = f.urgency === '紧急' ? '<span class="tag tag-red">紧急</span>' : '<span class="tag tag-orange">一般</span>';
+    const statusTag = f.status === '待处理' ? '<span class="tag tag-red">待处理</span>' :
+                      f.status === '处理中' ? '<span class="tag tag-blue">处理中</span>' :
+                      f.status === '待验收' ? '<span class="tag tag-orange">待验收</span>' :
+                      '<span class="tag tag-green">已完成</span>';
+
+    const tlHtml = f.timeline.map(t => `<div class="timeline-item"><div class="tl-time">${t.time}</div><div class="tl-content">${t.content}</div></div>`).join('');
+
+    let actionsHtml = '';
+    if (f.status === '待处理') actionsHtml = `<button class="btn btn-sm btn-primary" onclick="assignFault(${f.id})">分配处理</button>`;
+    else if (f.status === '处理中') actionsHtml = `<button class="btn btn-sm btn-success" onclick="completeFaultRepair(${f.id})">提交维修结果</button>`;
+    else if (f.status === '待验收') actionsHtml = `<button class="btn btn-sm btn-success" onclick="acceptFault(${f.id})">验收通过</button> <button class="btn btn-sm btn-warning" onclick="openReworkModal(${f.id})">返工</button>`;
+
+    return `<div class="maint-card" style="margin-bottom:12px">
+      <div class="maint-card-header">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${urgTag} ${statusTag} <span style="font-size:12px;color:var(--text3)">${f.type}</span></div>
+        <span style="font-size:12px;color:var(--text3)">${f.reportTime}</span>
+      </div>
+      <div style="margin:8px 0;font-size:13px">${f.desc}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">报修人: ${f.reporter} ${f.assignee ? '| 处理人: ' + f.assignee : ''} ${f.photos ? '| 照片: ' + f.photos + '张' : ''}</div>
+      <div style="overflow-x:auto">${stepsHtml}</div>
+      <div class="timeline" style="margin-top:8px">${tlHtml}</div>
+      ${actionsHtml ? `<div style="margin-top:8px">${actionsHtml}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  return `<div class="collapse-panel" id="panel4">
+    <div class="collapse-header" onclick="togglePanel('panel4')">
+      <h4><span class="collapse-arrow">&#9654;</span> 故障记录 <span class="tag tag-red" style="font-weight:400">${getDeviceOpenFaults(d.id).length} 未完成</span></h4>
+      <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();openFaultModal('${d.id}')">+ 报修</button>
+    </div>
+    <div class="collapse-content">
+      ${faults.length > 0 ? faultCards : '<div style="text-align:center;padding:20px;color:var(--text3)">暂无故障记录</div>'}
+    </div>
+  </div>`;
+}
+
+function assignFault(faultId) {
+  const f = state.faults.find(x => x.id === faultId);
+  if (f) {
+    f.status = '处理中';
+    f.assignee = '技术部-值班工程师';
+    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '已分配给技术部-值班工程师处理'});
+    showToast('已分配处理人','success');
+    refreshDrawer();
+    render();
+  }
+}
+function completeFaultRepair(faultId) {
+  const f = state.faults.find(x => x.id === faultId);
+  if (f) {
+    f.status = '待验收';
+    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '维修完成，提交验收'});
+    showToast('已提交验收','success');
+    refreshDrawer();
+    render();
+  }
+}
+function acceptFault(faultId) {
+  const f = state.faults.find(x => x.id === faultId);
+  if (f) {
+    f.status = '已完成';
+    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '验收通过，故障已关闭'});
+    showToast('验收通过','success');
+    refreshDrawer();
+    render();
+  }
+}
+
+// Panel 5: Maintenance
+function renderPanel5(d) {
+  const plans = getDevicePlans(d.id);
+  const history = getDeviceHistory(d.id);
+  const usage = getDeviceUsage(d.id);
+
+  // Prediction alerts
+  let alerts = '';
+  if (plans.length === 0) {
+    alerts += `<div class="predict-alert warn"><span class="alert-icon">&#x26A0;&#xFE0F;</span><div>该设备尚未配置保养计划，建议根据设备类型和使用频率制定保养计划。<button class="btn btn-sm btn-warning" style="margin-left:8px" onclick="openMaintPlanModal('${d.id}')">立即制定</button></div></div>`;
+  }
+  if (d.health < 60) {
+    alerts += `<div class="predict-alert danger"><span class="alert-icon">&#x1F6A8;</span><div>设备健康度偏低（${d.health}%），建议尽快安排专项检查。</div></div>`;
+  }
+  if (history.length > 0) {
+    const lastDate = history[0].date;
+    const daysSince = Math.floor((new Date('2026-06-17') - new Date(lastDate)) / 86400000);
+    if (daysSince > 90) {
+      alerts += `<div class="predict-alert warn"><span class="alert-icon">&#x23F0;</span><div>距上次保养已 ${daysSince} 天，建议安排保养。</div></div>`;
+    }
+  }
+  // Usage frequency prediction
+  const recent30 = usage.filter(u => u.date >= '2026-05-18');
+  if (recent30.length > 0 && plans.length > 0) {
+    const avgInterval = 30 / recent30.length;
+    const predictDays = Math.round(avgInterval * 10);
+    alerts += `<div class="predict-alert info"><span class="alert-icon">&#x1F4CA;</span><div>该设备近30天使用 ${recent30.length} 次，按当前使用强度，预计 ${predictDays} 天后需要保养。</div></div>`;
+  }
+
+  const planCards = plans.map(p => {
+    const isOverdue = p.nextDate < '2026-06-17';
+    const isSoon = !isOverdue && p.nextDate <= '2026-06-24';
+    const statusTag = isOverdue ? '<span class="tag tag-red">已逾期</span>' : isSoon ? '<span class="tag tag-orange">即将到期</span>' : '<span class="tag tag-green">正常</span>';
+    const typeTag = p.type === '日常' ? '<span class="tag tag-blue">日常</span>' : p.type === '定期' ? '<span class="tag tag-green">定期</span>' : '<span class="tag tag-purple">专项</span>';
+    return `<div class="maint-card">
+      <div class="maint-card-header">${typeTag} ${statusTag} <span style="font-size:12px;color:var(--text3)">周期: ${p.cycle}</span></div>
+      <div class="maint-info"><div class="item">内容: ${p.content}</div></div>
+      <div class="maint-info"><div class="item">责任人: ${p.responsible}</div><div class="item">下次保养: ${p.nextDate}</div>${p.lastDate ? `<div class="item">上次保养: ${p.lastDate}</div>` : ''}</div>
+      <div style="margin-top:8px"><button class="btn btn-sm btn-success" onclick="openExecMaintModal('${d.id}',${p.id})">执行保养</button></div>
+    </div>`;
+  }).join('');
+
+  const historyHtml = history.map(h => {
+    const resultTag = h.result === '正常' ? '<span class="tag tag-green">正常</span>' : h.result === '需关注' ? '<span class="tag tag-orange">需关注</span>' : '<span class="tag tag-red">需维修</span>';
+    return `<div style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <span><strong>${h.date}</strong> &nbsp; ${h.type} &nbsp; ${resultTag}</span>
+        <span style="color:var(--text3)">执行人: ${h.person}</span>
+      </div>
+      <div style="color:var(--text2);margin-top:4px">${h.content}</div>
+      ${h.parts !== '无' ? `<div style="color:var(--text3);font-size:12px;margin-top:2px">更换部件: ${h.parts}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  return `<div class="collapse-panel" id="panel5">
+    <div class="collapse-header" onclick="togglePanel('panel5')">
+      <h4><span class="collapse-arrow">&#9654;</span> 保养管理 <span class="tag tag-green" style="font-weight:400">${plans.length} 计划</span></h4>
+      <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openMaintPlanModal('${d.id}')">+ 保养计划</button>
+    </div>
+    <div class="collapse-content">
+      ${alerts}
+      <h5 style="margin:12px 0 8px;font-size:13px;color:var(--text2)">保养计划</h5>
+      ${plans.length > 0 ? planCards : '<div style="text-align:center;padding:16px;color:var(--text3)">暂无保养计划</div>'}
+      <h5 style="margin:16px 0 8px;font-size:13px;color:var(--text2)">保养历史</h5>
+      ${history.length > 0 ? historyHtml : '<div style="text-align:center;padding:16px;color:var(--text3)">暂无保养记录</div>'}
+    </div>
+  </div>`;
+}
+
+// Panel 6: Archives
+function renderPanel6(d) {
+  const files = getDeviceArchives(d.id);
+  const typeIcon = {'说明书':'📘','保修卡':'📋','技术参数':'⚙️','维修报告':'🔧','其他':'📄'};
+  const fileList = files.map(f => `
+    <div class="file-item">
+      <div class="file-info">
+        <span class="file-icon">${typeIcon[f.fileType] || '📄'}</span>
+        <div class="file-detail">
+          <div class="file-name">${f.fileName}</div>
+          <div class="file-meta"><span class="tag tag-gray" style="margin-right:6px">${f.fileType}</span>${f.uploadDate} &nbsp; ${f.uploader}</div>
+        </div>
+      </div>
+      <div>
+        <button class="btn-link" onclick="showToast('模拟文件预览')">预览</button>
+        <button class="btn-link" onclick="showToast('模拟文件下载')">下载</button>
+      </div>
+    </div>
+  `).join('');
+
+  return `<div class="collapse-panel" id="panel6">
+    <div class="collapse-header" onclick="togglePanel('panel6')">
+      <h4><span class="collapse-arrow">&#9654;</span> 设备档案 <span class="tag tag-gray" style="font-weight:400">${files.length} 份</span></h4>
+      <button class="btn btn-sm" onclick="event.stopPropagation();addArchive('${d.id}')">+ 上传档案</button>
+    </div>
+    <div class="collapse-content">
+      ${files.length > 0 ? fileList : '<div style="text-align:center;padding:20px;color:var(--text3)">暂无档案</div>'}
+    </div>
+  </div>`;
+}
+
+function addArchive(deviceId) {
+  const newId = state.archives.length + 1;
+  state.archives.push({id:newId,deviceId:deviceId,fileType:'其他',fileName:'新上传文档_' + Date.now() + '.pdf',uploadDate:'2026-06-17',uploader:'当前用户'});
+  showToast('档案上传成功（模拟）','success');
+  refreshDrawer();
+}
+
+function togglePanel(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function refreshDrawer() {
+  if (state.openDeviceId) {
+    const d = state.devices.find(x => x.id === state.openDeviceId);
+    if (d) renderDrawer(d);
+  }
+}
+
+// ==================== MODALS ====================
+function openModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+// 1. Sync Modal
+function openSyncModal() {
+  const candidates = state.syncCandidates;
+  if (candidates.length === 0) { showToast('暂无可同步的设备'); return; }
+  const rows = candidates.map((c, i) => `<div class="checkbox-row">
+    <input type="checkbox" id="sync-${i}" value="${i}">
+    <label for="sync-${i}"><strong>${c.id}</strong> &nbsp; ${c.name} &nbsp; <span style="color:var(--text3)">${c.location}</span></label>
+  </div>`).join('');
+  openModal(`
+    <div class="modal-header"><h3>从设备管理系统同步</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:12px;padding:10px;background:#e6f7ff;border-radius:6px;font-size:13px;color:#096dd9">以下设备已在设备管理系统中登记，但尚未同步到维护保养中心。</div>
+      <div class="checkbox-row" style="border-bottom:2px solid var(--border)">
+        <input type="checkbox" id="sync-all" onchange="toggleSyncAll(this.checked)"><label for="sync-all"><strong>全选</strong></label>
+      </div>
+      ${rows}
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="doSync()">同步</button>
+    </div>
+  `);
+}
+
+function toggleSyncAll(checked) {
+  state.syncCandidates.forEach((_, i) => {
+    const el = document.getElementById('sync-' + i);
+    if (el) el.checked = checked;
+  });
+}
+
+function doSync() {
+  const selected = [];
+  state.syncCandidates.forEach((c, i) => {
+    if (document.getElementById('sync-' + i)?.checked) selected.push(i);
+  });
+  if (selected.length === 0) { showToast('请选择要同步的设备','error'); return; }
+  const toAdd = selected.map(i => state.syncCandidates[i]);
+  toAdd.forEach(c => {
+    state.devices.push({
+      id:c.id,name:c.name,shortName:c.name.slice(0,8),deviceType:'铁路运输类',productName:c.name,location:c.location,manufacturer:'捷安高科',applicableSystem:'-',workstations:1,platformInteraction:'待确认',manager:'-',department:'-',assetValue:0,syncTime:'2026-06-17 '+new Date().toTimeString().slice(0,5),
+      sn:'',purchaseDate:'',expectedRetireDate:'',lifecycle:'待验收',majorCategory:'',usageCategory:'',onlineStatus:'离线',health:100,warrantyInfo:'',remark:'新同步设备',params:[]
+    });
+  });
+  // Remove synced from candidates
+  state.syncCandidates = state.syncCandidates.filter((_, i) => !selected.includes(i));
+  closeModal();
+  showToast(`已同步 ${toAdd.length} 台设备`, 'success');
+  render();
+}
+
+// 2. Edit Extension Info Modal
+function openEditExtModal(deviceId) {
+  const d = state.devices.find(x => x.id === deviceId);
+  if (!d) return;
+  openModal(`
+    <div class="modal-header"><h3>编辑扩展信息 - ${d.id}</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>序列号</label><input id="edit-sn" value="${d.sn}"></div>
+        <div class="form-group"><label>采购日期</label><input type="date" id="edit-purchaseDate" value="${d.purchaseDate}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>预计报废日期</label><input type="date" id="edit-retireDate" value="${d.expectedRetireDate}"></div>
+        <div class="form-group"><label>生命周期状态</label><select id="edit-lifecycle"><option ${d.lifecycle==='在用'?'selected':''}>在用</option><option ${d.lifecycle==='闲置'?'selected':''}>闲置</option><option ${d.lifecycle==='报废'?'selected':''}>报废</option><option ${d.lifecycle==='待验收'?'selected':''}>待验收</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>专业分类</label><select id="edit-major"><option value="">请选择</option><option ${d.majorCategory==='机车驾驶'?'selected':''}>机车驾驶</option><option ${d.majorCategory==='车辆检修'?'selected':''}>车辆检修</option><option ${d.majorCategory==='信号通信'?'selected':''}>信号通信</option><option ${d.majorCategory==='客运服务'?'selected':''}>客运服务</option><option ${d.majorCategory==='安全应急'?'selected':''}>安全应急</option></select></div>
+        <div class="form-group"><label>用途分类</label><select id="edit-usage"><option value="">请选择</option><option ${d.usageCategory==='教学实训'?'selected':''}>教学实训</option><option ${d.usageCategory==='考试考核'?'selected':''}>考试考核</option><option ${d.usageCategory==='技能竞赛'?'selected':''}>技能竞赛</option><option ${d.usageCategory==='科研实验'?'selected':''}>科研实验</option></select></div>
+      </div>
+      <div class="form-group"><label>保修信息</label><input id="edit-warranty" value="${d.warrantyInfo}"></div>
+      <div class="form-group"><label>备注</label><textarea id="edit-remark">${d.remark}</textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveEditExt('${d.id}')">保存</button>
+    </div>
+  `);
+}
+
+function saveEditExt(deviceId) {
+  const d = state.devices.find(x => x.id === deviceId);
+  if (!d) return;
+  d.sn = document.getElementById('edit-sn').value;
+  d.purchaseDate = document.getElementById('edit-purchaseDate').value;
+  d.expectedRetireDate = document.getElementById('edit-retireDate').value;
+  d.lifecycle = document.getElementById('edit-lifecycle').value;
+  d.majorCategory = document.getElementById('edit-major').value;
+  d.usageCategory = document.getElementById('edit-usage').value;
+  d.warrantyInfo = document.getElementById('edit-warranty').value;
+  d.remark = document.getElementById('edit-remark').value;
+  closeModal();
+  showToast('扩展信息已保存','success');
+  render();
+  refreshDrawer();
+}
+
+// 3. Delete Modal
+function openDeleteModal(deviceId) {
+  const d = state.devices.find(x => x.id === deviceId);
+  if (!d) return;
+  const faultCount = getDeviceFaults(d.id).length;
+  const usageCount = getDeviceUsage(d.id).length;
+  const planCount = getDevicePlans(d.id).length;
+  openModal(`
+    <div class="modal-header"><h3>确认删除设备</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body">
+      <div style="padding:16px;background:#fff2f0;border-radius:6px;margin-bottom:12px">
+        <div style="color:var(--danger);font-weight:600;margin-bottom:8px">&#x26A0;&#xFE0F; 此操作不可撤销</div>
+        <div style="font-size:13px">确定要删除设备 <strong>${d.id} ${d.shortName}</strong> 吗？</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:8px">以下关联数据将一并删除：</div>
+        <ul style="font-size:13px;color:var(--text2);margin:8px 0 0 20px">
+          <li>故障记录 ${faultCount} 条</li>
+          <li>保养计划 ${planCount} 个</li>
+          <li>使用记录 ${usageCount} 条</li>
+        </ul>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-danger" onclick="doDelete('${d.id}')">确认删除</button>
+    </div>
+  `);
+}
+
+function doDelete(deviceId) {
+  state.devices = state.devices.filter(d => d.id !== deviceId);
+  state.faults = state.faults.filter(f => f.deviceId !== deviceId);
+  state.usageRecords = state.usageRecords.filter(u => u.deviceId !== deviceId);
+  state.maintPlans = state.maintPlans.filter(p => p.deviceId !== deviceId);
+  state.maintHistory = state.maintHistory.filter(h => h.deviceId !== deviceId);
+  state.archives = state.archives.filter(a => a.deviceId !== deviceId);
+  closeModal();
+  closeDrawer();
+  showToast('设备已删除','success');
+  render();
+}
+
+// 4. Fault Report Modal
+function openFaultModal(deviceId) {
+  const options = state.devices.map(d => `<option value="${d.id}" ${d.id===deviceId?'selected':''}>${d.id} ${d.shortName}</option>`).join('');
+  openModal(`
+    <div class="modal-header"><h3>故障登记</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label><span class="req">*</span> 设备</label><select id="fault-device">${options}</select></div>
+      <div class="form-row">
+        <div class="form-group"><label><span class="req">*</span> 故障类型</label><select id="fault-type"><option>硬件故障</option><option>软件故障</option><option>电气故障</option><option>机械故障</option><option>网络故障</option><option>传感器故障</option><option>显示故障</option></select></div>
+        <div class="form-group"><label><span class="req">*</span> 紧急程度</label><div class="radio-group"><label><input type="radio" name="fault-urgency" value="紧急"> 紧急</label><label><input type="radio" name="fault-urgency" value="一般" checked> 一般</label></div></div>
+      </div>
+      <div class="form-group"><label><span class="req">*</span> 故障描述</label><textarea id="fault-desc" placeholder="请详细描述故障现象..."></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>照片上传</label><div style="border:2px dashed var(--border);border-radius:6px;padding:20px;text-align:center;color:var(--text3);cursor:pointer" onclick="showToast('模拟照片上传')">点击上传照片（模拟）</div></div>
+        <div class="form-group"><label><span class="req">*</span> 发现人</label><input id="fault-reporter" value="当前用户"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-danger" onclick="submitFault()">提交报修</button>
+    </div>
+  `);
+}
+
+function submitFault() {
+  const deviceId = document.getElementById('fault-device').value;
+  const type = document.getElementById('fault-type').value;
+  const urgency = document.querySelector('input[name="fault-urgency"]:checked')?.value || '一般';
+  const desc = document.getElementById('fault-desc').value;
+  const reporter = document.getElementById('fault-reporter').value;
+  if (!desc) { showToast('请填写故障描述','error'); return; }
+  const newId = Math.max(...state.faults.map(f => f.id)) + 1;
+  state.faults.push({
+    id:newId, deviceId, type, urgency, desc, reporter,
+    reportTime: '2026-06-17 ' + new Date().toTimeString().slice(0,5),
+    status: '待处理', assignee: '', photos: 0,
+    timeline: [{time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: reporter + '报修：' + desc}]
+  });
+  closeModal();
+  showToast('故障已登记','success');
+  render();
+  refreshDrawer();
+}
+
+// 5. New Maintenance Plan Modal
+function openMaintPlanModal(deviceId) {
+  const options = state.devices.map(d => `<option value="${d.id}" ${d.id===deviceId?'selected':''}>${d.id} ${d.shortName}</option>`).join('');
+  openModal(`
+    <div class="modal-header"><h3>新增保养计划</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label><span class="req">*</span> 设备</label><select id="mp-device">${options}</select></div>
+      <div class="form-row">
+        <div class="form-group"><label><span class="req">*</span> 保养类型</label><select id="mp-type"><option>日常</option><option>定期</option><option>专项</option></select></div>
+        <div class="form-group"><label><span class="req">*</span> 周期</label><select id="mp-cycle"><option>每周</option><option>每月</option><option>每季度</option><option>每半年</option><option>每年</option><option>一次性</option></select></div>
+      </div>
+      <div class="form-group"><label><span class="req">*</span> 保养内容</label><textarea id="mp-content" placeholder="请描述保养项目和标准..."></textarea></div>
+      <div class="form-group"><label><span class="req">*</span> 责任人</label><input id="mp-person" placeholder="如: 技术部-张工"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="submitMaintPlan()">创建计划</button>
+    </div>
+  `);
+}
+
+function submitMaintPlan() {
+  const deviceId = document.getElementById('mp-device').value;
+  const type = document.getElementById('mp-type').value;
+  const cycle = document.getElementById('mp-cycle').value;
+  const content = document.getElementById('mp-content').value;
+  const person = document.getElementById('mp-person').value;
+  if (!content || !person) { showToast('请填写完整信息','error'); return; }
+  const newId = Math.max(...state.maintPlans.map(p => p.id), 0) + 1;
+  const cycleDays = {'每周':7,'每月':30,'每季度':90,'每半年':180,'每年':365,'一次性':30};
+  const nextDate = new Date(new Date('2026-06-17').getTime() + (cycleDays[cycle]||30)*86400000);
+  const nd = nextDate.toISOString().slice(0,10);
+  state.maintPlans.push({id:newId, deviceId, type, cycle, content, responsible:person, nextDate:nd, lastDate:''});
+  closeModal();
+  showToast('保养计划已创建','success');
+  render();
+  refreshDrawer();
+}
+
+// 6. Execute Maintenance Modal
+function openExecMaintModal(deviceId, planId) {
+  const d = state.devices.find(x => x.id === deviceId);
+  if (!d) return;
+  const plan = planId ? state.maintPlans.find(p => p.id === planId) : null;
+  openModal(`
+    <div class="modal-header"><h3>执行保养</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>设备</label><input value="${d.id} ${d.shortName}" readonly></div>
+        <div class="form-group"><label>类型</label><input value="${plan ? plan.type : '定期'}" readonly id="exec-type"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label><span class="req">*</span> 保养日期</label><input type="date" id="exec-date" value="2026-06-17"></div>
+        <div class="form-group"><label><span class="req">*</span> 执行人</label><input id="exec-person" value="" placeholder="如: 技术部-张工"></div>
+      </div>
+      <div class="form-group"><label><span class="req">*</span> 保养内容</label><textarea id="exec-content" placeholder="请描述本次保养实际操作内容...">${plan ? plan.content : ''}</textarea></div>
+      <div class="form-group"><label>更换部件</label><input id="exec-parts" placeholder="如无则填 无"></div>
+      <div class="form-group"><label>照片上传</label><div style="border:2px dashed var(--border);border-radius:6px;padding:16px;text-align:center;color:var(--text3);cursor:pointer" onclick="showToast('模拟照片上传')">点击上传（模拟）</div></div>
+      <div class="form-group"><label><span class="req">*</span> 保养结果</label>
+        <div class="radio-group">
+          <label><input type="radio" name="exec-result" value="正常" checked> 正常</label>
+          <label><input type="radio" name="exec-result" value="需关注"> 需关注</label>
+          <label><input type="radio" name="exec-result" value="需维修"> 需维修</label>
+        </div>
+        <div id="exec-repair-hint" style="display:none;margin-top:8px;padding:8px;background:#fff7e6;border-radius:4px;font-size:12px;color:#d46b08">选择"需维修"将自动生成故障报修单</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-success" onclick="submitExecMaint('${d.id}',${planId||'null'})">提交保养记录</button>
+    </div>
+  `);
+  // Listen for radio change
+  setTimeout(() => {
+    document.querySelectorAll('input[name="exec-result"]').forEach(r => {
+      r.addEventListener('change', () => {
+        document.getElementById('exec-repair-hint').style.display = r.value === '需维修' && r.checked ? 'block' : 'none';
+      });
+    });
+  }, 50);
+}
+
+function submitExecMaint(deviceId, planId) {
+  const date = document.getElementById('exec-date').value;
+  const person = document.getElementById('exec-person').value;
+  const content = document.getElementById('exec-content').value;
+  const parts = document.getElementById('exec-parts').value || '无';
+  const result = document.querySelector('input[name="exec-result"]:checked')?.value || '正常';
+  const type = document.getElementById('exec-type').value;
+  if (!date || !person || !content) { showToast('请填写完整信息','error'); return; }
+  const newId = Math.max(...state.maintHistory.map(h => h.id), 0) + 1;
+  state.maintHistory.push({id:newId, deviceId, date, type, content, parts, person, result, photos:0});
+  // Update plan lastDate
+  if (planId) {
+    const plan = state.maintPlans.find(p => p.id === planId);
+    if (plan) plan.lastDate = date;
+  }
+  // If needs repair, auto-create fault
+  if (result === '需维修') {
+    const fId = Math.max(...state.faults.map(f => f.id), 0) + 1;
+    state.faults.push({
+      id:fId, deviceId, type:'保养发现', urgency:'一般', desc:'保养检查中发现需维修问题: ' + content,
+      reporter:person, reportTime:date + ' ' + new Date().toTimeString().slice(0,5),
+      status:'待处理', assignee:'', photos:0,
+      timeline:[{time:date + ' ' + new Date().toTimeString().slice(0,5), content:'保养检查转故障: ' + content}]
+    });
+    showToast('保养已记录，已自动生成故障单','success');
+  } else {
+    showToast('保养记录已提交','success');
+  }
+  closeModal();
+  render();
+  refreshDrawer();
+}
+
+// 7. Usage Record Modal
+function openUsageModal(deviceId) {
+  const d = state.devices.find(x => x.id === deviceId);
+  openModal(`
+    <div class="modal-header"><h3>新增使用记录</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>设备</label><input value="${d ? d.id + ' ' + d.shortName : ''}" readonly></div>
+      <div class="form-row">
+        <div class="form-group"><label><span class="req">*</span> 使用日期</label><input type="date" id="ur-date" value="2026-06-17"></div>
+        <div class="form-group"><label><span class="req">*</span> 使用时长(小时)</label><input type="number" id="ur-duration" min="0.5" max="12" step="0.5" value="2"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label><span class="req">*</span> 使用人员</label><input id="ur-person" placeholder="如: 王老师"></div>
+        <div class="form-group"><label><span class="req">*</span> 使用班级/部门</label><input id="ur-class" placeholder="如: 机车2024-1班"></div>
+      </div>
+      <div class="form-group"><label><span class="req">*</span> 训练科目</label><input id="ur-subject" placeholder="如: 电力机车操纵实训"></div>
+      <div class="form-group"><label><span class="req">*</span> 运行状态</label>
+        <div class="radio-group"><label><input type="radio" name="ur-status" value="正常" checked> 正常</label><label><input type="radio" name="ur-status" value="异常"> 异常</label></div>
+      </div>
+      <div class="form-group"><label>备注</label><textarea id="ur-remark" placeholder="选填"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="submitUsage('${deviceId}')">保存</button>
+    </div>
+  `);
+}
+
+function submitUsage(deviceId) {
+  const date = document.getElementById('ur-date').value;
+  const duration = parseFloat(document.getElementById('ur-duration').value);
+  const person = document.getElementById('ur-person').value;
+  const classGroup = document.getElementById('ur-class').value;
+  const subject = document.getElementById('ur-subject').value;
+  const status = document.querySelector('input[name="ur-status"]:checked')?.value || '正常';
+  const remark = document.getElementById('ur-remark').value;
+  if (!date || !person || !classGroup || !subject) { showToast('请填写完整信息','error'); return; }
+  const newId = Math.max(...state.usageRecords.map(u => u.id), 0) + 1;
+  state.usageRecords.push({id:newId, deviceId, date, duration, person, classGroup, subject, status, detail:'用户手动录入', remark});
+  closeModal();
+  showToast('使用记录已保存','success');
+  refreshDrawer();
+}
+
+// 8. Rework Modal
+function openReworkModal(faultId) {
+  openModal(`
+    <div class="modal-header"><h3>返工原因</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label><span class="req">*</span> 返工原因</label><textarea id="rework-reason" placeholder="请说明返工原因..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-warning" onclick="submitRework(${faultId})">确认返工</button>
+    </div>
+  `);
+}
+
+function submitRework(faultId) {
+  const reason = document.getElementById('rework-reason').value;
+  if (!reason) { showToast('请填写返工原因','error'); return; }
+  const f = state.faults.find(x => x.id === faultId);
+  if (f) {
+    f.status = '处理中';
+    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '验收不通过，需返工。原因：' + reason});
+    showToast('已退回返工','success');
+    closeModal();
+    render();
+    refreshDrawer();
+  }
+}
+
+// ==================== INIT ====================
+render();
 </script>
 </body>
 </html>
