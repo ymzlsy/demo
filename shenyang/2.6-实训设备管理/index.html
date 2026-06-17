@@ -667,7 +667,7 @@ function renderTable() {
     <th class="sortable" onclick="toggleSort('onlineStatus')">在线状态${sortIcon('onlineStatus')}</th>
     <th class="sortable" onclick="toggleSort('health')">健康度${sortIcon('health')}</th>
     <th class="sortable" onclick="toggleSort('faultCount')">故障${sortIcon('faultCount')}</th>
-    <th style="text-align:center">使用</th>
+    <th style="text-align:center">使用记录</th>
     <th style="text-align:center">保养</th>
     <th>生命周期</th>
     <th>操作</th>
@@ -926,10 +926,10 @@ function openUsageListModal(deviceId) {
   const d = state.devices.find(x => x.id === deviceId);
   document.getElementById('usageListTitle').textContent = d.name + ' — 使用记录';
   renderUsageListModal();
-  document.getElementById('usageListOverlay').classList.add('open');
+  document.getElementById('usageListOverlay').classList.add('show');
   setTimeout(() => renderUsageListChart(), 100);
 }
-function closeUsageListModal() { document.getElementById('usageListOverlay').classList.remove('open'); }
+function closeUsageListModal() { document.getElementById('usageListOverlay').classList.remove('show'); }
 
 function getFilteredUsageRecords() {
   let list = getDeviceUsage(usageListState.deviceId);
