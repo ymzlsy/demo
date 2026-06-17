@@ -157,6 +157,7 @@ tr.clickable{cursor:pointer}
     <button class="btn" onclick="showToast('报表已导出')">导出报表</button>
     <button class="btn btn-danger" onclick="openFaultModal()">+ 报修</button>
     <button class="btn btn-primary" onclick="openMaintPlanModal()">+ 新增保养计划</button>
+    <button class="btn btn-primary" onclick="openDeviceModal()">+ 新增设备</button>
   </div>
 </div>
 
@@ -190,7 +191,7 @@ tr.clickable{cursor:pointer}
         <th>设备名称</th><th>设备型号</th><th>所属区域</th>
         <th class="sortable" onclick="sortBy('status')">在线状态 <span id="sort-status">&#8693;</span></th>
         <th class="sortable" onclick="sortBy('health')">健康度 <span id="sort-health">&#8693;</span></th>
-        <th>故障</th><th>保养状态</th><th style="width:200px">操作</th>
+        <th>故障</th><th>保养状态</th><th style="width:260px">操作</th>
       </tr></thead>
       <tbody id="tableBody"></tbody>
     </table>
@@ -250,6 +251,32 @@ tr.clickable{cursor:pointer}
       <div class="form-group"><label>备注</label><textarea id="em-remark"></textarea></div>
     </div>
     <div class="modal-footer"><button class="btn" onclick="closeExecMaintModal()">取消</button><button class="btn btn-primary" onclick="submitExecMaint()">提交</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deviceModal">
+  <div class="modal" style="width:560px">
+    <div class="modal-header"><h3 id="deviceModalTitle">新增设备</h3><button class="drawer-close" onclick="closeDeviceModal()">&times;</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>设备编号 <span class="req">*</span></label><input id="dm-id" placeholder="如 SB-013"></div>
+      <div class="form-group"><label>设备名称 <span class="req">*</span></label><input id="dm-name" placeholder="如 售票机模拟器"></div>
+      <div class="form-group"><label>设备型号 <span class="req">*</span></label><input id="dm-model" placeholder="如 TVM-3000"></div>
+      <div class="form-group"><label>序列号 <span class="req">*</span></label><input id="dm-sn" placeholder="如 SN20250013"></div>
+      <div class="form-group"><label>所属区域 <span class="req">*</span></label><select id="dm-area"><option>实训区A</option><option>实训区B</option><option>实训区C</option></select></div>
+      <div class="form-group"><label>设备类型 <span class="req">*</span></label><input id="dm-type" placeholder="如 模拟终端"></div>
+      <div class="form-group"><label>采购日期 <span class="req">*</span></label><input type="date" id="dm-purchase"></div>
+      <div class="form-group"><label>在线状态</label><select id="dm-status"><option>在线</option><option>离线</option><option>维护中</option></select></div>
+      <div class="form-group"><label>健康度 (%)</label><input type="number" id="dm-health" min="0" max="100" value="100"></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeDeviceModal()">取消</button><button class="btn btn-primary" onclick="submitDevice()">确定</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteConfirmModal">
+  <div class="modal" style="width:400px">
+    <div class="modal-header"><h3>确认删除</h3><button class="drawer-close" onclick="closeDeleteConfirm()">&times;</button></div>
+    <div class="modal-body"><p id="deleteConfirmText" style="font-size:14px;color:var(--text)"></p><p style="font-size:13px;color:var(--danger);margin-top:8px">删除后该设备的故障记录和保养计划也将一并移除，此操作不可撤销。</p></div>
+    <div class="modal-footer"><button class="btn" onclick="closeDeleteConfirm()">取消</button><button class="btn btn-danger" onclick="confirmDeleteDevice()">确认删除</button></div>
   </div>
 </div>
 
@@ -436,9 +463,11 @@ function renderTable(){
       <td style="color:${af?'var(--danger)':'#ccc'}">${af||'—'}</td>
       <td><span class="tag ${maintTagClass(ms)}">${ms}</span></td>
       <td onclick="event.stopPropagation()">
-        <button class="btn-link btn-sm" onclick="openDrawer('${d.id}')">查看详情</button>
+        <button class="btn-link btn-sm" onclick="openDrawer('${d.id}')">详情</button>
+        <button class="btn-link btn-sm" onclick="openDeviceModal('${d.id}')">编辑</button>
         <button class="btn-link btn-sm" onclick="openFaultModal('${d.id}')">报修</button>
         <button class="btn-link btn-sm" onclick="openExecMaintModal('${d.id}')">保养</button>
+        <button class="btn-link btn-sm" style="color:var(--danger)" onclick="openDeleteConfirm('${d.id}')">删除</button>
       </td></tr>`;
   }).join('');
   document.getElementById('pageInfo').textContent='共 '+total+' 条记录';
@@ -460,7 +489,8 @@ function openDrawer(did){
   const hc=healthColor(d.health);
   const years=((new Date()-new Date(d.purchaseDate))/31536000000).toFixed(1);
 
-  let html=`<div class="collapse"><div class="collapse-head" onclick="toggleCollapse(this)">基本信息<span class="arrow down">&#9654;</span></div>
+  let html=`<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn btn-sm" onclick="openDeviceModal('${did}')">编辑设备</button><button class="btn btn-sm btn-danger" onclick="openDeleteConfirm('${did}')">删除设备</button></div>`;
+  html+=`<div class="collapse"><div class="collapse-head" onclick="toggleCollapse(this)">基本信息<span class="arrow down">&#9654;</span></div>
   <div class="collapse-body open" style="background:#fafafa"><div class="info-grid">
     <div class="info-item"><span class="lbl">设备编号</span><span class="val">${d.id}</span></div>
     <div class="info-item"><span class="lbl">设备名称</span><span class="val">${d.name}</span></div>
@@ -695,6 +725,84 @@ function submitExecMaint(){
   if(result==='需维修'&&confirm('保养结果为“需维修”，是否转为故障登记？')){openFaultModal(did)}
   renderTable();
   if(currentDrawerDevice===did)refreshDrawer();
+}
+
+let editingDeviceId=null;
+let deleteTargetId=null;
+
+function openDeviceModal(did){
+  editingDeviceId=did||null;
+  const title=document.getElementById('deviceModalTitle');
+  if(did){
+    title.textContent='编辑设备';
+    const d=devices.find(x=>x.id===did);
+    document.getElementById('dm-id').value=d.id;
+    document.getElementById('dm-id').readOnly=true;
+    document.getElementById('dm-name').value=d.name;
+    document.getElementById('dm-model').value=d.model;
+    document.getElementById('dm-sn').value=d.sn;
+    document.getElementById('dm-area').value=d.area;
+    document.getElementById('dm-type').value=d.type;
+    document.getElementById('dm-purchase').value=d.purchaseDate;
+    document.getElementById('dm-status').value=d.status;
+    document.getElementById('dm-health').value=d.health;
+  }else{
+    title.textContent='新增设备';
+    document.getElementById('dm-id').value='SB-'+String(devices.length+1).padStart(3,'0');
+    document.getElementById('dm-id').readOnly=false;
+    document.getElementById('dm-name').value='';
+    document.getElementById('dm-model').value='';
+    document.getElementById('dm-sn').value='SN'+new Date().getFullYear()+String(devices.length+1).padStart(4,'0');
+    document.getElementById('dm-area').value='实训区A';
+    document.getElementById('dm-type').value='';
+    document.getElementById('dm-purchase').value=today();
+    document.getElementById('dm-status').value='在线';
+    document.getElementById('dm-health').value=100;
+  }
+  document.getElementById('deviceModal').classList.add('open');
+}
+function closeDeviceModal(){document.getElementById('deviceModal').classList.remove('open');editingDeviceId=null}
+function submitDevice(){
+  const id=document.getElementById('dm-id').value.trim();
+  const name=document.getElementById('dm-name').value.trim();
+  const model=document.getElementById('dm-model').value.trim();
+  const sn=document.getElementById('dm-sn').value.trim();
+  const type=document.getElementById('dm-type').value.trim();
+  const purchase=document.getElementById('dm-purchase').value;
+  if(!id||!name||!model||!sn||!type||!purchase){showToast('请填写所有必填项');return}
+  if(!editingDeviceId&&devices.find(d=>d.id===id)){showToast('设备编号已存在');return}
+  const area=document.getElementById('dm-area').value;
+  const status=document.getElementById('dm-status').value;
+  const health=Math.min(100,Math.max(0,parseInt(document.getElementById('dm-health').value)||100));
+  if(editingDeviceId){
+    const d=devices.find(x=>x.id===editingDeviceId);
+    d.name=name;d.model=model;d.sn=sn;d.area=area;d.type=type;d.purchaseDate=purchase;d.status=status;d.health=health;
+    closeDeviceModal();showToast('设备信息已更新');
+    if(currentDrawerDevice===editingDeviceId)refreshDrawer();
+  }else{
+    devices.push({id,name,model,sn,area,purchaseDate:purchase,status,health,type});
+    closeDeviceModal();showToast('设备新增成功');
+  }
+  renderTable();
+}
+
+function openDeleteConfirm(did){
+  deleteTargetId=did;
+  const d=devices.find(x=>x.id===did);
+  document.getElementById('deleteConfirmText').textContent='确定要删除设备 "'+d.name+'（'+d.id+'）" 吗？';
+  document.getElementById('deleteConfirmModal').classList.add('open');
+}
+function closeDeleteConfirm(){document.getElementById('deleteConfirmModal').classList.remove('open');deleteTargetId=null}
+function confirmDeleteDevice(){
+  const did=deleteTargetId;
+  const idx=devices.findIndex(d=>d.id===did);
+  if(idx>-1)devices.splice(idx,1);
+  for(let i=faults.length-1;i>=0;i--){if(faults[i].deviceId===did)faults.splice(i,1)}
+  for(let i=maintPlans.length-1;i>=0;i--){if(maintPlans[i].deviceId===did)maintPlans.splice(i,1)}
+  for(let i=maintRecords.length-1;i>=0;i--){if(maintRecords[i].deviceId===did)maintRecords.splice(i,1)}
+  closeDeleteConfirm();
+  if(currentDrawerDevice===did)closeDrawer();
+  showToast('设备已删除');renderTable();
 }
 
 let photoCounters={};
