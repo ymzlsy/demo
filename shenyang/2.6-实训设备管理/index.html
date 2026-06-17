@@ -56,6 +56,26 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .usage-icon-btn .usage-count{position:absolute;top:-4px;right:-6px;min-width:16px;height:16px;border-radius:8px;background:var(--primary);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0 3px}
 .usage-modal{width:900px;max-width:95vw;max-height:90vh}
 .usage-modal-body{padding:20px;overflow-y:auto;max-height:calc(90vh - 120px)}
+.fault-modal{width:960px;max-width:95vw;max-height:92vh}
+.fault-modal-body{padding:20px;overflow-y:auto;max-height:calc(92vh - 120px)}
+.fault-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;transition:box-shadow .2s}
+.fault-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.fault-card-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.fault-card-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text3);margin-top:6px}
+.fault-card-desc{font-size:13px;margin:8px 0;line-height:1.6}
+.fault-card-actions{margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fault-form-inline{background:#fafafa;border:1px solid var(--border);border-radius:6px;padding:12px;margin-top:10px}
+.fault-form-inline .form-group{margin-bottom:10px}
+.fault-form-inline .form-group:last-child{margin-bottom:0}
+.fault-form-inline label{font-size:12px;font-weight:500;display:block;margin-bottom:3px}
+.fault-form-inline input,.fault-form-inline select,.fault-form-inline textarea{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;font-family:inherit}
+.fault-form-inline textarea{resize:vertical;min-height:60px}
+.fault-filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.fault-filter-bar select,.fault-filter-bar input{padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;min-width:100px}
+.fault-summary-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.fault-summary-item{background:#fafafa;border:1px solid var(--border);border-radius:6px;padding:8px 16px;flex:1;min-width:80px;text-align:center}
+.fault-summary-item .fs-val{font-size:20px;font-weight:700}
+.fault-summary-item .fs-label{font-size:12px;color:var(--text3)}
 .usage-filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
 .usage-filter-bar select,.usage-filter-bar input{padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;min-width:100px}
 .usage-table{width:100%;border-collapse:collapse;font-size:13px}
@@ -281,6 +301,20 @@ tr{cursor:pointer}
       <button class="close-btn" onclick="closeUsageListModal()">&times;</button>
     </div>
     <div class="usage-modal-body" id="usageListBody"></div>
+  </div>
+</div>
+
+<!-- Fault List Modal (separate, wider) -->
+<div class="overlay" id="faultListOverlay" onclick="closeFaultListModal()">
+  <div class="modal fault-modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="faultListTitle">故障/报修记录</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-sm btn-danger" id="faultListAddBtn" onclick="">+ 报修</button>
+        <button class="modal-close" onclick="closeFaultListModal()">&times;</button>
+      </div>
+    </div>
+    <div class="fault-modal-body" id="faultListBody"></div>
   </div>
 </div>
 
@@ -638,7 +672,7 @@ function renderTable() {
         <td style="white-space:nowrap">${getLocationShort(d.location)}</td>
         <td><span class="status-badge"><span class="status-dot ${onDot}"></span>${d.onlineStatus}</span></td>
         <td><div class="health-bar"><div class="health-bar-inner" style="width:${d.health}%;background:${getHealthColor(d.health)}"></div></div>${d.health}%</td>
-        <td style="text-align:center">${openFaults > 0 ? `<span style="color:var(--danger);font-weight:700">${openFaults}</span>` : '<span style="color:var(--text3)">—</span>'}</td>
+        <td style="text-align:center" onclick="event.stopPropagation()"><button class="usage-icon-btn" onclick="openFaultListModal('${d.id}')" title="查看故障/报修记录" style="font-size:14px">${openFaults > 0 ? `&#x1F6A8;` : `&#x1F6E0;`}${openFaults > 0 ? '<span class="usage-count" style="background:var(--danger)">'+openFaults+'</span>' : ''}</button></td>
         <td style="text-align:center" onclick="event.stopPropagation()"><button class="usage-icon-btn" onclick="openUsageListModal('${d.id}')" title="查看使用记录">&#x1F4CA;${(() => { const uc = getDeviceUsage(d.id).length; return uc > 0 ? '<span class="usage-count">'+uc+'</span>' : ''; })()}</button></td>
         <td>${msTag}</td>
         <td>${lcTag}</td>
@@ -998,14 +1032,63 @@ function renderUsageListChart() {
   });
 }
 
-// Panel 4: Fault Records
-function renderPanel4(d) {
-  const faults = getDeviceFaults(d.id).sort((a, b) => b.reportTime.localeCompare(a.reportTime));
-  const statusOrder = {'待处理':0,'处理中':1,'待验收':2,'已完成':3};
+// ==================== FAULT LIST MODAL ====================
+let faultListState = { deviceId: null, filters: { status: '', keyword: '' }, page: 1, pageSize: 5, expandedForms: {} };
 
-  const faultCards = faults.map(f => {
+function openFaultListModal(deviceId) {
+  faultListState.deviceId = deviceId;
+  faultListState.filters = { status: '', keyword: '' };
+  faultListState.page = 1;
+  faultListState.expandedForms = {};
+  const d = state.devices.find(x => x.id === deviceId);
+  document.getElementById('faultListTitle').textContent = (d ? d.id + ' ' + d.shortName : '') + ' — 故障/报修记录';
+  document.getElementById('faultListAddBtn').setAttribute('onclick', "closeFaultListModal();openFaultModal('" + deviceId + "')");
+  document.getElementById('faultListOverlay').classList.add('show');
+  renderFaultListModal();
+}
+
+function closeFaultListModal() {
+  document.getElementById('faultListOverlay').classList.remove('show');
+  faultListState.deviceId = null;
+}
+
+function getFilteredFaults() {
+  let list = getDeviceFaults(faultListState.deviceId).sort((a, b) => b.reportTime.localeCompare(a.reportTime));
+  const f = faultListState.filters;
+  if (f.status) list = list.filter(x => x.status === f.status);
+  if (f.keyword) { const kw = f.keyword.toLowerCase(); list = list.filter(x => x.desc.toLowerCase().includes(kw) || x.type.toLowerCase().includes(kw) || x.reporter.toLowerCase().includes(kw) || (x.assignee && x.assignee.toLowerCase().includes(kw))); }
+  return list;
+}
+
+function setFaultFilter(k, v) { faultListState.filters[k] = v; faultListState.page = 1; renderFaultListModal(); }
+function resetFaultFilters() { faultListState.filters = { status: '', keyword: '' }; faultListState.page = 1; renderFaultListModal(); }
+function faultListPage(p) { if (p < 1) return; faultListState.page = p; renderFaultListModal(); }
+
+function toggleFaultForm(faultId, formType) {
+  const key = faultId + '-' + formType;
+  if (faultListState.expandedForms[key]) { delete faultListState.expandedForms[key]; }
+  else { faultListState.expandedForms = {}; faultListState.expandedForms[key] = true; }
+  renderFaultListModal();
+}
+
+function renderFaultListModal() {
+  const allFaults = getDeviceFaults(faultListState.deviceId);
+  const filtered = getFilteredFaults();
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / faultListState.pageSize));
+  if (faultListState.page > totalPages) faultListState.page = totalPages;
+  const start = (faultListState.page - 1) * faultListState.pageSize;
+  const pageData = filtered.slice(start, start + faultListState.pageSize);
+
+  const pending = allFaults.filter(f => f.status === '待处理').length;
+  const processing = allFaults.filter(f => f.status === '处理中').length;
+  const verifying = allFaults.filter(f => f.status === '待验收').length;
+  const done = allFaults.filter(f => f.status === '已完成').length;
+
+  const statusOrder = {'待处理':0,'处理中':1,'待验收':2,'已完成':3};
+  const cards = pageData.map(f => {
     const si = statusOrder[f.status];
-    const steps = ['待处理','处理中','待验收','已完成'];
+    const steps = ['报修','分配','维修','验收'];
     const stepsHtml = steps.map((s, i) => {
       const dotClass = i < si ? 'done' : i === si ? 'current' : 'pending';
       const lineClass = i < si ? 'done' : '';
@@ -1021,65 +1104,185 @@ function renderPanel4(d) {
     const tlHtml = f.timeline.map(t => `<div class="timeline-item"><div class="tl-time">${t.time}</div><div class="tl-content">${t.content}</div></div>`).join('');
 
     let actionsHtml = '';
-    if (f.status === '待处理') actionsHtml = `<button class="btn btn-sm btn-primary" onclick="assignFault(${f.id})">分配处理</button>`;
-    else if (f.status === '处理中') actionsHtml = `<button class="btn btn-sm btn-success" onclick="completeFaultRepair(${f.id})">提交维修结果</button>`;
-    else if (f.status === '待验收') actionsHtml = `<button class="btn btn-sm btn-success" onclick="acceptFault(${f.id})">验收通过</button> <button class="btn btn-sm btn-warning" onclick="openReworkModal(${f.id})">返工</button>`;
+    let formHtml = '';
+    const assignKey = f.id + '-assign';
+    const repairKey = f.id + '-repair';
+    const acceptKey = f.id + '-accept';
 
-    return `<div class="maint-card" style="margin-bottom:12px">
-      <div class="maint-card-header">
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${urgTag} ${statusTag} <span style="font-size:12px;color:var(--text3)">${f.type}</span></div>
-        <span style="font-size:12px;color:var(--text3)">${f.reportTime}</span>
+    if (f.status === '待处理') {
+      actionsHtml = `<button class="btn btn-sm btn-primary" onclick="toggleFaultForm(${f.id},'assign')">分配处理人</button>`;
+      if (faultListState.expandedForms[assignKey]) {
+        formHtml = `<div class="fault-form-inline">
+          <div class="form-group"><label>处理人 <span style="color:var(--danger)">*</span></label>
+            <select id="fault-assign-${f.id}">
+              <option value="">请选择处理人</option>
+              <option>技术部-孙工</option><option>技术部-马工</option><option>IT运维-小李</option>
+              <option>网络运维-周工</option><option>设备厂家</option><option>捷安高科-研发</option>
+            </select></div>
+          <div class="form-group"><label>处理要求</label><input id="fault-assign-note-${f.id}" placeholder="选填，如: 优先处理"></div>
+          <div style="display:flex;gap:8px"><button class="btn btn-sm btn-primary" onclick="doAssignFault(${f.id})">确认分配</button><button class="btn btn-sm" onclick="toggleFaultForm(${f.id},'assign')">取消</button></div>
+        </div>`;
+      }
+    } else if (f.status === '处理中') {
+      actionsHtml = `<button class="btn btn-sm btn-success" onclick="toggleFaultForm(${f.id},'repair')">提交维修结果</button>`;
+      if (faultListState.expandedForms[repairKey]) {
+        formHtml = `<div class="fault-form-inline">
+          <div class="form-group"><label>维修人员 <span style="color:var(--danger)">*</span></label><input id="fault-repair-person-${f.id}" value="${f.assignee}" placeholder="维修人"></div>
+          <div class="form-group"><label>维修结果描述 <span style="color:var(--danger)">*</span></label><textarea id="fault-repair-desc-${f.id}" placeholder="请描述维修过程和结果..."></textarea></div>
+          <div class="form-group"><label>更换部件</label><input id="fault-repair-parts-${f.id}" placeholder="如无则留空"></div>
+          <div style="display:flex;gap:8px"><button class="btn btn-sm btn-success" onclick="doRepairFault(${f.id})">提交维修结果</button><button class="btn btn-sm" onclick="toggleFaultForm(${f.id},'repair')">取消</button></div>
+        </div>`;
+      }
+    } else if (f.status === '待验收') {
+      actionsHtml = `<button class="btn btn-sm btn-success" onclick="toggleFaultForm(${f.id},'accept')">验收</button>`;
+      if (faultListState.expandedForms[acceptKey]) {
+        formHtml = `<div class="fault-form-inline">
+          <div class="form-group"><label>验收结果 <span style="color:var(--danger)">*</span></label>
+            <div class="radio-group"><label><input type="radio" name="fault-accept-${f.id}" value="pass" checked> 验收通过</label><label><input type="radio" name="fault-accept-${f.id}" value="rework"> 返工</label></div></div>
+          <div class="form-group"><label>验收意见</label><textarea id="fault-accept-note-${f.id}" placeholder="选填，返工时请说明原因"></textarea></div>
+          <div style="display:flex;gap:8px"><button class="btn btn-sm btn-success" onclick="doAcceptFault(${f.id})">确认</button><button class="btn btn-sm" onclick="toggleFaultForm(${f.id},'accept')">取消</button></div>
+        </div>`;
+      }
+    }
+
+    return `<div class="fault-card">
+      <div class="fault-card-head">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${urgTag} ${statusTag} <span class="tag tag-gray">${f.type}</span></div>
+        <span style="font-size:12px;color:var(--text3)">#${f.id}</span>
       </div>
-      <div style="margin:8px 0;font-size:13px">${f.desc}</div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">报修人: ${f.reporter} ${f.assignee ? '| 处理人: ' + f.assignee : ''} ${f.photos ? '| 照片: ' + f.photos + '张' : ''}</div>
-      <div style="overflow-x:auto">${stepsHtml}</div>
-      <div class="timeline" style="margin-top:8px">${tlHtml}</div>
-      ${actionsHtml ? `<div style="margin-top:8px">${actionsHtml}</div>` : ''}
+      <div class="fault-card-desc">${f.desc}</div>
+      <div class="fault-card-meta">
+        <span>报修人: ${f.reporter}</span>
+        <span>报修时间: ${f.reportTime}</span>
+        ${f.assignee ? `<span>处理人: <strong>${f.assignee}</strong></span>` : ''}
+        ${f.photos ? `<span>照片: ${f.photos}张</span>` : ''}
+      </div>
+      <div style="overflow-x:auto;margin:10px 0">${stepsHtml}</div>
+      <details style="margin-top:4px"><summary style="font-size:12px;color:var(--primary);cursor:pointer">处理时间线 (${f.timeline.length})</summary><div class="timeline" style="margin-top:4px">${tlHtml}</div></details>
+      ${actionsHtml || formHtml ? `<div class="fault-card-actions">${actionsHtml}</div>` : ''}
+      ${formHtml}
+    </div>`;
+  }).join('');
+
+  document.getElementById('faultListBody').innerHTML = `
+    <div class="fault-summary-row">
+      <div class="fault-summary-item"><div class="fs-val" style="color:var(--danger)">${pending}</div><div class="fs-label">待处理</div></div>
+      <div class="fault-summary-item"><div class="fs-val" style="color:var(--primary)">${processing}</div><div class="fs-label">处理中</div></div>
+      <div class="fault-summary-item"><div class="fs-val" style="color:var(--warning)">${verifying}</div><div class="fs-label">待验收</div></div>
+      <div class="fault-summary-item"><div class="fs-val" style="color:var(--success)">${done}</div><div class="fs-label">已完成</div></div>
+      <div class="fault-summary-item"><div class="fs-val">${allFaults.length}</div><div class="fs-label">全部</div></div>
+    </div>
+    <div class="fault-filter-bar">
+      <select onchange="setFaultFilter('status',this.value)"><option value="">全部状态</option><option value="待处理" ${faultListState.filters.status==='待处理'?'selected':''}>待处理</option><option value="处理中" ${faultListState.filters.status==='处理中'?'selected':''}>处理中</option><option value="待验收" ${faultListState.filters.status==='待验收'?'selected':''}>待验收</option><option value="已完成" ${faultListState.filters.status==='已完成'?'selected':''}>已完成</option></select>
+      <input type="text" placeholder="搜索故障描述/类型/人员..." value="${faultListState.filters.keyword}" onchange="setFaultFilter('keyword',this.value)" style="min-width:200px">
+      <button class="btn btn-sm" onclick="resetFaultFilters()">重置</button>
+      <span style="margin-left:auto;font-size:12px;color:var(--text3)">共 ${total} 条</span>
+    </div>
+    ${total > 0 ? cards : '<div style="text-align:center;padding:40px;color:var(--text3)">暂无故障记录</div>'}
+    ${totalPages > 1 ? `<div style="display:flex;justify-content:center;gap:4px;margin-top:12px">
+      <button class="btn btn-sm" onclick="faultListPage(${faultListState.page-1})" ${faultListState.page<=1?'disabled':''}>上一页</button>
+      ${Array.from({length:totalPages},(_,i)=>`<button class="btn btn-sm ${i+1===faultListState.page?'btn-primary':''}" onclick="faultListPage(${i+1})">${i+1}</button>`).join('')}
+      <button class="btn btn-sm" onclick="faultListPage(${faultListState.page+1})" ${faultListState.page>=totalPages?'disabled':''}>下一页</button>
+    </div>` : ''}
+  `;
+}
+
+function doAssignFault(faultId) {
+  const assignee = document.getElementById('fault-assign-' + faultId)?.value;
+  const note = document.getElementById('fault-assign-note-' + faultId)?.value || '';
+  if (!assignee) { showToast('请选择处理人','error'); return; }
+  const f = state.faults.find(x => x.id === faultId);
+  if (f) {
+    f.status = '处理中';
+    f.assignee = assignee;
+    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '已分配给' + assignee + '处理' + (note ? '。要求: ' + note : '')});
+    showToast('已分配处理人','success');
+    delete faultListState.expandedForms[faultId + '-assign'];
+    renderFaultListModal();
+    render();
+    refreshDrawer();
+  }
+}
+
+function doRepairFault(faultId) {
+  const person = document.getElementById('fault-repair-person-' + faultId)?.value;
+  const desc = document.getElementById('fault-repair-desc-' + faultId)?.value;
+  const parts = document.getElementById('fault-repair-parts-' + faultId)?.value || '';
+  if (!person || !desc) { showToast('请填写维修人员和结果描述','error'); return; }
+  const f = state.faults.find(x => x.id === faultId);
+  if (f) {
+    f.status = '待验收';
+    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: person + '维修完成: ' + desc + (parts ? '（更换部件: ' + parts + ')' : '') + '，提交验收'});
+    showToast('维修结果已提交，待报修人验收','success');
+    delete faultListState.expandedForms[faultId + '-repair'];
+    renderFaultListModal();
+    render();
+    refreshDrawer();
+  }
+}
+
+function doAcceptFault(faultId) {
+  const result = document.querySelector('input[name="fault-accept-' + faultId + '"]:checked')?.value;
+  const note = document.getElementById('fault-accept-note-' + faultId)?.value || '';
+  const f = state.faults.find(x => x.id === faultId);
+  if (f) {
+    if (result === 'rework') {
+      if (!note) { showToast('返工请填写原因','error'); return; }
+      f.status = '处理中';
+      f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '验收不通过，返工。原因: ' + note});
+      showToast('已退回返工','success');
+    } else {
+      f.status = '已完成';
+      f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '验收通过' + (note ? '。意见: ' + note : '') + '，故障已关闭'});
+      showToast('验收通过','success');
+    }
+    delete faultListState.expandedForms[faultId + '-accept'];
+    renderFaultListModal();
+    render();
+    refreshDrawer();
+  }
+}
+
+// Panel 4: Fault Records (summary only, full workflow in fault list modal)
+function renderPanel4(d) {
+  const faults = getDeviceFaults(d.id);
+  const open = faults.filter(f => f.status !== '已完成');
+  const pending = faults.filter(f => f.status === '待处理').length;
+  const processing = faults.filter(f => f.status === '处理中').length;
+  const verifying = faults.filter(f => f.status === '待验收').length;
+  const done = faults.filter(f => f.status === '已完成').length;
+
+  const summaryItems = [];
+  if (pending) summaryItems.push(`<span class="tag tag-red">待处理 ${pending}</span>`);
+  if (processing) summaryItems.push(`<span class="tag tag-blue">处理中 ${processing}</span>`);
+  if (verifying) summaryItems.push(`<span class="tag tag-orange">待验收 ${verifying}</span>`);
+  if (done) summaryItems.push(`<span class="tag tag-green">已完成 ${done}</span>`);
+
+  const recentFaults = faults.sort((a, b) => b.reportTime.localeCompare(a.reportTime)).slice(0, 3);
+  const recentHtml = recentFaults.map(f => {
+    const statusTag = f.status === '待处理' ? '<span class="tag tag-red">待处理</span>' :
+                      f.status === '处理中' ? '<span class="tag tag-blue">处理中</span>' :
+                      f.status === '待验收' ? '<span class="tag tag-orange">待验收</span>' :
+                      '<span class="tag tag-green">已完成</span>';
+    return `<div style="padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.desc}</span>
+      <span style="flex-shrink:0">${statusTag}</span>
     </div>`;
   }).join('');
 
   return `<div class="collapse-panel" id="panel4">
     <div class="collapse-header" onclick="togglePanel('panel4')">
-      <h4><span class="collapse-arrow">&#9654;</span> 故障记录 <span class="tag tag-red" style="font-weight:400">${getDeviceOpenFaults(d.id).length} 未完成</span></h4>
+      <h4><span class="collapse-arrow">&#9654;</span> 故障记录 <span class="tag tag-red" style="font-weight:400">${open.length} 未完成</span></h4>
       <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();openFaultModal('${d.id}')">+ 报修</button>
     </div>
     <div class="collapse-content">
-      ${faults.length > 0 ? faultCards : '<div style="text-align:center;padding:20px;color:var(--text3)">暂无故障记录</div>'}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">${summaryItems.join('') || '<span style="color:var(--text3)">暂无故障</span>'}</div>
+      ${recentHtml ? `<div style="margin-bottom:12px">${recentHtml}</div>` : ''}
+      <button class="btn btn-sm btn-primary" onclick="closeDrawer();openFaultListModal('${d.id}')" style="width:100%">查看全部故障记录 & 处理流程 (${faults.length})</button>
     </div>
   </div>`;
 }
 
-function assignFault(faultId) {
-  const f = state.faults.find(x => x.id === faultId);
-  if (f) {
-    f.status = '处理中';
-    f.assignee = '技术部-值班工程师';
-    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '已分配给技术部-值班工程师处理'});
-    showToast('已分配处理人','success');
-    refreshDrawer();
-    render();
-  }
-}
-function completeFaultRepair(faultId) {
-  const f = state.faults.find(x => x.id === faultId);
-  if (f) {
-    f.status = '待验收';
-    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '维修完成，提交验收'});
-    showToast('已提交验收','success');
-    refreshDrawer();
-    render();
-  }
-}
-function acceptFault(faultId) {
-  const f = state.faults.find(x => x.id === faultId);
-  if (f) {
-    f.status = '已完成';
-    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '验收通过，故障已关闭'});
-    showToast('验收通过','success');
-    refreshDrawer();
-    render();
-  }
-}
 
 // Panel 5: Maintenance
 function renderPanel5(d) {
@@ -1388,6 +1591,7 @@ function submitFault() {
   showToast('故障已登记','success');
   render();
   refreshDrawer();
+  if (faultListState.deviceId === deviceId) { renderFaultListModal(); }
 }
 
 // 5. New Maintenance Plan Modal
@@ -1549,33 +1753,6 @@ function submitUsage(deviceId) {
   refreshDrawer();
 }
 
-// 8. Rework Modal
-function openReworkModal(faultId) {
-  openModal(`
-    <div class="modal-header"><h3>返工原因</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label><span class="req">*</span> 返工原因</label><textarea id="rework-reason" placeholder="请说明返工原因..."></textarea></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal()">取消</button>
-      <button class="btn btn-warning" onclick="submitRework(${faultId})">确认返工</button>
-    </div>
-  `);
-}
-
-function submitRework(faultId) {
-  const reason = document.getElementById('rework-reason').value;
-  if (!reason) { showToast('请填写返工原因','error'); return; }
-  const f = state.faults.find(x => x.id === faultId);
-  if (f) {
-    f.status = '处理中';
-    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '验收不通过，需返工。原因：' + reason});
-    showToast('已退回返工','success');
-    closeModal();
-    render();
-    refreshDrawer();
-  }
-}
 
 // ==================== INIT ====================
 render();
