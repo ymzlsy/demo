@@ -56,20 +56,29 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .usage-icon-btn .usage-count{position:absolute;top:-4px;right:-6px;min-width:16px;height:16px;border-radius:8px;background:var(--primary);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0 3px}
 .usage-modal{width:900px;max-width:95vw;max-height:90vh}
 .usage-modal-body{padding:20px;overflow-y:auto;max-height:calc(90vh - 120px)}
-.fault-modal{width:960px;max-width:95vw;max-height:92vh}
-.fault-modal-body{padding:20px;overflow-y:auto;max-height:calc(92vh - 120px)}
-.fault-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;transition:box-shadow .2s}
-.fault-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.fault-card-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.fault-card-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text3);margin-top:6px}
-.fault-card-desc{font-size:13px;margin:8px 0;line-height:1.6}
-.fault-card-actions{margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.fault-form-inline{background:#fafafa;border:1px solid var(--border);border-radius:6px;padding:12px;margin-top:10px}
-.fault-form-inline .form-group{margin-bottom:10px}
-.fault-form-inline .form-group:last-child{margin-bottom:0}
-.fault-form-inline label{font-size:12px;font-weight:500;display:block;margin-bottom:3px}
-.fault-form-inline input,.fault-form-inline select,.fault-form-inline textarea{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;font-family:inherit}
-.fault-form-inline textarea{resize:vertical;min-height:60px}
+.fault-modal{width:1200px;max-width:96vw;max-height:92vh}
+.fault-modal-body{padding:16px;overflow-y:auto;max-height:calc(92vh - 120px)}
+.fault-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius)}
+.fault-table{width:100%;border-collapse:collapse;font-size:12px;min-width:1100px}
+.fault-table th{background:#fafafa;padding:8px 10px;text-align:left;font-weight:600;border-bottom:1px solid var(--border);white-space:nowrap;font-size:11px;color:var(--text2)}
+.fault-table td{padding:7px 10px;border-bottom:1px solid #f0f0f0;vertical-align:top;line-height:1.5}
+.fault-table tr:hover{background:#fafafa}
+.fault-table tr.fault-row-expanded{background:#f0f7ff}
+.fault-table .fault-desc-cell{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fault-table .fault-desc-cell:hover{white-space:normal;overflow:visible}
+.fault-table .fault-repair-cell{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fault-table .fault-repair-cell:hover{white-space:normal;overflow:visible}
+.fault-photo-tag{display:inline-flex;align-items:center;gap:2px;background:#f0f0f0;border-radius:3px;padding:1px 6px;font-size:11px;color:var(--text2);cursor:default}
+.fault-photo-tag.has-photo{background:#e6f7ff;color:var(--primary)}
+.fault-expand-row td{padding:12px 16px;background:#fafbfc;border-bottom:1px solid var(--border)}
+.fault-expand-form{max-width:600px}
+.fault-expand-form .form-group{margin-bottom:10px}
+.fault-expand-form .form-group:last-child{margin-bottom:0}
+.fault-expand-form label{font-size:12px;font-weight:500;display:block;margin-bottom:3px}
+.fault-expand-form input,.fault-expand-form select,.fault-expand-form textarea{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;font-family:inherit;box-sizing:border-box}
+.fault-expand-form textarea{resize:vertical;min-height:60px}
+.fault-expand-form .radio-group{display:flex;gap:16px}
+.fault-expand-form .radio-group label{display:inline-flex;align-items:center;gap:4px;font-weight:400}
 .fault-filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
 .fault-filter-bar select,.fault-filter-bar input{padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;min-width:100px}
 .fault-summary-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -380,21 +389,21 @@ const USAGE_RECORDS = [
 
 // Fault records
 const FAULTS = [
-  {id:1,deviceId:'PE00701',type:'硬件故障',urgency:'紧急',desc:'液压系统压力异常波动，训练中突然失压',reporter:'赵刚',reportTime:'2026-06-12 14:30',status:'待处理',assignee:'',photos:1,timeline:[{time:'2026-06-12 14:30',content:'赵刚报修：训练中液压系统压力异常波动'}]},
-  {id:2,deviceId:'PE00623',type:'显示故障',urgency:'一般',desc:'第2工位显示器闪屏，偶发',reporter:'陈丽',reportTime:'2026-06-15 16:20',status:'处理中',assignee:'技术部-孙工',photos:2,timeline:[{time:'2026-06-15 16:20',content:'陈丽报修：第2工位显示器闪屏'},{time:'2026-06-15 17:00',content:'已分配给技术部-孙工处理'},{time:'2026-06-16 09:30',content:'孙工到场检查，初步判断显卡驱动问题，正在处理'}]},
-  {id:3,deviceId:'PE01208',type:'软件故障',urgency:'一般',desc:'模拟画面卡顿延迟，重启后恢复但反复出现',reporter:'李明',reportTime:'2026-06-16 15:00',status:'待处理',assignee:'',photos:0,timeline:[{time:'2026-06-16 15:00',content:'李明报修：模拟画面卡顿延迟'}]},
-  {id:4,deviceId:'PE00556',type:'传感器故障',urgency:'一般',desc:'速度传感器偶尔读数跳变',reporter:'王建国',reportTime:'2026-06-10 10:00',status:'待验收',assignee:'技术部-马工',photos:1,timeline:[{time:'2026-06-10 10:00',content:'王建国报修：速度传感器读数跳变'},{time:'2026-06-10 14:00',content:'分配给技术部-马工'},{time:'2026-06-11 09:00',content:'马工检查，更换传感器连接线'},{time:'2026-06-11 16:00',content:'维修完成，提交验收'}]},
-  {id:5,deviceId:'PE00802',type:'机械故障',urgency:'紧急',desc:'液压升降台异响，升降速度不均匀',reporter:'刘洋',reportTime:'2026-05-28 11:00',status:'已完成',assignee:'设备厂家-中车株洲',photos:3,timeline:[{time:'2026-05-28 11:00',content:'刘洋报修：液压升降台异响'},{time:'2026-05-28 14:00',content:'联系厂家中车株洲'},{time:'2026-05-30 09:00',content:'厂家工程师到场检修'},{time:'2026-05-31 17:00',content:'更换液压油缸密封圈，维修完成'},{time:'2026-06-01 10:00',content:'验收通过，运行正常'}]},
-  {id:6,deviceId:'PE00915',type:'网络故障',urgency:'一般',desc:'3号和4号工位网络连接不稳定',reporter:'赵刚',reportTime:'2026-06-05 09:30',status:'已完成',assignee:'网络运维-周工',photos:0,timeline:[{time:'2026-06-05 09:30',content:'赵刚报修：3号4号工位网络不稳'},{time:'2026-06-05 10:00',content:'分配给网络运维-周工'},{time:'2026-06-05 14:00',content:'更换交换机端口和网线'},{time:'2026-06-05 16:00',content:'测试正常，验收通过'}]},
-  {id:7,deviceId:'PE01103',type:'软件故障',urgency:'一般',desc:'烟雾场景渲染偶尔崩溃',reporter:'刘强',reportTime:'2026-06-03 15:00',status:'已完成',assignee:'捷安高科-研发',photos:0,timeline:[{time:'2026-06-03 15:00',content:'刘强报修：烟雾渲染崩溃'},{time:'2026-06-04 10:00',content:'远程排查，升级渲染引擎版本'},{time:'2026-06-05 09:00',content:'测试通过'}]},
-  {id:8,deviceId:'PE00701',type:'电气故障',urgency:'紧急',desc:'主控柜电源模块发热严重',reporter:'张伟',reportTime:'2026-05-20 08:00',status:'已完成',assignee:'技术部-马工',photos:2,timeline:[{time:'2026-05-20 08:00',content:'张伟报修：主控柜电源发热'},{time:'2026-05-20 09:00',content:'紧急断电处理'},{time:'2026-05-20 14:00',content:'更换电源模块'},{time:'2026-05-21 10:00',content:'验收通过'}]},
-  {id:9,deviceId:'PE01001',type:'硬件故障',urgency:'一般',desc:'6号终端平板触屏失灵',reporter:'陈静',reportTime:'2026-06-08 13:00',status:'已完成',assignee:'IT运维-小李',photos:1,timeline:[{time:'2026-06-08 13:00',content:'陈静报修：6号平板触屏失灵'},{time:'2026-06-08 15:00',content:'更换备用平板'},{time:'2026-06-08 16:00',content:'验收通过'}]},
-  {id:10,deviceId:'PE00623',type:'机械故障',urgency:'一般',desc:'座椅液压杆下沉',reporter:'张伟',reportTime:'2026-05-15 10:00',status:'已完成',assignee:'后勤-老王',photos:0,timeline:[{time:'2026-05-15 10:00',content:'报修：座椅液压杆下沉'},{time:'2026-05-16 09:00',content:'更换液压杆'},{time:'2026-05-16 14:00',content:'验收通过'}]},
-  {id:11,deviceId:'PE01208',type:'硬件故障',urgency:'一般',desc:'操纵杆回位弹簧松弛',reporter:'李明',reportTime:'2026-06-01 09:00',status:'处理中',assignee:'技术部-孙工',photos:1,timeline:[{time:'2026-06-01 09:00',content:'李明报修：操纵杆回位弹簧松弛'},{time:'2026-06-02 10:00',content:'分配给孙工，需订购配件'},{time:'2026-06-10 14:00',content:'配件到货，等待安排维修'}]},
-  {id:12,deviceId:'PE00933',type:'软件故障',urgency:'一般',desc:'列控数据加载缓慢',reporter:'赵刚',reportTime:'2026-06-07 11:00',status:'已完成',assignee:'卡斯柯-远程支持',photos:0,timeline:[{time:'2026-06-07 11:00',content:'赵刚报修：数据加载慢'},{time:'2026-06-07 15:00',content:'厂家远程优化数据库'},{time:'2026-06-08 09:00',content:'验收通过'}]},
-  {id:13,deviceId:'PE01310',type:'传感器故障',urgency:'一般',desc:'传送带速度传感器偏差',reporter:'周琳',reportTime:'2026-06-13 14:00',status:'待验收',assignee:'同方威视-售后',photos:1,timeline:[{time:'2026-06-13 14:00',content:'周琳报修：传送带速度偏差'},{time:'2026-06-14 10:00',content:'厂家远程指导校准'},{time:'2026-06-15 09:00',content:'校准完成，待验收'}]},
-  {id:14,deviceId:'PE00556',type:'软件故障',urgency:'一般',desc:'考试成绩统计模块偶发计算错误',reporter:'王建国',reportTime:'2026-05-25 16:00',status:'已完成',assignee:'捷安高科-研发',photos:0,timeline:[{time:'2026-05-25 16:00',content:'报修：成绩计算错误'},{time:'2026-05-26 10:00',content:'研发排查，修复Bug'},{time:'2026-05-27 09:00',content:'验证通过'}]},
-  {id:15,deviceId:'PE01155',type:'硬件故障',urgency:'一般',desc:'2号模拟火源LED灯珠损坏',reporter:'刘强',reportTime:'2026-06-06 10:00',status:'处理中',assignee:'技术部-马工',photos:1,timeline:[{time:'2026-06-06 10:00',content:'刘强报修：LED灯珠损坏'},{time:'2026-06-06 14:00',content:'分配给马工，需采购灯珠'}]}
+  {id:1,deviceId:'PE00701',type:'硬件故障',urgency:'紧急',desc:'液压系统压力异常波动，训练中突然失压',reporter:'赵刚',reportTime:'2026-06-12 14:30',status:'待处理',reportPhotos:1,repairPerson:'',repairDesc:'',repairParts:'',repairPhotos:0,repairTime:'',timeline:[{time:'2026-06-12 14:30',content:'赵刚报修：训练中液压系统压力异常波动'}]},
+  {id:2,deviceId:'PE00623',type:'显示故障',urgency:'一般',desc:'第2工位显示器闪屏，偶发',reporter:'陈丽',reportTime:'2026-06-15 16:20',status:'待处理',reportPhotos:2,repairPerson:'',repairDesc:'',repairParts:'',repairPhotos:0,repairTime:'',timeline:[{time:'2026-06-15 16:20',content:'陈丽报修：第2工位显示器闪屏'}]},
+  {id:3,deviceId:'PE01208',type:'软件故障',urgency:'一般',desc:'模拟画面卡顿延迟，重启后恢复但反复出现',reporter:'李明',reportTime:'2026-06-16 15:00',status:'待处理',reportPhotos:0,repairPerson:'',repairDesc:'',repairParts:'',repairPhotos:0,repairTime:'',timeline:[{time:'2026-06-16 15:00',content:'李明报修：模拟画面卡顿延迟'}]},
+  {id:4,deviceId:'PE00556',type:'传感器故障',urgency:'一般',desc:'速度传感器偶尔读数跳变',reporter:'王建国',reportTime:'2026-06-10 10:00',status:'待验收',reportPhotos:1,repairPerson:'技术部-马工',repairDesc:'检查并更换传感器连接线',repairParts:'传感器连接线x1',repairPhotos:1,repairTime:'2026-06-11 16:00',timeline:[{time:'2026-06-10 10:00',content:'王建国报修：速度传感器读数跳变'},{time:'2026-06-11 09:00',content:'马工检查，更换传感器连接线'},{time:'2026-06-11 16:00',content:'维修完成，提交验收'}]},
+  {id:5,deviceId:'PE00802',type:'机械故障',urgency:'紧急',desc:'液压升降台异响，升降速度不均匀',reporter:'刘洋',reportTime:'2026-05-28 11:00',status:'已完成',reportPhotos:3,repairPerson:'设备厂家-中车株洲',repairDesc:'更换液压油缸密封圈，运行恢复正常',repairParts:'液压油缸密封圈',repairPhotos:2,repairTime:'2026-05-31 17:00',timeline:[{time:'2026-05-28 11:00',content:'刘洋报修：液压升降台异响'},{time:'2026-05-30 09:00',content:'厂家工程师到场检修'},{time:'2026-05-31 17:00',content:'更换液压油缸密封圈，维修完成'},{time:'2026-06-01 10:00',content:'验收通过，运行正常'}]},
+  {id:6,deviceId:'PE00915',type:'网络故障',urgency:'一般',desc:'3号和4号工位网络连接不稳定',reporter:'赵刚',reportTime:'2026-06-05 09:30',status:'已完成',reportPhotos:0,repairPerson:'网络运维-周工',repairDesc:'更换交换机端口和网线',repairParts:'交换机端口,网线',repairPhotos:0,repairTime:'2026-06-05 14:00',timeline:[{time:'2026-06-05 09:30',content:'赵刚报修：3号4号工位网络不稳'},{time:'2026-06-05 14:00',content:'更换交换机端口和网线'},{time:'2026-06-05 16:00',content:'测试正常，验收通过'}]},
+  {id:7,deviceId:'PE01103',type:'软件故障',urgency:'一般',desc:'烟雾场景渲染偶尔崩溃',reporter:'刘强',reportTime:'2026-06-03 15:00',status:'已完成',reportPhotos:0,repairPerson:'捷安高科-研发',repairDesc:'远程排查，升级渲染引擎版本',repairParts:'',repairPhotos:0,repairTime:'2026-06-04 10:00',timeline:[{time:'2026-06-03 15:00',content:'刘强报修：烟雾渲染崩溃'},{time:'2026-06-04 10:00',content:'远程排查，升级渲染引擎版本'},{time:'2026-06-05 09:00',content:'测试通过'}]},
+  {id:8,deviceId:'PE00701',type:'电气故障',urgency:'紧急',desc:'主控柜电源模块发热严重',reporter:'张伟',reportTime:'2026-05-20 08:00',status:'已完成',reportPhotos:2,repairPerson:'技术部-马工',repairDesc:'紧急断电后更换电源模块',repairParts:'电源模块x1',repairPhotos:1,repairTime:'2026-05-20 14:00',timeline:[{time:'2026-05-20 08:00',content:'张伟报修：主控柜电源发热'},{time:'2026-05-20 09:00',content:'紧急断电处理'},{time:'2026-05-20 14:00',content:'更换电源模块'},{time:'2026-05-21 10:00',content:'验收通过'}]},
+  {id:9,deviceId:'PE01001',type:'硬件故障',urgency:'一般',desc:'6号终端平板触屏失灵',reporter:'陈静',reportTime:'2026-06-08 13:00',status:'已完成',reportPhotos:1,repairPerson:'IT运维-小李',repairDesc:'更换备用平板',repairParts:'平板x1',repairPhotos:0,repairTime:'2026-06-08 15:00',timeline:[{time:'2026-06-08 13:00',content:'陈静报修：6号平板触屏失灵'},{time:'2026-06-08 15:00',content:'更换备用平板'},{time:'2026-06-08 16:00',content:'验收通过'}]},
+  {id:10,deviceId:'PE00623',type:'机械故障',urgency:'一般',desc:'座椅液压杆下沉',reporter:'张伟',reportTime:'2026-05-15 10:00',status:'已完成',reportPhotos:0,repairPerson:'后勤-老王',repairDesc:'更换液压杆',repairParts:'液压杆x1',repairPhotos:0,repairTime:'2026-05-16 09:00',timeline:[{time:'2026-05-15 10:00',content:'报修：座椅液压杆下沉'},{time:'2026-05-16 09:00',content:'更换液压杆'},{time:'2026-05-16 14:00',content:'验收通过'}]},
+  {id:11,deviceId:'PE01208',type:'硬件故障',urgency:'一般',desc:'操纵杆回位弹簧松弛',reporter:'李明',reportTime:'2026-06-01 09:00',status:'待处理',reportPhotos:1,repairPerson:'',repairDesc:'',repairParts:'',repairPhotos:0,repairTime:'',timeline:[{time:'2026-06-01 09:00',content:'李明报修：操纵杆回位弹簧松弛'}]},
+  {id:12,deviceId:'PE00933',type:'软件故障',urgency:'一般',desc:'列控数据加载缓慢',reporter:'赵刚',reportTime:'2026-06-07 11:00',status:'已完成',reportPhotos:0,repairPerson:'卡斯柯-远程支持',repairDesc:'远程优化数据库',repairParts:'',repairPhotos:0,repairTime:'2026-06-07 15:00',timeline:[{time:'2026-06-07 11:00',content:'赵刚报修：数据加载慢'},{time:'2026-06-07 15:00',content:'厂家远程优化数据库'},{time:'2026-06-08 09:00',content:'验收通过'}]},
+  {id:13,deviceId:'PE01310',type:'传感器故障',urgency:'一般',desc:'传送带速度传感器偏差',reporter:'周琳',reportTime:'2026-06-13 14:00',status:'待验收',reportPhotos:1,repairPerson:'同方威视-售后',repairDesc:'远程指导校准传送带速度传感器',repairParts:'',repairPhotos:0,repairTime:'2026-06-15 09:00',timeline:[{time:'2026-06-13 14:00',content:'周琳报修：传送带速度偏差'},{time:'2026-06-14 10:00',content:'厂家远程指导校准'},{time:'2026-06-15 09:00',content:'校准完成，待验收'}]},
+  {id:14,deviceId:'PE00556',type:'软件故障',urgency:'一般',desc:'考试成绩统计模块偶发计算错误',reporter:'王建国',reportTime:'2026-05-25 16:00',status:'已完成',reportPhotos:0,repairPerson:'捷安高科-研发',repairDesc:'排查并修复成绩计算Bug',repairParts:'',repairPhotos:0,repairTime:'2026-05-26 10:00',timeline:[{time:'2026-05-25 16:00',content:'报修：成绩计算错误'},{time:'2026-05-26 10:00',content:'研发排查，修复Bug'},{time:'2026-05-27 09:00',content:'验证通过'}]},
+  {id:15,deviceId:'PE01155',type:'硬件故障',urgency:'一般',desc:'2号模拟火源LED灯珠损坏',reporter:'刘强',reportTime:'2026-06-06 10:00',status:'待处理',reportPhotos:1,repairPerson:'',repairDesc:'',repairParts:'',repairPhotos:0,repairTime:'',timeline:[{time:'2026-06-06 10:00',content:'刘强报修：LED灯珠损坏'}]}
 ];
 
 // Maintenance plans
@@ -1062,7 +1071,7 @@ function getFilteredFaults() {
   let list = getDeviceFaults(faultListState.deviceId).sort((a, b) => b.reportTime.localeCompare(a.reportTime));
   const f = faultListState.filters;
   if (f.status) list = list.filter(x => x.status === f.status);
-  if (f.keyword) { const kw = f.keyword.toLowerCase(); list = list.filter(x => x.desc.toLowerCase().includes(kw) || x.type.toLowerCase().includes(kw) || x.reporter.toLowerCase().includes(kw) || (x.assignee && x.assignee.toLowerCase().includes(kw))); }
+  if (f.keyword) { const kw = f.keyword.toLowerCase(); list = list.filter(x => x.desc.toLowerCase().includes(kw) || x.type.toLowerCase().includes(kw) || x.reporter.toLowerCase().includes(kw) || (x.repairPerson && x.repairPerson.toLowerCase().includes(kw))); }
   return list;
 }
 
@@ -1087,127 +1096,103 @@ function renderFaultListModal() {
   const pageData = filtered.slice(start, start + faultListState.pageSize);
 
   const pending = allFaults.filter(f => f.status === '待处理').length;
-  const processing = allFaults.filter(f => f.status === '处理中').length;
   const verifying = allFaults.filter(f => f.status === '待验收').length;
   const done = allFaults.filter(f => f.status === '已完成').length;
 
-  const statusOrder = {'待处理':0,'处理中':1,'待验收':2,'已完成':3};
-  const cards = pageData.map(f => {
-    const si = statusOrder[f.status];
-    const steps = ['报修','分配','维修','验收'];
-    const stepsHtml = steps.map((s, i) => {
-      const dotClass = i < si ? 'done' : i === si ? 'current' : 'pending';
-      const lineClass = i < si ? 'done' : '';
-      return `<div class="fault-step"><div class="step-dot ${dotClass}">${i < si ? '✓' : i + 1}</div><span style="font-size:11px;color:${i<=si?'var(--text)':'var(--text3)'}">${s}</span>${i < steps.length - 1 ? `<div class="step-line ${lineClass}"></div>` : ''}</div>`;
-    }).join('');
+  const photoTag = (n) => n > 0 ? `<span class="fault-photo-tag has-photo">&#x1F4F7; ${n}</span>` : `<span class="fault-photo-tag">-</span>`;
 
-    const urgTag = f.urgency === '紧急' ? '<span class="tag tag-red">紧急</span>' : '<span class="tag tag-orange">一般</span>';
-    const statusTag = f.status === '待处理' ? '<span class="tag tag-red">待处理</span>' :
-                      f.status === '处理中' ? '<span class="tag tag-blue">处理中</span>' :
-                      f.status === '待验收' ? '<span class="tag tag-orange">待验收</span>' :
-                      '<span class="tag tag-green">已完成</span>';
+  const statusTag = (s) => s === '待处理' ? '<span class="tag tag-red">待处理</span>' :
+                           s === '待验收' ? '<span class="tag tag-orange">待验收</span>' :
+                           '<span class="tag tag-green">已完成</span>';
 
-    const tlHtml = f.timeline.map(t => `<div class="timeline-item"><div class="tl-time">${t.time}</div><div class="tl-content">${t.content}</div></div>`).join('');
+  const urgTag = (u) => u === '紧急' ? '<span class="tag tag-red">紧急</span>' : '<span class="tag tag-orange">一般</span>';
 
+  const rows = pageData.map(f => {
+    const isExpanded = faultListState.expandedForms[f.id + '-repair'] || faultListState.expandedForms[f.id + '-accept'];
     let actionsHtml = '';
-    let formHtml = '';
-    const assignKey = f.id + '-assign';
-    const repairKey = f.id + '-repair';
-    const acceptKey = f.id + '-accept';
-
     if (f.status === '待处理') {
-      actionsHtml = `<button class="btn btn-sm btn-primary" onclick="toggleFaultForm(${f.id},'assign')">分配处理人</button>`;
-      if (faultListState.expandedForms[assignKey]) {
-        formHtml = `<div class="fault-form-inline">
-          <div class="form-group"><label>处理人 <span style="color:var(--danger)">*</span></label>
-            <select id="fault-assign-${f.id}">
-              <option value="">请选择处理人</option>
-              <option>技术部-孙工</option><option>技术部-马工</option><option>IT运维-小李</option>
-              <option>网络运维-周工</option><option>设备厂家</option><option>捷安高科-研发</option>
-            </select></div>
-          <div class="form-group"><label>处理要求</label><input id="fault-assign-note-${f.id}" placeholder="选填，如: 优先处理"></div>
-          <div style="display:flex;gap:8px"><button class="btn btn-sm btn-primary" onclick="doAssignFault(${f.id})">确认分配</button><button class="btn btn-sm" onclick="toggleFaultForm(${f.id},'assign')">取消</button></div>
-        </div>`;
-      }
-    } else if (f.status === '处理中') {
-      actionsHtml = `<button class="btn btn-sm btn-success" onclick="toggleFaultForm(${f.id},'repair')">提交维修结果</button>`;
-      if (faultListState.expandedForms[repairKey]) {
-        formHtml = `<div class="fault-form-inline">
-          <div class="form-group"><label>维修人员 <span style="color:var(--danger)">*</span></label><input id="fault-repair-person-${f.id}" value="${f.assignee}" placeholder="维修人"></div>
+      actionsHtml = `<button class="btn btn-sm btn-primary" onclick="event.stopPropagation();toggleFaultForm(${f.id},'repair')" style="white-space:nowrap">提交维修</button>`;
+    } else if (f.status === '待验收') {
+      actionsHtml = `<button class="btn btn-sm btn-success" onclick="event.stopPropagation();toggleFaultForm(${f.id},'accept')" style="white-space:nowrap">验收</button>`;
+    } else {
+      actionsHtml = '<span style="color:var(--text3);font-size:11px">-</span>';
+    }
+
+    let expandRow = '';
+    if (faultListState.expandedForms[f.id + '-repair']) {
+      expandRow = `<tr class="fault-expand-row"><td colspan="12">
+        <div class="fault-expand-form">
+          <div style="font-weight:600;margin-bottom:10px">提交维修结果 — #${f.id} ${f.type}</div>
+          <div class="form-group"><label>维修人员 <span style="color:var(--danger)">*</span></label><input id="fault-repair-person-${f.id}" placeholder="维修人员姓名"></div>
           <div class="form-group"><label>维修结果描述 <span style="color:var(--danger)">*</span></label><textarea id="fault-repair-desc-${f.id}" placeholder="请描述维修过程和结果..."></textarea></div>
           <div class="form-group"><label>更换部件</label><input id="fault-repair-parts-${f.id}" placeholder="如无则留空"></div>
-          <div style="display:flex;gap:8px"><button class="btn btn-sm btn-success" onclick="doRepairFault(${f.id})">提交维修结果</button><button class="btn btn-sm" onclick="toggleFaultForm(${f.id},'repair')">取消</button></div>
-        </div>`;
-      }
-    } else if (f.status === '待验收') {
-      actionsHtml = `<button class="btn btn-sm btn-success" onclick="toggleFaultForm(${f.id},'accept')">验收</button>`;
-      if (faultListState.expandedForms[acceptKey]) {
-        formHtml = `<div class="fault-form-inline">
+          <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-sm btn-primary" onclick="doRepairFault(${f.id})">确认提交</button><button class="btn btn-sm" onclick="toggleFaultForm(${f.id},'repair')">取消</button></div>
+        </div></td></tr>`;
+    } else if (faultListState.expandedForms[f.id + '-accept']) {
+      expandRow = `<tr class="fault-expand-row"><td colspan="12">
+        <div class="fault-expand-form">
+          <div style="font-weight:600;margin-bottom:10px">验收 — #${f.id} ${f.type}</div>
           <div class="form-group"><label>验收结果 <span style="color:var(--danger)">*</span></label>
             <div class="radio-group"><label><input type="radio" name="fault-accept-${f.id}" value="pass" checked> 验收通过</label><label><input type="radio" name="fault-accept-${f.id}" value="rework"> 返工</label></div></div>
           <div class="form-group"><label>验收意见</label><textarea id="fault-accept-note-${f.id}" placeholder="选填，返工时请说明原因"></textarea></div>
-          <div style="display:flex;gap:8px"><button class="btn btn-sm btn-success" onclick="doAcceptFault(${f.id})">确认</button><button class="btn btn-sm" onclick="toggleFaultForm(${f.id},'accept')">取消</button></div>
-        </div>`;
-      }
+          <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-sm btn-success" onclick="doAcceptFault(${f.id})">确认</button><button class="btn btn-sm" onclick="toggleFaultForm(${f.id},'accept')">取消</button></div>
+        </div></td></tr>`;
     }
 
-    return `<div class="fault-card">
-      <div class="fault-card-head">
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${urgTag} ${statusTag} <span class="tag tag-gray">${f.type}</span></div>
-        <span style="font-size:12px;color:var(--text3)">#${f.id}</span>
-      </div>
-      <div class="fault-card-desc">${f.desc}</div>
-      <div class="fault-card-meta">
-        <span>报修人: ${f.reporter}</span>
-        <span>报修时间: ${f.reportTime}</span>
-        ${f.assignee ? `<span>处理人: <strong>${f.assignee}</strong></span>` : ''}
-        ${f.photos ? `<span>照片: ${f.photos}张</span>` : ''}
-      </div>
-      <div style="overflow-x:auto;margin:10px 0">${stepsHtml}</div>
-      <details style="margin-top:4px"><summary style="font-size:12px;color:var(--primary);cursor:pointer">处理时间线 (${f.timeline.length})</summary><div class="timeline" style="margin-top:4px">${tlHtml}</div></details>
-      ${actionsHtml || formHtml ? `<div class="fault-card-actions">${actionsHtml}</div>` : ''}
-      ${formHtml}
-    </div>`;
+    return `<tr class="${isExpanded ? 'fault-row-expanded' : ''}" style="cursor:default">
+      <td style="text-align:center;color:var(--text3)">${f.id}</td>
+      <td>${statusTag(f.status)}</td>
+      <td>${urgTag(f.urgency)}</td>
+      <td><span class="tag tag-gray">${f.type}</span></td>
+      <td class="fault-desc-cell" title="${f.desc}">${f.desc}</td>
+      <td style="white-space:nowrap">${f.reporter}<br><span style="font-size:11px;color:var(--text3)">${f.reportTime}</span></td>
+      <td style="text-align:center">${photoTag(f.reportPhotos)}</td>
+      <td style="white-space:nowrap">${f.repairPerson || '<span style="color:var(--text3)">-</span>'}</td>
+      <td class="fault-repair-cell" title="${f.repairDesc || ''}">${f.repairDesc || '<span style="color:var(--text3)">-</span>'}</td>
+      <td style="white-space:nowrap">${f.repairParts || '<span style="color:var(--text3)">-</span>'}</td>
+      <td style="text-align:center">${f.repairPerson ? photoTag(f.repairPhotos) : '<span style="color:var(--text3)">-</span>'}</td>
+      <td style="text-align:center">${actionsHtml}</td>
+    </tr>${expandRow}`;
   }).join('');
+
+  const tableHtml = total > 0 ? `<div class="fault-table-wrap"><table class="fault-table">
+    <thead><tr>
+      <th style="width:40px;text-align:center">#</th>
+      <th style="width:70px">状态</th>
+      <th style="width:60px">紧急度</th>
+      <th style="width:80px">类型</th>
+      <th>故障描述</th>
+      <th style="width:100px">报修信息</th>
+      <th style="width:50px;text-align:center">报修照片</th>
+      <th style="width:100px">维修人</th>
+      <th>维修结果</th>
+      <th style="width:100px">更换部件</th>
+      <th style="width:50px;text-align:center">维修照片</th>
+      <th style="width:80px;text-align:center">操作</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>` : '<div style="text-align:center;padding:40px;color:var(--text3)">暂无故障记录</div>';
 
   document.getElementById('faultListBody').innerHTML = `
     <div class="fault-summary-row">
       <div class="fault-summary-item"><div class="fs-val" style="color:var(--danger)">${pending}</div><div class="fs-label">待处理</div></div>
-      <div class="fault-summary-item"><div class="fs-val" style="color:var(--primary)">${processing}</div><div class="fs-label">处理中</div></div>
       <div class="fault-summary-item"><div class="fs-val" style="color:var(--warning)">${verifying}</div><div class="fs-label">待验收</div></div>
       <div class="fault-summary-item"><div class="fs-val" style="color:var(--success)">${done}</div><div class="fs-label">已完成</div></div>
       <div class="fault-summary-item"><div class="fs-val">${allFaults.length}</div><div class="fs-label">全部</div></div>
     </div>
     <div class="fault-filter-bar">
-      <select onchange="setFaultFilter('status',this.value)"><option value="">全部状态</option><option value="待处理" ${faultListState.filters.status==='待处理'?'selected':''}>待处理</option><option value="处理中" ${faultListState.filters.status==='处理中'?'selected':''}>处理中</option><option value="待验收" ${faultListState.filters.status==='待验收'?'selected':''}>待验收</option><option value="已完成" ${faultListState.filters.status==='已完成'?'selected':''}>已完成</option></select>
+      <select onchange="setFaultFilter('status',this.value)"><option value="">全部状态</option><option value="待处理" ${faultListState.filters.status==='待处理'?'selected':''}>待处理</option><option value="待验收" ${faultListState.filters.status==='待验收'?'selected':''}>待验收</option><option value="已完成" ${faultListState.filters.status==='已完成'?'selected':''}>已完成</option></select>
       <input type="text" placeholder="搜索故障描述/类型/人员..." value="${faultListState.filters.keyword}" onchange="setFaultFilter('keyword',this.value)" style="min-width:200px">
       <button class="btn btn-sm" onclick="resetFaultFilters()">重置</button>
       <span style="margin-left:auto;font-size:12px;color:var(--text3)">共 ${total} 条</span>
     </div>
-    ${total > 0 ? cards : '<div style="text-align:center;padding:40px;color:var(--text3)">暂无故障记录</div>'}
+    ${tableHtml}
     ${totalPages > 1 ? `<div style="display:flex;justify-content:center;gap:4px;margin-top:12px">
       <button class="btn btn-sm" onclick="faultListPage(${faultListState.page-1})" ${faultListState.page<=1?'disabled':''}>上一页</button>
       ${Array.from({length:totalPages},(_,i)=>`<button class="btn btn-sm ${i+1===faultListState.page?'btn-primary':''}" onclick="faultListPage(${i+1})">${i+1}</button>`).join('')}
       <button class="btn btn-sm" onclick="faultListPage(${faultListState.page+1})" ${faultListState.page>=totalPages?'disabled':''}>下一页</button>
     </div>` : ''}
   `;
-}
-
-function doAssignFault(faultId) {
-  const assignee = document.getElementById('fault-assign-' + faultId)?.value;
-  const note = document.getElementById('fault-assign-note-' + faultId)?.value || '';
-  if (!assignee) { showToast('请选择处理人','error'); return; }
-  const f = state.faults.find(x => x.id === faultId);
-  if (f) {
-    f.status = '处理中';
-    f.assignee = assignee;
-    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '已分配给' + assignee + '处理' + (note ? '。要求: ' + note : '')});
-    showToast('已分配处理人','success');
-    delete faultListState.expandedForms[faultId + '-assign'];
-    renderFaultListModal();
-    render();
-    refreshDrawer();
-  }
 }
 
 function doRepairFault(faultId) {
@@ -1218,7 +1203,12 @@ function doRepairFault(faultId) {
   const f = state.faults.find(x => x.id === faultId);
   if (f) {
     f.status = '待验收';
-    f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: person + '维修完成: ' + desc + (parts ? '（更换部件: ' + parts + ')' : '') + '，提交验收'});
+    f.repairPerson = person;
+    f.repairDesc = desc;
+    f.repairParts = parts;
+    f.repairPhotos = 0;
+    f.repairTime = '2026-06-17 ' + new Date().toTimeString().slice(0,5);
+    f.timeline.push({time: f.repairTime, content: person + '维修完成: ' + desc + (parts ? '（更换部件: ' + parts + ')' : '') + '，提交验收'});
     showToast('维修结果已提交，待报修人验收','success');
     delete faultListState.expandedForms[faultId + '-repair'];
     renderFaultListModal();
@@ -1234,7 +1224,8 @@ function doAcceptFault(faultId) {
   if (f) {
     if (result === 'rework') {
       if (!note) { showToast('返工请填写原因','error'); return; }
-      f.status = '处理中';
+      f.status = '待处理';
+      f.repairPerson = ''; f.repairDesc = ''; f.repairParts = ''; f.repairPhotos = 0; f.repairTime = '';
       f.timeline.push({time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: '验收不通过，返工。原因: ' + note});
       showToast('已退回返工','success');
     } else {
@@ -1254,20 +1245,17 @@ function renderPanel4(d) {
   const faults = getDeviceFaults(d.id);
   const open = faults.filter(f => f.status !== '已完成');
   const pending = faults.filter(f => f.status === '待处理').length;
-  const processing = faults.filter(f => f.status === '处理中').length;
   const verifying = faults.filter(f => f.status === '待验收').length;
   const done = faults.filter(f => f.status === '已完成').length;
 
   const summaryItems = [];
   if (pending) summaryItems.push(`<span class="tag tag-red">待处理 ${pending}</span>`);
-  if (processing) summaryItems.push(`<span class="tag tag-blue">处理中 ${processing}</span>`);
   if (verifying) summaryItems.push(`<span class="tag tag-orange">待验收 ${verifying}</span>`);
   if (done) summaryItems.push(`<span class="tag tag-green">已完成 ${done}</span>`);
 
   const recentFaults = faults.sort((a, b) => b.reportTime.localeCompare(a.reportTime)).slice(0, 3);
   const recentHtml = recentFaults.map(f => {
     const statusTag = f.status === '待处理' ? '<span class="tag tag-red">待处理</span>' :
-                      f.status === '处理中' ? '<span class="tag tag-blue">处理中</span>' :
                       f.status === '待验收' ? '<span class="tag tag-orange">待验收</span>' :
                       '<span class="tag tag-green">已完成</span>';
     return `<div style="padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:8px">
@@ -1717,7 +1705,7 @@ function submitFault() {
   state.faults.push({
     id:newId, deviceId, type, urgency, desc, reporter,
     reportTime: '2026-06-17 ' + new Date().toTimeString().slice(0,5),
-    status: '待处理', assignee: '', photos: 0,
+    status: '待处理', reportPhotos: 0, repairPerson: '', repairDesc: '', repairParts: '', repairPhotos: 0, repairTime: '',
     timeline: [{time: '2026-06-17 ' + new Date().toTimeString().slice(0,5), content: reporter + '报修：' + desc}]
   });
   closeModal();
@@ -1831,7 +1819,7 @@ function submitExecMaint(deviceId, planId) {
     state.faults.push({
       id:fId, deviceId, type:'保养发现', urgency:'一般', desc:'保养检查中发现需维修问题: ' + content,
       reporter:person, reportTime:date + ' ' + new Date().toTimeString().slice(0,5),
-      status:'待处理', assignee:'', photos:0,
+      status:'待处理', reportPhotos:0, repairPerson:'', repairDesc:'', repairParts:'', repairPhotos:0, repairTime:'',
       timeline:[{time:date + ' ' + new Date().toTimeString().slice(0,5), content:'保养检查转故障: ' + content}]
     });
     showToast('保养已记录，已自动生成故障单','success');
