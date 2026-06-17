@@ -12,11 +12,11 @@
     .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
     .breadcrumb a { color: #1677ff; text-decoration: none; }
     .breadcrumb a:hover { text-decoration: underline; }
-    .content { max-width: 1400px; margin: 0 auto; padding: 10px 24px 0; }
-    .page-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .page-title { font-size: 18px; font-weight: 600; color: rgba(0,0,0,.85); }
-    .card { background: #fff; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
-    .card-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
+    .content { max-width: 1400px; margin: 0 auto; padding: 6px 24px 0; }
+    .page-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .page-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .card { background: #fff; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
+    .card-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
     .card-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
     .btn { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all .2s; gap: 6px; }
     .btn:hover { border-color: #1677ff; color: #1677ff; }
@@ -34,32 +34,32 @@
     .tag-red { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
     .tag-purple { background: #f9f0ff; color: #722ed1; border: 1px solid #d3adf7; }
 
-    .filter-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .filter-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
     /* Tabs */
-    .tab-bar { display: flex; gap: 0; margin-bottom: 10px; border-bottom: 2px solid #f0f0f0; }
-    .tab-item { padding: 8px 24px; font-size: 14px; font-weight: 500; color: rgba(0,0,0,.45); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; user-select: none; }
+    .tab-bar { display: flex; gap: 0; margin-bottom: 6px; border-bottom: 2px solid #f0f0f0; }
+    .tab-item { padding: 5px 20px; font-size: 13px; font-weight: 500; color: rgba(0,0,0,.45); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; user-select: none; }
     .tab-item:hover { color: #1677ff; }
     .tab-item.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 600; }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
     /* Teacher Card Grid */
-    .teacher-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .teacher-card { background: #fff; border-radius: 8px; border: 1px solid #f0f0f0; padding: 12px 14px; cursor: pointer; transition: all .25s; position: relative; overflow: hidden; }
-    .teacher-card:hover { border-color: #1677ff; box-shadow: 0 4px 12px rgba(22,119,255,.12); transform: translateY(-2px); }
-    .teacher-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .teacher-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .teacher-card { background: #fff; border-radius: 8px; border: 1px solid #f0f0f0; padding: 8px 10px; cursor: pointer; transition: all .25s; position: relative; overflow: hidden; }
+    .teacher-card:hover { border-color: #1677ff; box-shadow: 0 4px 12px rgba(22,119,255,.12); transform: translateY(-1px); }
+    .teacher-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
     .teacher-info { flex: 1; }
-    .teacher-name { font-size: 14px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 1px; }
-    .teacher-meta { font-size: 12px; color: rgba(0,0,0,.45); }
-    .teacher-card-mid { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-    .mini-radar { width: 90px; height: 70px; flex-shrink: 0; }
+    .teacher-name { font-size: 13px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 0; }
+    .teacher-meta { font-size: 11px; color: rgba(0,0,0,.45); }
+    .teacher-card-mid { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .mini-radar { width: 80px; height: 58px; flex-shrink: 0; }
     .score-block { text-align: center; flex: 1; }
-    .score-number { font-size: 28px; font-weight: 700; color: #1677ff; line-height: 1.1; }
+    .score-number { font-size: 22px; font-weight: 700; color: #1677ff; line-height: 1.1; }
     .score-label { font-size: 11px; color: rgba(0,0,0,.45); margin-top: 1px; }
-    .teacher-card-bottom { display: flex; align-items: center; justify-content: space-between; }
-    .view-detail-btn { padding: 3px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid #1677ff; background: #fff; color: #1677ff; transition: all .2s; }
+    .teacher-card-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 2px; }
+    .view-detail-btn { padding: 2px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; border: 1px solid #1677ff; background: #fff; color: #1677ff; transition: all .2s; }
     .view-detail-btn:hover { background: #1677ff; color: #fff; }
 
     /* Detail Page */
@@ -98,16 +98,16 @@
     .research-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
 
     /* Overview Section */
-    .overview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 10px; }
-    .overview-kpi { text-align: center; padding: 10px 8px; }
-    .kpi-value { font-size: 24px; font-weight: 700; color: #1677ff; line-height: 1.1; }
-    .kpi-label { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 4px; }
-    .kpi-trend { font-size: 11px; margin-top: 2px; }
+    .overview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+    .overview-kpi { text-align: center; padding: 6px 6px; }
+    .kpi-value { font-size: 20px; font-weight: 700; color: #1677ff; line-height: 1.1; }
+    .kpi-label { font-size: 11px; color: rgba(0,0,0,.45); margin-top: 2px; }
+    .kpi-trend { font-size: 11px; margin-top: 1px; }
     .kpi-trend.up { color: #52c41a; }
     .kpi-trend.down { color: #ff4d4f; }
-    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0; }
-    .chart-box { height: 220px; }
-    .section-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0; }
+    .chart-box { height: 180px; }
+    .section-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
     .section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
 
     /* Weight Modal */
@@ -285,7 +285,7 @@
   </div>
 
   <!-- Filter Bar -->
-  <div class="card" style="padding: 10px 16px; margin-bottom: 10px;">
+  <div class="card" style="padding: 6px 12px; margin-bottom: 6px;">
     <div class="filter-bar" style="margin-bottom:0;">
       <input class="form-input" id="searchName" placeholder="搜索教师姓名..." oninput="filterTeachers()">
       <select class="form-select" id="filterDept" onchange="filterTeachers()">
@@ -314,7 +314,7 @@
   <!-- Tab 1: Overview -->
   <div class="tab-panel active" id="tabOverview">
     <div class="overview-grid" id="overviewKpis"></div>
-    <div class="charts-row" style="margin-bottom: 10px;">
+    <div class="charts-row" style="margin-bottom: 8px;">
       <div class="card" style="margin-bottom:0;">
         <div class="section-title">四维能力全站均值</div>
         <div class="chart-box" id="chartDimAvg"></div>
@@ -338,8 +338,8 @@
 
   <!-- Tab 2: Teacher Grid -->
   <div class="tab-panel" id="tabTeachers">
-    <div style="margin-bottom:8px;">
-      <div class="section-title">教师个人分析 <span style="font-size:12px;font-weight:400;color:rgba(0,0,0,.45);margin-left:8px;">点击卡片查看详情</span></div>
+    <div style="margin-bottom:4px;">
+      <div class="section-title">教师个人分析 <span style="font-size:11px;font-weight:400;color:rgba(0,0,0,.45);margin-left:8px;">点击卡片查看详情</span></div>
     </div>
     <div class="teacher-grid" id="teacherGrid"></div>
   </div>
@@ -834,6 +834,28 @@ function saveWeights() {
 let xiaoanOpen = false;
 let xiaoanChartInstances = [];
 let xiaoanDragState = null;
+let xiaoanHistory243 = [];
+const DEEPSEEK_KEY_243 = 'sk-6420a1c0196149ecac72720513863fd0';
+const DEEPSEEK_URL_243 = 'https://api.deepseek.com/chat/completions';
+
+function xiaoan243CollectData() {
+  let ctx = '当前查看：' + (currentTab === 'overview' ? '整体概览' : '教师分析') + '\n\n';
+  ctx += '## 权重配置\n教学效果' + weights.teach + '%，学员反馈' + weights.feedback + '%，职业素养' + weights.profess + '%，教研成果' + weights.research + '%\n\n';
+  ctx += '## 全部教师数据\n';
+  teachers.forEach(t => {
+    const s = calcScore(t);
+    ctx += t.name + '（' + t.dept + '，' + t.post + '，教龄' + t.years + '年）：综合' + s + '分\n';
+    ctx += '  教学效果' + t.dims.teach + '，学员反馈' + t.dims.feedback + '，职业素养' + t.dims.profess + '，教研成果' + t.dims.research + '\n';
+    ctx += '  学员通过率' + t.passRate + '%，进步提升' + t.progress + '%，满意度' + t.satisfaction + '\n';
+    ctx += '  近5期趋势：' + t.trends.join('→') + '\n';
+    ctx += '  教研：' + t.researches.map(r => r.n + '(' + r.s + ')').join('、') + '\n';
+  });
+  if (currentTeacher) {
+    ctx += '\n## 当前选中教师：' + currentTeacher.name + '\n';
+    ctx += '学员评价：' + currentTeacher.reviews.join('；') + '\n';
+  }
+  return ctx;
+}
 
 // --- FAB drag support ---
 let xiaoanFabDragged = false;
@@ -1037,6 +1059,56 @@ function updateChips() {
   container.querySelectorAll('.xa-chip').forEach((el, i) => { el.__action = chips[i].action; });
 }
 
+// --- DeepSeek Streaming for 2.4.3 ---
+function addStreamMsg243() {
+  const body = document.getElementById('xiaoanChatBody');
+  const div = document.createElement('div');
+  div.className = 'xa-msg';
+  const id = 'xa-stream-' + Date.now();
+  div.innerHTML = `<div class="xa-msg-system"><span id="${id}" style="white-space:pre-wrap;line-height:1.6;font-size:13px;"></span></div>`;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  return document.getElementById(id);
+}
+
+async function callDeepSeek243(userMsg, textEl) {
+  xiaoanHistory243.push({ role: 'user', content: userMsg });
+  const sysPrompt = '你是"小安"，沈阳客运段职培基地的智能培训分析助手（教学质量分析模块）。你基于以下真实教学质量数据回答问题。\n\n' +
+    '要求：1.必须基于提供的真实数据，不要编造 2.包含具体数字和百分比 3.分析教师优劣势和发展趋势 4.给出具体可操作的建议 5.回答简洁，200字以内 6.中文回答\n\n' +
+    xiaoan243CollectData();
+  const msgs = [{ role: 'system', content: sysPrompt }, ...xiaoanHistory243.slice(-6)];
+  try {
+    const resp = await fetch(DEEPSEEK_URL_243, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + DEEPSEEK_KEY_243 },
+      body: JSON.stringify({ model: 'deepseek-chat', messages: msgs, stream: true, max_tokens: 800, temperature: 0.7 })
+    });
+    if (!resp.ok) throw new Error('API ' + resp.status);
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let full = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      for (const line of chunk.split('\n')) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data: ')) continue;
+        const d = trimmed.slice(6);
+        if (d === '[DONE]') continue;
+        try {
+          const p = JSON.parse(d);
+          const tk = p.choices?.[0]?.delta?.content;
+          if (tk) { full += tk; textEl.textContent = full; document.getElementById('xiaoanChatBody').scrollTop = document.getElementById('xiaoanChatBody').scrollHeight; }
+        } catch(e) {}
+      }
+    }
+    xiaoanHistory243.push({ role: 'assistant', content: full });
+  } catch(err) {
+    textEl.textContent = '网络异常，请稍后再试。(' + err.message + ')';
+  }
+}
+
 // --- Send message ---
 function sendXiaoanMsg() {
   const input = document.getElementById('xiaoanInput');
@@ -1044,35 +1116,8 @@ function sendXiaoanMsg() {
   if (!text) return;
   input.value = '';
   addUserMsg(text);
-
-  // Intent matching
-  setTimeout(() => {
-    if (/最好|最强|最优|top|排名前/.test(text)) runAnalysis('best');
-    else if (/关注|最差|落后|薄弱|最低/.test(text)) runAnalysis('attention');
-    else if (/部门|概况|整体|全站/.test(text)) runAnalysis('dept');
-    else if (/优势|劣势|优劣|强项|弱项|短板/.test(text) && currentTeacher) runAnalysis('strengths');
-    else if (/对比|比较|vs|差距/.test(text) && currentTeacher) runAnalysis('comparison');
-    else if (/建议|提升|改进|评估/.test(text) && currentTeacher) runAnalysis('suggestion');
-    else if (/趋势|走势|变化|历史/.test(text) && currentTeacher) runAnalysis('trend');
-    else if (/教学效果|通过率|教学/.test(text) && currentTeacher) runAnalysis('dimDive', 'teach');
-    else if (/反馈|满意度|评价/.test(text) && currentTeacher) runAnalysis('dimDive', 'feedback');
-    else if (/素养|出勤|职业/.test(text) && currentTeacher) runAnalysis('dimDive', 'profess');
-    else if (/教研|论文|科研|成果/.test(text) && currentTeacher) runAnalysis('dimDive', 'research');
-    else {
-      // Non-data question — guide user
-      const hintsMap = {
-        list: ['教学效果最好的教师', '哪位教师需要关注', '部门教学质量概况'],
-        detail: [`分析${currentTeacher ? currentTeacher.name : ''}的优劣势`, '和其他教师对比', '生成评估建议', '查看趋势变化']
-      };
-      const hints = currentTeacher ? hintsMap.detail : hintsMap.list;
-      const guideText = `我是小安，专注于教学质量数据分析。您问的"<span class="xa-highlight">${text}</span>"不在我的数据分析能力范围内，但我可以帮您分析以下内容：<br><br>` +
-        `<b>试试这样问我：</b><br>` +
-        hints.map(h => `- 「${h}」`).join('<br>') +
-        `<br><br>您也可以直接点击下方的快捷按钮，快速获取数据洞察。`;
-      typeSystemMsg(guideText, null);
-      return;
-    }
-  }, 300);
+  const textEl = addStreamMsg243();
+  callDeepSeek243(text, textEl);
 }
 
 // --- Voice simulation ---
@@ -1095,8 +1140,20 @@ function xiaoanVoice() {
 
 // ===== Analysis Functions =====
 function runAnalysis(type, extra) {
-  const result = analysisHandlers[type](extra);
-  typeSystemMsg(result.text, result.chart || null);
+  const labelMap = {
+    best: '教学效果最好的教师有哪些？分析他们的特点',
+    attention: '哪位教师需要重点关注？分析原因',
+    dept: '各部门教学质量概况如何？',
+    strengths: currentTeacher ? '分析' + currentTeacher.name + '的优势和劣势' : '分析教师优劣势',
+    comparison: currentTeacher ? currentTeacher.name + '和其他教师相比怎么样？' : '教师对比分析',
+    suggestion: currentTeacher ? '给' + currentTeacher.name + '生成评估建议' : '生成评估建议',
+    trend: currentTeacher ? '分析' + currentTeacher.name + '的趋势变化' : '趋势分析',
+    dimDive: extra ? '详细分析' + ({teach:'教学效果',feedback:'学员反馈',profess:'职业素养',research:'教研成果'}[extra] || extra) + '维度' : '维度分析'
+  };
+  const query = labelMap[type] || type;
+  addUserMsg(query);
+  const textEl = addStreamMsg243();
+  callDeepSeek243(query, textEl);
 }
 
 const analysisHandlers = {

@@ -12,10 +12,10 @@
     .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
     .breadcrumb a { color: #1677ff; text-decoration: none; }
     .breadcrumb a:hover { text-decoration: underline; }
-    .content { max-width: 1400px; margin: 0 auto; padding: 10px 24px 8px; }
-    .page-title { font-size: 18px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 8px; }
-    .card { background: #fff; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
-    .card-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 6px; }
+    .content { max-width: 1400px; margin: 0 auto; padding: 6px 24px 8px; }
+    .page-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 4px; }
+    .card { background: #fff; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
+    .card-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 6px; }
     .card-title::before { content: ''; display: inline-block; width: 3px; height: 12px; background: #1677ff; border-radius: 2px; }
     .form-select { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; color: rgba(0,0,0,.85); cursor: pointer; }
     .form-select:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
@@ -29,11 +29,11 @@
     .update-time { font-size: 12px; color: rgba(0,0,0,.35); margin-left: auto; }
 
     /* KPI Cards */
-    .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 12px; }
-    .kpi-card { background: #fff; border-radius: 8px; padding: 10px 12px; text-align: center; border: 1px solid #f0f0f0; cursor: default; transition: box-shadow .2s; position: relative; }
+    .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 6px; }
+    .kpi-card { background: #fff; border-radius: 8px; padding: 8px 10px; text-align: center; border: 1px solid #f0f0f0; cursor: default; transition: box-shadow .2s; position: relative; }
     .kpi-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
-    .kpi-label { font-size: 12px; color: rgba(0,0,0,.45); margin-bottom: 4px; }
-    .kpi-value { font-size: 22px; font-weight: 700; color: #1677ff; line-height: 1.2; }
+    .kpi-label { font-size: 12px; color: rgba(0,0,0,.45); margin-bottom: 2px; }
+    .kpi-value { font-size: 20px; font-weight: 700; color: #1677ff; line-height: 1.2; }
     .kpi-value .unit { font-size: 12px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
     .kpi-trend { font-size: 11px; margin-top: 2px; }
     .trend-up { color: #52c41a; }
@@ -43,9 +43,9 @@
     .kpi-card:hover .kpi-tooltip { display: block; }
 
     /* Charts layout - compressed 2-row grid */
-    .charts-row-4 { display: grid; grid-template-columns: 1fr 1.5fr 1.5fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .chart-box { height: 220px; }
+    .charts-row-4 { display: grid; grid-template-columns: 1fr 1.5fr 1.5fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .chart-box { height: 180px; }
 
     /* Xiaoan FAB */
     .xiaoan-fab {
@@ -206,7 +206,7 @@
   <div class="page-title">培训综合分析</div>
 
   <!-- Time selector -->
-  <div class="card" style="padding: 8px 16px;">
+  <div class="card" style="padding: 4px 12px;">
     <div class="time-bar">
       <label>统计周期：</label>
       <select class="form-select" id="selYear">
@@ -476,7 +476,7 @@ function renderCharts(data) {
   const gap = data.planRing.total - data.planRing.completed;
   charts.chartPlanRing.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}项 ({d}%)' },
-    legend: { bottom: 4, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    legend: { bottom: 2, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
     series: [{
       type: 'pie', radius: ['48%', '70%'], center: ['50%', '44%'],
       avoidLabelOverlap: false,
@@ -505,8 +505,8 @@ function renderCharts(data) {
   const mActual = data.monthlyClass.actual.slice(0, mLen);
   charts.chartMonthlyClass.setOption({
     tooltip: { trigger: 'axis' },
-    legend: { bottom: 4, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
-    grid: { left: 40, right: 16, top: 16, bottom: 40 },
+    legend: { bottom: 2, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    grid: { left: 40, right: 16, top: 12, bottom: 34 },
     xAxis: { type: 'category', data: mLabels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
     yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [
@@ -520,7 +520,7 @@ function renderCharts(data) {
   const pdData = data.personDays.slice(0, mLen);
   charts.chartPersonDays.setOption({
     tooltip: { trigger: 'axis', formatter: '{b}<br/>{a}: {c} 人天' },
-    grid: { left: 50, right: 16, top: 16, bottom: 30 },
+    grid: { left: 50, right: 16, top: 12, bottom: 24 },
     xAxis: { type: 'category', data: pdLabels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
     yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [{
@@ -536,8 +536,8 @@ function renderCharts(data) {
   const jd = data.jobCompletion;
   charts.chartJobCompletion.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    legend: { bottom: 4, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
-    grid: { left: 80, right: 20, top: 8, bottom: 40 },
+    legend: { bottom: 2, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    grid: { left: 80, right: 20, top: 8, bottom: 34 },
     xAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     yAxis: { type: 'category', data: jd.jobs, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 11 }, inverse: true },
     series: [
@@ -550,8 +550,8 @@ function renderCharts(data) {
   const wd = data.workshop;
   charts.chartWorkshop.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    legend: { bottom: 4, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
-    grid: { left: 44, right: 16, top: 10, bottom: 40 },
+    legend: { bottom: 2, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    grid: { left: 44, right: 16, top: 8, bottom: 34 },
     xAxis: { type: 'category', data: wd.names, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 10, rotate: 15 } },
     yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [
@@ -564,7 +564,7 @@ function renderCharts(data) {
   const wk = data.weakTop5;
   charts.chartWeakTop5.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/>人均失分: ' + p[0].value + ' 分'; } },
-    grid: { left: 120, right: 44, top: 8, bottom: 20 },
+    grid: { left: 120, right: 44, top: 6, bottom: 12 },
     xAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', formatter: '{value} 分', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     yAxis: { type: 'category', data: wk.subjects, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 11 }, inverse: true },
     series: [{
@@ -594,8 +594,8 @@ function renderCharts(data) {
 
   charts.chartScoreDist.setOption({
     tooltip: { trigger: 'axis' },
-    legend: { bottom: 4, data: ['人数', '正态分布'], textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
-    grid: { left: 40, right: 20, top: 16, bottom: 40 },
+    legend: { bottom: 2, data: ['人数', '正态分布'], textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    grid: { left: 40, right: 20, top: 12, bottom: 34 },
     xAxis: [
       { type: 'category', data: sd.ranges, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
       { type: 'category', data: normX.map(String), show: false },
@@ -619,6 +619,31 @@ function renderCharts(data) {
 }
 
 // ========== CONVERSATIONAL DIGITAL HUMAN ==========
+const DEEPSEEK_KEY = 'sk-6420a1c0196149ecac72720513863fd0';
+const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
+let xiaoanHistory = [];
+
+function xiaoan242CollectData() {
+  const d = DATA[currentPeriod];
+  const periodLabel = {year:'年度', quarter:'本季度', month:'本月'}[currentPeriod];
+  let ctx = '当前时间维度：' + periodLabel + '\n\n';
+  ctx += '## KPI指标\n';
+  d.kpi.forEach(k => { ctx += k.label + '：' + k.value + k.unit + '（趋势' + k.trend + '）- ' + k.tip + '\n'; });
+  ctx += '\n## 计划完成\n已完成' + d.planRing.completed + '项/共' + d.planRing.total + '项\n';
+  ctx += '\n## 月度办班（计划/实际）\n';
+  const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  d.monthlyClass.plan.forEach((p, i) => { if (p > 0 || d.monthlyClass.actual[i] > 0) ctx += months[i] + '：计划' + p + '期/实际' + d.monthlyClass.actual[i] + '期\n'; });
+  ctx += '\n## 各岗位培训（计划/实际）\n';
+  d.jobCompletion.jobs.forEach((j, i) => { ctx += j + '：计划' + d.jobCompletion.plan[i] + '人/实际' + d.jobCompletion.actual[i] + '人\n'; });
+  ctx += '\n## 各车间培训（计划/实际）\n';
+  d.workshop.names.forEach((n, i) => { ctx += n + '：计划' + d.workshop.plan[i] + '人/实际' + d.workshop.actual[i] + '人\n'; });
+  ctx += '\n## 群体薄弱科目TOP5\n';
+  d.weakTop5.subjects.forEach((s, i) => { ctx += (i+1) + '. ' + s + '（人均失分' + d.weakTop5.scores[i] + '分）\n'; });
+  ctx += '\n## 成绩分布\n均分' + d.scoreDist.mean + '，标准差' + d.scoreDist.std + '\n';
+  d.scoreDist.ranges.forEach((r, i) => { ctx += r + '分：' + d.scoreDist.counts[i] + '人\n'; });
+  return ctx;
+}
+
 const xiaoan = {
   fab: null, overlay: null, wrapper: null, chat: null, input: null, quickActions: null,
   soundWave: null, mic: null, isOpen: false, chartInstances: [], msgId: 0,
@@ -868,13 +893,63 @@ const xiaoan = {
     setTimeout(() => { this.typeText(typing, html); }, 600);
   },
 
+  // --- DeepSeek Streaming ---
+  addStreamMsg() {
+    const id = 'xiaoan-msg-' + (++this.msgId);
+    const div = document.createElement('div');
+    div.className = 'xiaoan-msg system';
+    div.innerHTML = `<div class="xiaoan-msg-card"><span id="${id}-text" style="white-space:pre-wrap;line-height:1.6;font-size:13px;"></span></div>`;
+    this.chat.appendChild(div);
+    this.scrollToBottom();
+    this.soundWave.classList.add('active');
+    return document.getElementById(id + '-text');
+  },
+
+  async callDeepSeek(userMsg, textEl) {
+    xiaoanHistory.push({ role: 'user', content: userMsg });
+    const sysPrompt = '你是"小安"，沈阳客运段职培基地的智能培训分析助手。你基于以下真实培训数据回答问题。\n\n' +
+      '要求：1.必须基于提供的真实数据，不要编造 2.包含具体数字和百分比 3.分析异常值和薄弱环节 4.给出具体可操作的建议 5.回答简洁，200字以内 6.中文回答\n\n' +
+      xiaoan242CollectData();
+    const msgs = [{ role: 'system', content: sysPrompt }, ...xiaoanHistory.slice(-6)];
+    try {
+      const resp = await fetch(DEEPSEEK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + DEEPSEEK_KEY },
+        body: JSON.stringify({ model: 'deepseek-chat', messages: msgs, stream: true, max_tokens: 800, temperature: 0.7 })
+      });
+      if (!resp.ok) throw new Error('API ' + resp.status);
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let full = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        for (const line of chunk.split('\n')) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data: ')) continue;
+          const d = trimmed.slice(6);
+          if (d === '[DONE]') continue;
+          try {
+            const p = JSON.parse(d);
+            const tk = p.choices?.[0]?.delta?.content;
+            if (tk) { full += tk; textEl.textContent = full; this.scrollToBottom(); }
+          } catch(e) {}
+        }
+      }
+      xiaoanHistory.push({ role: 'assistant', content: full });
+      this.soundWave.classList.remove('active');
+    } catch(err) {
+      const fallback = this.matchIntent(userMsg);
+      textEl.innerHTML = fallback.text;
+      this.soundWave.classList.remove('active');
+    }
+  },
+
   // --- Intent Matching & Analysis ---
   processQuery(text) {
-    const typing = this.showTyping();
-    setTimeout(() => {
-      const result = this.matchIntent(text);
-      this.typeText(typing, result.text, result.chart);
-    }, 500 + Math.random() * 500);
+    const textEl = this.addStreamMsg();
+    this.callDeepSeek(text, textEl);
   },
 
   matchIntent(text) {
