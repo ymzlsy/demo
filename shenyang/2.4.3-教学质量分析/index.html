@@ -148,9 +148,9 @@
 
     /* Right panel */
     .xiaoan-panel {
-      width: 420px; background: #fff; border-radius: 16px;
+      width: 560px; background: #fff; border-radius: 16px;
       box-shadow: 0 12px 40px rgba(0,0,0,.12); overflow: hidden;
-      display: flex; flex-direction: column; max-height: 600px; position: relative; z-index: 2;
+      display: flex; flex-direction: column; max-height: 720px; position: relative; z-index: 2;
     }
     .xiaoan-panel-header {
       padding: 16px 20px; background: #fff; border-bottom: 1px solid #f0f0f0;
@@ -758,19 +758,20 @@ let xiaoanChartInstances = [];
 let xiaoanDragState = null;
 
 // --- FAB drag support ---
+let xiaoanFabDragged = false;
 (function() {
   const fab = document.getElementById('xiaoanFab');
-  let startX, startY, origX, origY, dragged;
+  let startX, startY, origX, origY;
   fab.addEventListener('mousedown', function(e) {
     if (e.button !== 0) return;
-    dragged = false;
+    xiaoanFabDragged = false;
     startX = e.clientX; startY = e.clientY;
     const rect = fab.getBoundingClientRect();
     origX = rect.left; origY = rect.top;
     fab.style.transition = 'none';
     function onMove(e2) {
       const dx = e2.clientX - startX, dy = e2.clientY - startY;
-      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragged = true;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) xiaoanFabDragged = true;
       fab.style.left = (origX + dx) + 'px';
       fab.style.top = (origY + dy) + 'px';
       fab.style.right = 'auto'; fab.style.bottom = 'auto';
@@ -786,8 +787,7 @@ let xiaoanDragState = null;
 })();
 
 function xiaoanFabClick(e) {
-  // Only open if not dragged
-  if (e.detail === 0) return; // programmatic
+  if (xiaoanFabDragged) return;
   openXiaoan();
 }
 
@@ -981,10 +981,18 @@ function sendXiaoanMsg() {
     else if (/素养|出勤|职业/.test(text) && currentTeacher) runAnalysis('dimDive', 'profess');
     else if (/教研|论文|科研|成果/.test(text) && currentTeacher) runAnalysis('dimDive', 'research');
     else {
-      // Best-effort
-      const topic = text.length > 10 ? text.substring(0, 10) + '...' : text;
-      if (currentTeacher) runAnalysis('strengths');
-      else runAnalysis('best');
+      // Non-data question — guide user
+      const hintsMap = {
+        list: ['教学效果最好的教师', '哪位教师需要关注', '部门教学质量概况'],
+        detail: [`分析${currentTeacher ? currentTeacher.name : ''}的优劣势`, '和其他教师对比', '生成评估建议', '查看趋势变化']
+      };
+      const hints = currentTeacher ? hintsMap.detail : hintsMap.list;
+      const guideText = `我是小安，专注于教学质量数据分析。您问的"<span class="xa-highlight">${text}</span>"不在我的数据分析能力范围内，但我可以帮您分析以下内容：<br><br>` +
+        `<b>试试这样问我：</b><br>` +
+        hints.map(h => `- 「${h}」`).join('<br>') +
+        `<br><br>您也可以直接点击下方的快捷按钮，快速获取数据洞察。`;
+      typeSystemMsg(guideText, null);
+      return;
     }
   }, 300);
 }
