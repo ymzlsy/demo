@@ -7,14 +7,16 @@
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1440px; color: rgba(0,0,0,.85); padding-bottom: 40px; }
-    .header { background: #fff; padding: 0 24px; height: 56px; display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; }
+    html, body { height: 100vh; overflow: hidden; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1440px; color: rgba(0,0,0,.85); display: flex; flex-direction: column; }
+    .header { background: #fff; padding: 0 24px; height: 42px; display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
     .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
     .breadcrumb a { color: #1677ff; text-decoration: none; }
     .breadcrumb a:hover { text-decoration: underline; }
-    .content { max-width: 1400px; margin: 0 auto; padding: 6px 24px 8px; }
-    .page-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 4px; }
-    .card { background: #fff; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
+    .content { max-width: 1400px; width: 100%; margin: 0 auto; padding: 6px 24px 6px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .page-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 4px; flex-shrink: 0; }
+    .card { background: #fff; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; flex-shrink: 0; }
+    .charts-area { flex: 1; display: flex; flex-direction: column; min-height: 0; }
     .card-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 6px; }
     .card-title::before { content: ''; display: inline-block; width: 3px; height: 12px; background: #1677ff; border-radius: 2px; }
     .form-select { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; color: rgba(0,0,0,.85); cursor: pointer; }
@@ -42,10 +44,13 @@
     .kpi-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: rgba(0,0,0,.75); }
     .kpi-card:hover .kpi-tooltip { display: block; }
 
-    /* Charts layout - compressed 2-row grid */
-    .charts-row-4 { display: grid; grid-template-columns: 1fr 1.5fr 1.5fr 1fr; gap: 8px; margin-bottom: 8px; }
-    .charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-    .chart-box { height: 180px; }
+    /* Charts layout - flex fill */
+    .charts-row-4 { display: grid; grid-template-columns: 1fr 1.5fr 1.5fr 1fr; gap: 8px; margin-bottom: 8px; flex: 1; min-height: 0; }
+    .charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 0; flex: 1; min-height: 0; }
+    .chart-box { height: 100%; min-height: 120px; }
+    .charts-area > .charts-row-4 > .card, .charts-area > .charts-row-3 > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; flex-shrink: 1; }
+    .charts-area > .charts-row-4 > .card > .chart-box, .charts-area > .charts-row-3 > .card > .chart-box { flex: 1; min-height: 0; }
+    .kpi-row { flex-shrink: 0; }
 
     /* Xiaoan FAB */
     .xiaoan-fab {
@@ -233,39 +238,39 @@
     <!-- JS rendered -->
   </div>
 
-  <!-- Row 1: 4 charts -->
-  <div class="charts-row-4">
-    <div class="card">
-      <div class="card-title">年度计划完成度</div>
-      <div id="chartPlanRing" class="chart-box"></div>
+  <!-- Charts area - flex fill viewport -->
+  <div class="charts-area">
+    <div class="charts-row-4">
+      <div class="card">
+        <div class="card-title">年度计划完成度</div>
+        <div id="chartPlanRing" class="chart-box"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">月度办班计划 vs 实际</div>
+        <div id="chartMonthlyClass" class="chart-box"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">培训人天数走势</div>
+        <div id="chartPersonDays" class="chart-box"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">培训人数完成度（按岗位）</div>
+        <div id="chartJobCompletion" class="chart-box"></div>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-title">月度办班计划 vs 实际</div>
-      <div id="chartMonthlyClass" class="chart-box"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">培训人天数走势</div>
-      <div id="chartPersonDays" class="chart-box"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">培训人数完成度（按岗位）</div>
-      <div id="chartJobCompletion" class="chart-box"></div>
-    </div>
-  </div>
-
-  <!-- Row 2: 3 charts -->
-  <div class="charts-row-3">
-    <div class="card">
-      <div class="card-title">各车间培训参与对比</div>
-      <div id="chartWorkshop" class="chart-box"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">群体薄弱点 TOP 5</div>
-      <div id="chartWeakTop5" class="chart-box"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">班级成绩分布</div>
-      <div id="chartScoreDist" class="chart-box"></div>
+    <div class="charts-row-3">
+      <div class="card">
+        <div class="card-title">各车间培训参与对比</div>
+        <div id="chartWorkshop" class="chart-box"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">群体薄弱点 TOP 5</div>
+        <div id="chartWeakTop5" class="chart-box"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">班级成绩分布</div>
+        <div id="chartScoreDist" class="chart-box"></div>
+      </div>
     </div>
   </div>
 </div>
