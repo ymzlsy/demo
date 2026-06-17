@@ -47,29 +47,138 @@
     .charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
     .chart-box { min-height: 340px; }
 
-    /* Digital human button */
-    .dh-fab { position: fixed; right: 32px; bottom: 32px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #1677ff, #4096ff); color: #fff; border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(22,119,255,.4); display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 999; transition: transform .2s; }
-    .dh-fab:hover { transform: scale(1.1); }
-    .dh-panel { position: fixed; right: 32px; bottom: 100px; width: 380px; max-height: 520px; background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.15); z-index: 998; display: none; flex-direction: column; overflow: hidden; border: 1px solid #f0f0f0; }
-    .dh-panel.open { display: flex; animation: slideUp .3s ease; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .dh-panel-header { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 10px; }
-    .dh-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1677ff, #69b1ff); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; flex-shrink: 0; }
-    .dh-panel-header .dh-name { font-size: 15px; font-weight: 600; }
-    .dh-panel-header .dh-desc { font-size: 12px; color: rgba(0,0,0,.45); }
-    .dh-panel-close { margin-left: auto; cursor: pointer; color: rgba(0,0,0,.35); font-size: 18px; background: none; border: none; width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
-    .dh-panel-close:hover { background: #f5f5f5; color: rgba(0,0,0,.65); }
-    .dh-tabs { display: flex; border-bottom: 1px solid #f0f0f0; }
-    .dh-tab { flex: 1; padding: 10px 0; text-align: center; font-size: 13px; color: rgba(0,0,0,.65); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; }
-    .dh-tab:hover { color: #1677ff; }
-    .dh-tab.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 500; }
-    .dh-body { padding: 16px 20px; flex: 1; overflow-y: auto; font-size: 13px; line-height: 1.8; color: rgba(0,0,0,.65); }
-    .dh-body h4 { font-size: 14px; color: rgba(0,0,0,.85); margin: 12px 0 6px; font-weight: 600; }
-    .dh-body h4:first-child { margin-top: 0; }
-    .dh-body ul { padding-left: 18px; margin: 4px 0; }
-    .dh-insight { padding: 10px 12px; background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 6px; margin: 8px 0; font-size: 12px; color: rgba(0,0,0,.85); }
-    .dh-warn { padding: 10px 12px; background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; margin: 8px 0; font-size: 12px; color: rgba(0,0,0,.85); }
-    .dh-alert { padding: 10px 12px; background: #fff2f0; border: 1px solid #ffccc7; border-radius: 6px; margin: 8px 0; font-size: 12px; color: rgba(0,0,0,.85); }
+    /* Xiaoan FAB */
+    .xiaoan-fab {
+      position: fixed; bottom: 28px; right: 28px; z-index: 900;
+      cursor: grab; user-select: none;
+    }
+    .xiaoan-fab:active { cursor: grabbing; }
+    .xiaoan-fab-inner {
+      width: 72px; height: 72px; border-radius: 50%; overflow: hidden;
+      position: relative; background: #f0f5ff;
+      box-shadow: 0 4px 16px rgba(22,119,255,0.15);
+      transition: transform .2s;
+      animation: xiaoanBreathe 3s ease-in-out infinite;
+    }
+    .xiaoan-fab:hover .xiaoan-fab-inner { transform: scale(1.06); }
+    .xiaoan-fab-inner img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    @keyframes xiaoanBreathe {
+      0%, 100% { box-shadow: 0 4px 16px rgba(22,119,255,0.15); }
+      50% { box-shadow: 0 4px 24px rgba(22,119,255,0.35), 0 0 0 4px rgba(22,119,255,0.08); }
+    }
+    .xiaoan-label { text-align: center; margin-top: 6px; font-size: 12px; color: #1677ff; font-weight: 500; }
+
+    /* Xiaoan Overlay & Panel */
+    .xiaoan-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 1000;
+      display: none; opacity: 0; transition: opacity .3s;
+    }
+    .xiaoan-overlay.open { display: block; opacity: 1; }
+    .xiaoan-wrapper {
+      position: fixed; z-index: 1001; display: none;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 720px; height: 560px;
+      background: #fff; border-radius: 16px;
+      box-shadow: 0 12px 48px rgba(0,0,0,.18);
+      overflow: hidden;
+    }
+    .xiaoan-wrapper.open { display: flex; animation: xiaoanSlideIn .35s ease; }
+    @keyframes xiaoanSlideIn { from { opacity: 0; transform: translate(-50%, -46%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+
+    .xiaoan-left {
+      width: 160px; flex-shrink: 0; background: linear-gradient(180deg, #f0f5ff 0%, #e6f0ff 100%);
+      display: flex; align-items: flex-end; justify-content: center; overflow: hidden;
+    }
+    .xiaoan-left img { width: 140px; height: auto; object-fit: contain; }
+
+    .xiaoan-right { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    .xiaoan-header {
+      padding: 16px 20px; border-bottom: 1px solid #f0f0f0;
+      display: flex; align-items: center; gap: 12px; cursor: grab; user-select: none;
+    }
+    .xiaoan-header:active { cursor: grabbing; }
+    .xiaoan-header-info { flex: 1; }
+    .xiaoan-header-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .xiaoan-header-sub { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
+    .xiaoan-sound-wave { display: none; align-items: center; gap: 2px; height: 20px; margin-right: 8px; }
+    .xiaoan-sound-wave.active { display: flex; }
+    .xiaoan-sound-wave span { display: block; width: 3px; background: #1677ff; border-radius: 2px; animation: soundWave .6s ease-in-out infinite alternate; }
+    .xiaoan-sound-wave span:nth-child(1) { height: 8px; animation-delay: 0s; }
+    .xiaoan-sound-wave span:nth-child(2) { height: 14px; animation-delay: .15s; }
+    .xiaoan-sound-wave span:nth-child(3) { height: 10px; animation-delay: .3s; }
+    .xiaoan-sound-wave span:nth-child(4) { height: 16px; animation-delay: .1s; }
+    .xiaoan-sound-wave span:nth-child(5) { height: 6px; animation-delay: .25s; }
+    @keyframes soundWave { from { height: 4px; } to { height: 18px; } }
+    .xiaoan-close { cursor: pointer; color: rgba(0,0,0,.35); font-size: 20px; background: none; border: none; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .xiaoan-close:hover { background: #f5f5f5; color: rgba(0,0,0,.65); }
+
+    .xiaoan-chat {
+      flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .xiaoan-chat::-webkit-scrollbar { width: 4px; }
+    .xiaoan-chat::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 2px; }
+
+    .xiaoan-msg { max-width: 92%; animation: msgFadeIn .3s ease; }
+    .xiaoan-msg.system { align-self: flex-start; }
+    .xiaoan-msg.user { align-self: flex-end; }
+    @keyframes msgFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .xiaoan-msg-card {
+      padding: 12px 16px; border-radius: 10px; font-size: 13px; line-height: 1.8; color: rgba(0,0,0,.75);
+    }
+    .xiaoan-msg.system .xiaoan-msg-card {
+      background: #fff; border: 1px solid #f0f0f0; border-left: 3px solid #1677ff;
+    }
+    .xiaoan-msg.user .xiaoan-msg-card {
+      background: #1677ff; color: #fff; border-radius: 10px 10px 2px 10px;
+    }
+    .xiaoan-msg-card .msg-chart { width: 100%; height: 200px; margin-top: 8px; border-radius: 6px; }
+    .xiaoan-msg-card b { color: rgba(0,0,0,.85); }
+    .xiaoan-msg.user .xiaoan-msg-card b { color: #fff; }
+    .xiaoan-msg-card .highlight { color: #1677ff; font-weight: 600; }
+    .xiaoan-msg.user .xiaoan-msg-card .highlight { color: #fff; text-decoration: underline; }
+
+    .xiaoan-typing { display: inline-flex; align-items: center; gap: 4px; padding: 8px 16px; background: #f5f5f5; border-radius: 10px; }
+    .xiaoan-typing span { width: 6px; height: 6px; border-radius: 50%; background: #bfbfbf; animation: typingDot 1.2s infinite; }
+    .xiaoan-typing span:nth-child(2) { animation-delay: .2s; }
+    .xiaoan-typing span:nth-child(3) { animation-delay: .4s; }
+    @keyframes typingDot { 0%, 60%, 100% { opacity: .3; transform: scale(.8); } 30% { opacity: 1; transform: scale(1); } }
+
+    .xiaoan-quick-actions {
+      padding: 8px 20px; display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid #f0f0f0;
+    }
+    .xiaoan-chip {
+      padding: 6px 14px; border-radius: 16px; border: 1px solid #d9d9d9;
+      background: #fff; font-size: 12px; color: rgba(0,0,0,.65);
+      cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .xiaoan-chip:hover { border-color: #1677ff; color: #1677ff; background: #f0f5ff; }
+
+    .xiaoan-input-bar {
+      padding: 12px 20px; border-top: 1px solid #f0f0f0;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .xiaoan-input {
+      flex: 1; padding: 8px 14px; border: 1px solid #d9d9d9; border-radius: 8px;
+      font-size: 13px; outline: none; transition: border-color .2s;
+    }
+    .xiaoan-input:focus { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+    .xiaoan-mic {
+      width: 36px; height: 36px; border-radius: 50%; border: 1px solid #d9d9d9;
+      background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all .2s; color: rgba(0,0,0,.45); font-size: 16px;
+    }
+    .xiaoan-mic:hover { border-color: #1677ff; color: #1677ff; }
+    .xiaoan-mic.recording { background: #ff4d4f; border-color: #ff4d4f; color: #fff; animation: micPulse 1s infinite; }
+    @keyframes micPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,77,79,.3); } 50% { box-shadow: 0 0 0 8px rgba(255,77,79,0); } }
+    .xiaoan-send {
+      width: 36px; height: 36px; border-radius: 8px; border: none;
+      background: #1677ff; color: #fff; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; font-size: 16px; transition: background .2s;
+    }
+    .xiaoan-send:hover { background: #4096ff; }
+    .xiaoan-send:disabled { background: #d9d9d9; cursor: not-allowed; }
 
     /* Notice bar */
     .notice-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fffbe6; border-top: 1px solid #ffe58f; padding: 10px 24px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(0,0,0,.85); z-index: 900; }
@@ -159,28 +268,38 @@
   </div>
 </div>
 
-<!-- Digital Human FAB -->
-<button class="dh-fab" id="dhFab" title="小安 - AI培训分析助手" onclick="toggleDhPanel()">
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75" opacity=".5"/></svg>
-</button>
+<!-- Xiaoan FAB -->
+<div class="xiaoan-fab" id="xiaoanFab">
+  <div class="xiaoan-fab-inner"><img src="xiaoan.png" alt="小安" /></div>
+  <div class="xiaoan-label">小安</div>
+</div>
 
-<!-- Digital Human Panel -->
-<div class="dh-panel" id="dhPanel">
-  <div class="dh-panel-header">
-    <div class="dh-avatar">安</div>
-    <div>
-      <div class="dh-name">小安</div>
-      <div class="dh-desc">AI 培训分析助手</div>
+<!-- Xiaoan Overlay -->
+<div class="xiaoan-overlay" id="xiaoanOverlay"></div>
+
+<!-- Xiaoan Panel -->
+<div class="xiaoan-wrapper" id="xiaoanWrapper">
+  <div class="xiaoan-left"><img src="xiaoan.png" alt="小安" /></div>
+  <div class="xiaoan-right">
+    <div class="xiaoan-header" id="xiaoanHeader">
+      <div class="xiaoan-header-info">
+        <div class="xiaoan-header-title">小安 &middot; 智能分析</div>
+        <div class="xiaoan-header-sub">基于当前页面数据，为您提供培训分析洞察</div>
+      </div>
+      <div class="xiaoan-sound-wave" id="xiaoanSoundWave"><span></span><span></span><span></span><span></span><span></span></div>
+      <button class="xiaoan-close" id="xiaoanClose">&times;</button>
     </div>
-    <button class="dh-panel-close" onclick="toggleDhPanel()">&times;</button>
-  </div>
-  <div class="dh-tabs">
-    <div class="dh-tab active" onclick="switchDhTab(this,0)">综合分析</div>
-    <div class="dh-tab" onclick="switchDhTab(this,1)">薄弱诊断</div>
-    <div class="dh-tab" onclick="switchDhTab(this,2)">培训建议</div>
-  </div>
-  <div class="dh-body" id="dhBody">
-    <!-- JS rendered -->
+    <div class="xiaoan-chat" id="xiaoanChat"></div>
+    <div class="xiaoan-quick-actions" id="xiaoanQuickActions"></div>
+    <div class="xiaoan-input-bar">
+      <input class="xiaoan-input" id="xiaoanInput" type="text" placeholder="输入您的问题，如：年度计划完成了多少？" />
+      <button class="xiaoan-mic" id="xiaoanMic" title="语音输入">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="1" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/></svg>
+      </button>
+      <button class="xiaoan-send" id="xiaoanSend" title="发送">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -498,70 +617,497 @@ function renderCharts(data) {
   });
 }
 
-// ========== DIGITAL HUMAN ==========
-let dhOpen = false;
-function toggleDhPanel() {
-  dhOpen = !dhOpen;
-  document.getElementById('dhPanel').classList.toggle('open', dhOpen);
-  if (dhOpen) renderDhContent(0);
-}
+// ========== CONVERSATIONAL DIGITAL HUMAN ==========
+const xiaoan = {
+  fab: null, overlay: null, wrapper: null, chat: null, input: null, quickActions: null,
+  soundWave: null, mic: null, isOpen: false, chartInstances: [], msgId: 0,
 
-const DH_CONTENT = [
-  // Tab 0: 综合分析
-  `<h4>本期培训总览</h4>
-  <div class="dh-insight">本季度培训总人次 1,923，同比增长 10.3%，培训覆盖面持续扩大。</div>
-  <p>年度计划完成进度 45%，时间进度 50%，存在 5% 的缺口。需关注下半年办班节奏。</p>
-  <h4>关键发现</h4>
-  <ul>
-    <li>客运二车间参训率最高（94.2%），调度车间最低（81.5%）</li>
-    <li>列车员岗位完成度 92.3%，超额完成预期</li>
-    <li>设备利用率受 6 月检修影响下降 7.2%</li>
-  </ul>
-  <div class="dh-warn">计划缺口集中在调度员和站务员岗位，建议在三季度增加对应班次。</div>`,
+  init() {
+    this.fab = document.getElementById('xiaoanFab');
+    this.overlay = document.getElementById('xiaoanOverlay');
+    this.wrapper = document.getElementById('xiaoanWrapper');
+    this.chat = document.getElementById('xiaoanChat');
+    this.input = document.getElementById('xiaoanInput');
+    this.quickActions = document.getElementById('xiaoanQuickActions');
+    this.soundWave = document.getElementById('xiaoanSoundWave');
+    this.mic = document.getElementById('xiaoanMic');
 
-  // Tab 1: 薄弱诊断
-  `<h4>群体薄弱项诊断</h4>
-  <div class="dh-alert">"应急处置流程" 连续 3 个月位列薄弱点 TOP 1，人均失分 14.2 分，需重点干预。</div>
-  <p>薄弱点主要集中在以下维度：</p>
-  <ul>
-    <li><b>应急处置流程</b> — 操作步骤遗漏率 38%，时间超限率 45%</li>
-    <li><b>设备故障判断</b> — 误判率 22%，主要集中在电气类故障</li>
-    <li><b>旅客投诉处理</b> — 话术规范达标率仅 61%</li>
-  </ul>
-  <h4>车间维度分析</h4>
-  <p>调度车间在"列车运行图解读"科目失分最高（均分 58.3），低于合格线。客运三车间"安全规章"考试不及格率 12%，需关注。</p>`,
+    this.fab.addEventListener('click', (e) => { if (!this._fabDragged) this.open(); });
+    document.getElementById('xiaoanClose').addEventListener('click', () => this.close());
+    this.overlay.addEventListener('click', () => this.close());
+    document.getElementById('xiaoanSend').addEventListener('click', () => this.sendFromInput());
+    this.input.addEventListener('keydown', (e) => { if (e.key === 'Enter') this.sendFromInput(); });
+    this.mic.addEventListener('click', () => this.simulateVoice());
 
-  // Tab 2: 培训建议
-  `<h4>三季度培训建议</h4>
-  <div class="dh-insight">基于当前数据分析，小安为您生成以下培训优化建议：</div>
-  <h4>1. 专项强化</h4>
-  <ul>
-    <li>增设"应急处置实操强化班"，频次从每月 1 期提高至 2 期</li>
-    <li>针对调度车间开设"运行图专题训练"，采用案例教学法</li>
-    <li>旅客投诉处理引入情景模拟实训</li>
-  </ul>
-  <h4>2. 计划调整</h4>
-  <ul>
-    <li>站务员岗位增加 3 期培训班，补齐计划缺口</li>
-    <li>调度员岗位增加 2 期，重点覆盖新入职人员</li>
-  </ul>
-  <h4>3. 暑运保障</h4>
-  <div class="dh-warn">暑运期间（7-8月）建议优先安排安全生产和应急处置专项培训，确保一线人员全覆盖。</div>
-  <h4>4. 设备排期</h4>
-  <p>7 月设备检修完成后，建议集中排班提升设备利用率至 75% 以上。</p>`,
-];
+    this._initFabDrag();
+    this._initPanelDrag();
+    this.renderQuickActions();
+  },
 
-let currentDhTab = 0;
-function switchDhTab(el, idx) {
-  document.querySelectorAll('.dh-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  currentDhTab = idx;
-  renderDhContent(idx);
-}
+  // --- Draggable FAB ---
+  _initFabDrag() {
+    let startX, startY, origX, origY, moved;
+    const fab = this.fab;
+    fab.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      startX = e.clientX; startY = e.clientY;
+      const rect = fab.getBoundingClientRect();
+      origX = rect.left; origY = rect.top;
+      moved = false; this._fabDragged = false;
+      const onMove = (ev) => {
+        const dx = ev.clientX - startX, dy = ev.clientY - startY;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+        fab.style.left = (origX + dx) + 'px'; fab.style.top = (origY + dy) + 'px';
+        fab.style.right = 'auto'; fab.style.bottom = 'auto';
+      };
+      const onUp = () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        this._fabDragged = moved;
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  },
 
-function renderDhContent(idx) {
-  document.getElementById('dhBody').innerHTML = DH_CONTENT[idx];
-}
+  // --- Draggable Panel Header ---
+  _initPanelDrag() {
+    let startX, startY, origX, origY;
+    const header = document.getElementById('xiaoanHeader');
+    const wrapper = this.wrapper;
+    header.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.xiaoan-close')) return;
+      e.preventDefault();
+      startX = e.clientX; startY = e.clientY;
+      const rect = wrapper.getBoundingClientRect();
+      origX = rect.left + rect.width / 2; origY = rect.top + rect.height / 2;
+      const onMove = (ev) => {
+        const dx = ev.clientX - startX, dy = ev.clientY - startY;
+        wrapper.style.left = (origX + dx) + 'px';
+        wrapper.style.top = (origY + dy) + 'px';
+      };
+      const onUp = () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  },
+
+  open() {
+    this.isOpen = true;
+    this.overlay.classList.add('open');
+    this.wrapper.classList.add('open');
+    if (this.chat.children.length === 0) {
+      this.showProactiveInsight();
+    }
+  },
+
+  close() {
+    this.isOpen = false;
+    this.overlay.classList.remove('open');
+    this.wrapper.classList.remove('open');
+  },
+
+  // --- Quick Actions ---
+  renderQuickActions() {
+    const chips = ['年度计划完成了多少', '哪个月办班缺口最大', '群体薄弱科目TOP5', '推荐培训重点'];
+    this.quickActions.innerHTML = chips.map(c =>
+      `<div class="xiaoan-chip" onclick="xiaoan.handleChip('${c}')">${c}</div>`
+    ).join('');
+  },
+
+  handleChip(text) {
+    this.addUserMsg(text);
+    this.processQuery(text);
+  },
+
+  sendFromInput() {
+    const text = this.input.value.trim();
+    if (!text) return;
+    this.input.value = '';
+    this.addUserMsg(text);
+    this.processQuery(text);
+  },
+
+  // --- Voice Simulation ---
+  simulateVoice() {
+    if (this.mic.classList.contains('recording')) return;
+    this.mic.classList.add('recording');
+    const presets = ['年度计划完成了多少', '哪个月办班缺口最大', '群体薄弱科目TOP5', '各岗位培训完成情况'];
+    const chosen = presets[Math.floor(Math.random() * presets.length)];
+    setTimeout(() => {
+      this.mic.classList.remove('recording');
+      this.input.value = chosen;
+      setTimeout(() => this.sendFromInput(), 300);
+    }, 2000);
+  },
+
+  // --- Messages ---
+  addUserMsg(text) {
+    const div = document.createElement('div');
+    div.className = 'xiaoan-msg user';
+    div.innerHTML = `<div class="xiaoan-msg-card">${text}</div>`;
+    this.chat.appendChild(div);
+    this.scrollToBottom();
+  },
+
+  addSystemMsg(html, chartCfg) {
+    const id = 'xiaoan-msg-' + (++this.msgId);
+    const div = document.createElement('div');
+    div.className = 'xiaoan-msg system';
+    let chartHtml = chartCfg ? `<div class="msg-chart" id="${id}-chart"></div>` : '';
+    div.innerHTML = `<div class="xiaoan-msg-card">${html}${chartHtml}</div>`;
+    this.chat.appendChild(div);
+    this.scrollToBottom();
+    if (chartCfg) {
+      setTimeout(() => {
+        const el = document.getElementById(id + '-chart');
+        if (el) {
+          const c = echarts.init(el);
+          c.setOption(chartCfg);
+          this.chartInstances.push(c);
+        }
+      }, 50);
+    }
+    return div;
+  },
+
+  showTyping() {
+    const div = document.createElement('div');
+    div.className = 'xiaoan-msg system xiaoan-typing-wrapper';
+    div.innerHTML = `<div class="xiaoan-typing"><span></span><span></span><span></span></div>`;
+    this.chat.appendChild(div);
+    this.scrollToBottom();
+    return div;
+  },
+
+  typeText(container, html, chartCfg, cb) {
+    // Show sound wave
+    this.soundWave.classList.add('active');
+    const plain = html.replace(/<[^>]+>/g, '');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'xiaoan-msg system';
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'xiaoan-msg-card';
+    const textSpan = document.createElement('span');
+    textSpan.className = 'typing-text';
+    cardDiv.appendChild(textSpan);
+    msgDiv.appendChild(cardDiv);
+    // Replace typing indicator with message
+    container.replaceWith(msgDiv);
+    let i = 0;
+    const cursor = document.createElement('span');
+    cursor.style.cssText = 'border-right:2px solid #1677ff;animation:blink 0.8s infinite;margin-left:1px;';
+    if (!document.getElementById('xiaoan-blink-style')) {
+      const s = document.createElement('style');
+      s.id = 'xiaoan-blink-style';
+      s.textContent = '@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}';
+      document.head.appendChild(s);
+    }
+    textSpan.appendChild(cursor);
+    const step = () => {
+      if (i < plain.length) {
+        cursor.before(plain[i]);
+        i++;
+        this.scrollToBottom();
+        setTimeout(step, 20 + Math.random() * 20);
+      } else {
+        cursor.remove();
+        // Replace plain text with rich HTML
+        textSpan.innerHTML = html;
+        // Add chart if needed
+        if (chartCfg) {
+          const chartId = 'xiaoan-msg-' + (++this.msgId) + '-chart';
+          const chartDiv = document.createElement('div');
+          chartDiv.className = 'msg-chart';
+          chartDiv.id = chartId;
+          cardDiv.appendChild(chartDiv);
+          setTimeout(() => {
+            const el = document.getElementById(chartId);
+            if (el) {
+              const c = echarts.init(el);
+              c.setOption(chartCfg);
+              this.chartInstances.push(c);
+            }
+          }, 50);
+        }
+        this.soundWave.classList.remove('active');
+        this.scrollToBottom();
+        if (cb) cb();
+      }
+    };
+    step();
+  },
+
+  scrollToBottom() {
+    this.chat.scrollTop = this.chat.scrollHeight;
+  },
+
+  // --- Proactive Insight ---
+  showProactiveInsight() {
+    const d = DATA[currentPeriod];
+    const periodLabel = {year: '年度', quarter: '本季度', month: '本月'}[currentPeriod];
+    const rate = d.planRing.completed;
+    // Find negative-trend KPIs
+    const warnings = d.kpi.filter(k => !k.up);
+    let warnText = '';
+    if (warnings.length > 0) {
+      warnText = '，' + warnings.map(k => `<b>${k.label}</b>(${k.trend})`).join('、') + '需要关注';
+    }
+    const html = `您好，我是小安，您的智能培训分析助手。<br><br>` +
+      `我注意到当前查看的是<b>${periodLabel}</b>数据：年度计划完成 <span class="highlight">${rate}%</span>${warnText}。<br><br>` +
+      `您可以问我任何关于培训数据的问题，或点击下方快捷按钮快速了解。`;
+    const typing = this.showTyping();
+    setTimeout(() => { this.typeText(typing, html); }, 600);
+  },
+
+  // --- Intent Matching & Analysis ---
+  processQuery(text) {
+    const typing = this.showTyping();
+    setTimeout(() => {
+      const result = this.matchIntent(text);
+      this.typeText(typing, result.text, result.chart);
+    }, 500 + Math.random() * 500);
+  },
+
+  matchIntent(text) {
+    const t = text.toLowerCase();
+    if (/计划/.test(t) && /(完成|兑现|进度)/.test(t)) return this.planCompletion();
+    if (/(办班|班次)/.test(t) && /(缺口|差距|差|不足|最大)/.test(t)) return this.monthlyGap();
+    if (/月/.test(t) && /(办班|班次)/.test(t)) return this.monthlyGap();
+    if (/(薄弱|弱项|短板|top|失分)/.test(t)) return this.weakTop();
+    if (/(岗位|工种)/.test(t) && /(完成|培训|情况|对比)/.test(t)) return this.jobAnalysis();
+    if (/(车间|部门)/.test(t) && /(对比|比较|参与|完成|情况)/.test(t)) return this.workshopComparison();
+    if (/(建议|推荐|重点|优化|改进|怎么办|如何)/.test(t)) return this.trainingSuggestion();
+    if (/(成绩|分数|分布|合格|及格)/.test(t)) return this.scoreSummary();
+    if (/(kpi|指标|总览|概况|大盘|总体)/.test(t)) return this.kpiSummary();
+    if (/(人天|人日|工时)/.test(t)) return this.personDaysTrend();
+    // Fallback
+    return this.trainingSuggestion();
+  },
+
+  // --- Analysis Functions ---
+  planCompletion() {
+    const d = DATA[currentPeriod];
+    const r = d.planRing;
+    const pct = ((r.completed / r.total) * 100).toFixed(1);
+    const gap = r.total - r.completed;
+    const text = `根据当前数据，年度培训计划共 <b>${r.total}</b> 项，已完成 <b>${r.completed}</b> 项，完成率 <span class="highlight">${pct}%</span>。<br><br>` +
+      `剩余 <b>${gap}</b> 项待完成。` +
+      (pct < 50 ? '当前进度偏慢，建议加快下阶段办班节奏。' : pct >= 80 ? '整体进度良好，继续保持。' : '进度基本正常，需持续关注。');
+    const chart = {
+      series: [{
+        type: 'pie', radius: ['55%', '75%'], center: ['50%', '50%'],
+        label: { show: true, position: 'center', formatter: `{val|${r.completed}%}\n{lbl|完成率}`,
+          rich: { val: { fontSize: 22, fontWeight: 700, color: '#1677ff', lineHeight: 30 }, lbl: { fontSize: 12, color: 'rgba(0,0,0,.45)' } } },
+        data: [
+          { value: r.completed, name: '已完成', itemStyle: { color: '#1677ff' } },
+          { value: gap, name: '未完成', itemStyle: { color: '#ff4d4f' } },
+        ]
+      }],
+      tooltip: { trigger: 'item', formatter: '{b}: {c}项 ({d}%)' }
+    };
+    return { text, chart };
+  },
+
+  monthlyGap() {
+    const d = DATA[currentPeriod];
+    const mc = d.monthlyClass;
+    const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    let maxGap = 0, maxIdx = 0;
+    const gaps = [];
+    for (let i = 0; i < mc.plan.length; i++) {
+      if (mc.plan[i] === 0 && mc.actual[i] === 0) continue;
+      const g = mc.plan[i] - mc.actual[i];
+      gaps.push({ month: months[i], plan: mc.plan[i], actual: mc.actual[i], gap: g });
+      if (g > maxGap) { maxGap = g; maxIdx = gaps.length - 1; }
+    }
+    const worst = gaps[maxIdx] || { month: '-', gap: 0 };
+    const totalPlan = mc.plan.reduce((a, b) => a + b, 0);
+    const totalActual = mc.actual.reduce((a, b) => a + b, 0);
+    const text = `根据当前数据，累计计划办班 <b>${totalPlan}</b> 期，实际完成 <b>${totalActual}</b> 期。<br><br>` +
+      (maxGap > 0 ? `<b>${worst.month}</b>缺口最大，计划 ${worst.plan} 期但仅完成 ${worst.actual} 期，差距 <span class="highlight">${worst.gap} 期</span>。建议在后续月份补排。` : '各月均已完成或超额完成计划，表现优秀。');
+    const visGaps = gaps.slice(0, 6);
+    const chart = {
+      tooltip: { trigger: 'axis' },
+      grid: { left: 40, right: 10, top: 10, bottom: 30 },
+      xAxis: { type: 'category', data: visGaps.map(g => g.month), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' } },
+      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+      series: [
+        { name: '计划', type: 'bar', data: visGaps.map(g => g.plan), itemStyle: { color: '#bae0ff', borderRadius: [3,3,0,0] }, barMaxWidth: 20 },
+        { name: '实际', type: 'bar', data: visGaps.map(g => g.actual), itemStyle: { color: '#1677ff', borderRadius: [3,3,0,0] }, barMaxWidth: 20 },
+      ]
+    };
+    return { text, chart };
+  },
+
+  weakTop() {
+    const d = DATA[currentPeriod];
+    const wk = d.weakTop5;
+    const top1 = wk.subjects[0];
+    const top1Score = wk.scores[0];
+    let list = wk.subjects.map((s, i) => `${i + 1}. ${s}（人均失分 ${wk.scores[i]} 分）`).join('<br>');
+    const text = `根据当前数据，群体薄弱科目 TOP 5 如下：<br><br>${list}<br><br>` +
+      `其中 <b>${top1}</b> 人均失分最高达 <span class="highlight">${top1Score} 分</span>，建议作为优先干预方向。`;
+    const chart = {
+      grid: { left: 120, right: 40, top: 5, bottom: 5 },
+      xAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+      yAxis: { type: 'category', data: [...wk.subjects].reverse(), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' } },
+      series: [{
+        type: 'bar', data: [...wk.scores].reverse(),
+        itemStyle: { color: (p) => ['#ffe0de','#ffccc7','#ffa39e','#ff7875','#ff4d4f'][4 - p.dataIndex] || '#ffa39e', borderRadius: [0,3,3,0] },
+        barMaxWidth: 16, label: { show: true, position: 'right', formatter: '{c}', fontSize: 11, color: 'rgba(0,0,0,.45)' }
+      }],
+      tooltip: { trigger: 'axis' }
+    };
+    return { text, chart };
+  },
+
+  jobAnalysis() {
+    const d = DATA[currentPeriod];
+    const jd = d.jobCompletion;
+    const rates = jd.jobs.map((j, i) => ({ job: j, plan: jd.plan[i], actual: jd.actual[i], rate: ((jd.actual[i] / jd.plan[i]) * 100).toFixed(1) }));
+    rates.sort((a, b) => a.rate - b.rate);
+    const worst = rates[0];
+    const best = rates[rates.length - 1];
+    const text = `根据当前数据，各岗位培训完成情况：<br><br>` +
+      rates.map(r => `<b>${r.job}</b>：完成 ${r.actual}/${r.plan} 人（${r.rate}%）`).join('<br>') +
+      `<br><br>完成率最低的是 <span class="highlight">${worst.job}（${worst.rate}%）</span>，建议重点补充；最高的是 <b>${best.job}（${best.rate}%）</b>。`;
+    const chart = {
+      grid: { left: 85, right: 30, top: 5, bottom: 5 },
+      xAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+      yAxis: { type: 'category', data: jd.jobs, inverse: true, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' } },
+      series: [
+        { name: '计划', type: 'bar', data: jd.plan, itemStyle: { color: '#bae0ff', borderRadius: [0,3,3,0] }, barMaxWidth: 12 },
+        { name: '实际', type: 'bar', data: jd.actual, itemStyle: { color: '#1677ff', borderRadius: [0,3,3,0] }, barMaxWidth: 12 },
+      ],
+      tooltip: { trigger: 'axis' }
+    };
+    return { text, chart };
+  },
+
+  workshopComparison() {
+    const d = DATA[currentPeriod];
+    const wd = d.workshop;
+    const rates = wd.names.map((n, i) => ({ name: n, plan: wd.plan[i], actual: wd.actual[i], rate: ((wd.actual[i] / wd.plan[i]) * 100).toFixed(1) }));
+    rates.sort((a, b) => a.rate - b.rate);
+    const worst = rates[0];
+    const text = `根据当前数据，各车间培训参与对比：<br><br>` +
+      rates.map(r => `<b>${r.name}</b>：完成 ${r.actual}/${r.plan} 人（${r.rate}%）`).join('<br>') +
+      `<br><br>参训完成率最低的是 <span class="highlight">${worst.name}（${worst.rate}%）</span>，建议督促该车间加快培训进度。`;
+    const chart = {
+      grid: { left: 40, right: 10, top: 10, bottom: 40 },
+      xAxis: { type: 'category', data: wd.names, axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.45)', rotate: 15 } },
+      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+      series: [
+        { name: '计划', type: 'bar', data: wd.plan, itemStyle: { color: '#bae0ff', borderRadius: [3,3,0,0] }, barMaxWidth: 20 },
+        { name: '实际', type: 'bar', data: wd.actual, itemStyle: { color: '#1677ff', borderRadius: [3,3,0,0] }, barMaxWidth: 20 },
+      ],
+      tooltip: { trigger: 'axis' }
+    };
+    return { text, chart };
+  },
+
+  trainingSuggestion() {
+    const d = DATA[currentPeriod];
+    const pct = ((d.planRing.completed / d.planRing.total) * 100).toFixed(1);
+    const top1 = d.weakTop5.subjects[0];
+    const top1Score = d.weakTop5.scores[0];
+    // Find worst job
+    const jd = d.jobCompletion;
+    let worstJobIdx = 0, worstJobRate = 100;
+    jd.jobs.forEach((j, i) => {
+      const r = (jd.actual[i] / jd.plan[i]) * 100;
+      if (r < worstJobRate) { worstJobRate = r; worstJobIdx = i; }
+    });
+    const worstJob = jd.jobs[worstJobIdx];
+    const worstJobGap = jd.plan[worstJobIdx] - jd.actual[worstJobIdx];
+    // Find worst workshop
+    const wd = d.workshop;
+    let worstWsIdx = 0, worstWsRate = 100;
+    wd.names.forEach((n, i) => {
+      const r = (wd.actual[i] / wd.plan[i]) * 100;
+      if (r < worstWsRate) { worstWsRate = r; worstWsIdx = i; }
+    });
+    const worstWs = wd.names[worstWsIdx];
+
+    const text = `根据当前数据综合分析，为您生成以下培训优化建议：<br><br>` +
+      `<b>1. 计划推进</b><br>当前计划完成率 ${pct}%，` +
+      (pct < 50 ? '进度偏慢，建议加快办班节奏，在下阶段集中排课。' : '进度基本正常，继续按计划执行。') +
+      `<br><br><b>2. 薄弱专项</b><br>「${top1}」人均失分 ${top1Score} 分，位列薄弱点第一，建议增设专项强化班，提高实操训练频次。` +
+      `<br><br><b>3. 岗位补缺</b><br>「${worstJob}」岗位完成率最低（${worstJobRate.toFixed(1)}%），缺口 ${worstJobGap} 人，建议优先安排补训。` +
+      `<br><br><b>4. 车间督促</b><br>「${worstWs}」车间参训率最低（${worstWsRate.toFixed(1)}%），建议与该车间协调培训排期。` +
+      `<br><br><b>5. 暑运保障</b><br>暑运期间建议优先安排安全生产和应急处置培训，确保一线人员覆盖率达到 100%。`;
+    return { text, chart: null };
+  },
+
+  scoreSummary() {
+    const d = DATA[currentPeriod];
+    const sd = d.scoreDist;
+    const total = sd.counts.reduce((a, b) => a + b, 0);
+    const below60 = sd.counts[0] + sd.counts[1];
+    const above80 = sd.counts[4] + sd.counts[5];
+    const failRate = ((below60 / total) * 100).toFixed(1);
+    const excellentRate = ((above80 / total) * 100).toFixed(1);
+    const text = `根据当前数据，班级成绩分布情况：<br><br>` +
+      `考核总人数 <b>${total}</b> 人，平均分 <span class="highlight">${sd.mean}</span> 分（标准差 ${sd.std}）。<br>` +
+      `不及格率（<60分）：<b>${failRate}%</b>（${below60} 人）<br>` +
+      `优秀率（>=80分）：<b>${excellentRate}%</b>（${above80} 人）<br><br>` +
+      (below60 > total * 0.05 ? '不及格人数偏多，建议分析低分人群特征并安排补考或辅导。' : '整体成绩分布良好。');
+    const chart = {
+      grid: { left: 40, right: 10, top: 10, bottom: 30 },
+      xAxis: { type: 'category', data: sd.ranges, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' } },
+      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+      series: [{ type: 'bar', data: sd.counts, itemStyle: { color: '#1677ff', borderRadius: [3,3,0,0] }, barMaxWidth: 30,
+        label: { show: true, position: 'top', fontSize: 10, color: 'rgba(0,0,0,.45)' } }],
+      tooltip: { trigger: 'axis' }
+    };
+    return { text, chart };
+  },
+
+  kpiSummary() {
+    const d = DATA[currentPeriod];
+    const periodLabel = {year: '年度', quarter: '本季度', month: '本月'}[currentPeriod];
+    let lines = d.kpi.map(k => {
+      const icon = k.up ? '<span style="color:#52c41a">&#9650;</span>' : '<span style="color:#ff4d4f">&#9660;</span>';
+      return `<b>${k.label}</b>：${k.value}${k.unit} ${icon} ${k.trend}`;
+    }).join('<br>');
+    const warnings = d.kpi.filter(k => !k.up);
+    let warnText = '';
+    if (warnings.length > 0) {
+      warnText = '<br><br>需重点关注：' + warnings.map(k => `<b>${k.label}</b>出现下降趋势（${k.trend}），${k.tip}`).join('；') + '。';
+    }
+    const text = `根据当前数据，${periodLabel} KPI 指标总览：<br><br>${lines}${warnText}`;
+    return { text, chart: null };
+  },
+
+  personDaysTrend() {
+    const d = DATA[currentPeriod];
+    const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    const active = [];
+    d.personDays.forEach((v, i) => { if (v > 0) active.push({ month: months[i], value: v }); });
+    const total = active.reduce((s, a) => s + a.value, 0);
+    const max = active.reduce((m, a) => a.value > m.value ? a : m, active[0]);
+    const min = active.reduce((m, a) => a.value < m.value ? a : m, active[0]);
+    const text = `根据当前数据，培训人天数走势：<br><br>` +
+      `累计培训 <b>${total}</b> 人天，峰值出现在 <b>${max.month}</b>（${max.value} 人天），` +
+      `最低为 <b>${min.month}</b>（${min.value} 人天）。<br><br>` +
+      (active.length >= 2 && active[active.length - 1].value > active[active.length - 2].value ? '近期呈上升趋势，培训力度在加大。' : '近期呈平稳或下降趋势，可适当增加培训投入。');
+    const chart = {
+      grid: { left: 50, right: 10, top: 10, bottom: 30 },
+      xAxis: { type: 'category', data: active.map(a => a.month), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' } },
+      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+      series: [{ type: 'line', data: active.map(a => a.value), smooth: true, symbol: 'circle', symbolSize: 5,
+        lineStyle: { color: '#1677ff', width: 2 }, itemStyle: { color: '#1677ff' },
+        areaStyle: { color: { type: 'linear', x:0,y:0,x2:0,y2:1, colorStops: [{offset:0,color:'rgba(22,119,255,.12)'},{offset:1,color:'rgba(22,119,255,.02)'}] } }
+      }],
+      tooltip: { trigger: 'axis', formatter: '{b}: {c} 人天' }
+    };
+    return { text, chart };
+  },
+};
 
 // ========== RENDER ALL ==========
 function renderAll() {
@@ -574,6 +1120,7 @@ function renderAll() {
 document.addEventListener('DOMContentLoaded', function() {
   initCharts();
   renderAll();
+  xiaoan.init();
 });
 </script>
 </body>

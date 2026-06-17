@@ -116,6 +116,171 @@
     .progress-bar .seg-red { background: #ff4d4f; }
     .progress-legend { display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: rgba(0,0,0,.45); }
     .progress-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+
+    /* ========== XiaoAn Digital Human ========== */
+    .xiaoan-fab {
+      position: fixed; bottom: 28px; right: 28px; z-index: 900;
+      cursor: grab; user-select: none;
+    }
+    .xiaoan-fab:active { cursor: grabbing; }
+    .xiaoan-fab-inner {
+      width: 72px; height: 72px; border-radius: 50%; overflow: hidden;
+      position: relative; background: #f0f5ff;
+      box-shadow: 0 4px 16px rgba(22,119,255,0.15);
+      transition: transform .2s;
+      animation: xiaoanBreathe 3s ease-in-out infinite;
+    }
+    .xiaoan-fab:hover .xiaoan-fab-inner { transform: scale(1.06); }
+    .xiaoan-fab-inner img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    @keyframes xiaoanBreathe {
+      0%, 100% { box-shadow: 0 4px 16px rgba(22,119,255,0.15); }
+      50% { box-shadow: 0 4px 24px rgba(22,119,255,0.35), 0 0 0 4px rgba(22,119,255,0.08); }
+    }
+    .xiaoan-label { text-align: center; margin-top: 6px; font-size: 12px; color: #1677ff; font-weight: 500; }
+
+    /* Overlay */
+    .xiaoan-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.35); z-index: 950;
+      opacity: 0; transition: opacity .3s;
+      pointer-events: none;
+    }
+    .xiaoan-overlay.active { opacity: 1; pointer-events: auto; }
+
+    /* Panel wrapper */
+    .xiaoan-wrapper {
+      position: fixed; z-index: 960;
+      bottom: 40px; right: 28px;
+      display: flex; align-items: flex-end; gap: 0;
+      transform: translateY(20px) scale(0.95); opacity: 0;
+      transition: transform .35s cubic-bezier(.4,0,.2,1), opacity .3s;
+      pointer-events: none;
+    }
+    .xiaoan-wrapper.active { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+
+    /* Left avatar column */
+    .xiaoan-avatar-col {
+      width: 160px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: flex-end;
+      align-items: center; pointer-events: none;
+    }
+    .xiaoan-avatar-col img {
+      width: 140px; height: auto; border-radius: 0 0 0 12px;
+      filter: drop-shadow(2px 2px 8px rgba(0,0,0,.1));
+    }
+
+    /* Right panel */
+    .xiaoan-panel {
+      width: 440px; height: 580px; background: #fff;
+      border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    /* Panel header */
+    .xiaoan-panel-header {
+      padding: 16px 20px; background: linear-gradient(135deg, #1677ff 0%, #4096ff 100%);
+      color: #fff; position: relative; cursor: grab; user-select: none; flex-shrink: 0;
+    }
+    .xiaoan-panel-header:active { cursor: grabbing; }
+    .xiaoan-panel-header .xa-title { font-size: 16px; font-weight: 600; }
+    .xiaoan-panel-header .xa-subtitle { font-size: 12px; opacity: .8; margin-top: 2px; }
+    .xiaoan-panel-close {
+      position: absolute; top: 12px; right: 12px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(255,255,255,.2); border: none; color: #fff;
+      font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .xiaoan-panel-close:hover { background: rgba(255,255,255,.35); }
+    /* Sound wave bars */
+    .xa-sound-wave { display: inline-flex; gap: 2px; margin-left: 10px; vertical-align: middle; height: 14px; align-items: flex-end; opacity: 0; transition: opacity .3s; }
+    .xa-sound-wave.playing { opacity: 1; }
+    .xa-sound-wave span { display: block; width: 2px; background: rgba(255,255,255,.8); border-radius: 1px; animation: xaSoundBar .6s ease-in-out infinite alternate; }
+    .xa-sound-wave span:nth-child(1) { height: 4px; animation-delay: 0s; }
+    .xa-sound-wave span:nth-child(2) { height: 8px; animation-delay: .15s; }
+    .xa-sound-wave span:nth-child(3) { height: 12px; animation-delay: .3s; }
+    .xa-sound-wave span:nth-child(4) { height: 6px; animation-delay: .45s; }
+    .xa-sound-wave span:nth-child(5) { height: 10px; animation-delay: .1s; }
+    @keyframes xaSoundBar {
+      0% { transform: scaleY(0.4); }
+      100% { transform: scaleY(1); }
+    }
+
+    /* Chat content */
+    .xiaoan-chat {
+      flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .xiaoan-chat::-webkit-scrollbar { width: 4px; }
+    .xiaoan-chat::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 2px; }
+
+    /* Message cards */
+    .xa-msg { max-width: 100%; animation: xaMsgIn .3s ease-out; }
+    @keyframes xaMsgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .xa-msg-sys {
+      background: #fff; border: 1px solid #f0f0f0; border-left: 3px solid #1677ff;
+      border-radius: 0 8px 8px 0; padding: 12px 14px;
+      font-size: 13px; color: rgba(0,0,0,.75); line-height: 1.7;
+    }
+    .xa-msg-sys .xa-msg-label { font-size: 11px; color: #1677ff; font-weight: 600; margin-bottom: 6px; }
+    .xa-msg-user {
+      align-self: flex-end; background: #1677ff; color: #fff;
+      border-radius: 8px 0 8px 8px; padding: 10px 14px;
+      font-size: 13px; max-width: 85%; line-height: 1.6;
+    }
+    .xa-msg-chart { width: 100%; height: 200px; margin-top: 8px; border-radius: 6px; }
+    .xa-typing-cursor { display: inline-block; width: 2px; height: 14px; background: #1677ff; margin-left: 2px; vertical-align: middle; animation: xaBlink .6s infinite; }
+    @keyframes xaBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* Quick action chips */
+    .xa-chips { padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px; flex-shrink: 0; border-top: 1px solid #f5f5f5; }
+    .xa-chip {
+      padding: 6px 14px; border-radius: 16px; border: 1px solid #d9d9d9;
+      background: #fff; font-size: 12px; color: rgba(0,0,0,.65);
+      cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .xa-chip:hover { border-color: #1677ff; color: #1677ff; background: #f0f5ff; }
+
+    /* Input bar */
+    .xiaoan-input-bar {
+      padding: 12px 16px; border-top: 1px solid #f0f0f0;
+      display: flex; gap: 8px; align-items: center; flex-shrink: 0; background: #fafafa;
+    }
+    .xiaoan-input-bar input {
+      flex: 1; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 20px;
+      font-size: 13px; outline: none; background: #fff;
+    }
+    .xiaoan-input-bar input:focus { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
+    .xa-mic-btn {
+      width: 36px; height: 36px; border-radius: 50%; border: 1px solid #d9d9d9;
+      background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all .2s; position: relative; overflow: hidden;
+    }
+    .xa-mic-btn:hover { border-color: #1677ff; color: #1677ff; }
+    .xa-mic-btn.recording { background: #ff4d4f; border-color: #ff4d4f; color: #fff; }
+    .xa-mic-btn.recording::after {
+      content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%;
+      background: rgba(255,77,79,.3); animation: xaMicPulse 1s ease-out infinite;
+    }
+    @keyframes xaMicPulse { to { transform: scale(1.8); opacity: 0; } }
+    .xa-mic-wave { display: none; position: absolute; inset: 0; }
+    .xa-mic-btn.recording .xa-mic-wave { display: flex; align-items: center; justify-content: center; gap: 2px; }
+    .xa-mic-wave span { display: block; width: 2px; background: #fff; border-radius: 1px; animation: xaSoundBar .5s ease-in-out infinite alternate; }
+    .xa-mic-wave span:nth-child(1) { height: 8px; animation-delay: 0s; }
+    .xa-mic-wave span:nth-child(2) { height: 14px; animation-delay: .1s; }
+    .xa-mic-wave span:nth-child(3) { height: 10px; animation-delay: .2s; }
+
+    .xa-send-btn {
+      width: 36px; height: 36px; border-radius: 50%; border: none;
+      background: #1677ff; color: #fff; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; transition: background .2s; font-size: 16px;
+    }
+    .xa-send-btn:hover { background: #4096ff; }
+    .xa-send-btn:disabled { background: #d9d9d9; cursor: not-allowed; }
+
+    /* Highlight numbers in analysis */
+    .xa-highlight { color: #1677ff; font-weight: 600; }
+    .xa-warn { color: #fa8c16; font-weight: 600; }
+    .xa-danger { color: #ff4d4f; font-weight: 600; }
+    .xa-good { color: #52c41a; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -431,6 +596,39 @@
     <div class="modal-footer">
       <button class="btn" onclick="closeAddRecordModal()">取消</button>
       <button class="btn btn-primary" onclick="alert('记录添加成功（Demo演示）');closeAddRecordModal()">确认添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- XiaoAn Digital Human FAB -->
+<div class="xiaoan-fab" id="xiaoanFab" onclick="xiaoanOpen()">
+  <div class="xiaoan-fab-inner"><img src="xiaoan.png" alt="小安" /></div>
+  <div class="xiaoan-label">小安</div>
+</div>
+
+<!-- XiaoAn Overlay -->
+<div class="xiaoan-overlay" id="xiaoanOverlay" onclick="xiaoanClose()"></div>
+
+<!-- XiaoAn Panel Wrapper -->
+<div class="xiaoan-wrapper" id="xiaoanWrapper">
+  <div class="xiaoan-avatar-col"><img src="xiaoan.png" alt="小安" /></div>
+  <div class="xiaoan-panel" id="xiaoanPanel">
+    <div class="xiaoan-panel-header" id="xiaoanPanelHeader">
+      <div class="xa-title">小安 · 智能分析 <span class="xa-sound-wave" id="xaSoundWave"><span></span><span></span><span></span><span></span><span></span></span></div>
+      <div class="xa-subtitle">基于实训考核数据的 AI 分析助手</div>
+      <button class="xiaoan-panel-close" onclick="xiaoanClose()">&times;</button>
+    </div>
+    <div class="xiaoan-chat" id="xiaoanChat"></div>
+    <div class="xa-chips" id="xiaoanChips"></div>
+    <div class="xiaoan-input-bar">
+      <input type="text" id="xiaoanInput" placeholder="输入您的问题..." onkeydown="if(event.key==='Enter')xiaoanSend()" />
+      <button class="xa-mic-btn" id="xiaoanMic" onclick="xiaoanVoice()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+        <div class="xa-mic-wave"><span></span><span></span><span></span></div>
+      </button>
+      <button class="xa-send-btn" id="xiaoanSendBtn" onclick="xiaoanSend()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
     </div>
   </div>
 </div>
@@ -901,6 +1099,575 @@ window.onload = function() {
     Object.keys(charts).forEach(function(k) { if (charts[k]) charts[k].resize(); });
   });
 };
+
+// ========== XiaoAn Digital Human ==========
+var xiaoanCharts = [];
+var xiaoanIsOpen = false;
+var xiaoanMsgId = 0;
+
+// --- FAB Drag ---
+(function() {
+  var fab = document.getElementById('xiaoanFab');
+  var dragging = false, hasMoved = false, sx, sy, fx, fy;
+  fab.addEventListener('mousedown', function(e) {
+    if (xiaoanIsOpen) return;
+    dragging = true; hasMoved = false;
+    sx = e.clientX; sy = e.clientY;
+    var r = fab.getBoundingClientRect();
+    fx = r.left; fy = r.top;
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    var dx = e.clientX - sx, dy = e.clientY - sy;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved = true;
+    if (hasMoved) {
+      fab.style.left = (fx + dx) + 'px';
+      fab.style.top = (fy + dy) + 'px';
+      fab.style.right = 'auto'; fab.style.bottom = 'auto';
+    }
+  });
+  document.addEventListener('mouseup', function() {
+    if (dragging && hasMoved) { fab.onclick = null; setTimeout(function() { fab.onclick = xiaoanOpen; }, 50); }
+    dragging = false;
+  });
+})();
+
+// --- Panel Header Drag ---
+(function() {
+  var hdr = document.getElementById('xiaoanPanelHeader');
+  var wrap = document.getElementById('xiaoanWrapper');
+  var dragging = false, sx, sy, wx, wy;
+  hdr.addEventListener('mousedown', function(e) {
+    if (e.target.closest('.xiaoan-panel-close')) return;
+    dragging = true; sx = e.clientX; sy = e.clientY;
+    var r = wrap.getBoundingClientRect();
+    wx = r.left; wy = r.top;
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    wrap.style.left = (wx + e.clientX - sx) + 'px';
+    wrap.style.top = (wy + e.clientY - sy) + 'px';
+    wrap.style.right = 'auto'; wrap.style.bottom = 'auto';
+  });
+  document.addEventListener('mouseup', function() { dragging = false; });
+})();
+
+// --- Open / Close ---
+function xiaoanOpen() {
+  if (xiaoanIsOpen) return;
+  xiaoanIsOpen = true;
+  document.getElementById('xiaoanFab').style.display = 'none';
+  document.getElementById('xiaoanOverlay').classList.add('active');
+  document.getElementById('xiaoanWrapper').classList.add('active');
+  // Reset position
+  var wrap = document.getElementById('xiaoanWrapper');
+  wrap.style.left = ''; wrap.style.top = '';
+  wrap.style.right = '28px'; wrap.style.bottom = '40px';
+  // Clear and show proactive insight
+  document.getElementById('xiaoanChat').innerHTML = '';
+  xiaoanCharts = [];
+  xiaoanShowProactiveInsight();
+  xiaoanUpdateChips();
+}
+
+function xiaoanClose() {
+  xiaoanIsOpen = false;
+  document.getElementById('xiaoanOverlay').classList.remove('active');
+  document.getElementById('xiaoanWrapper').classList.remove('active');
+  setTimeout(function() { document.getElementById('xiaoanFab').style.display = ''; }, 300);
+}
+
+// --- Chips ---
+function xiaoanUpdateChips() {
+  var chipsByLevel = [
+    ['各车间综合排名', '哪个科目最薄弱', '本期培训建议'],
+    ['该车间薄弱项分析', '优秀班组和薄弱班组', '改进建议'],
+    ['该班组薄弱科目', '优秀/薄弱职工', '培训重点'],
+    ['个人薄弱项分析', '推荐培训计划', '成绩趋势解读']
+  ];
+  var chips = chipsByLevel[currentLevel] || chipsByLevel[0];
+  var html = '';
+  chips.forEach(function(c) {
+    html += '<div class="xa-chip" onclick="xiaoanChipClick(this)">' + c + '</div>';
+  });
+  document.getElementById('xiaoanChips').innerHTML = html;
+}
+
+function xiaoanChipClick(el) {
+  var text = el.textContent;
+  xiaoanAddUserMsg(text);
+  xiaoanProcess(text);
+}
+
+// --- Send ---
+function xiaoanSend() {
+  var input = document.getElementById('xiaoanInput');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  xiaoanAddUserMsg(text);
+  xiaoanProcess(text);
+}
+
+// --- Voice ---
+function xiaoanVoice() {
+  var mic = document.getElementById('xiaoanMic');
+  if (mic.classList.contains('recording')) return;
+  mic.classList.add('recording');
+  var presets = [
+    ['各车间综合排名', '哪个科目最薄弱', '本期培训建议', '成绩分布分析'],
+    ['该车间薄弱项分析', '优秀班组和薄弱班组', '改进建议'],
+    ['该班组薄弱科目', '优秀/薄弱职工', '培训重点'],
+    ['个人薄弱项分析', '推荐培训计划', '成绩趋势解读']
+  ];
+  var list = presets[currentLevel] || presets[0];
+  var picked = list[Math.floor(Math.random() * list.length)];
+  setTimeout(function() {
+    mic.classList.remove('recording');
+    document.getElementById('xiaoanInput').value = picked;
+    xiaoanSend();
+  }, 2000);
+}
+
+// --- Add messages ---
+function xiaoanAddUserMsg(text) {
+  var div = document.createElement('div');
+  div.className = 'xa-msg xa-msg-user';
+  div.textContent = text;
+  document.getElementById('xiaoanChat').appendChild(div);
+  xiaoanScrollBottom();
+}
+
+function xiaoanAddSysMsg(html, chartOpt) {
+  var id = 'xa-msg-' + (++xiaoanMsgId);
+  var div = document.createElement('div');
+  div.className = 'xa-msg xa-msg-sys';
+  div.innerHTML = '<div class="xa-msg-label">小安</div><div id="' + id + '-text"></div>' +
+    (chartOpt ? '<div id="' + id + '-chart" class="xa-msg-chart"></div>' : '');
+  document.getElementById('xiaoanChat').appendChild(div);
+  xiaoanScrollBottom();
+  // Typewriter effect
+  xiaoanTypewriter(id + '-text', html, function() {
+    if (chartOpt) {
+      var chartDom = document.getElementById(id + '-chart');
+      if (chartDom) {
+        var c = echarts.init(chartDom);
+        c.setOption(chartOpt);
+        xiaoanCharts.push(c);
+      }
+    }
+    xiaoanStopSoundWave();
+  });
+  xiaoanStartSoundWave();
+}
+
+function xiaoanTypewriter(elId, html, cb) {
+  var el = document.getElementById(elId);
+  if (!el) { if (cb) cb(); return; }
+  // Parse html, type character by character (keeping tags intact)
+  var chars = [];
+  var inTag = false, buf = '';
+  for (var i = 0; i < html.length; i++) {
+    if (html[i] === '<') { inTag = true; buf = '<'; continue; }
+    if (inTag) { buf += html[i]; if (html[i] === '>') { inTag = false; chars.push(buf); buf = ''; } continue; }
+    chars.push(html[i]);
+  }
+  var idx = 0;
+  var built = '';
+  function tick() {
+    if (idx >= chars.length) { el.innerHTML = built; if (cb) cb(); return; }
+    built += chars[idx++];
+    el.innerHTML = built + '<span class="xa-typing-cursor"></span>';
+    xiaoanScrollBottom();
+    setTimeout(tick, chars[idx - 1].length > 1 ? 0 : 18);
+  }
+  tick();
+}
+
+function xiaoanScrollBottom() {
+  var chat = document.getElementById('xiaoanChat');
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function xiaoanStartSoundWave() { document.getElementById('xaSoundWave').classList.add('playing'); }
+function xiaoanStopSoundWave() { document.getElementById('xaSoundWave').classList.remove('playing'); }
+
+// --- Proactive Insight ---
+function xiaoanShowProactiveInsight() {
+  var text = '';
+  if (currentLevel === 0) {
+    var total = workshops.reduce(function(a, b) { return a + b.total; }, 0);
+    var avgScore = (workshops.reduce(function(a, b) { return a + b.score; }, 0) / workshops.length).toFixed(1);
+    var avgRate = (workshops.reduce(function(a, b) { return a + b.rate; }, 0) / workshops.length).toFixed(1);
+    var lowest = workshops.slice().sort(function(a, b) { return a.score - b.score; })[0];
+    text = '您好！我是小安，您的智能分析助手。根据当前数据，本期站段共 <span class="xa-highlight">' + total + '</span> 人参培，' +
+      '综合平均得分 <span class="xa-highlight">' + avgScore + '</span> 分，平均合格率 <span class="xa-highlight">' + avgRate + '%</span>。' +
+      '我注意到 <span class="xa-warn">' + lowest.name + '</span> 综合得分 <span class="xa-warn">' + lowest.score + '</span> 分，在各车间中表现偏弱，建议重点关注。<br><br>您可以点击下方快捷问题，或直接输入您想了解的内容。';
+  } else if (currentLevel === 1) {
+    var ws = document.getElementById('ws-workshop').value;
+    var wsData = workshops.filter(function(w) { return w.name === ws; })[0] || workshops[0];
+    var avgScore = (workshops.reduce(function(a, b) { return a + b.score; }, 0) / workshops.length).toFixed(1);
+    var diff = (wsData.score - parseFloat(avgScore)).toFixed(1);
+    var cmp = diff > 0 ? '高于全站平均 <span class="xa-good">' + diff + '</span> 分' : '低于全站平均 <span class="xa-danger">' + Math.abs(diff) + '</span> 分';
+    text = '您好！当前正在查看 <span class="xa-highlight">' + ws + '</span>，综合得分 <span class="xa-highlight">' + wsData.score + '</span> 分，' +
+      '合格率 <span class="xa-highlight">' + wsData.rate + '%</span>，' + cmp + '。有什么我可以帮您分析的？';
+  } else if (currentLevel === 2) {
+    var ws = document.getElementById('tm-workshop').value;
+    var tm = document.getElementById('tm-team').value;
+    var weakest = tmWeakModules.slice().sort(function(a, b) { return parseFloat(a.rate) - parseFloat(b.rate); })[0];
+    text = '您好！当前正在查看 <span class="xa-highlight">' + ws + ' ' + tm + '</span>。' +
+      '根据数据分析，该班组最薄弱的科目是 <span class="xa-warn">' + weakest.name + '</span>（掌握率仅 <span class="xa-danger">' + weakest.rate + '</span>），' +
+      '有 <span class="xa-danger">' + weakest.poor + '</span> 人未掌握。建议优先安排针对性培训。';
+  } else {
+    var personalRadar = [88, 82, 90, 75, 92, 85];
+    var minIdx = 0;
+    personalRadar.forEach(function(v, i) { if (v < personalRadar[minIdx]) minIdx = i; });
+    text = '您好！当前查看的是 <span class="xa-highlight">王建国</span> 的个人分析。综合画像值 <span class="xa-highlight">87.5</span> 分，等级"良好"。' +
+      '六维能力中 <span class="xa-warn">' + radarDims[minIdx] + '</span> 得分最低（<span class="xa-danger">' + personalRadar[minIdx] + '</span> 分），建议重点提升。';
+  }
+  xiaoanAddSysMsg(text);
+}
+
+// --- Intent Matching & Analysis ---
+function xiaoanProcess(text) {
+  setTimeout(function() {
+    var result = xiaoanMatchIntent(text);
+    xiaoanAddSysMsg(result.text, result.chart || null);
+    xiaoanUpdateChips();
+  }, 400);
+}
+
+function xiaoanMatchIntent(text) {
+  // Keyword matching
+  if (/车间.*(排名|对比|综合)/.test(text) || /综合排名/.test(text)) return xiaoanWorkshopRanking();
+  if (/薄弱.*(科目|模块|项)|最薄弱|科目.*薄弱/.test(text)) {
+    if (currentLevel >= 2) return xiaoanTeamWeakness();
+    if (currentLevel === 1) return xiaoanWorkshopWeakness();
+    return xiaoanWeakestModule();
+  }
+  if (/培训.*(建议|计划|重点)|改进建议|建议/.test(text)) return xiaoanTrainingSuggestion();
+  if (/优秀.*(班组|职工)|薄弱.*(班组|职工)|班组.*优秀|职工.*优秀/.test(text)) return xiaoanTopBottomAnalysis();
+  if (/分布|成绩分布/.test(text)) return xiaoanScoreDistAnalysis();
+  if (/趋势|成绩趋势|走势/.test(text)) return xiaoanTrendAnalysis();
+  if (/个人.*薄弱|薄弱项分析/.test(text) && currentLevel === 3) return xiaoanPersonalWeakness();
+  if (/推荐.*培训|培训计划/.test(text) && currentLevel === 3) return xiaoanPersonalTrainingPlan();
+  // Fallback
+  return xiaoanFallback(text);
+}
+
+function xiaoanWorkshopRanking() {
+  var sorted = workshops.slice().sort(function(a, b) { return b.score - a.score; });
+  var text = '根据当前数据，各车间综合得分排名如下：<br>';
+  sorted.forEach(function(w, i) {
+    var cls = i === 0 ? 'xa-good' : (i === sorted.length - 1 ? 'xa-danger' : 'xa-highlight');
+    text += (i + 1) + '. <span class="' + cls + '">' + w.name + '</span>：' + w.score + ' 分（合格率 ' + w.rate + '%）<br>';
+  });
+  var best = sorted[0], worst = sorted[sorted.length - 1];
+  text += '<br>第一名 <span class="xa-good">' + best.name + '</span> 与末位 <span class="xa-danger">' + worst.name + '</span> 差距为 <span class="xa-warn">' +
+    (best.score - worst.score).toFixed(1) + '</span> 分，建议关注薄弱车间的培训资源配置。';
+  var chart = {
+    tooltip: { trigger: 'axis' },
+    grid: { left: 90, right: 40, top: 10, bottom: 25 },
+    yAxis: { type: 'category', data: sorted.map(function(w) { return w.name; }).reverse(), axisLabel: { fontSize: 11 } },
+    xAxis: { type: 'value', max: 100, axisLabel: { fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [{
+      type: 'bar', barWidth: 18,
+      data: sorted.map(function(w) {
+        return { value: w.score, itemStyle: { color: w.score >= 83 ? '#52c41a' : w.score >= 80 ? '#1677ff' : '#fa8c16', borderRadius: [0, 4, 4, 0] } };
+      }).reverse(),
+      label: { show: true, position: 'right', fontSize: 11 }
+    }]
+  };
+  return { text: text, chart: chart };
+}
+
+function xiaoanWeakestModule() {
+  var modScores = modules.map(function(m, i) {
+    var total = masteryData.excellent[i] + masteryData.good[i] + masteryData.normal[i] + masteryData.poor[i];
+    var excellentRate = masteryData.excellent[i] / total * 100;
+    var poorRate = masteryData.poor[i] / total * 100;
+    return { name: m, poor: masteryData.poor[i], poorRate: poorRate.toFixed(1), excellentRate: excellentRate.toFixed(1), total: total };
+  });
+  modScores.sort(function(a, b) { return b.poorRate - a.poorRate; });
+  var worst = modScores[0];
+  var text = '根据当前数据，各科目未掌握率排名：<br>';
+  modScores.forEach(function(m, i) {
+    var cls = i === 0 ? 'xa-danger' : (parseFloat(m.poorRate) > 10 ? 'xa-warn' : 'xa-good');
+    text += (i + 1) + '. <span class="' + cls + '">' + m.name + '</span>：未掌握率 ' + m.poorRate + '%（' + m.poor + '人）<br>';
+  });
+  text += '<br>最薄弱科目为 <span class="xa-danger">' + worst.name + '</span>，未掌握率高达 <span class="xa-danger">' + worst.poorRate + '%</span>，' +
+    '建议增加该科目的培训课时和实操演练频次。';
+  var chart = {
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    grid: { left: 80, right: 30, top: 10, bottom: 25 },
+    yAxis: { type: 'category', data: modScores.map(function(m) { return m.name; }).reverse(), axisLabel: { fontSize: 11 } },
+    xAxis: { type: 'value', axisLabel: { formatter: '{value}%', fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [{
+      type: 'bar', barWidth: 16,
+      data: modScores.map(function(m) {
+        return { value: parseFloat(m.poorRate), itemStyle: { color: parseFloat(m.poorRate) > 12 ? '#ff4d4f' : parseFloat(m.poorRate) > 8 ? '#fa8c16' : '#52c41a', borderRadius: [0, 4, 4, 0] } };
+      }).reverse(),
+      label: { show: true, position: 'right', fontSize: 10, formatter: '{c}%' }
+    }]
+  };
+  return { text: text, chart: chart };
+}
+
+function xiaoanTrainingSuggestion() {
+  var text = '根据当前数据，综合分析后给出以下培训建议：<br><br>';
+  if (currentLevel === 0) {
+    var lowest = workshops.slice().sort(function(a, b) { return a.score - b.score; })[0];
+    var modScores = modules.map(function(m, i) { return { name: m, poor: masteryData.poor[i] }; });
+    modScores.sort(function(a, b) { return b.poor - a.poor; });
+    text += '<b>1. 重点车间</b>：<span class="xa-warn">' + lowest.name + '</span> 综合得分最低（' + lowest.score + '分），建议增派培训资源，安排专项辅导。<br>';
+    text += '<b>2. 薄弱科目</b>：<span class="xa-warn">' + modScores[0].name + '</span> 未掌握人数最多（' + modScores[0].poor + '人），建议增加该科目课时和实操环节。<br>';
+    text += '<b>3. 差距缩小</b>：各车间得分差距 ' + (workshops.slice().sort(function(a,b){return b.score-a.score;})[0].score - lowest.score).toFixed(1) +
+      ' 分，建议组织跨车间经验交流和对标学习。<br>';
+    text += '<b>4. 考核频次</b>：建议将薄弱科目的考核频次从季度调整为月度，及时掌握改进效果。';
+  } else if (currentLevel === 1) {
+    var ws = document.getElementById('ws-workshop').value;
+    var rd = radarByWorkshop[ws] || radarAll;
+    var minIdx = 0;
+    rd.current.forEach(function(v, i) { if (v < rd.current[minIdx]) minIdx = i; });
+    text += '<b>1. 能力短板</b>：<span class="xa-warn">' + radarDims[minIdx] + '</span> 维度得分最低（' + rd.current[minIdx] + '分），建议安排专项强化训练。<br>';
+    text += '<b>2. 班组帮扶</b>：建议优秀班组与薄弱班组结对帮扶，定期开展经验分享会。<br>';
+    text += '<b>3. 实操加强</b>：针对薄弱维度增加仿真设备实操课时，由高分学员担任实操辅导员。';
+  } else if (currentLevel === 2) {
+    var weakest = tmWeakModules.slice().sort(function(a, b) { return parseFloat(a.rate) - parseFloat(b.rate); })[0];
+    text += '<b>1. 首要目标</b>：<span class="xa-danger">' + weakest.name + '</span> 掌握率仅 ' + weakest.rate + '，' + weakest.poor + ' 人未掌握，应作为本月培训重点。<br>';
+    text += '<b>2. 个别辅导</b>：对关注名单中的职工安排一对一辅导，制定个性化学习计划。<br>';
+    text += '<b>3. 考核安排</b>：建议两周内组织一次专项补考，检验改进效果。';
+  } else {
+    text += '<b>1. 短板突破</b>：基础能理化维度得分偏低，建议针对性复习相关章节。<br>';
+    text += '<b>2. 实操保持</b>：操作技能和实作考试表现优秀，建议保持当前训练节奏。<br>';
+    text += '<b>3. 理论补强</b>：理论考试成绩有提升空间，建议每周安排 2 次理论复习。';
+  }
+  return { text: text };
+}
+
+function xiaoanWorkshopWeakness() {
+  var ws = document.getElementById('ws-workshop') ? document.getElementById('ws-workshop').value : '客运一车间';
+  var rd = radarByWorkshop[ws] || radarAll;
+  var dims = radarDims.map(function(d, i) { return { name: d, score: rd.current[i], avg: rd.avg[i] }; });
+  dims.sort(function(a, b) { return a.score - b.score; });
+  var text = '根据当前数据，<span class="xa-highlight">' + ws + '</span> 六维能力分析：<br>';
+  dims.forEach(function(d, i) {
+    var diff = (d.score - d.avg).toFixed(0);
+    var diffStr = diff > 0 ? '<span class="xa-good">+' + diff + '</span>' : '<span class="xa-danger">' + diff + '</span>';
+    var cls = i < 2 ? 'xa-warn' : 'xa-highlight';
+    text += '- <span class="' + cls + '">' + d.name + '</span>：' + d.score + ' 分（较平均 ' + diffStr + '）<br>';
+  });
+  text += '<br>最薄弱的两个维度是 <span class="xa-danger">' + dims[0].name + '</span>（' + dims[0].score + '分）和 <span class="xa-warn">' + dims[1].name + '</span>（' + dims[1].score + '分），建议针对性加强。';
+  var chart = {
+    color: ['#1677ff', '#faad14'],
+    legend: { data: [ws, '全站平均'], bottom: 0, textStyle: { fontSize: 10 } },
+    radar: {
+      indicator: radarDims.map(function(d) { return { name: d, max: 100 }; }),
+      shape: 'polygon', radius: '55%', splitNumber: 4,
+      axisName: { fontSize: 10, color: 'rgba(0,0,0,.65)' },
+      splitLine: { lineStyle: { color: '#e8e8e8' } },
+      splitArea: { areaStyle: { color: ['#fff', '#fafafa'] } }
+    },
+    series: [{ type: 'radar', data: [
+      { value: rd.current, name: ws, areaStyle: { color: 'rgba(22,119,255,.15)' } },
+      { value: rd.avg, name: '全站平均', lineStyle: { type: 'dashed' }, areaStyle: { color: 'rgba(250,173,20,.08)' } }
+    ]}]
+  };
+  return { text: text, chart: chart };
+}
+
+function xiaoanTopBottomAnalysis() {
+  var text = '';
+  if (currentLevel <= 1) {
+    text = '根据当前数据，班组排名分析：<br><br><b>优秀班组 Top 3：</b><br>';
+    wsTopTeams.slice(0, 3).forEach(function(t, i) {
+      text += '<span class="xa-good">' + (i+1) + '. ' + t.name + '</span>：' + t.score + ' 分，合格率 ' + t.rate + '<br>';
+    });
+    text += '<br><b>需关注班组 Top 3：</b><br>';
+    wsBottomTeams.slice(0, 3).forEach(function(t, i) {
+      text += '<span class="xa-danger">' + (i+1) + '. ' + t.name + '</span>：' + t.score + ' 分，合格率 ' + t.rate + '<br>';
+    });
+    var gap = (wsTopTeams[0].score - wsBottomTeams[0].score).toFixed(1);
+    text += '<br>优秀班组与薄弱班组差距达 <span class="xa-warn">' + gap + '</span> 分，建议开展结对帮扶和经验分享活动。';
+  } else {
+    text = '根据当前数据，职工排名分析：<br><br><b>优秀职工 Top 3：</b><br>';
+    tmTopWorkers.slice(0, 3).forEach(function(w, i) {
+      text += '<span class="xa-good">' + (i+1) + '. ' + w.name + '</span>（' + w.post + '）：' + w.score + ' 分<br>';
+    });
+    text += '<br><b>需重点关注职工 Top 3：</b><br>';
+    tmBottomWorkers.slice(0, 3).forEach(function(w, i) {
+      text += '<span class="xa-danger">' + (i+1) + '. ' + w.name + '</span>（' + w.post + '）：' + w.score + ' 分，薄弱项：' + w.weak + '，建议：' + w.suggest + '<br>';
+    });
+  }
+  return { text: text };
+}
+
+function xiaoanScoreDistAnalysis() {
+  var total = distScores.reduce(function(a, b) { return a + b; }, 0);
+  var sumScore = 0, sumSq = 0;
+  distScores.forEach(function(cnt, i) {
+    var s = 40 + i * 2;
+    sumScore += s * cnt;
+    sumSq += s * s * cnt;
+  });
+  var mean = (sumScore / total).toFixed(1);
+  var variance = (sumSq / total - Math.pow(sumScore / total, 2));
+  var std = Math.sqrt(variance).toFixed(1);
+  var below60 = distScores.slice(0, 10).reduce(function(a, b) { return a + b; }, 0);
+  var above90 = distScores.slice(25).reduce(function(a, b) { return a + b; }, 0);
+  var text = '根据当前数据，成绩分布分析：<br><br>';
+  text += '- 参考人数：<span class="xa-highlight">' + total + '</span> 人<br>';
+  text += '- 平均分：<span class="xa-highlight">' + mean + '</span> 分<br>';
+  text += '- 标准差：<span class="xa-highlight">' + std + '</span>（离散程度' + (std > 14 ? '较大' : std > 10 ? '适中' : '较小') + '）<br>';
+  text += '- 不及格（<60分）：<span class="xa-danger">' + below60 + '</span> 人（占 ' + (below60/total*100).toFixed(1) + '%）<br>';
+  text += '- 优秀（>=90分）：<span class="xa-good">' + above90 + '</span> 人（占 ' + (above90/total*100).toFixed(1) + '%）<br><br>';
+  text += '整体分布呈' + (parseFloat(mean) > 75 ? '偏右' : '正态') + '分布，说明大部分职工成绩集中在中高分段。' +
+    '不及格人数占 ' + (below60/total*100).toFixed(1) + '%，需要重点帮扶。';
+  var chart = {
+    tooltip: { trigger: 'axis' },
+    grid: { left: 40, right: 20, top: 10, bottom: 25 },
+    xAxis: { type: 'category', data: distScores.map(function(_, i) { return (40 + i*2) + ''; }), axisLabel: { fontSize: 9, interval: 4 } },
+    yAxis: { type: 'value', axisLabel: { fontSize: 9 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [{ type: 'bar', data: distScores.map(function(v, i) {
+      var s = 40 + i*2;
+      return { value: v, itemStyle: { color: s < 60 ? '#ff4d4f' : s < 80 ? '#fa8c16' : s < 90 ? '#1677ff' : '#52c41a' } };
+    }), barWidth: '70%' }]
+  };
+  return { text: text, chart: chart };
+}
+
+function xiaoanTrendAnalysis() {
+  var trendData = {
+    '客运一车间': [93.2, 94.1, 94.5, 95.0, 95.5, 95.8],
+    '客运二车间': [90.5, 91.2, 91.8, 92.5, 93.0, 93.2],
+    '客运三车间': [87.3, 88.0, 88.5, 89.2, 89.8, 90.5],
+    '客运四车间': [91.5, 92.0, 92.8, 93.2, 93.8, 94.1]
+  };
+  var text = '根据当前数据，各车间合格率月度趋势分析：<br><br>';
+  var colors = ['#1677ff', '#52c41a', '#fa8c16', '#722ed1'];
+  var series = [];
+  workshops.forEach(function(w, i) {
+    var d = trendData[w.name];
+    var growth = (d[d.length-1] - d[0]).toFixed(1);
+    text += '- <span class="xa-highlight">' + w.name + '</span>：从 ' + d[0] + '% 提升到 ' + d[d.length-1] + '%，增长 <span class="xa-good">' + growth + '</span> 个百分点<br>';
+    series.push({ name: w.name, type: 'line', data: d, smooth: true, lineStyle: { width: 2, color: colors[i] }, itemStyle: { color: colors[i] } });
+  });
+  text += '<br>总体趋势向好，各车间合格率均呈上升态势。但车间间差距仍存在，建议加大对薄弱车间的支持力度。';
+  var chart = {
+    tooltip: { trigger: 'axis' },
+    legend: { data: workshops.map(function(w) { return w.name; }), bottom: 0, textStyle: { fontSize: 10 } },
+    grid: { left: 40, right: 20, top: 10, bottom: 35 },
+    xAxis: { type: 'category', data: ['1月','2月','3月','4月','5月','6月'], axisLabel: { fontSize: 10 } },
+    yAxis: { type: 'value', min: 85, max: 98, axisLabel: { formatter: '{value}%', fontSize: 9 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: series
+  };
+  return { text: text, chart: chart };
+}
+
+function xiaoanTeamWeakness() {
+  var sorted = tmWeakModules.slice().sort(function(a, b) { return parseFloat(a.rate) - parseFloat(b.rate); });
+  var text = '根据当前数据，班组各科目掌握率分析：<br><br>';
+  sorted.forEach(function(m, i) {
+    var cls = parseFloat(m.rate) < 35 ? 'xa-danger' : parseFloat(m.rate) < 50 ? 'xa-warn' : 'xa-good';
+    text += (i+1) + '. <span class="' + cls + '">' + m.name + '</span>：掌握率 ' + m.rate + '，未掌握 ' + m.poor + ' 人<br>';
+  });
+  text += '<br>最需关注 <span class="xa-danger">' + sorted[0].name + '</span>（掌握率 ' + sorted[0].rate + '），建议本周内安排专项补训。';
+  var chart = {
+    tooltip: { trigger: 'axis' },
+    grid: { left: 80, right: 30, top: 10, bottom: 25 },
+    yAxis: { type: 'category', data: sorted.map(function(m) { return m.name; }).reverse(), axisLabel: { fontSize: 10 } },
+    xAxis: { type: 'value', max: 100, axisLabel: { formatter: '{value}%', fontSize: 9 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [{ type: 'bar', barWidth: 14,
+      data: sorted.map(function(m) {
+        var v = parseFloat(m.rate);
+        return { value: v, itemStyle: { color: v < 35 ? '#ff4d4f' : v < 50 ? '#fa8c16' : '#52c41a', borderRadius: [0, 4, 4, 0] } };
+      }).reverse(),
+      label: { show: true, position: 'right', fontSize: 10, formatter: '{c}%' }
+    }]
+  };
+  return { text: text, chart: chart };
+}
+
+function xiaoanPersonalWeakness() {
+  var personalRadar = [88, 82, 90, 75, 92, 85];
+  var dims = radarDims.map(function(d, i) { return { name: d, score: personalRadar[i] }; });
+  dims.sort(function(a, b) { return a.score - b.score; });
+  var text = '根据当前数据，<span class="xa-highlight">王建国</span> 六维能力分析：<br><br>';
+  dims.forEach(function(d, i) {
+    var cls = i < 2 ? 'xa-danger' : (d.score >= 88 ? 'xa-good' : 'xa-highlight');
+    text += '- <span class="' + cls + '">' + d.name + '</span>：' + d.score + ' 分<br>';
+  });
+  text += '<br>短板集中在 <span class="xa-danger">' + dims[0].name + '</span>（' + dims[0].score + '分）和 <span class="xa-warn">' + dims[1].name + '</span>（' + dims[1].score + '分），' +
+    '建议在这两个维度投入更多学习时间。操作技能表现突出（' + dims[dims.length-1].score + '分），可作为同岗位辅导员。';
+  var chart = {
+    color: ['#1677ff'],
+    radar: {
+      indicator: radarDims.map(function(d) { return { name: d, max: 100 }; }),
+      shape: 'polygon', radius: '55%', splitNumber: 4,
+      axisName: { fontSize: 10, color: 'rgba(0,0,0,.65)' },
+      splitLine: { lineStyle: { color: '#e8e8e8' } },
+      splitArea: { areaStyle: { color: ['#fff', '#fafafa'] } }
+    },
+    series: [{ type: 'radar', data: [{ value: personalRadar, areaStyle: { color: 'rgba(22,119,255,.15)' }, lineStyle: { width: 2 } }] }]
+  };
+  return { text: text, chart: chart };
+}
+
+function xiaoanPersonalTrainingPlan() {
+  var personalRadar = [88, 82, 90, 75, 92, 85];
+  var dims = radarDims.map(function(d, i) { return { name: d, score: personalRadar[i] }; });
+  dims.sort(function(a, b) { return a.score - b.score; });
+  var text = '根据 <span class="xa-highlight">王建国</span> 的能力画像，为您推荐以下培训计划：<br><br>';
+  text += '<b>第一阶段（第1-2周）：短板突破</b><br>';
+  text += '- 重点科目：<span class="xa-danger">' + dims[0].name + '</span>（当前 ' + dims[0].score + ' 分，目标 85 分）<br>';
+  text += '- 每日安排 1 小时专项学习，配合仿真设备实操<br>';
+  text += '- 每周安排 1 次模拟考核检验效果<br><br>';
+  text += '<b>第二阶段（第3-4周）：巩固提升</b><br>';
+  text += '- 重点科目：<span class="xa-warn">' + dims[1].name + '</span>（当前 ' + dims[1].score + ' 分，目标 88 分）<br>';
+  text += '- 结合案例分析和小组讨论方式学习<br><br>';
+  text += '<b>第三阶段（持续）：优势保持</b><br>';
+  text += '- <span class="xa-good">' + dims[dims.length-1].name + '</span> 和 <span class="xa-good">' + dims[dims.length-2].name + '</span> 保持每周 1 次复习<br>';
+  text += '- 可担任班组实操辅导员，以教促学';
+  return { text: text };
+}
+
+function xiaoanFallback(text) {
+  // Best-effort: try to find related keywords and do a general analysis
+  var resp = '我理解您在问关于"<span class="xa-highlight">' + text + '</span>"的问题，让我为您分析一下。<br><br>';
+  if (currentLevel === 0) {
+    var avgScore = (workshops.reduce(function(a, b) { return a + b.score; }, 0) / workshops.length).toFixed(1);
+    var avgRate = (workshops.reduce(function(a, b) { return a + b.rate; }, 0) / workshops.length).toFixed(1);
+    resp += '根据当前数据，站段综合平均得分 <span class="xa-highlight">' + avgScore + '</span> 分，平均合格率 <span class="xa-highlight">' + avgRate + '%</span>。';
+    resp += '共有 <span class="xa-highlight">' + workshops.length + '</span> 个车间参与培训考核。';
+    resp += '如需更详细的分析，您可以尝试点击下方的快捷问题按钮。';
+  } else if (currentLevel === 1) {
+    var ws = document.getElementById('ws-workshop').value;
+    var wsData = workshops.filter(function(w) { return w.name === ws; })[0] || workshops[0];
+    resp += '当前查看 <span class="xa-highlight">' + ws + '</span>，综合得分 <span class="xa-highlight">' + wsData.score + '</span> 分，合格率 <span class="xa-highlight">' + wsData.rate + '%</span>。';
+    resp += '您可以点击下方快捷问题获取更精准的分析。';
+  } else if (currentLevel === 2) {
+    resp += '当前查看班组级别数据。共有 <span class="xa-highlight">' + tmWeakModules.length + '</span> 个培训科目，';
+    var weakest = tmWeakModules.slice().sort(function(a, b) { return parseFloat(a.rate) - parseFloat(b.rate); })[0];
+    resp += '最薄弱科目为 <span class="xa-warn">' + weakest.name + '</span>（掌握率 ' + weakest.rate + '）。您可以点击快捷问题获取更多分析。';
+  } else {
+    resp += '当前查看 <span class="xa-highlight">王建国</span> 的个人数据，综合画像值 <span class="xa-highlight">87.5</span> 分。您可以点击下方快捷问题了解更多。';
+  }
+  return { text: resp };
+}
+
+// Listen for level changes to update chips
+var _origSwitchLevel = switchLevel;
+switchLevel = function(idx, el) {
+  _origSwitchLevel(idx, el);
+  if (xiaoanIsOpen) xiaoanUpdateChips();
+};
+
+// Resize xiaoan charts on window resize
+window.addEventListener('resize', function() {
+  xiaoanCharts.forEach(function(c) { if (c && !c.isDisposed()) c.resize(); });
+});
 </script>
 </body>
 </html>
