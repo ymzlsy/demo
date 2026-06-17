@@ -318,6 +318,20 @@ tr{cursor:pointer}
   </div>
 </div>
 
+<!-- Maintenance List Modal (separate, wider) -->
+<div class="overlay" id="maintListOverlay" onclick="closeMaintListModal()">
+  <div class="modal fault-modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="maintListTitle">保养管理</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-sm btn-primary" id="maintListAddBtn" onclick="">+ 新增保养计划</button>
+        <button class="modal-close" onclick="closeMaintListModal()">&times;</button>
+      </div>
+    </div>
+    <div class="fault-modal-body" id="maintListBody"></div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -645,13 +659,13 @@ function renderTable() {
     <th class="sortable" onclick="toggleSort('health')">健康度${sortIcon('health')}</th>
     <th class="sortable" onclick="toggleSort('faultCount')">故障${sortIcon('faultCount')}</th>
     <th style="text-align:center">使用</th>
-    <th>保养状态</th>
+    <th style="text-align:center">保养</th>
     <th>生命周期</th>
     <th>操作</th>
   </tr>`;
 
   if (pageData.length === 0) {
-    document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--text3)">暂无匹配设备</td></tr>';
+    document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--text3)">暂无匹配设备</td></tr>'; /* columns: id,name,type,loc,online,health,fault,usage,maint,lifecycle,ops */
   } else {
     document.getElementById('tableBody').innerHTML = pageData.map(d => {
       const openFaults = getDeviceOpenFaults(d.id).length;
@@ -674,14 +688,12 @@ function renderTable() {
         <td><div class="health-bar"><div class="health-bar-inner" style="width:${d.health}%;background:${getHealthColor(d.health)}"></div></div>${d.health}%</td>
         <td style="text-align:center" onclick="event.stopPropagation()"><button class="usage-icon-btn" onclick="openFaultListModal('${d.id}')" title="查看故障/报修记录" style="font-size:14px">${openFaults > 0 ? `&#x1F6A8;` : `&#x1F6E0;`}${openFaults > 0 ? '<span class="usage-count" style="background:var(--danger)">'+openFaults+'</span>' : ''}</button></td>
         <td style="text-align:center" onclick="event.stopPropagation()"><button class="usage-icon-btn" onclick="openUsageListModal('${d.id}')" title="查看使用记录">&#x1F4CA;${(() => { const uc = getDeviceUsage(d.id).length; return uc > 0 ? '<span class="usage-count">'+uc+'</span>' : ''; })()}</button></td>
-        <td>${msTag}</td>
+        <td style="text-align:center" onclick="event.stopPropagation()"><button class="usage-icon-btn" onclick="openMaintListModal('${d.id}')" title="查看保养管理" style="font-size:14px">${ms === '已逾期' ? '&#x1F534;' : ms === '即将到期' ? '&#x1F7E0;' : ms === '无计划' ? '&#x1F7E3;' : '&#x1F7E2;'}${(() => { const pc = getDevicePlans(d.id).length; return pc > 0 ? '<span class="usage-count" style="background:' + (ms==='已逾期'?'var(--danger)':ms==='即将到期'?'var(--warning)':'var(--success)') + '">' + pc + '</span>' : ''; })()}</button></td>
         <td>${lcTag}</td>
         <td onclick="event.stopPropagation()">
           <button class="btn-link" onclick="openDrawer('${d.id}')">详情</button>
           <button class="btn-link" onclick="openEditExtModal('${d.id}')">编辑</button>
           <button class="btn-link" onclick="openFaultModal('${d.id}')">报修</button>
-          <button class="btn-link" onclick="openExecMaintModal('${d.id}')">保养</button>
-          <button class="btn-link danger" onclick="openDeleteModal('${d.id}')">删除</button>
         </td>
       </tr>`;
     }).join('');
@@ -730,21 +742,15 @@ function renderDrawer(d) {
       <h3>${d.id} ${d.shortName}</h3>
       <div class="actions">
         <button class="btn btn-sm" onclick="openEditExtModal('${d.id}')">编辑扩展信息</button>
-        <button class="btn btn-sm btn-danger" onclick="openDeleteModal('${d.id}')">删除设备</button>
         <button class="modal-close" onclick="closeDrawer()">&times;</button>
       </div>
     </div>
     <div class="drawer-body">
       ${renderPanel1(d)}
       ${renderPanel2(d)}
-      ${renderPanel3(d)}
-      ${renderPanel4(d)}
-      ${renderPanel5(d)}
       ${renderPanel6(d)}
     </div>
   `;
-  // Init charts in usage panel after DOM ready
-  setTimeout(() => renderUsageChart(d.id), 100);
 }
 
 // Panel 1: Basic Info
@@ -1402,6 +1408,133 @@ function refreshDrawer() {
   }
 }
 
+// ==================== MAINTENANCE LIST MODAL ====================
+let maintListState = { deviceId: null, tab: 'plans' };
+
+function openMaintListModal(deviceId) {
+  maintListState.deviceId = deviceId;
+  maintListState.tab = 'plans';
+  const d = state.devices.find(x => x.id === deviceId);
+  document.getElementById('maintListTitle').textContent = (d ? d.id + ' ' + d.shortName : '') + ' — 保养管理';
+  document.getElementById('maintListAddBtn').setAttribute('onclick', "openMaintPlanModalFromList('" + deviceId + "')");
+  document.getElementById('maintListOverlay').classList.add('show');
+  renderMaintListModal();
+}
+
+function closeMaintListModal() {
+  document.getElementById('maintListOverlay').classList.remove('show');
+  maintListState.deviceId = null;
+}
+
+function setMaintTab(tab) { maintListState.tab = tab; renderMaintListModal(); }
+
+function openMaintPlanModalFromList(deviceId) {
+  closeMaintListModal();
+  openMaintPlanModal(deviceId);
+}
+
+function openExecMaintFromList(deviceId, planId) {
+  closeMaintListModal();
+  openExecMaintModal(deviceId, planId);
+}
+
+function renderMaintListModal() {
+  const did = maintListState.deviceId;
+  const d = state.devices.find(x => x.id === did);
+  if (!d) return;
+  const plans = getDevicePlans(did);
+  const history = getDeviceHistory(did);
+  const usage = getDeviceUsage(did);
+  const tab = maintListState.tab;
+
+  // Prediction alerts
+  let alerts = '';
+  if (plans.length === 0) {
+    alerts += `<div class="predict-alert warn"><span class="alert-icon">&#x26A0;&#xFE0F;</span><div>该设备尚未配置保养计划，建议根据设备类型和使用频率制定保养计划。<button class="btn btn-sm btn-warning" style="margin-left:8px" onclick="openMaintPlanModalFromList('${did}')">立即制定</button></div></div>`;
+  }
+  if (d.health < 60) {
+    alerts += `<div class="predict-alert danger"><span class="alert-icon">&#x1F6A8;</span><div>设备健康度偏低（${d.health}%），建议尽快安排专项检查。</div></div>`;
+  }
+  if (history.length > 0) {
+    const daysSince = Math.floor((new Date('2026-06-17') - new Date(history[0].date)) / 86400000);
+    if (daysSince > 90) {
+      alerts += `<div class="predict-alert warn"><span class="alert-icon">&#x23F0;</span><div>距上次保养已 ${daysSince} 天，建议安排保养。</div></div>`;
+    }
+  }
+  const recent30 = usage.filter(u => u.date >= '2026-05-18');
+  if (recent30.length > 0 && plans.length > 0) {
+    const predictDays = Math.round((30 / recent30.length) * 10);
+    alerts += `<div class="predict-alert info"><span class="alert-icon">&#x1F4CA;</span><div>近30天使用 ${recent30.length} 次，按当前使用强度，预计 ${predictDays} 天后需要保养。</div></div>`;
+  }
+
+  // Summary
+  const overdue = plans.filter(p => p.nextDate < '2026-06-17').length;
+  const soon = plans.filter(p => p.nextDate >= '2026-06-17' && p.nextDate <= '2026-06-24').length;
+  const normal = plans.filter(p => p.nextDate > '2026-06-24').length;
+
+  // Plans tab
+  const planCards = plans.map(p => {
+    const isOverdue = p.nextDate < '2026-06-17';
+    const isSoon = !isOverdue && p.nextDate <= '2026-06-24';
+    const statusTag = isOverdue ? '<span class="tag tag-red">已逾期</span>' : isSoon ? '<span class="tag tag-orange">即将到期</span>' : '<span class="tag tag-green">正常</span>';
+    const typeTag = p.type === '日常' ? '<span class="tag tag-blue">日常</span>' : p.type === '定期' ? '<span class="tag tag-green">定期</span>' : '<span class="tag tag-purple">专项</span>';
+    return `<div class="fault-card">
+      <div class="fault-card-head">${typeTag} ${statusTag} <span style="font-size:12px;color:var(--text3)">周期: ${p.cycle}</span></div>
+      <div class="fault-card-desc">${p.content}</div>
+      <div class="fault-card-meta">
+        <span>责任人: <strong>${p.responsible}</strong></span>
+        <span>下次保养: <strong style="color:${isOverdue?'var(--danger)':isSoon?'var(--warning)':'var(--text)'}">${p.nextDate}</strong></span>
+        ${p.lastDate ? `<span>上次保养: ${p.lastDate}</span>` : ''}
+      </div>
+      <div class="fault-card-actions">
+        <button class="btn btn-sm btn-success" onclick="openExecMaintFromList('${did}',${p.id})">执行保养</button>
+        <button class="btn btn-sm" onclick="deleteMaintPlan(${p.id})">删除计划</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // History tab
+  const historyCards = history.map(h => {
+    const resultTag = h.result === '正常' ? '<span class="tag tag-green">正常</span>' : h.result === '需关注' ? '<span class="tag tag-orange">需关注</span>' : '<span class="tag tag-red">需维修</span>';
+    const typeTag = h.type === '日常' ? '<span class="tag tag-blue">日常</span>' : h.type === '定期' ? '<span class="tag tag-green">定期</span>' : '<span class="tag tag-purple">专项</span>';
+    return `<div class="fault-card">
+      <div class="fault-card-head">${typeTag} ${resultTag} <span style="font-size:12px;color:var(--text3)">${h.date}</span></div>
+      <div class="fault-card-desc">${h.content}</div>
+      <div class="fault-card-meta">
+        <span>执行人: ${h.person}</span>
+        ${h.parts !== '无' ? `<span>更换部件: ${h.parts}</span>` : ''}
+        ${h.photos ? `<span>照片: ${h.photos}张</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const tabActive = (t) => t === tab ? 'btn-primary' : '';
+
+  document.getElementById('maintListBody').innerHTML = `
+    ${alerts}
+    <div class="fault-summary-row">
+      <div class="fault-summary-item"><div class="fs-val" style="color:var(--danger)">${overdue}</div><div class="fs-label">已逾期</div></div>
+      <div class="fault-summary-item"><div class="fs-val" style="color:var(--warning)">${soon}</div><div class="fs-label">即将到期</div></div>
+      <div class="fault-summary-item"><div class="fs-val" style="color:var(--success)">${normal}</div><div class="fs-label">正常</div></div>
+      <div class="fault-summary-item"><div class="fs-val">${plans.length}</div><div class="fs-label">计划总数</div></div>
+      <div class="fault-summary-item"><div class="fs-val">${history.length}</div><div class="fs-label">保养记录</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button class="btn btn-sm ${tabActive('plans')}" onclick="setMaintTab('plans')">保养计划 (${plans.length})</button>
+      <button class="btn btn-sm ${tabActive('history')}" onclick="setMaintTab('history')">保养历史 (${history.length})</button>
+    </div>
+    ${tab === 'plans' ? (plans.length > 0 ? planCards : '<div style="text-align:center;padding:40px;color:var(--text3)">暂无保养计划<br><button class="btn btn-sm btn-warning" style="margin-top:12px" onclick="openMaintPlanModalFromList(\'' + did + '\')">立即制定</button></div>') : ''}
+    ${tab === 'history' ? (history.length > 0 ? historyCards : '<div style="text-align:center;padding:40px;color:var(--text3)">暂无保养记录</div>') : ''}
+  `;
+}
+
+function deleteMaintPlan(planId) {
+  state.maintPlans = state.maintPlans.filter(p => p.id !== planId);
+  showToast('保养计划已删除','success');
+  renderMaintListModal();
+  render();
+}
+
 // ==================== MODALS ====================
 function openModal(html) {
   document.getElementById('modalContent').innerHTML = html;
@@ -1631,6 +1764,7 @@ function submitMaintPlan() {
   showToast('保养计划已创建','success');
   render();
   refreshDrawer();
+  if (maintListState.deviceId === deviceId) { openMaintListModal(deviceId); }
 }
 
 // 6. Execute Maintenance Modal
@@ -1707,6 +1841,7 @@ function submitExecMaint(deviceId, planId) {
   closeModal();
   render();
   refreshDrawer();
+  if (maintListState.deviceId === deviceId) { openMaintListModal(deviceId); }
 }
 
 // 7. Usage Record Modal
