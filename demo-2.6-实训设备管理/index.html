@@ -4,37 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>实训设备管理 — 维护保养中心</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ant-design-vue@4.2.6/dist/reset.min.css">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#1677ff;--success:#52c41a;--warning:#faad14;--danger:#ff4d4f;--purple:#722ed1;--bg:#f5f5f5;--card:#fff;--border:#e8e8e8;--text:#333;--text2:#666;--text3:#999;--radius:8px;--blue:#1890ff}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+:root{--primary:#1677ff;--primary-hover:#4096ff;--primary-bg:#e6f4ff;--primary-border:#91caff;--success:#52c41a;--success-bg:#f6ffed;--success-border:#b7eb8f;--warning:#faad14;--warning-bg:#fffbe6;--warning-border:#ffe58f;--danger:#ff4d4f;--danger-bg:#fff2f0;--danger-border:#ffccc7;--purple:#722ed1;--bg:#f5f5f5;--card:#fff;--border:#d9d9d9;--border-light:#f0f0f0;--text:#262626;--text2:#595959;--text3:#8c8c8c;--radius:6px;--radius-lg:8px;--blue:#1890ff;--shadow:0 1px 2px 0 rgba(0,0,0,.03),0 1px 6px -1px rgba(0,0,0,.02),0 2px 4px 0 rgba(0,0,0,.02);--shadow-md:0 6px 16px 0 rgba(0,0,0,.08),0 3px 6px -4px rgba(0,0,0,.12),0 9px 28px 8px rgba(0,0,0,.05)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5715}
 .header{background:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
 .header h1{font-size:20px;font-weight:600;white-space:nowrap}
 .header-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.btn{padding:6px 16px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap}
-.btn:hover{border-color:var(--primary);color:var(--primary)}
-.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
-.btn-primary:hover{background:#4096ff;color:#fff}
-.btn-success{background:var(--success);color:#fff;border-color:var(--success)}
-.btn-success:hover{opacity:.85;color:#fff}
-.btn-danger{background:var(--danger);color:#fff;border-color:var(--danger)}
-.btn-danger:hover{opacity:.85;color:#fff}
-.btn-warning{background:var(--warning);color:#fff;border-color:var(--warning)}
-.btn-warning:hover{opacity:.85;color:#fff}
-.btn-purple{background:var(--purple);color:#fff;border-color:var(--purple)}
-.btn-purple:hover{opacity:.85;color:#fff}
-.btn-link{border:none;background:none;color:var(--primary);padding:2px 4px;cursor:pointer;font-size:12px;white-space:nowrap}
-.btn-link:hover{color:#4096ff}
+.btn{padding:4px 15px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:4px;transition:all .2s;white-space:nowrap;height:32px;line-height:1.5715;font-weight:400;box-shadow:0 2px 0 rgba(0,0,0,.02)}
+.btn:hover{border-color:var(--primary-border);color:var(--primary)}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 2px 0 rgba(5,145,255,.1)}
+.btn-primary:hover{background:var(--primary-hover);color:#fff;border-color:var(--primary-hover)}
+.btn-success{background:var(--success);color:#fff;border-color:var(--success);box-shadow:0 2px 0 rgba(82,196,26,.1)}
+.btn-success:hover{background:#73d13d;color:#fff;border-color:#73d13d}
+.btn-danger{background:var(--danger);color:#fff;border-color:var(--danger);box-shadow:0 2px 0 rgba(255,77,79,.1)}
+.btn-danger:hover{background:#ff7875;color:#fff;border-color:#ff7875}
+.btn-warning{background:var(--warning);color:#fff;border-color:var(--warning);box-shadow:0 2px 0 rgba(250,173,20,.1)}
+.btn-warning:hover{background:#ffc53d;color:#fff;border-color:#ffc53d}
+.btn-purple{background:var(--purple);color:#fff;border-color:var(--purple);box-shadow:0 2px 0 rgba(114,46,209,.1)}
+.btn-purple:hover{background:#9254de;color:#fff;border-color:#9254de}
+.btn-link{border:none;background:none;color:var(--primary);padding:0 4px;cursor:pointer;font-size:14px;white-space:nowrap;box-shadow:none;height:auto}
+.btn-link:hover{color:var(--primary-hover)}
 .btn-link.danger{color:var(--danger)}
 .btn-link.danger:hover{color:#ff7875}
-.btn-sm{padding:4px 10px;font-size:12px;white-space:nowrap}
-.btn-ghost{background:transparent;border:1px dashed var(--border);color:var(--text2)}
+.btn-sm{padding:0px 7px;font-size:12px;white-space:nowrap;height:24px;border-radius:4px}
+.btn-ghost{background:transparent;border:1px dashed var(--border);color:var(--text2);box-shadow:none}
 .btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
 .container{padding:16px 24px;max-width:1480px;margin:0 auto}
 .stats-row{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;align-items:stretch}
-.stat-card{background:#fff;border-radius:var(--radius);padding:16px 20px;flex:1;min-width:140px;border:1px solid var(--border);cursor:pointer;transition:all .2s}
-.stat-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.stat-card{background:#fff;border-radius:var(--radius-lg);padding:16px 20px;flex:1;min-width:140px;border:1px solid var(--border);cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.stat-card:hover{box-shadow:var(--shadow-md);border-color:var(--primary-border)}
 .stat-card .label{font-size:13px;color:var(--text2);white-space:nowrap}
 .stat-card .value{font-size:28px;font-weight:700;margin-top:4px;white-space:nowrap}
 .stat-card .value.green{color:var(--success)}
@@ -50,7 +51,9 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .badge-orange{background:var(--warning)}
 .badge-purple{background:var(--purple)}
 .filter-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
-.filter-row select,.filter-row input[type="text"]{padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;min-width:110px;max-width:160px;background:#fff}
+.filter-row select,.filter-row input[type="text"]{padding:4px 11px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;min-width:110px;max-width:160px;background:#fff;height:32px;transition:all .2s;color:var(--text)}
+.filter-row select:hover,.filter-row input[type="text"]:hover{border-color:var(--primary-border)}
+.filter-row select:focus,.filter-row input[type="text"]:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 2px rgba(5,145,255,.06)}
 .usage-icon-btn{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;transition:background .2s;position:relative}
 .usage-icon-btn:hover{background:#e6f7ff}
 .usage-icon-btn .usage-count{position:absolute;top:-4px;right:-6px;min-width:16px;height:16px;border-radius:8px;background:var(--primary);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0 3px}
@@ -83,7 +86,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .fault-photo-upload .photo-thumb{width:56px;height:56px;border-radius:4px;object-fit:cover;border:1px solid var(--border)}
 .fault-photo-upload .photo-add-btn{width:56px;height:56px;border:1px dashed var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--text3);background:#fafafa;transition:border-color .2s}
 .fault-photo-upload .photo-add-btn:hover{border-color:var(--primary);color:var(--primary)}
-.maint-bar-wrap{position:relative;width:80px;cursor:pointer}
+.maint-bar-wrap{position:relative;width:80px}
 .maint-bar{width:100%;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden;border:1.5px solid transparent}
 .maint-bar.overdue{border-color:var(--danger);background:#fff2f0}
 .maint-bar-inner{height:100%;border-radius:4px;transition:width .3s}
@@ -104,9 +107,9 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .usage-table th{background:#fafafa;padding:8px 10px;text-align:left;font-weight:600;border-bottom:1px solid var(--border);white-space:nowrap;font-size:12px}
 .usage-table td{padding:8px 10px;border-bottom:1px solid #f0f0f0}
 .usage-table tr:hover{background:#fafafa}
-.table-wrap{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow-x:auto}
+.table-wrap{background:#fff;border-radius:var(--radius-lg);border:1px solid var(--border);overflow-x:auto;box-shadow:var(--shadow)}
 table{width:100%;border-collapse:collapse}
-th{background:#fafafa;padding:10px 12px;text-align:left;font-weight:600;font-size:13px;border-bottom:1px solid var(--border);white-space:nowrap;user-select:none}
+th{background:#fafafa;padding:10px 12px;text-align:left;font-weight:600;font-size:14px;border-bottom:1px solid var(--border);white-space:nowrap;user-select:none;color:rgba(0,0,0,.85)}
 th.sortable{cursor:pointer}
 th.sortable:hover{background:#f0f0f0}
 th .sort-icon{margin-left:4px;color:var(--text3);font-size:11px}
@@ -116,12 +119,12 @@ td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:13px;vertical-ali
 td:last-child{white-space:nowrap}
 tr:hover{background:#fafafa}
 tr{cursor:pointer}
-.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;white-space:nowrap}
+.tag{display:inline-block;padding:0 7px;border-radius:4px;font-size:12px;white-space:nowrap;line-height:20px;height:22px}
 .tag-green{background:#f6ffed;color:#389e0d;border:1px solid #b7eb8f}
 .tag-red{background:#fff2f0;color:#cf1322;border:1px solid #ffccc7}
-.tag-orange{background:#fff7e6;color:#d46b08;border:1px solid #ffd591}
-.tag-blue{background:#e6f7ff;color:#096dd9;border:1px solid #91d5ff}
-.tag-gray{background:#f5f5f5;color:#8c8c8c;border:1px solid #d9d9d9}
+.tag-orange{background:#fffbe6;color:#d46b08;border:1px solid #ffe58f}
+.tag-blue{background:#e6f4ff;color:#0958d9;border:1px solid #91caff}
+.tag-gray{background:#fafafa;color:#8c8c8c;border:1px solid #d9d9d9}
 .tag-purple{background:#f9f0ff;color:#531dab;border:1px solid #d3adf7}
 .status-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap}
 .status-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
@@ -132,14 +135,14 @@ tr{cursor:pointer}
 .health-bar-inner{height:100%;border-radius:3px}
 .pagination{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-size:13px;color:var(--text2)}
 .pagination .pages{display:flex;gap:4px}
-.pagination .page-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
-.pagination .page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.pagination .page-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:var(--radius);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;font-weight:400}
+.pagination .page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600}
 .pagination .page-btn:hover:not(.active){border-color:var(--primary);color:var(--primary)}
 
 /* Overlay */
 .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1000;display:none;justify-content:center;align-items:center}
 .overlay.show{display:flex}
-.modal{background:#fff;border-radius:var(--radius);width:580px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.modal{background:#fff;border-radius:var(--radius-lg);width:580px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-md)}
 .modal-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .modal-header h3{font-size:16px;font-weight:600;white-space:nowrap}
 .modal-close{width:32px;height:32px;border:none;background:none;cursor:pointer;font-size:18px;color:var(--text3);display:flex;align-items:center;justify-content:center;border-radius:4px}
@@ -149,9 +152,10 @@ tr{cursor:pointer}
 .form-group{margin-bottom:16px}
 .form-group label{display:block;margin-bottom:4px;font-size:13px;font-weight:500;white-space:nowrap}
 .form-group label .req{color:var(--danger)}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit}
-.form-group textarea{resize:vertical;min-height:80px}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(22,119,255,.1)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:4px 11px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:inherit;height:32px;transition:all .2s;color:var(--text)}
+.form-group textarea{resize:vertical;min-height:80px;height:auto;padding:4px 11px}
+.form-group input:hover,.form-group select:hover,.form-group textarea:hover{border-color:var(--primary-border)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(5,145,255,.06)}
 .form-group input[readonly],.form-group input:disabled{background:#f5f5f5;color:var(--text2);cursor:not-allowed}
 .form-row{display:flex;gap:16px}
 .form-row .form-group{flex:1}
@@ -340,17 +344,28 @@ tr{cursor:pointer}
   </div>
 </div>
 
-<!-- Maintenance List Modal (separate, wider) -->
-<div class="overlay" id="maintListOverlay" onclick="closeMaintListModal()">
+<!-- Maintenance Plan Modal -->
+<div class="overlay" id="maintPlanListOverlay" onclick="closeMaintPlanListModal()">
   <div class="modal fault-modal" onclick="event.stopPropagation()">
     <div class="modal-header">
-      <h3 id="maintListTitle">保养管理</h3>
+      <h3 id="maintPlanListTitle">保养计划</h3>
       <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn btn-sm btn-primary" id="maintListAddBtn" onclick="">+ 新增保养计划</button>
-        <button class="modal-close" onclick="closeMaintListModal()">&times;</button>
+        <button class="btn btn-sm btn-primary" id="maintPlanListAddBtn" onclick="">+ 新增保养计划</button>
+        <button class="modal-close" onclick="closeMaintPlanListModal()">&times;</button>
       </div>
     </div>
-    <div class="fault-modal-body" id="maintListBody"></div>
+    <div class="fault-modal-body" id="maintPlanListBody"></div>
+  </div>
+</div>
+
+<!-- Maintenance History Modal -->
+<div class="overlay" id="maintHistoryListOverlay" onclick="closeMaintHistoryListModal()">
+  <div class="modal fault-modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="maintHistoryListTitle">保养历史</h3>
+      <button class="modal-close" onclick="closeMaintHistoryListModal()">&times;</button>
+    </div>
+    <div class="fault-modal-body" id="maintHistoryListBody"></div>
   </div>
 </div>
 
@@ -516,22 +531,21 @@ function getMaintStatus(device) {
 
 function renderMaintBar(deviceId) {
   const plans = getDevicePlans(deviceId);
-  if (plans.length === 0) return '<div class="maint-noplan" onclick="event.stopPropagation();openMaintListModal(\'' + deviceId + '\')">无计划</div>';
+  if (plans.length === 0) return '<div class="maint-noplan">无计划</div>';
   const earliest = plans.reduce((a, b) => a.nextDate < b.nextDate ? a : b);
   const today = new Date('2026-06-17');
   const next = new Date(earliest.nextDate);
   const last = earliest.lastDate ? new Date(earliest.lastDate) : new Date(today.getTime() - 30 * 86400000);
   const totalSpan = Math.max((next - last) / 86400000, 1);
-  const elapsed = (today - last) / 86400000;
   const remaining = (next - today) / 86400000;
-  const pct = Math.min(Math.max(elapsed / totalSpan * 100, 0), 100);
+  const pct = Math.min(Math.max(remaining / totalSpan * 100, 0), 100);
   const overdue = remaining < 0;
   const isWarn = remaining <= 7 && remaining >= 0;
   const barColor = overdue ? 'var(--danger)' : isWarn ? 'var(--warning)' : 'var(--success)';
   const label = overdue ? '逾期' + Math.abs(Math.round(remaining)) + '天' : Math.round(remaining) + '天后';
   const lastStr = earliest.lastDate || '-';
   const nextStr = earliest.nextDate;
-  return `<div class="maint-bar-wrap" onclick="event.stopPropagation();openMaintListModal('${deviceId}')">
+  return `<div class="maint-bar-wrap">
     <div class="maint-tooltip">上次: ${lastStr}<br>下次: ${nextStr}</div>
     <div class="maint-bar ${overdue ? 'overdue' : ''}"><div class="maint-bar-inner" style="width:${pct}%;background:${barColor}"></div></div>
     <div class="maint-bar-label" style="color:${overdue ? 'var(--danger)' : isWarn ? 'var(--warning)' : 'var(--text3)'}">${label}</div>
@@ -740,6 +754,8 @@ function renderTable() {
           <button class="btn-link" onclick="openDrawer('${d.id}')">详情</button>
           <button class="btn-link" onclick="openEditExtModal('${d.id}')">编辑</button>
           <button class="btn-link" onclick="openFaultModal('${d.id}')">报修</button>
+          <button class="btn-link" onclick="openMaintPlanListModal('${d.id}')" style="color:var(--success)">计划</button>
+          <button class="btn-link" onclick="openMaintHistoryListModal('${d.id}')" style="color:#722ed1">历史</button>
         </td>
       </tr>`;
     }).join('');
@@ -1454,49 +1470,44 @@ function refreshDrawer() {
   }
 }
 
-// ==================== MAINTENANCE LIST MODAL ====================
-let maintListState = { deviceId: null, tab: 'plans' };
+// ==================== MAINTENANCE PLAN LIST MODAL ====================
+let maintPlanListState = { deviceId: null };
 
-function openMaintListModal(deviceId) {
-  maintListState.deviceId = deviceId;
-  maintListState.tab = 'plans';
+function openMaintPlanListModal(deviceId) {
+  maintPlanListState.deviceId = deviceId;
   const d = state.devices.find(x => x.id === deviceId);
-  document.getElementById('maintListTitle').textContent = (d ? d.id + ' ' + d.shortName : '') + ' — 保养管理';
-  document.getElementById('maintListAddBtn').setAttribute('onclick', "openMaintPlanModalFromList('" + deviceId + "')");
-  document.getElementById('maintListOverlay').classList.add('show');
-  renderMaintListModal();
+  document.getElementById('maintPlanListTitle').textContent = (d ? d.id + ' ' + d.shortName : '') + ' — 保养计划';
+  document.getElementById('maintPlanListAddBtn').setAttribute('onclick', "openMaintPlanModalFromPlanList('" + deviceId + "')");
+  document.getElementById('maintPlanListOverlay').classList.add('show');
+  renderMaintPlanListModal();
 }
 
-function closeMaintListModal() {
-  document.getElementById('maintListOverlay').classList.remove('show');
-  maintListState.deviceId = null;
+function closeMaintPlanListModal() {
+  document.getElementById('maintPlanListOverlay').classList.remove('show');
+  maintPlanListState.deviceId = null;
 }
 
-function setMaintTab(tab) { maintListState.tab = tab; renderMaintListModal(); }
-
-function openMaintPlanModalFromList(deviceId) {
-  closeMaintListModal();
+function openMaintPlanModalFromPlanList(deviceId) {
+  closeMaintPlanListModal();
   openMaintPlanModal(deviceId);
 }
 
-function openExecMaintFromList(deviceId, planId) {
-  closeMaintListModal();
+function openExecMaintFromPlanList(deviceId, planId) {
+  closeMaintPlanListModal();
   openExecMaintModal(deviceId, planId);
 }
 
-function renderMaintListModal() {
-  const did = maintListState.deviceId;
+function renderMaintPlanListModal() {
+  const did = maintPlanListState.deviceId;
   const d = state.devices.find(x => x.id === did);
   if (!d) return;
   const plans = getDevicePlans(did);
   const history = getDeviceHistory(did);
   const usage = getDeviceUsage(did);
-  const tab = maintListState.tab;
 
-  // Prediction alerts
   let alerts = '';
   if (plans.length === 0) {
-    alerts += `<div class="predict-alert warn"><span class="alert-icon">&#x26A0;&#xFE0F;</span><div>该设备尚未配置保养计划，建议根据设备类型和使用频率制定保养计划。<button class="btn btn-sm btn-warning" style="margin-left:8px" onclick="openMaintPlanModalFromList('${did}')">立即制定</button></div></div>`;
+    alerts += `<div class="predict-alert warn"><span class="alert-icon">&#x26A0;&#xFE0F;</span><div>该设备尚未配置保养计划，建议根据设备类型和使用频率制定保养计划。<button class="btn btn-sm btn-warning" style="margin-left:8px" onclick="openMaintPlanModalFromPlanList('${did}')">立即制定</button></div></div>`;
   }
   if (d.health < 60) {
     alerts += `<div class="predict-alert danger"><span class="alert-icon">&#x1F6A8;</span><div>设备健康度偏低（${d.health}%），建议尽快安排专项检查。</div></div>`;
@@ -1513,73 +1524,105 @@ function renderMaintListModal() {
     alerts += `<div class="predict-alert info"><span class="alert-icon">&#x1F4CA;</span><div>近30天使用 ${recent30.length} 次，按当前使用强度，预计 ${predictDays} 天后需要保养。</div></div>`;
   }
 
-  // Summary
   const overdue = plans.filter(p => p.nextDate < '2026-06-17').length;
   const soon = plans.filter(p => p.nextDate >= '2026-06-17' && p.nextDate <= '2026-06-24').length;
   const normal = plans.filter(p => p.nextDate > '2026-06-24').length;
 
-  // Plans tab
   const planCards = plans.map(p => {
     const isOverdue = p.nextDate < '2026-06-17';
     const isSoon = !isOverdue && p.nextDate <= '2026-06-24';
     const statusTag = isOverdue ? '<span class="tag tag-red">已逾期</span>' : isSoon ? '<span class="tag tag-orange">即将到期</span>' : '<span class="tag tag-green">正常</span>';
     const typeTag = p.type === '日常' ? '<span class="tag tag-blue">日常</span>' : p.type === '定期' ? '<span class="tag tag-green">定期</span>' : '<span class="tag tag-purple">专项</span>';
-    return `<div class="fault-card">
-      <div class="fault-card-head">${typeTag} ${statusTag} <span style="font-size:12px;color:var(--text3)">周期: ${p.cycle}</span></div>
-      <div class="fault-card-desc">${p.content}</div>
-      <div class="fault-card-meta">
-        <span>责任人: <strong>${p.responsible}</strong></span>
-        <span>下次保养: <strong style="color:${isOverdue?'var(--danger)':isSoon?'var(--warning)':'var(--text)'}">${p.nextDate}</strong></span>
-        ${p.lastDate ? `<span>上次保养: ${p.lastDate}</span>` : ''}
+    return `<div class="maint-card">
+      <div class="maint-card-header">${typeTag} ${statusTag} <span style="font-size:12px;color:var(--text3)">周期: ${p.cycle}</span></div>
+      <div class="maint-info"><div class="item">内容: ${p.content}</div></div>
+      <div class="maint-info">
+        <div class="item">责任人: <strong>${p.responsible}</strong></div>
+        <div class="item">下次保养: <strong style="color:${isOverdue?'var(--danger)':isSoon?'var(--warning)':'var(--text)'}">${p.nextDate}</strong></div>
+        ${p.lastDate ? `<div class="item">上次保养: ${p.lastDate}</div>` : ''}
       </div>
-      <div class="fault-card-actions">
-        <button class="btn btn-sm btn-success" onclick="openExecMaintFromList('${did}',${p.id})">执行保养</button>
-        <button class="btn btn-sm" onclick="deleteMaintPlan(${p.id})">删除计划</button>
-      </div>
-    </div>`;
-  }).join('');
-
-  // History tab
-  const historyCards = history.map(h => {
-    const resultTag = h.result === '正常' ? '<span class="tag tag-green">正常</span>' : h.result === '需关注' ? '<span class="tag tag-orange">需关注</span>' : '<span class="tag tag-red">需维修</span>';
-    const typeTag = h.type === '日常' ? '<span class="tag tag-blue">日常</span>' : h.type === '定期' ? '<span class="tag tag-green">定期</span>' : '<span class="tag tag-purple">专项</span>';
-    return `<div class="fault-card">
-      <div class="fault-card-head">${typeTag} ${resultTag} <span style="font-size:12px;color:var(--text3)">${h.date}</span></div>
-      <div class="fault-card-desc">${h.content}</div>
-      <div class="fault-card-meta">
-        <span>执行人: ${h.person}</span>
-        ${h.parts !== '无' ? `<span>更换部件: ${h.parts}</span>` : ''}
-        ${h.photos ? `<span>照片: ${h.photos}张</span>` : ''}
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn btn-sm btn-success" onclick="openExecMaintFromPlanList('${did}',${p.id})">执行保养</button>
+        <button class="btn btn-sm" onclick="deleteMaintPlanFromList(${p.id})">删除计划</button>
       </div>
     </div>`;
   }).join('');
 
-  const tabActive = (t) => t === tab ? 'btn-primary' : '';
-
-  document.getElementById('maintListBody').innerHTML = `
+  document.getElementById('maintPlanListBody').innerHTML = `
     ${alerts}
     <div class="fault-summary-row">
       <div class="fault-summary-item"><div class="fs-val" style="color:var(--danger)">${overdue}</div><div class="fs-label">已逾期</div></div>
       <div class="fault-summary-item"><div class="fs-val" style="color:var(--warning)">${soon}</div><div class="fs-label">即将到期</div></div>
       <div class="fault-summary-item"><div class="fs-val" style="color:var(--success)">${normal}</div><div class="fs-label">正常</div></div>
       <div class="fault-summary-item"><div class="fs-val">${plans.length}</div><div class="fs-label">计划总数</div></div>
-      <div class="fault-summary-item"><div class="fs-val">${history.length}</div><div class="fs-label">保养记录</div></div>
     </div>
-    <div style="display:flex;gap:8px;margin-bottom:16px">
-      <button class="btn btn-sm ${tabActive('plans')}" onclick="setMaintTab('plans')">保养计划 (${plans.length})</button>
-      <button class="btn btn-sm ${tabActive('history')}" onclick="setMaintTab('history')">保养历史 (${history.length})</button>
-    </div>
-    ${tab === 'plans' ? (plans.length > 0 ? planCards : '<div style="text-align:center;padding:40px;color:var(--text3)">暂无保养计划<br><button class="btn btn-sm btn-warning" style="margin-top:12px" onclick="openMaintPlanModalFromList(\'' + did + '\')">立即制定</button></div>') : ''}
-    ${tab === 'history' ? (history.length > 0 ? historyCards : '<div style="text-align:center;padding:40px;color:var(--text3)">暂无保养记录</div>') : ''}
+    ${plans.length > 0 ? planCards : '<div style="text-align:center;padding:40px;color:var(--text3)">暂无保养计划<br><button class="btn btn-sm btn-warning" style="margin-top:12px" onclick="openMaintPlanModalFromPlanList(\'' + did + '\')">立即制定</button></div>'}
   `;
 }
 
-function deleteMaintPlan(planId) {
+function deleteMaintPlanFromList(planId) {
   state.maintPlans = state.maintPlans.filter(p => p.id !== planId);
   showToast('保养计划已删除','success');
-  renderMaintListModal();
+  renderMaintPlanListModal();
   render();
 }
+
+// ==================== MAINTENANCE HISTORY LIST MODAL ====================
+let maintHistoryListState = { deviceId: null };
+
+function openMaintHistoryListModal(deviceId) {
+  maintHistoryListState.deviceId = deviceId;
+  const d = state.devices.find(x => x.id === deviceId);
+  document.getElementById('maintHistoryListTitle').textContent = (d ? d.id + ' ' + d.shortName : '') + ' — 保养历史';
+  document.getElementById('maintHistoryListOverlay').classList.add('show');
+  renderMaintHistoryListModal();
+}
+
+function closeMaintHistoryListModal() {
+  document.getElementById('maintHistoryListOverlay').classList.remove('show');
+  maintHistoryListState.deviceId = null;
+}
+
+function renderMaintHistoryListModal() {
+  const did = maintHistoryListState.deviceId;
+  const d = state.devices.find(x => x.id === did);
+  if (!d) return;
+  const history = getDeviceHistory(did);
+
+  const normalCount = history.filter(h => h.result === '正常').length;
+  const warnCount = history.filter(h => h.result === '需关注').length;
+  const repairCount = history.filter(h => h.result === '需维修').length;
+  const totalParts = history.filter(h => h.parts && h.parts !== '无').length;
+
+  const historyCards = history.map(h => {
+    const resultTag = h.result === '正常' ? '<span class="tag tag-green">正常</span>' : h.result === '需关注' ? '<span class="tag tag-orange">需关注</span>' : '<span class="tag tag-red">需维修</span>';
+    const typeTag = h.type === '日常' ? '<span class="tag tag-blue">日常</span>' : h.type === '定期' ? '<span class="tag tag-green">定期</span>' : '<span class="tag tag-purple">专项</span>';
+    return `<div class="maint-card">
+      <div class="maint-card-header">${typeTag} ${resultTag} <span style="font-size:12px;color:var(--text3)">${h.date}</span></div>
+      <div class="maint-info"><div class="item">${h.content}</div></div>
+      <div class="maint-info">
+        <span>执行人: ${h.person}</span>
+        ${h.parts !== '无' ? `<span style="margin-left:16px">更换部件: ${h.parts}</span>` : ''}
+        ${h.photos ? `<span style="margin-left:16px">照片: ${h.photos}张</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('maintHistoryListBody').innerHTML = `
+    <div class="fault-summary-row">
+      <div class="fault-summary-item"><div class="fs-val">${history.length}</div><div class="fs-label">保养总次数</div></div>
+      <div class="fault-summary-item"><div class="fs-val" style="color:var(--success)">${normalCount}</div><div class="fs-label">正常</div></div>
+      <div class="fault-summary-item"><div class="fs-val" style="color:var(--warning)">${warnCount}</div><div class="fs-label">需关注</div></div>
+      <div class="fault-summary-item"><div class="fs-val" style="color:var(--danger)">${repairCount}</div><div class="fs-label">需维修</div></div>
+      <div class="fault-summary-item"><div class="fs-val">${totalParts}</div><div class="fs-label">涉及换件</div></div>
+    </div>
+    ${history.length > 0 ? historyCards : '<div style="text-align:center;padding:40px;color:var(--text3)">暂无保养记录</div>'}
+  `;
+}
+
+// Legacy compatibility
+function openMaintListModal(deviceId) { openMaintPlanListModal(deviceId); }
+function closeMaintListModal() { closeMaintPlanListModal(); }
 
 // ==================== MODALS ====================
 function openModal(html) {
@@ -1810,7 +1853,7 @@ function submitMaintPlan() {
   showToast('保养计划已创建','success');
   render();
   refreshDrawer();
-  if (maintListState.deviceId === deviceId) { openMaintListModal(deviceId); }
+  if (maintPlanListState.deviceId === deviceId) { openMaintPlanListModal(deviceId); }
 }
 
 // 6. Execute Maintenance Modal
@@ -1887,7 +1930,7 @@ function submitExecMaint(deviceId, planId) {
   closeModal();
   render();
   refreshDrawer();
-  if (maintListState.deviceId === deviceId) { openMaintListModal(deviceId); }
+  if (maintPlanListState.deviceId === deviceId) { openMaintPlanListModal(deviceId); }
 }
 
 // 7. Usage Record Modal
