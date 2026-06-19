@@ -2,52 +2,52 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=1920" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>培训综合分析 - 沈阳客运职培基地</title>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100vh; overflow: hidden; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1920px; color: rgba(0,0,0,.85); display: flex; flex-direction: column; }
-    .header { background: #fff; padding: 0 24px; height: 42px; display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
-    .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
+    html, body { width: 100%; height: 100vh; overflow: hidden; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; color: rgba(0,0,0,.85); display: flex; flex-direction: column; }
+    .header { background: #fff; padding: 0 20px; height: 40px; display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+    .breadcrumb { font-size: 13px; color: rgba(0,0,0,.45); }
     .breadcrumb a { color: #1677ff; text-decoration: none; }
     .breadcrumb a:hover { text-decoration: underline; }
-    .content { max-width: 1880px; width: 100%; margin: 0 auto; padding: 6px 24px 6px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
-    .page-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 4px; flex-shrink: 0; }
-    .card { background: #fff; border-radius: 8px; padding: 8px 12px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
-    .card-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 6px; }
-    .card-title::before { content: ''; display: inline-block; width: 3px; height: 12px; background: #1677ff; border-radius: 2px; }
-    .card-subtitle { font-size: 10px; color: rgba(0,0,0,.35); font-weight: 400; margin-left: 4px; }
-    .form-select { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; color: rgba(0,0,0,.85); cursor: pointer; }
+    .content { width: 100%; padding: 4px 16px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .page-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 3px; flex-shrink: 0; }
+    .card { background: #fff; border-radius: 6px; padding: 6px 10px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
+    .card-title { font-size: 11px; font-weight: 600; margin-bottom: 2px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 5px; }
+    .card-title::before { content: ''; display: inline-block; width: 3px; height: 11px; background: #1677ff; border-radius: 2px; }
+    .card-subtitle { font-size: 9px; color: rgba(0,0,0,.35); font-weight: 400; margin-left: 4px; }
+    .form-select { padding: 3px 8px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 12px; background: #fff; color: rgba(0,0,0,.85); cursor: pointer; }
     .form-select:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
 
     /* Toolbar */
-    .toolbar { display: flex; gap: 10px; align-items: center; padding: 0; background: transparent; flex-shrink: 0; margin-bottom: 6px; }
-    .toolbar label { font-size: 13px; color: rgba(0,0,0,.65); font-weight: 500; white-space: nowrap; }
-    .update-time { font-size: 12px; color: rgba(0,0,0,.35); margin-left: auto; }
+    .toolbar { display: flex; gap: 8px; align-items: center; padding: 0; background: transparent; flex-shrink: 0; margin-bottom: 4px; }
+    .toolbar label { font-size: 12px; color: rgba(0,0,0,.65); font-weight: 500; white-space: nowrap; }
+    .update-time { font-size: 11px; color: rgba(0,0,0,.35); margin-left: auto; }
 
     /* KPI Cards */
-    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 6px; flex-shrink: 0; }
-    .kpi-card { background: #fff; border-radius: 8px; padding: 10px 14px; border: 1px solid #f0f0f0; cursor: default; transition: box-shadow .2s; display: flex; align-items: center; gap: 14px; }
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 4px; flex-shrink: 0; }
+    .kpi-card { background: #fff; border-radius: 6px; padding: 8px 12px; border: 1px solid #f0f0f0; cursor: default; transition: box-shadow .2s; display: flex; align-items: center; gap: 10px; }
     .kpi-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
-    .kpi-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .kpi-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
     .kpi-icon.blue { background: #e6f4ff; color: #1677ff; }
     .kpi-icon.green { background: #f6ffed; color: #52c41a; }
     .kpi-icon.orange { background: #fff7e6; color: #fa8c16; }
     .kpi-icon.purple { background: #f9f0ff; color: #722ed1; }
     .kpi-info { flex: 1; }
-    .kpi-label { font-size: 12px; color: rgba(0,0,0,.45); margin-bottom: 2px; }
-    .kpi-value { font-size: 22px; font-weight: 700; color: rgba(0,0,0,.85); line-height: 1.2; }
-    .kpi-value .unit { font-size: 12px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
-    .kpi-api { font-size: 10px; color: rgba(0,0,0,.25); margin-top: 2px; }
+    .kpi-label { font-size: 11px; color: rgba(0,0,0,.45); margin-bottom: 1px; }
+    .kpi-value { font-size: 18px; font-weight: 700; color: rgba(0,0,0,.85); line-height: 1.2; }
+    .kpi-value .unit { font-size: 11px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
+    .kpi-api { font-size: 9px; color: rgba(0,0,0,.25); margin-top: 1px; }
 
     /* Charts layout */
-    .charts-area { flex: 1; display: flex; flex-direction: column; min-height: 0; gap: 8px; }
-    .charts-row { display: grid; gap: 8px; flex: 1; min-height: 0; }
+    .charts-area { flex: 1; display: flex; flex-direction: column; min-height: 0; gap: 6px; }
+    .charts-row { display: grid; gap: 6px; flex: 1; min-height: 0; }
     .charts-row.row-3 { grid-template-columns: 1fr 1fr 1fr; }
     .charts-row > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
-    .chart-box { flex: 1; min-height: 0; }
+    .chart-box { flex: 1; min-height: 0; width: 100%; }
 
     /* Tab selector inside chart card */
     .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
@@ -66,10 +66,10 @@
 
     /* Scrolling table */
     .scroll-table-wrap { flex: 1; overflow: hidden; position: relative; min-height: 0; }
-    .scroll-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .scroll-table thead { background: #fafafa; }
-    .scroll-table th { padding: 6px 8px; text-align: left; font-weight: 500; color: rgba(0,0,0,.65); border-bottom: 1px solid #f0f0f0; font-size: 11px; white-space: nowrap; }
-    .scroll-table td { padding: 5px 8px; border-bottom: 1px solid #f5f5f5; color: rgba(0,0,0,.75); white-space: nowrap; }
+    .scroll-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .scroll-table thead { background: #fafafa; position: sticky; top: 0; z-index: 1; }
+    .scroll-table th { padding: 4px 6px; text-align: left; font-weight: 500; color: rgba(0,0,0,.65); border-bottom: 1px solid #f0f0f0; font-size: 10px; white-space: nowrap; }
+    .scroll-table td { padding: 3px 6px; border-bottom: 1px solid #f5f5f5; color: rgba(0,0,0,.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; }
     .scroll-table tbody { display: block; overflow: hidden; }
     .scroll-table thead, .scroll-table tbody tr { display: table; width: 100%; table-layout: fixed; }
     .state-tag { padding: 1px 8px; border-radius: 4px; font-size: 11px; display: inline-block; }
