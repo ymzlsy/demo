@@ -2,55 +2,80 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=1440" />
+  <meta name="viewport" content="width=1920" />
   <title>培训综合分析 - 沈阳客运职培基地</title>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100vh; overflow: hidden; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1440px; color: rgba(0,0,0,.85); display: flex; flex-direction: column; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1920px; color: rgba(0,0,0,.85); display: flex; flex-direction: column; }
     .header { background: #fff; padding: 0 24px; height: 42px; display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
     .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
     .breadcrumb a { color: #1677ff; text-decoration: none; }
     .breadcrumb a:hover { text-decoration: underline; }
-    .content { max-width: 1400px; width: 100%; margin: 0 auto; padding: 6px 24px 6px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .content { max-width: 1880px; width: 100%; margin: 0 auto; padding: 6px 24px 6px; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
     .page-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 4px; flex-shrink: 0; }
-    .card { background: #fff; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; flex-shrink: 0; }
-    .charts-area { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    .card { background: #fff; border-radius: 8px; padding: 8px 12px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; }
     .card-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 6px; }
     .card-title::before { content: ''; display: inline-block; width: 3px; height: 12px; background: #1677ff; border-radius: 2px; }
+    .card-subtitle { font-size: 10px; color: rgba(0,0,0,.35); font-weight: 400; margin-left: 4px; }
     .form-select { padding: 4px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; color: rgba(0,0,0,.85); cursor: pointer; }
     .form-select:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
 
-    /* Time selector bar */
-    .time-bar { display: flex; gap: 10px; align-items: center; padding: 0; background: transparent; border: none; }
-    .time-bar label { font-size: 13px; color: rgba(0,0,0,.65); font-weight: 500; white-space: nowrap; }
-    .time-quick-btn { padding: 3px 10px; border-radius: 4px; border: 1px solid #d9d9d9; background: #fff; font-size: 12px; cursor: pointer; color: rgba(0,0,0,.65); transition: all .2s; }
-    .time-quick-btn:hover { border-color: #1677ff; color: #1677ff; }
-    .time-quick-btn.active { background: #1677ff; color: #fff; border-color: #1677ff; }
+    /* Toolbar */
+    .toolbar { display: flex; gap: 10px; align-items: center; padding: 0; background: transparent; flex-shrink: 0; margin-bottom: 6px; }
+    .toolbar label { font-size: 13px; color: rgba(0,0,0,.65); font-weight: 500; white-space: nowrap; }
     .update-time { font-size: 12px; color: rgba(0,0,0,.35); margin-left: auto; }
 
     /* KPI Cards */
-    .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 6px; }
-    .kpi-card { background: #fff; border-radius: 8px; padding: 8px 10px; text-align: center; border: 1px solid #f0f0f0; cursor: default; transition: box-shadow .2s; position: relative; }
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 6px; flex-shrink: 0; }
+    .kpi-card { background: #fff; border-radius: 8px; padding: 10px 14px; border: 1px solid #f0f0f0; cursor: default; transition: box-shadow .2s; display: flex; align-items: center; gap: 14px; }
     .kpi-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+    .kpi-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .kpi-icon.blue { background: #e6f4ff; color: #1677ff; }
+    .kpi-icon.green { background: #f6ffed; color: #52c41a; }
+    .kpi-icon.orange { background: #fff7e6; color: #fa8c16; }
+    .kpi-icon.purple { background: #f9f0ff; color: #722ed1; }
+    .kpi-info { flex: 1; }
     .kpi-label { font-size: 12px; color: rgba(0,0,0,.45); margin-bottom: 2px; }
-    .kpi-value { font-size: 20px; font-weight: 700; color: #1677ff; line-height: 1.2; }
+    .kpi-value { font-size: 22px; font-weight: 700; color: rgba(0,0,0,.85); line-height: 1.2; }
     .kpi-value .unit { font-size: 12px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
-    .kpi-trend { font-size: 11px; margin-top: 2px; }
-    .trend-up { color: #52c41a; }
-    .trend-down { color: #ff4d4f; }
-    .kpi-tooltip { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.75); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; white-space: nowrap; z-index: 10; pointer-events: none; }
-    .kpi-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: rgba(0,0,0,.75); }
-    .kpi-card:hover .kpi-tooltip { display: block; }
+    .kpi-api { font-size: 10px; color: rgba(0,0,0,.25); margin-top: 2px; }
 
-    /* Charts layout - flex fill */
-    .charts-row-4 { display: grid; grid-template-columns: 1fr 1.5fr 1.5fr 1fr; gap: 8px; margin-bottom: 8px; flex: 1; min-height: 0; }
-    .charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 0; flex: 1; min-height: 0; }
-    .chart-box { height: 100%; min-height: 120px; }
-    .charts-area > .charts-row-4 > .card, .charts-area > .charts-row-3 > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; flex-shrink: 1; }
-    .charts-area > .charts-row-4 > .card > .chart-box, .charts-area > .charts-row-3 > .card > .chart-box { flex: 1; min-height: 0; }
-    .kpi-row { flex-shrink: 0; }
+    /* Charts layout */
+    .charts-area { flex: 1; display: flex; flex-direction: column; min-height: 0; gap: 8px; }
+    .charts-row { display: grid; gap: 8px; flex: 1; min-height: 0; }
+    .charts-row.row-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .charts-row > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .chart-box { flex: 1; min-height: 0; }
+
+    /* Tab selector inside chart card */
+    .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+    .chart-tabs { display: flex; gap: 0; }
+    .chart-tab { padding: 2px 10px; font-size: 11px; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.65); cursor: pointer; transition: all .2s; }
+    .chart-tab:first-child { border-radius: 4px 0 0 4px; }
+    .chart-tab:last-child { border-radius: 0 4px 4px 0; }
+    .chart-tab + .chart-tab { border-left: none; }
+    .chart-tab.active { background: #1677ff; color: #fff; border-color: #1677ff; }
+    .chart-tab.active + .chart-tab { border-left-color: #1677ff; }
+
+    /* Device info header */
+    .device-info { display: flex; gap: 16px; margin-bottom: 4px; }
+    .device-stat { font-size: 12px; color: rgba(0,0,0,.65); }
+    .device-stat b { color: #1677ff; font-size: 14px; }
+
+    /* Scrolling table */
+    .scroll-table-wrap { flex: 1; overflow: hidden; position: relative; min-height: 0; }
+    .scroll-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .scroll-table thead { background: #fafafa; }
+    .scroll-table th { padding: 6px 8px; text-align: left; font-weight: 500; color: rgba(0,0,0,.65); border-bottom: 1px solid #f0f0f0; font-size: 11px; white-space: nowrap; }
+    .scroll-table td { padding: 5px 8px; border-bottom: 1px solid #f5f5f5; color: rgba(0,0,0,.75); white-space: nowrap; }
+    .scroll-table tbody { display: block; overflow: hidden; }
+    .scroll-table thead, .scroll-table tbody tr { display: table; width: 100%; table-layout: fixed; }
+    .state-tag { padding: 1px 8px; border-radius: 4px; font-size: 11px; display: inline-block; }
+    .state-0 { background: #f5f5f5; color: rgba(0,0,0,.45); }
+    .state-1 { background: #e6f4ff; color: #1677ff; }
+    .state-2 { background: #f6ffed; color: #52c41a; }
 
     /* Xiaoan FAB */
     .xiaoan-fab {
@@ -192,84 +217,83 @@
     }
     .xiaoan-send:hover { background: #4096ff; }
     .xiaoan-send:disabled { background: #d9d9d9; cursor: not-allowed; }
-
-    /* Notice bar */
-    .notice-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fffbe6; border-top: 1px solid #ffe58f; padding: 8px 24px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(0,0,0,.85); z-index: 900; }
-    .notice-icon { color: #faad14; font-size: 16px; flex-shrink: 0; }
-    .notice-close { margin-left: auto; cursor: pointer; color: rgba(0,0,0,.35); background: none; border: none; font-size: 16px; }
-    .notice-close:hover { color: rgba(0,0,0,.65); }
   </style>
 </head>
 <body>
 
 <!-- Header -->
 <div class="header">
-  <div class="breadcrumb"><a href="#">首页</a> &gt; <a href="#">实训技能评价分析</a> &gt; 培训综合分析</div>
+  <div class="breadcrumb"><a href="../">Demo</a> &gt; <a href="#">实训技能评价分析</a> &gt; 培训综合分析</div>
 </div>
 
 <div class="content">
   <div class="page-title">培训综合分析</div>
 
-  <!-- Time selector -->
-  <div class="card" style="padding: 4px 12px;">
-    <div class="time-bar">
-      <label>统计周期：</label>
-      <select class="form-select" id="selYear">
-        <option value="2026">2026年</option><option value="2025">2025年</option><option value="2024">2024年</option>
-      </select>
-      <select class="form-select" id="selQuarter">
-        <option value="">全年</option><option value="Q1">第一季度</option><option value="Q2">第二季度</option><option value="Q3">第三季度</option><option value="Q4">第四季度</option>
-      </select>
-      <select class="form-select" id="selMonth">
-        <option value="">全部月份</option>
-        <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
-        <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
-      </select>
-      <span style="color:rgba(0,0,0,.25);margin:0 4px;">|</span>
-      <button class="time-quick-btn" onclick="setQuick(this,'month')">本月</button>
-      <button class="time-quick-btn active" onclick="setQuick(this,'quarter')">本季度</button>
-      <button class="time-quick-btn" onclick="setQuick(this,'year')">本年度</button>
-      <span class="update-time" id="updateTime">数据更新时间：2026-06-17 08:30</span>
-    </div>
-  </div>
-
   <!-- KPI Cards -->
-  <div class="kpi-row" id="kpiRow">
-    <!-- JS rendered -->
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <!-- Toolbar -->
+  <div class="card toolbar" style="padding: 4px 12px; margin-bottom: 6px;">
+    <label>培训班：</label>
+    <select class="form-select" id="selClass">
+      <option value="0">2025年第3期理论培训班</option>
+      <option value="1">2025年第2期实作培训班</option>
+      <option value="2">2025年第1期综合培训班</option>
+      <option value="3">2024年第4期安全培训班</option>
+      <option value="4">2024年第3期技能强化班</option>
+    </select>
+    <label style="margin-left:12px;">考试：</label>
+    <select class="form-select" id="selExam">
+      <option value="0">2025年6月理论考试</option>
+      <option value="1">2025年6月实作考试</option>
+      <option value="2">2025年5月综合考核</option>
+    </select>
+    <span class="update-time">数据更新时间：2026-06-19 08:30</span>
   </div>
 
-  <!-- Charts area - flex fill viewport -->
+  <!-- Charts area -->
   <div class="charts-area">
-    <div class="charts-row-4">
+    <!-- Row 1: 3 charts -->
+    <div class="charts-row row-3">
       <div class="card">
-        <div class="card-title">年度计划完成度</div>
-        <div id="chartPlanRing" class="chart-box"></div>
+        <div class="card-title">培训班出勤率对比<span class="card-subtitle">API: getTrainAttendRatio</span></div>
+        <div id="chartAttend" class="chart-box"></div>
       </div>
       <div class="card">
-        <div class="card-title">月度办班计划 vs 实际</div>
-        <div id="chartMonthlyClass" class="chart-box"></div>
+        <div class="chart-header">
+          <div class="card-title">培训班成绩对比<span class="card-subtitle">API: getTrainResultExam</span></div>
+          <div class="chart-tabs">
+            <div class="chart-tab active" onclick="switchTestModel(this,0)">理论</div>
+            <div class="chart-tab" onclick="switchTestModel(this,1)">实作</div>
+          </div>
+        </div>
+        <div id="chartResult" class="chart-box"></div>
       </div>
       <div class="card">
-        <div class="card-title">培训人天数走势</div>
-        <div id="chartPersonDays" class="chart-box"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">培训人数完成度（按岗位）</div>
-        <div id="chartJobCompletion" class="chart-box"></div>
+        <div class="card-title">成绩分布曲线<span class="card-subtitle">API: scoreDistribution</span></div>
+        <div id="chartScoreDist" class="chart-box"></div>
       </div>
     </div>
-    <div class="charts-row-3">
+
+    <!-- Row 2: 3 charts -->
+    <div class="charts-row row-3">
       <div class="card">
-        <div class="card-title">各车间培训参与对比</div>
-        <div id="chartWorkshop" class="chart-box"></div>
+        <div class="card-title">设备利用率仪表盘<span class="card-subtitle">API: getIndexData</span></div>
+        <div class="device-info" id="deviceInfo"></div>
+        <div id="chartDeviceGauge" class="chart-box"></div>
       </div>
       <div class="card">
-        <div class="card-title">群体薄弱点 TOP 5</div>
-        <div id="chartWeakTop5" class="chart-box"></div>
+        <div class="card-title">培训计划执行状态<span class="card-subtitle">API: getTrainPlanData</span></div>
+        <div class="scroll-table-wrap" id="planTableWrap">
+          <table class="scroll-table" id="planTable">
+            <thead><tr><th style="width:28%">培训班</th><th style="width:18%">课程</th><th style="width:16%">日期</th><th style="width:18%">地点</th><th style="width:20%">状态</th></tr></thead>
+            <tbody id="planTbody"></tbody>
+          </table>
+        </div>
       </div>
       <div class="card">
-        <div class="card-title">班级成绩分布</div>
-        <div id="chartScoreDist" class="chart-box"></div>
+        <div class="card-title">薄弱项分析 TOP 5<span class="card-subtitle">API: getWeakAnalysis</span></div>
+        <div id="chartWeak" class="chart-box"></div>
       </div>
     </div>
   </div>
@@ -291,7 +315,7 @@
     <div class="xiaoan-panel-header" id="xiaoanPanelHeader">
       <div style="flex:1">
         <div class="xa-title">小安 &middot; 智能分析</div>
-        <div class="xa-subtitle">基于当前页面数据，为您提供培训分析洞察</div>
+        <div class="xa-subtitle">基于当前页面数据，为您提供培训综合分析洞察</div>
       </div>
       <div class="xiaoan-sound-wave" id="xiaoanSoundWave"><span></span><span></span><span></span><span></span><span></span></div>
       <button class="xiaoan-panel-close" id="xiaoanClose">&times;</button>
@@ -299,7 +323,7 @@
     <div class="xiaoan-chat" id="xiaoanChat"></div>
     <div class="xiaoan-quick-actions" id="xiaoanQuickActions"></div>
     <div class="xiaoan-input-bar">
-      <input class="xiaoan-input" id="xiaoanInput" type="text" placeholder="输入您的问题，如：年度计划完成了多少？" />
+      <input class="xiaoan-input" id="xiaoanInput" type="text" placeholder="输入您的问题，如：各班出勤率如何？" />
       <button class="xiaoan-mic" id="xiaoanMic" title="语音输入">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="1" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/></svg>
       </button>
@@ -310,156 +334,107 @@
   </div>
 </div>
 
-<!-- Notice Bar -->
-<div class="notice-bar" id="noticeBar">
-  <span class="notice-icon">&#9888;</span>
-  <span>当前为暑运期间（7月1日-8月31日），建议加强<b>安全生产</b>及<b>应急处置</b>专项培训，确保暑运安全。</span>
-  <button class="notice-close" onclick="document.getElementById('noticeBar').style.display='none'">&times;</button>
-</div>
-
 <script>
-// ========== DATA SETS ==========
-const DATA = {
-  year: {
-    kpi: [
-      { label: '年度计划兑现率', value: '82.5', unit: '%', trend: '+3.2%', up: true, tip: '已完成82项/计划100项，同比去年提升3.2个百分点' },
-      { label: '培训总人数', value: '1,286', unit: '人', trend: '+12.5%', up: true, tip: '累计培训1286人，同比增长12.5%' },
-      { label: '培训总人次', value: '3,847', unit: '人次', trend: '+8.7%', up: true, tip: '含复训人次，人均参训2.99次' },
-      { label: '班级合格率', value: '91.3', unit: '%', trend: '+1.8%', up: true, tip: '通过考核班级占比91.3%，同比提升1.8%' },
-      { label: '设备月均利用率', value: '67.8', unit: '%', trend: '-2.1%', up: false, tip: '6月检修导致设备利用率下降2.1%' },
-    ],
-    planRing: { completed: 82, total: 100 },
-    monthlyClass: {
-      plan:   [8,7,9,10,8,12,10,14,11,9,8,7],
-      actual: [7,6,8,10,7,11,9,0,0,0,0,0],
-    },
-    personDays: [320,285,410,520,480,560,610,0,0,0,0,0],
-    jobCompletion: {
-      jobs: ['客运值班员','列车员','售票员','安检员','站务员','调度员'],
-      plan:   [240,320,180,200,160,120],
-      actual: [210,290,165,185,140,95],
-    },
-    workshop: {
-      names: ['客运一车间','客运二车间','客运三车间','调度车间','安检车间'],
-      plan:   [280,260,240,180,160],
-      actual: [255,245,220,165,148],
-    },
-    weakTop5: {
-      subjects: ['应急处置流程','列车运行图解读','旅客投诉处理','安全规章考试','设备故障判断'],
-      scores:  [12.3, 10.8, 9.5, 8.2, 7.6],
-    },
-    scoreDist: {
-      ranges: ['<50','50-59','60-69','70-79','80-89','90-100'],
-      counts: [15, 42, 128, 285, 410, 406],
-      mean: 79.5, std: 12.3,
-    },
-  },
-  quarter: {
-    kpi: [
-      { label: '年度计划兑现率', value: '45.0', unit: '%', trend: '+5.1%', up: true, tip: '二季度完成45项/计划100项' },
-      { label: '培训总人数', value: '658', unit: '人', trend: '+15.2%', up: true, tip: '本季度培训658人' },
-      { label: '培训总人次', value: '1,923', unit: '人次', trend: '+10.3%', up: true, tip: '本季度1923人次' },
-      { label: '班级合格率', value: '89.7', unit: '%', trend: '-1.6%', up: false, tip: '本季度合格率略有下降' },
-      { label: '设备月均利用率', value: '72.4', unit: '%', trend: '+4.6%', up: true, tip: '二季度设备利用率提升' },
-    ],
-    planRing: { completed: 45, total: 100 },
-    monthlyClass: {
-      plan:   [10,8,12,0,0,0,0,0,0,0,0,0],
-      actual: [10,7,11,0,0,0,0,0,0,0,0,0],
-    },
-    personDays: [520,480,560,0,0,0,0,0,0,0,0,0],
-    jobCompletion: {
-      jobs: ['客运值班员','列车员','售票员','安检员','站务员','调度员'],
-      plan:   [120,160,90,100,80,60],
-      actual: [115,148,82,92,72,55],
-    },
-    workshop: {
-      names: ['客运一车间','客运二车间','客运三车间','调度车间','安检车间'],
-      plan:   [140,130,120,90,80],
-      actual: [132,125,110,85,76],
-    },
-    weakTop5: {
-      subjects: ['应急处置流程','安全规章考试','列车运行图解读','旅客投诉处理','票务系统操作'],
-      scores:  [13.1, 11.2, 9.8, 8.5, 7.1],
-    },
-    scoreDist: {
-      ranges: ['<50','50-59','60-69','70-79','80-89','90-100'],
-      counts: [8, 25, 72, 155, 220, 178],
-      mean: 78.2, std: 13.1,
-    },
-  },
-  month: {
-    kpi: [
-      { label: '年度计划兑现率', value: '15.0', unit: '%', trend: '+2.0%', up: true, tip: '6月完成15项' },
-      { label: '培训总人数', value: '218', unit: '人', trend: '+8.5%', up: true, tip: '本月培训218人' },
-      { label: '培训总人次', value: '647', unit: '人次', trend: '+6.2%', up: true, tip: '本月647人次' },
-      { label: '班级合格率', value: '93.1', unit: '%', trend: '+3.4%', up: true, tip: '本月合格率提升' },
-      { label: '设备月均利用率', value: '65.2', unit: '%', trend: '-7.2%', up: false, tip: '6月有设备检修计划' },
-    ],
-    planRing: { completed: 15, total: 100 },
-    monthlyClass: {
-      plan:   [12,0,0,0,0,0,0,0,0,0,0,0],
-      actual: [11,0,0,0,0,0,0,0,0,0,0,0],
-    },
-    personDays: [560,0,0,0,0,0,0,0,0,0,0,0],
-    jobCompletion: {
-      jobs: ['客运值班员','列车员','售票员','安检员','站务员','调度员'],
-      plan:   [40,55,30,35,28,20],
-      actual: [38,50,28,33,25,18],
-    },
-    workshop: {
-      names: ['客运一车间','客运二车间','客运三车间','调度车间','安检车间'],
-      plan:   [48,45,42,30,28],
-      actual: [45,42,38,28,25],
-    },
-    weakTop5: {
-      subjects: ['应急处置流程','设备故障判断','旅客投诉处理','列车运行图解读','安全规章考试'],
-      scores:  [14.2, 11.5, 10.1, 8.9, 7.8],
-    },
-    scoreDist: {
-      ranges: ['<50','50-59','60-69','70-79','80-89','90-100'],
-      counts: [3, 10, 28, 62, 75, 40],
-      mean: 80.1, std: 11.8,
-    },
-  },
+// ========== MOCK DATA (real API field names) ==========
+
+// get7ItemData
+const get7ItemData = {
+  examTotal: 156,
+  examTheoryTotal: 89,
+  examTrainTotal: 67,
+  examTheoryPaperTotal: 42,
+  examTrainPaperTotal: 35,
+  examTheoryQuestionTotal: 2840,
+  examTrainQuestionTotal: 1560
 };
 
-let currentPeriod = 'quarter';
+// getTrainAttendRatio (per class)
+const trainAttendData = [
+  { className: '2025年第3期理论培训班', trainClassPersonNum: 45, trainClassAttendRatio: 92.3 },
+  { className: '2025年第2期实作培训班', trainClassPersonNum: 38, trainClassAttendRatio: 76.5 },
+  { className: '2025年第1期综合培训班', trainClassPersonNum: 42, trainClassAttendRatio: 88.1 },
+  { className: '2024年第4期安全培训班', trainClassPersonNum: 50, trainClassAttendRatio: 94.7 },
+  { className: '2024年第3期技能强化班', trainClassPersonNum: 35, trainClassAttendRatio: 79.2 }
+];
 
-// ========== TIME QUICK BUTTONS ==========
-function setQuick(btn, period) {
-  document.querySelectorAll('.time-quick-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentPeriod = period;
-  renderAll();
-}
+// getTrainResultExam (two testModel variants)
+const trainResultExam = [
+  // testModel=0 (理论)
+  { classData: [[28.5, 62.3, 91.2]], avgData: [[25.1, 58.7, 88.6]], allAvgScore: 76.8, classAvgScore: 79.2 },
+  // testModel=1 (实作)
+  { classData: [[32.1, 65.8, 93.5]], avgData: [[27.3, 60.2, 90.1]], allAvgScore: 78.5, classAvgScore: 81.6 }
+];
 
-// Also react to select changes
-document.getElementById('selYear').addEventListener('change', () => { clearQuickBtns(); renderAll(); });
-document.getElementById('selQuarter').addEventListener('change', function() {
-  clearQuickBtns();
-  if (this.value) { currentPeriod = 'quarter'; } else { currentPeriod = 'year'; }
-  renderAll();
-});
-document.getElementById('selMonth').addEventListener('change', function() {
-  clearQuickBtns();
-  if (this.value) { currentPeriod = 'month'; } else { currentPeriod = 'year'; }
-  renderAll();
-});
+// scoreDistribution
+const scoreDistribution = [
+  ['0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90-100'],
+  [
+    { className: '实作一班', nums: [0,0,1,2,3,5,12,18,8,3] },
+    { className: '理论二班', nums: [0,1,0,3,4,8,15,14,6,2] },
+    { className: '综合三班', nums: [0,0,0,1,2,6,14,20,10,5] },
+    { className: '安全四班', nums: [0,0,2,3,5,7,10,15,6,2] }
+  ]
+];
 
-function clearQuickBtns() {
-  document.querySelectorAll('.time-quick-btn').forEach(b => b.classList.remove('active'));
-}
+// getIndexData
+const getIndexData = {
+  deviceNum: 86,
+  deviceValue: 3200,
+  deviceUseRate: [
+    { name: '模拟驾驶设备', value: 78.5 },
+    { name: 'VR设备', value: 65.2 },
+    { name: '实训工位', value: 82.1 },
+    { name: '多媒体设备', value: 71.8 }
+  ]
+};
 
-// ========== KPI CARDS ==========
-function renderKPI(data) {
-  const row = document.getElementById('kpiRow');
-  row.innerHTML = data.kpi.map(k => `
+// getTrainPlanData
+const getTrainPlanData = {
+  rows: [
+    { trainClass: '2025年第3期理论培训班', trainLesson: '信号基础', trainDate: '2025-06-15', trainPlace: '3号教室', executingState: 2 },
+    { trainClass: '2025年第3期理论培训班', trainLesson: '行车规章', trainDate: '2025-06-16', trainPlace: '3号教室', executingState: 2 },
+    { trainClass: '2025年第2期实作培训班', trainLesson: '道岔操作', trainDate: '2025-06-17', trainPlace: 'VR实训室', executingState: 1 },
+    { trainClass: '2025年第2期实作培训班', trainLesson: '应急处置', trainDate: '2025-06-18', trainPlace: '模拟演练场', executingState: 1 },
+    { trainClass: '2025年第1期综合培训班', trainLesson: '客运服务', trainDate: '2025-06-19', trainPlace: '2号教室', executingState: 1 },
+    { trainClass: '2024年第4期安全培训班', trainLesson: '消防演练', trainDate: '2025-06-20', trainPlace: '安全体验区', executingState: 0 },
+    { trainClass: '2024年第3期技能强化班', trainLesson: '设备检修', trainDate: '2025-06-21', trainPlace: '检修车间', executingState: 0 },
+    { trainClass: '2025年第3期理论培训班', trainLesson: '票务系统', trainDate: '2025-06-22', trainPlace: '机房', executingState: 0 },
+    { trainClass: '2025年第2期实作培训班', trainLesson: '列车广播', trainDate: '2025-06-23', trainPlace: '模拟车厢', executingState: 0 },
+    { trainClass: '2024年第4期安全培训班', trainLesson: '安全规章', trainDate: '2025-06-24', trainPlace: '1号教室', executingState: 0 }
+  ]
+};
+
+// getWeakAnalysis
+const getWeakAnalysis = {
+  weakData: [
+    { taskName: '道岔转辙装置检查', subtractScoreRate: '45.2%' },
+    { taskName: '信号机故障处理', subtractScoreRate: '38.7%' },
+    { taskName: '应急广播操作', subtractScoreRate: '31.5%' },
+    { taskName: '列车防护流程', subtractScoreRate: '26.8%' },
+    { taskName: '站台门联动测试', subtractScoreRate: '22.1%' }
+  ]
+};
+
+let currentTestModel = 0;
+
+// ========== RENDER KPI ==========
+function renderKPI() {
+  const d = get7ItemData;
+  const questionTotal = d.examTheoryQuestionTotal + d.examTrainQuestionTotal;
+  const kpis = [
+    { label: 'examTotal', title: '考试总数', value: d.examTotal, unit: '场', icon: '\u{1F4CB}', color: 'blue' },
+    { label: 'examTheoryTotal', title: '理论考试数', value: d.examTheoryTotal, unit: '场', icon: '\u{1F4D6}', color: 'green' },
+    { label: 'examTrainTotal', title: '实训考试数', value: d.examTrainTotal, unit: '场', icon: '\u{2699}', color: 'orange' },
+    { label: 'questionTotal', title: '题目总数', value: questionTotal, unit: '题', icon: '\u{1F4DD}', color: 'purple' }
+  ];
+  document.getElementById('kpiRow').innerHTML = kpis.map(k => `
     <div class="kpi-card">
-      <div class="kpi-tooltip">${k.tip}</div>
-      <div class="kpi-label">${k.label}</div>
-      <div class="kpi-value">${k.value}<span class="unit">${k.unit}</span></div>
-      <div class="kpi-trend ${k.up ? 'trend-up' : 'trend-down'}">${k.up ? '&#9650;' : '&#9660;'} ${k.trend} 同比上期</div>
+      <div class="kpi-icon ${k.color}">${k.icon}</div>
+      <div class="kpi-info">
+        <div class="kpi-label">${k.title}</div>
+        <div class="kpi-value">${k.value.toLocaleString()}<span class="unit">${k.unit}</span></div>
+        <div class="kpi-api">field: ${k.label}</div>
+      </div>
     </div>
   `).join('');
 }
@@ -468,184 +443,195 @@ function renderKPI(data) {
 let charts = {};
 
 function initCharts() {
-  ['chartPlanRing','chartMonthlyClass','chartPersonDays','chartJobCompletion','chartWorkshop','chartWeakTop5','chartScoreDist'].forEach(id => {
+  ['chartAttend','chartResult','chartScoreDist','chartDeviceGauge','chartWeak'].forEach(id => {
     charts[id] = echarts.init(document.getElementById(id));
   });
-  window.addEventListener('resize', () => {
-    Object.values(charts).forEach(c => c.resize());
+  window.addEventListener('resize', () => { Object.values(charts).forEach(c => c.resize()); });
+}
+
+// 1. Attendance bar
+function renderAttendChart() {
+  const names = trainAttendData.map(d => {
+    // shorten class names for display
+    const m = d.className.match(/第(\d+)期(.+?)班/);
+    return m ? m[2] + m[1] + '期' : d.className;
+  });
+  const values = trainAttendData.map(d => d.trainClassAttendRatio);
+  charts.chartAttend.setOption({
+    tooltip: { trigger: 'axis', formatter: function(p) { return p[0].name + '<br/>出勤率: ' + p[0].value + '%<br/>人数: ' + trainAttendData[p[0].dataIndex].trainClassPersonNum + '人'; } },
+    grid: { left: 50, right: 16, top: 12, bottom: 24 },
+    xAxis: { type: 'category', data: names, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11, rotate: 15 } },
+    yAxis: { type: 'value', max: 100, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11, formatter: '{value}%' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [{
+      type: 'bar', data: values, barMaxWidth: 36,
+      itemStyle: {
+        borderRadius: [4,4,0,0],
+        color: function(params) { return params.value < 80 ? '#fa8c16' : '#1677ff'; }
+      },
+      label: { show: true, position: 'top', formatter: '{c}%', fontSize: 11, color: 'rgba(0,0,0,.55)' }
+    }]
   });
 }
 
-function renderCharts(data) {
-  // 1. Plan ring
-  const gap = data.planRing.total - data.planRing.completed;
-  charts.chartPlanRing.setOption({
-    tooltip: { trigger: 'item', formatter: '{b}: {c}项 ({d}%)' },
+// 2. Result grouped bar
+function renderResultChart() {
+  const d = trainResultExam[currentTestModel];
+  const categories = ['高分率', '优良率', '合格率'];
+  const classValues = d.classData[0];
+  const avgValues = d.avgData[0];
+  charts.chartResult.setOption({
+    tooltip: { trigger: 'axis', formatter: function(p) { return p.map(s => s.seriesName + ': ' + s.value + '%').join('<br/>'); } },
     legend: { bottom: 2, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
-    series: [{
-      type: 'pie', radius: ['48%', '70%'], center: ['50%', '44%'],
-      avoidLabelOverlap: false,
-      label: {
-        show: true, position: 'center',
-        formatter: () => `{val|${data.planRing.completed}%}\n{lbl|完成率}`,
-        rich: {
-          val: { fontSize: 22, fontWeight: 700, color: '#1677ff', lineHeight: 28 },
-          lbl: { fontSize: 12, color: 'rgba(0,0,0,.45)', lineHeight: 18 },
-        }
-      },
-      emphasis: { label: { show: true } },
-      data: [
-        { value: data.planRing.completed, name: '已完成', itemStyle: { color: '#1677ff' } },
-        { value: gap, name: '未完成 ' + gap + '项', itemStyle: { color: '#ff4d4f' } },
-      ],
+    grid: { left: 44, right: 16, top: 30, bottom: 34 },
+    graphic: [{
+      type: 'text', left: 44, top: 6,
+      style: { text: '班级均分: ' + d.classAvgScore + '  |  全校均分: ' + d.allAvgScore, fontSize: 11, fill: 'rgba(0,0,0,.45)' }
     }],
-  });
-
-  // 2. Monthly class plan vs actual
-  const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-  const mLen = currentPeriod === 'month' ? 1 : currentPeriod === 'quarter' ? 3 : 12;
-  const mOffset = currentPeriod === 'quarter' ? 3 : 0;
-  const mLabels = currentPeriod === 'year' ? months : currentPeriod === 'quarter' ? ['4月','5月','6月'] : ['6月'];
-  const mPlan = data.monthlyClass.plan.slice(0, mLen);
-  const mActual = data.monthlyClass.actual.slice(0, mLen);
-  charts.chartMonthlyClass.setOption({
-    tooltip: { trigger: 'axis' },
-    legend: { bottom: 2, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
-    grid: { left: 40, right: 16, top: 12, bottom: 34 },
-    xAxis: { type: 'category', data: mLabels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
-    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    xAxis: { type: 'category', data: categories, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 12 } },
+    yAxis: { type: 'value', max: 100, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11, formatter: '{value}%' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [
-      { name: '计划班次', type: 'bar', data: mPlan, itemStyle: { color: '#bae0ff', borderRadius: [4,4,0,0] }, barGap: '10%', barMaxWidth: 28 },
-      { name: '实际班次', type: 'bar', data: mActual, itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 28 },
-    ],
+      { name: '当前班级', type: 'bar', data: classValues, itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 32, barGap: '20%',
+        label: { show: true, position: 'top', formatter: '{c}%', fontSize: 10, color: 'rgba(0,0,0,.45)' } },
+      { name: '全校平均', type: 'bar', data: avgValues, itemStyle: { color: '#bae0ff', borderRadius: [4,4,0,0] }, barMaxWidth: 32,
+        label: { show: true, position: 'top', formatter: '{c}%', fontSize: 10, color: 'rgba(0,0,0,.45)' } }
+    ]
   });
+}
 
-  // 3. Person days trend
-  const pdLabels = currentPeriod === 'year' ? months : currentPeriod === 'quarter' ? ['4月','5月','6月'] : ['6月'];
-  const pdData = data.personDays.slice(0, mLen);
-  charts.chartPersonDays.setOption({
-    tooltip: { trigger: 'axis', formatter: '{b}<br/>{a}: {c} 人天' },
-    grid: { left: 50, right: 16, top: 12, bottom: 24 },
-    xAxis: { type: 'category', data: pdLabels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
-    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-    series: [{
-      name: '培训人天数', type: 'line', data: pdData,
-      smooth: true, symbol: 'circle', symbolSize: 6,
-      lineStyle: { color: '#1677ff', width: 2 },
-      itemStyle: { color: '#1677ff' },
-      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(22,119,255,.15)' }, { offset: 1, color: 'rgba(22,119,255,.02)' }] } },
-    }],
-  });
+function switchTestModel(btn, model) {
+  document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTestModel = model;
+  renderResultChart();
+}
 
-  // 4. Job completion horizontal bar
-  const jd = data.jobCompletion;
-  charts.chartJobCompletion.setOption({
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    legend: { bottom: 2, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
-    grid: { left: 80, right: 20, top: 8, bottom: 34 },
-    xAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-    yAxis: { type: 'category', data: jd.jobs, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 11 }, inverse: true },
-    series: [
-      { name: '计划人数', type: 'bar', data: jd.plan, itemStyle: { color: '#bae0ff', borderRadius: [0,4,4,0] }, barMaxWidth: 14 },
-      { name: '实际人数', type: 'bar', data: jd.actual, itemStyle: { color: '#1677ff', borderRadius: [0,4,4,0] }, barMaxWidth: 14 },
-    ],
-  });
-
-  // 5. Workshop comparison grouped bar
-  const wd = data.workshop;
-  charts.chartWorkshop.setOption({
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    legend: { bottom: 2, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
-    grid: { left: 44, right: 16, top: 8, bottom: 34 },
-    xAxis: { type: 'category', data: wd.names, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 10, rotate: 15 } },
-    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-    series: [
-      { name: '计划人数', type: 'bar', data: wd.plan, itemStyle: { color: '#bae0ff', borderRadius: [4,4,0,0] }, barMaxWidth: 24 },
-      { name: '实际人数', type: 'bar', data: wd.actual, itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 24 },
-    ],
-  });
-
-  // 6. Weak TOP 5 horizontal bar (red tones)
-  const wk = data.weakTop5;
-  charts.chartWeakTop5.setOption({
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { return p[0].name + '<br/>人均失分: ' + p[0].value + ' 分'; } },
-    grid: { left: 120, right: 44, top: 6, bottom: 12 },
-    xAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', formatter: '{value} 分', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-    yAxis: { type: 'category', data: wk.subjects, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 11 }, inverse: true },
-    series: [{
-      type: 'bar', data: wk.scores,
-      itemStyle: {
-        color: function(params) {
-          const colors = ['#ff4d4f','#ff7875','#ffa39e','#ffccc7','#ffe0de'];
-          return colors[params.dataIndex] || '#ffa39e';
-        },
-        borderRadius: [0,4,4,0],
-      },
-      barMaxWidth: 18,
-      label: { show: true, position: 'right', formatter: '{c} 分', color: 'rgba(0,0,0,.45)', fontSize: 11 },
-    }],
-  });
-
-  // 7. Score distribution histogram + normal curve
-  const sd = data.scoreDist;
-  const normX = [], normY = [];
-  const totalCount = sd.counts.reduce((a,b) => a + b, 0);
-  for (let x = 30; x <= 105; x += 1) {
-    normX.push(x);
-    const z = (x - sd.mean) / sd.std;
-    const pdf = (1 / (sd.std * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
-    normY.push(Math.round(pdf * totalCount * 10 * 100) / 100);
-  }
-
+// 3. Score distribution multi-line
+function renderScoreDistChart() {
+  const labels = scoreDistribution[0];
+  const series = scoreDistribution[1].map((cls, idx) => ({
+    name: cls.className, type: 'line', data: cls.nums,
+    smooth: true, symbol: 'circle', symbolSize: 5,
+    lineStyle: { width: 2 }
+  }));
   charts.chartScoreDist.setOption({
     tooltip: { trigger: 'axis' },
-    legend: { bottom: 2, data: ['人数', '正态分布'], textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
-    grid: { left: 40, right: 20, top: 12, bottom: 34 },
-    xAxis: [
-      { type: 'category', data: sd.ranges, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
-      { type: 'category', data: normX.map(String), show: false },
-    ],
-    yAxis: [
-      { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-      { type: 'value', show: false },
-    ],
-    series: [
-      {
-        name: '人数', type: 'bar', data: sd.counts, xAxisIndex: 0, yAxisIndex: 0,
-        itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 32,
-        label: { show: true, position: 'top', color: 'rgba(0,0,0,.45)', fontSize: 10 },
-      },
-      {
-        name: '正态分布', type: 'line', data: normY, xAxisIndex: 1, yAxisIndex: 1,
-        smooth: true, symbol: 'none', lineStyle: { color: '#ff7875', width: 2, type: 'dashed' },
-      },
-    ],
+    legend: { bottom: 2, textStyle: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    grid: { left: 36, right: 16, top: 12, bottom: 36 },
+    color: ['#1677ff', '#52c41a', '#fa8c16', '#722ed1'],
+    xAxis: { type: 'category', data: labels, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 10 }, boundaryGap: false },
+    yAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: series
   });
 }
 
-// ========== CONVERSATIONAL DIGITAL HUMAN ==========
+// 4. Device gauge
+function renderDeviceGauge() {
+  document.getElementById('deviceInfo').innerHTML =
+    '<div class="device-stat">设备总数: <b>' + getIndexData.deviceNum + '</b> 台</div>' +
+    '<div class="device-stat">设备总值: <b>' + getIndexData.deviceValue + '</b> 万元</div>';
+
+  const devices = getIndexData.deviceUseRate;
+  const gaugeColors = ['#1677ff', '#52c41a', '#fa8c16', '#722ed1'];
+  const series = devices.map((d, i) => ({
+    type: 'gauge',
+    center: [(12.5 + i * 25) + '%', '55%'],
+    radius: '70%',
+    startAngle: 220,
+    endAngle: -40,
+    min: 0, max: 100,
+    splitNumber: 5,
+    pointer: { show: true, length: '55%', width: 3, itemStyle: { color: gaugeColors[i] } },
+    axisLine: {
+      lineStyle: { width: 10, color: [[d.value / 100, gaugeColors[i]], [1, '#f0f0f0']] }
+    },
+    axisTick: { show: false },
+    splitLine: { show: false },
+    axisLabel: { show: false },
+    title: { show: true, offsetCenter: [0, '80%'], fontSize: 11, color: 'rgba(0,0,0,.65)' },
+    detail: { show: true, offsetCenter: [0, '55%'], fontSize: 16, fontWeight: 700, color: gaugeColors[i], formatter: '{value}%' },
+    data: [{ value: d.value, name: d.name }]
+  }));
+
+  charts.chartDeviceGauge.setOption({ series: series });
+}
+
+// 5. Plan table with auto-scroll
+function renderPlanTable() {
+  const stateMap = { 0: ['未开始', 'state-0'], 1: ['进行中', 'state-1'], 2: ['已结束', 'state-2'] };
+  const rows = getTrainPlanData.rows;
+  // Duplicate rows for seamless scrolling
+  const allRows = [...rows, ...rows];
+  const tbody = document.getElementById('planTbody');
+  tbody.innerHTML = allRows.map(r => {
+    const [label, cls] = stateMap[r.executingState] || ['未知', 'state-0'];
+    return `<tr>
+      <td>${r.trainClass.replace(/^\d{4}年/, '')}</td>
+      <td>${r.trainLesson}</td>
+      <td>${r.trainDate}</td>
+      <td>${r.trainPlace}</td>
+      <td><span class="state-tag ${cls}">${label}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Auto scroll
+  const wrap = document.getElementById('planTableWrap');
+  let scrollTop = 0;
+  const rowHeight = 28;
+  const totalOrigHeight = rows.length * rowHeight;
+  setInterval(() => {
+    scrollTop += 0.5;
+    if (scrollTop >= totalOrigHeight) scrollTop = 0;
+    tbody.style.transform = 'translateY(-' + scrollTop + 'px)';
+  }, 50);
+}
+
+// 6. Weak analysis horizontal bar
+function renderWeakChart() {
+  const data = getWeakAnalysis.weakData;
+  const names = data.map(d => d.taskName).reverse();
+  const values = data.map(d => parseFloat(d.subtractScoreRate)).reverse();
+  charts.chartWeak.setOption({
+    tooltip: { trigger: 'axis', formatter: function(p) { return p[0].name + '<br/>失分率: ' + p[0].value + '%'; } },
+    grid: { left: 130, right: 44, top: 6, bottom: 12 },
+    xAxis: { type: 'value', axisLabel: { color: 'rgba(0,0,0,.45)', formatter: '{value}%', fontSize: 11 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    yAxis: { type: 'category', data: names, axisLabel: { color: 'rgba(0,0,0,.65)', fontSize: 11 } },
+    series: [{
+      type: 'bar', data: values, barMaxWidth: 18,
+      itemStyle: {
+        borderRadius: [0,4,4,0],
+        color: function(params) {
+          // Gradient: darkest for highest (last item = index 4 in reversed)
+          const colors = ['#ffccc7','#ffa39e','#ff7875','#ff4d4f','#cf1322'];
+          return colors[params.dataIndex] || '#ff4d4f';
+        }
+      },
+      label: { show: true, position: 'right', formatter: '{c}%', fontSize: 11, color: 'rgba(0,0,0,.45)' }
+    }]
+  });
+}
+
+// ========== XIAOAN CHAT INTEGRATION ==========
 const DEEPSEEK_KEY = 'sk-6420a1c0196149ecac72720513863fd0';
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 let xiaoanHistory = [];
 
-function xiaoan242CollectData() {
-  const d = DATA[currentPeriod];
-  const periodLabel = {year:'年度', quarter:'本季度', month:'本月'}[currentPeriod];
-  let ctx = '当前时间维度：' + periodLabel + '\n\n';
-  ctx += '## KPI指标\n';
-  d.kpi.forEach(k => { ctx += k.label + '：' + k.value + k.unit + '（趋势' + k.trend + '）- ' + k.tip + '\n'; });
-  ctx += '\n## 计划完成\n已完成' + d.planRing.completed + '项/共' + d.planRing.total + '项\n';
-  ctx += '\n## 月度办班（计划/实际）\n';
-  const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-  d.monthlyClass.plan.forEach((p, i) => { if (p > 0 || d.monthlyClass.actual[i] > 0) ctx += months[i] + '：计划' + p + '期/实际' + d.monthlyClass.actual[i] + '期\n'; });
-  ctx += '\n## 各岗位培训（计划/实际）\n';
-  d.jobCompletion.jobs.forEach((j, i) => { ctx += j + '：计划' + d.jobCompletion.plan[i] + '人/实际' + d.jobCompletion.actual[i] + '人\n'; });
-  ctx += '\n## 各车间培训（计划/实际）\n';
-  d.workshop.names.forEach((n, i) => { ctx += n + '：计划' + d.workshop.plan[i] + '人/实际' + d.workshop.actual[i] + '人\n'; });
-  ctx += '\n## 群体薄弱科目TOP5\n';
-  d.weakTop5.subjects.forEach((s, i) => { ctx += (i+1) + '. ' + s + '（人均失分' + d.weakTop5.scores[i] + '分）\n'; });
-  ctx += '\n## 成绩分布\n均分' + d.scoreDist.mean + '，标准差' + d.scoreDist.std + '\n';
-  d.scoreDist.ranges.forEach((r, i) => { ctx += r + '分：' + d.scoreDist.counts[i] + '人\n'; });
+function collectPageData() {
+  let ctx = '## 培训综合分析 - 当前页面数据\n\n';
+  const d = get7ItemData;
+  ctx += '### KPI (get7ItemData)\n';
+  ctx += '考试总数(examTotal): ' + d.examTotal + ', 理论考试数(examTheoryTotal): ' + d.examTheoryTotal + ', 实训考试数(examTrainTotal): ' + d.examTrainTotal + '\n';
+  ctx += '题目总数: ' + (d.examTheoryQuestionTotal + d.examTrainQuestionTotal) + ' (理论' + d.examTheoryQuestionTotal + '+实训' + d.examTrainQuestionTotal + ')\n\n';
+  ctx += '### 培训班出勤率 (getTrainAttendRatio)\n';
+  trainAttendData.forEach(c => { ctx += c.className + ': 出勤率' + c.trainClassAttendRatio + '%, 人数' + c.trainClassPersonNum + '人\n'; });
+  ctx += '\n### 成绩对比 (getTrainResultExam)\n';
+  const r = trainResultExam[currentTestModel];
+  ctx += '当前班级: 高分率' + r.classData[0][0] + '%, 优良率' + r.classData[0][1] + '%, 合格率' + r.classData[0][2] + '%, 班级均分' + r.classAvgScore + '\n';
+  ctx += '全校平均: 高分率' + r.avgData[0][0] + '%, 优良率' + r.avgData[0][1] + '%, 合格率' + r.avgData[0][2] + '%, 全校均分' + r.allAvgScore + '\n\n';
+  ctx += '### 设备利用率 (getIndexData)\n';
+  ctx += '设备总数(deviceNum): ' + getIndexData.deviceNum + '台, 设备总值(deviceValue): ' + getIndexData.deviceValue + '万元\n';
+  getIndexData.deviceUseRate.forEach(d => { ctx += d.name + ': ' + d.value + '%\n'; });
+  ctx += '\n### 薄弱项TOP5 (getWeakAnalysis)\n';
+  getWeakAnalysis.weakData.forEach((w, i) => { ctx += (i+1) + '. ' + w.taskName + ' 失分率' + w.subtractScoreRate + '\n'; });
   return ctx;
 }
 
@@ -675,7 +661,6 @@ const xiaoan = {
     this.renderQuickActions();
   },
 
-  // --- Draggable FAB ---
   _initFabDrag() {
     let startX, startY, origX, origY, moved;
     const fab = this.fab;
@@ -701,7 +686,6 @@ const xiaoan = {
     });
   },
 
-  // --- Draggable Panel Header ---
   _initPanelDrag() {
     let startX, startY, origX, origY;
     const header = document.getElementById('xiaoanPanelHeader');
@@ -745,9 +729,8 @@ const xiaoan = {
     this.fab.style.display = '';
   },
 
-  // --- Quick Actions ---
   renderQuickActions() {
-    const chips = ['年度计划完成了多少', '哪个月办班缺口最大', '群体薄弱科目TOP5', '推荐培训重点'];
+    const chips = ['各班出勤率对比', '薄弱项TOP5分析', '设备利用情况', '培训建议'];
     this.quickActions.innerHTML = chips.map(c =>
       `<div class="xiaoan-chip" onclick="xiaoan.handleChip('${c}')">${c}</div>`
     ).join('');
@@ -766,11 +749,10 @@ const xiaoan = {
     this.processQuery(text);
   },
 
-  // --- Voice Simulation ---
   simulateVoice() {
     if (this.mic.classList.contains('recording')) return;
     this.mic.classList.add('recording');
-    const presets = ['年度计划完成了多少', '哪个月办班缺口最大', '群体薄弱科目TOP5', '各岗位培训完成情况'];
+    const presets = ['各班出勤率对比', '薄弱项TOP5分析', '设备利用情况', '培训建议'];
     const chosen = presets[Math.floor(Math.random() * presets.length)];
     setTimeout(() => {
       this.mic.classList.remove('recording');
@@ -779,7 +761,6 @@ const xiaoan = {
     }, 2000);
   },
 
-  // --- Messages ---
   addUserMsg(text) {
     const div = document.createElement('div');
     div.className = 'xiaoan-msg user';
@@ -788,117 +769,6 @@ const xiaoan = {
     this.scrollToBottom();
   },
 
-  addSystemMsg(html, chartCfg) {
-    const id = 'xiaoan-msg-' + (++this.msgId);
-    const div = document.createElement('div');
-    div.className = 'xiaoan-msg system';
-    let chartHtml = chartCfg ? `<div class="msg-chart" id="${id}-chart"></div>` : '';
-    div.innerHTML = `<div class="xiaoan-msg-card">${html}${chartHtml}</div>`;
-    this.chat.appendChild(div);
-    this.scrollToBottom();
-    if (chartCfg) {
-      setTimeout(() => {
-        const el = document.getElementById(id + '-chart');
-        if (el) {
-          const c = echarts.init(el);
-          c.setOption(chartCfg);
-          this.chartInstances.push(c);
-        }
-      }, 50);
-    }
-    return div;
-  },
-
-  showTyping() {
-    const div = document.createElement('div');
-    div.className = 'xiaoan-msg system xiaoan-typing-wrapper';
-    div.innerHTML = `<div class="xiaoan-typing"><span></span><span></span><span></span></div>`;
-    this.chat.appendChild(div);
-    this.scrollToBottom();
-    return div;
-  },
-
-  typeText(container, html, chartCfg, cb) {
-    // Show sound wave
-    this.soundWave.classList.add('active');
-    const plain = html.replace(/<[^>]+>/g, '');
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'xiaoan-msg system';
-    const cardDiv = document.createElement('div');
-    cardDiv.className = 'xiaoan-msg-card';
-    const textSpan = document.createElement('span');
-    textSpan.className = 'typing-text';
-    cardDiv.appendChild(textSpan);
-    msgDiv.appendChild(cardDiv);
-    // Replace typing indicator with message
-    container.replaceWith(msgDiv);
-    let i = 0;
-    const cursor = document.createElement('span');
-    cursor.style.cssText = 'border-right:2px solid #1677ff;animation:blink 0.8s infinite;margin-left:1px;';
-    if (!document.getElementById('xiaoan-blink-style')) {
-      const s = document.createElement('style');
-      s.id = 'xiaoan-blink-style';
-      s.textContent = '@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}';
-      document.head.appendChild(s);
-    }
-    textSpan.appendChild(cursor);
-    const step = () => {
-      if (i < plain.length) {
-        cursor.before(plain[i]);
-        i++;
-        this.scrollToBottom();
-        setTimeout(step, 20 + Math.random() * 20);
-      } else {
-        cursor.remove();
-        // Replace plain text with rich HTML
-        textSpan.innerHTML = html;
-        // Add chart if needed
-        if (chartCfg) {
-          const chartId = 'xiaoan-msg-' + (++this.msgId) + '-chart';
-          const chartDiv = document.createElement('div');
-          chartDiv.className = 'msg-chart';
-          chartDiv.id = chartId;
-          cardDiv.appendChild(chartDiv);
-          setTimeout(() => {
-            const el = document.getElementById(chartId);
-            if (el) {
-              const c = echarts.init(el);
-              c.setOption(chartCfg);
-              this.chartInstances.push(c);
-            }
-          }, 50);
-        }
-        this.soundWave.classList.remove('active');
-        this.scrollToBottom();
-        if (cb) cb();
-      }
-    };
-    step();
-  },
-
-  scrollToBottom() {
-    this.chat.scrollTop = this.chat.scrollHeight;
-  },
-
-  // --- Proactive Insight ---
-  showProactiveInsight() {
-    const d = DATA[currentPeriod];
-    const periodLabel = {year: '年度', quarter: '本季度', month: '本月'}[currentPeriod];
-    const rate = d.planRing.completed;
-    // Find negative-trend KPIs
-    const warnings = d.kpi.filter(k => !k.up);
-    let warnText = '';
-    if (warnings.length > 0) {
-      warnText = '，' + warnings.map(k => `<b>${k.label}</b>(${k.trend})`).join('、') + '需要关注';
-    }
-    const html = `您好，我是小安，您的智能培训分析助手。<br><br>` +
-      `我注意到当前查看的是<b>${periodLabel}</b>数据：年度计划完成 <span class="highlight">${rate}%</span>${warnText}。<br><br>` +
-      `您可以问我任何关于培训数据的问题，或点击下方快捷按钮快速了解。`;
-    const typing = this.showTyping();
-    setTimeout(() => { this.typeText(typing, html); }, 600);
-  },
-
-  // --- DeepSeek Streaming ---
   addStreamMsg() {
     const id = 'xiaoan-msg-' + (++this.msgId);
     const div = document.createElement('div');
@@ -910,11 +780,26 @@ const xiaoan = {
     return document.getElementById(id + '-text');
   },
 
+  showProactiveInsight() {
+    const textEl = this.addStreamMsg();
+    const weakTop = getWeakAnalysis.weakData[0];
+    const lowAttend = trainAttendData.filter(d => d.trainClassAttendRatio < 80);
+    let warn = '';
+    if (lowAttend.length > 0) {
+      warn = '，其中<b>' + lowAttend.map(d => d.className.replace(/^\d{4}年/, '')).join('、') + '</b>出勤率低于80%需关注';
+    }
+    const html = '您好，我是小安，您的培训综合分析助手。\n\n' +
+      '当前共有 ' + get7ItemData.examTotal + ' 场考试，薄弱项TOP1为「' + weakTop.taskName + '」（失分率' + weakTop.subtractScoreRate + '）' + warn + '。\n\n' +
+      '您可以问我关于出勤率、成绩对比、设备利用等问题。';
+    textEl.textContent = html;
+    this.soundWave.classList.remove('active');
+  },
+
   async callDeepSeek(userMsg, textEl) {
     xiaoanHistory.push({ role: 'user', content: userMsg });
-    const sysPrompt = '你是"小安"，沈阳客运段职培基地的智能培训分析助手。你基于以下真实培训数据回答问题。\n\n' +
+    const sysPrompt = '你是"小安"，沈阳客运段职培基地的智能培训综合分析助手。你基于以下真实培训数据回答问题。\n\n' +
       '要求：1.必须基于提供的真实数据，不要编造 2.包含具体数字和百分比 3.分析异常值和薄弱环节 4.给出具体可操作的建议 5.回答简洁，200字以内 6.中文回答\n\n' +
-      xiaoan242CollectData();
+      collectPageData();
     const msgs = [{ role: 'system', content: sysPrompt }, ...xiaoanHistory.slice(-6)];
     try {
       const resp = await fetch(DEEPSEEK_URL, {
@@ -945,269 +830,30 @@ const xiaoan = {
       xiaoanHistory.push({ role: 'assistant', content: full });
       this.soundWave.classList.remove('active');
     } catch(err) {
-      const fallback = this.matchIntent(userMsg);
-      textEl.innerHTML = fallback.text;
+      textEl.textContent = '抱歉，连接服务暂时不可用，请稍后再试。';
       this.soundWave.classList.remove('active');
     }
   },
 
-  // --- Intent Matching & Analysis ---
   processQuery(text) {
     const textEl = this.addStreamMsg();
     this.callDeepSeek(text, textEl);
   },
 
-  matchIntent(text) {
-    const t = text.toLowerCase();
-    if (/计划/.test(t) && /(完成|兑现|进度)/.test(t)) return this.planCompletion();
-    if (/(办班|班次)/.test(t) && /(缺口|差距|差|不足|最大)/.test(t)) return this.monthlyGap();
-    if (/月/.test(t) && /(办班|班次)/.test(t)) return this.monthlyGap();
-    if (/(薄弱|弱项|短板|top|失分)/.test(t)) return this.weakTop();
-    if (/(岗位|工种)/.test(t) && /(完成|培训|情况|对比)/.test(t)) return this.jobAnalysis();
-    if (/(车间|部门)/.test(t) && /(对比|比较|参与|完成|情况)/.test(t)) return this.workshopComparison();
-    if (/(建议|推荐|重点|优化|改进|怎么办|如何)/.test(t)) return this.trainingSuggestion();
-    if (/(成绩|分数|分布|合格|及格)/.test(t)) return this.scoreSummary();
-    if (/(kpi|指标|总览|概况|大盘|总体)/.test(t)) return this.kpiSummary();
-    if (/(人天|人日|工时)/.test(t)) return this.personDaysTrend();
-    // Non-data question — guide user
-    return this.guideToDataQuestion(t);
-  },
-
-  // --- Analysis Functions ---
-  planCompletion() {
-    const d = DATA[currentPeriod];
-    const r = d.planRing;
-    const pct = ((r.completed / r.total) * 100).toFixed(1);
-    const gap = r.total - r.completed;
-    const text = `根据当前数据，年度培训计划共 <b>${r.total}</b> 项，已完成 <b>${r.completed}</b> 项，完成率 <span class="highlight">${pct}%</span>。<br><br>` +
-      `剩余 <b>${gap}</b> 项待完成。` +
-      (pct < 50 ? '当前进度偏慢，建议加快下阶段办班节奏。' : pct >= 80 ? '整体进度良好，继续保持。' : '进度基本正常，需持续关注。');
-    const chart = {
-      series: [{
-        type: 'pie', radius: ['55%', '75%'], center: ['50%', '50%'],
-        label: { show: true, position: 'center', formatter: `{val|${r.completed}%}\n{lbl|完成率}`,
-          rich: { val: { fontSize: 22, fontWeight: 700, color: '#1677ff', lineHeight: 30 }, lbl: { fontSize: 12, color: 'rgba(0,0,0,.45)' } } },
-        data: [
-          { value: r.completed, name: '已完成', itemStyle: { color: '#1677ff' } },
-          { value: gap, name: '未完成', itemStyle: { color: '#ff4d4f' } },
-        ]
-      }],
-      tooltip: { trigger: 'item', formatter: '{b}: {c}项 ({d}%)' }
-    };
-    return { text, chart };
-  },
-
-  monthlyGap() {
-    const d = DATA[currentPeriod];
-    const mc = d.monthlyClass;
-    const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-    let maxGap = 0, maxIdx = 0;
-    const gaps = [];
-    for (let i = 0; i < mc.plan.length; i++) {
-      if (mc.plan[i] === 0 && mc.actual[i] === 0) continue;
-      const g = mc.plan[i] - mc.actual[i];
-      gaps.push({ month: months[i], plan: mc.plan[i], actual: mc.actual[i], gap: g });
-      if (g > maxGap) { maxGap = g; maxIdx = gaps.length - 1; }
-    }
-    const worst = gaps[maxIdx] || { month: '-', gap: 0 };
-    const totalPlan = mc.plan.reduce((a, b) => a + b, 0);
-    const totalActual = mc.actual.reduce((a, b) => a + b, 0);
-    const text = `根据当前数据，累计计划办班 <b>${totalPlan}</b> 期，实际完成 <b>${totalActual}</b> 期。<br><br>` +
-      (maxGap > 0 ? `<b>${worst.month}</b>缺口最大，计划 ${worst.plan} 期但仅完成 ${worst.actual} 期，差距 <span class="highlight">${worst.gap} 期</span>。建议在后续月份补排。` : '各月均已完成或超额完成计划，表现优秀。');
-    const visGaps = gaps.slice(0, 6);
-    const chart = {
-      tooltip: { trigger: 'axis' },
-      grid: { left: 40, right: 10, top: 10, bottom: 30 },
-      xAxis: { type: 'category', data: visGaps.map(g => g.month), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' } },
-      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
-      series: [
-        { name: '计划', type: 'bar', data: visGaps.map(g => g.plan), itemStyle: { color: '#bae0ff', borderRadius: [3,3,0,0] }, barMaxWidth: 20 },
-        { name: '实际', type: 'bar', data: visGaps.map(g => g.actual), itemStyle: { color: '#1677ff', borderRadius: [3,3,0,0] }, barMaxWidth: 20 },
-      ]
-    };
-    return { text, chart };
-  },
-
-  weakTop() {
-    const d = DATA[currentPeriod];
-    const wk = d.weakTop5;
-    const top1 = wk.subjects[0];
-    const top1Score = wk.scores[0];
-    let list = wk.subjects.map((s, i) => `${i + 1}. ${s}（人均失分 ${wk.scores[i]} 分）`).join('<br>');
-    const text = `根据当前数据，群体薄弱科目 TOP 5 如下：<br><br>${list}<br><br>` +
-      `其中 <b>${top1}</b> 人均失分最高达 <span class="highlight">${top1Score} 分</span>，建议作为优先干预方向。`;
-    const chart = {
-      grid: { left: 120, right: 40, top: 5, bottom: 5 },
-      xAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
-      yAxis: { type: 'category', data: [...wk.subjects].reverse(), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' } },
-      series: [{
-        type: 'bar', data: [...wk.scores].reverse(),
-        itemStyle: { color: (p) => ['#ffe0de','#ffccc7','#ffa39e','#ff7875','#ff4d4f'][4 - p.dataIndex] || '#ffa39e', borderRadius: [0,3,3,0] },
-        barMaxWidth: 16, label: { show: true, position: 'right', formatter: '{c}', fontSize: 11, color: 'rgba(0,0,0,.45)' }
-      }],
-      tooltip: { trigger: 'axis' }
-    };
-    return { text, chart };
-  },
-
-  jobAnalysis() {
-    const d = DATA[currentPeriod];
-    const jd = d.jobCompletion;
-    const rates = jd.jobs.map((j, i) => ({ job: j, plan: jd.plan[i], actual: jd.actual[i], rate: ((jd.actual[i] / jd.plan[i]) * 100).toFixed(1) }));
-    rates.sort((a, b) => a.rate - b.rate);
-    const worst = rates[0];
-    const best = rates[rates.length - 1];
-    const text = `根据当前数据，各岗位培训完成情况：<br><br>` +
-      rates.map(r => `<b>${r.job}</b>：完成 ${r.actual}/${r.plan} 人（${r.rate}%）`).join('<br>') +
-      `<br><br>完成率最低的是 <span class="highlight">${worst.job}（${worst.rate}%）</span>，建议重点补充；最高的是 <b>${best.job}（${best.rate}%）</b>。`;
-    const chart = {
-      grid: { left: 85, right: 30, top: 5, bottom: 5 },
-      xAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
-      yAxis: { type: 'category', data: jd.jobs, inverse: true, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' } },
-      series: [
-        { name: '计划', type: 'bar', data: jd.plan, itemStyle: { color: '#bae0ff', borderRadius: [0,3,3,0] }, barMaxWidth: 12 },
-        { name: '实际', type: 'bar', data: jd.actual, itemStyle: { color: '#1677ff', borderRadius: [0,3,3,0] }, barMaxWidth: 12 },
-      ],
-      tooltip: { trigger: 'axis' }
-    };
-    return { text, chart };
-  },
-
-  workshopComparison() {
-    const d = DATA[currentPeriod];
-    const wd = d.workshop;
-    const rates = wd.names.map((n, i) => ({ name: n, plan: wd.plan[i], actual: wd.actual[i], rate: ((wd.actual[i] / wd.plan[i]) * 100).toFixed(1) }));
-    rates.sort((a, b) => a.rate - b.rate);
-    const worst = rates[0];
-    const text = `根据当前数据，各车间培训参与对比：<br><br>` +
-      rates.map(r => `<b>${r.name}</b>：完成 ${r.actual}/${r.plan} 人（${r.rate}%）`).join('<br>') +
-      `<br><br>参训完成率最低的是 <span class="highlight">${worst.name}（${worst.rate}%）</span>，建议督促该车间加快培训进度。`;
-    const chart = {
-      grid: { left: 40, right: 10, top: 10, bottom: 40 },
-      xAxis: { type: 'category', data: wd.names, axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.45)', rotate: 15 } },
-      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
-      series: [
-        { name: '计划', type: 'bar', data: wd.plan, itemStyle: { color: '#bae0ff', borderRadius: [3,3,0,0] }, barMaxWidth: 20 },
-        { name: '实际', type: 'bar', data: wd.actual, itemStyle: { color: '#1677ff', borderRadius: [3,3,0,0] }, barMaxWidth: 20 },
-      ],
-      tooltip: { trigger: 'axis' }
-    };
-    return { text, chart };
-  },
-
-  trainingSuggestion() {
-    const d = DATA[currentPeriod];
-    const pct = ((d.planRing.completed / d.planRing.total) * 100).toFixed(1);
-    const top1 = d.weakTop5.subjects[0];
-    const top1Score = d.weakTop5.scores[0];
-    // Find worst job
-    const jd = d.jobCompletion;
-    let worstJobIdx = 0, worstJobRate = 100;
-    jd.jobs.forEach((j, i) => {
-      const r = (jd.actual[i] / jd.plan[i]) * 100;
-      if (r < worstJobRate) { worstJobRate = r; worstJobIdx = i; }
-    });
-    const worstJob = jd.jobs[worstJobIdx];
-    const worstJobGap = jd.plan[worstJobIdx] - jd.actual[worstJobIdx];
-    // Find worst workshop
-    const wd = d.workshop;
-    let worstWsIdx = 0, worstWsRate = 100;
-    wd.names.forEach((n, i) => {
-      const r = (wd.actual[i] / wd.plan[i]) * 100;
-      if (r < worstWsRate) { worstWsRate = r; worstWsIdx = i; }
-    });
-    const worstWs = wd.names[worstWsIdx];
-
-    const text = `根据当前数据综合分析，为您生成以下培训优化建议：<br><br>` +
-      `<b>1. 计划推进</b><br>当前计划完成率 ${pct}%，` +
-      (pct < 50 ? '进度偏慢，建议加快办班节奏，在下阶段集中排课。' : '进度基本正常，继续按计划执行。') +
-      `<br><br><b>2. 薄弱专项</b><br>「${top1}」人均失分 ${top1Score} 分，位列薄弱点第一，建议增设专项强化班，提高实操训练频次。` +
-      `<br><br><b>3. 岗位补缺</b><br>「${worstJob}」岗位完成率最低（${worstJobRate.toFixed(1)}%），缺口 ${worstJobGap} 人，建议优先安排补训。` +
-      `<br><br><b>4. 车间督促</b><br>「${worstWs}」车间参训率最低（${worstWsRate.toFixed(1)}%），建议与该车间协调培训排期。` +
-      `<br><br><b>5. 暑运保障</b><br>暑运期间建议优先安排安全生产和应急处置培训，确保一线人员覆盖率达到 100%。`;
-    return { text, chart: null };
-  },
-
-  scoreSummary() {
-    const d = DATA[currentPeriod];
-    const sd = d.scoreDist;
-    const total = sd.counts.reduce((a, b) => a + b, 0);
-    const below60 = sd.counts[0] + sd.counts[1];
-    const above80 = sd.counts[4] + sd.counts[5];
-    const failRate = ((below60 / total) * 100).toFixed(1);
-    const excellentRate = ((above80 / total) * 100).toFixed(1);
-    const text = `根据当前数据，班级成绩分布情况：<br><br>` +
-      `考核总人数 <b>${total}</b> 人，平均分 <span class="highlight">${sd.mean}</span> 分（标准差 ${sd.std}）。<br>` +
-      `不及格率（<60分）：<b>${failRate}%</b>（${below60} 人）<br>` +
-      `优秀率（>=80分）：<b>${excellentRate}%</b>（${above80} 人）<br><br>` +
-      (below60 > total * 0.05 ? '不及格人数偏多，建议分析低分人群特征并安排补考或辅导。' : '整体成绩分布良好。');
-    const chart = {
-      grid: { left: 40, right: 10, top: 10, bottom: 30 },
-      xAxis: { type: 'category', data: sd.ranges, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' } },
-      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
-      series: [{ type: 'bar', data: sd.counts, itemStyle: { color: '#1677ff', borderRadius: [3,3,0,0] }, barMaxWidth: 30,
-        label: { show: true, position: 'top', fontSize: 10, color: 'rgba(0,0,0,.45)' } }],
-      tooltip: { trigger: 'axis' }
-    };
-    return { text, chart };
-  },
-
-  kpiSummary() {
-    const d = DATA[currentPeriod];
-    const periodLabel = {year: '年度', quarter: '本季度', month: '本月'}[currentPeriod];
-    let lines = d.kpi.map(k => {
-      const icon = k.up ? '<span style="color:#52c41a">&#9650;</span>' : '<span style="color:#ff4d4f">&#9660;</span>';
-      return `<b>${k.label}</b>：${k.value}${k.unit} ${icon} ${k.trend}`;
-    }).join('<br>');
-    const warnings = d.kpi.filter(k => !k.up);
-    let warnText = '';
-    if (warnings.length > 0) {
-      warnText = '<br><br>需重点关注：' + warnings.map(k => `<b>${k.label}</b>出现下降趋势（${k.trend}），${k.tip}`).join('；') + '。';
-    }
-    const text = `根据当前数据，${periodLabel} KPI 指标总览：<br><br>${lines}${warnText}`;
-    return { text, chart: null };
-  },
-
-  personDaysTrend() {
-    const d = DATA[currentPeriod];
-    const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-    const active = [];
-    d.personDays.forEach((v, i) => { if (v > 0) active.push({ month: months[i], value: v }); });
-    const total = active.reduce((s, a) => s + a.value, 0);
-    const max = active.reduce((m, a) => a.value > m.value ? a : m, active[0]);
-    const min = active.reduce((m, a) => a.value < m.value ? a : m, active[0]);
-    const text = `根据当前数据，培训人天数走势：<br><br>` +
-      `累计培训 <b>${total}</b> 人天，峰值出现在 <b>${max.month}</b>（${max.value} 人天），` +
-      `最低为 <b>${min.month}</b>（${min.value} 人天）。<br><br>` +
-      (active.length >= 2 && active[active.length - 1].value > active[active.length - 2].value ? '近期呈上升趋势，培训力度在加大。' : '近期呈平稳或下降趋势，可适当增加培训投入。');
-    const chart = {
-      grid: { left: 50, right: 10, top: 10, bottom: 30 },
-      xAxis: { type: 'category', data: active.map(a => a.month), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' } },
-      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
-      series: [{ type: 'line', data: active.map(a => a.value), smooth: true, symbol: 'circle', symbolSize: 5,
-        lineStyle: { color: '#1677ff', width: 2 }, itemStyle: { color: '#1677ff' },
-        areaStyle: { color: { type: 'linear', x:0,y:0,x2:0,y2:1, colorStops: [{offset:0,color:'rgba(22,119,255,.12)'},{offset:1,color:'rgba(22,119,255,.02)'}] } }
-      }],
-      tooltip: { trigger: 'axis', formatter: '{b}: {c} 人天' }
-    };
-    return { text, chart };
-  },
-
-  guideToDataQuestion(input) {
-    const hints = ['年度计划完成了多少', '哪个月办班缺口最大', '群体薄弱科目TOP5', '各岗位培训完成情况', '推荐培训重点'];
-    const text = `我是小安，专注于培训数据分析。您问的"<span class="highlight">${input}</span>"不在我的数据分析能力范围内，但我可以帮您分析以下内容：<br><br>` +
-      `<b>试试这样问我：</b><br>` +
-      hints.map(h => `- 「${h}」`).join('<br>') +
-      `<br><br>您也可以直接点击下方的快捷按钮，快速获取数据洞察。`;
-    return { text, chart: null };
-  },
+  scrollToBottom() {
+    this.chat.scrollTop = this.chat.scrollHeight;
+  }
 };
 
 // ========== RENDER ALL ==========
 function renderAll() {
-  const d = DATA[currentPeriod];
-  renderKPI(d);
-  renderCharts(d);
+  renderKPI();
+  renderAttendChart();
+  renderResultChart();
+  renderScoreDistChart();
+  renderDeviceGauge();
+  renderPlanTable();
+  renderWeakChart();
 }
 
 // ========== INIT ==========

@@ -2,131 +2,90 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=1440" />
+  <meta name="viewport" content="width=1920" />
   <title>教学质量分析 - 沈阳客运职培基地</title>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100vh; overflow: hidden; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1440px; color: rgba(0,0,0,.85); display: flex; flex-direction: column; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-width: 1920px; color: rgba(0,0,0,.85); display: flex; flex-direction: column; }
     .header { background: #fff; padding: 0 24px; height: 42px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
     .breadcrumb { font-size: 14px; color: rgba(0,0,0,.45); }
     .breadcrumb a { color: #1677ff; text-decoration: none; }
     .breadcrumb a:hover { text-decoration: underline; }
-    .content { max-width: 1400px; width: 100%; margin: 0 auto; padding: 6px 24px 0; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
-    .page-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-shrink: 0; }
-    .page-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,.85); }
-    .card { background: #fff; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; flex-shrink: 0; }
-    .card-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
+    .content { width: 100%; padding: 8px 24px 0; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .page-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; flex-shrink: 0; }
+    .page-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,.85); }
+    .card { background: #fff; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.03); border: 1px solid #f0f0f0; flex-shrink: 0; }
+    .card-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
     .card-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
+    .card-subtitle { font-size: 11px; color: rgba(0,0,0,.35); font-weight: 400; margin-left: 8px; }
     .btn { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,.85); transition: all .2s; gap: 6px; }
     .btn:hover { border-color: #1677ff; color: #1677ff; }
     .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
     .btn-primary:hover { background: #4096ff; border-color: #4096ff; color: #fff; }
-    .btn-sm { padding: 3px 10px; font-size: 13px; }
-    .form-select { padding: 5px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; color: rgba(0,0,0,.85); min-width: 130px; }
-    .form-select:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
-    .form-input { padding: 5px 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; background: #fff; min-width: 180px; }
-    .form-input:focus { outline: none; border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,.1); }
-    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
     .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
     .tag-blue { background: #e6f7ff; color: #1677ff; border: 1px solid #91d5ff; }
     .tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
     .tag-red { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
-    .tag-purple { background: #f9f0ff; color: #722ed1; border: 1px solid #d3adf7; }
 
-    .filter-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    /* KPI Row */
+    .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 8px; flex-shrink: 0; }
+    .kpi-card { background: #fff; border-radius: 8px; padding: 12px 16px; text-align: center; border: 1px solid #f0f0f0; }
+    .kpi-value { font-size: 24px; font-weight: 700; color: #1677ff; line-height: 1.2; }
+    .kpi-value .unit { font-size: 13px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
+    .kpi-label { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
 
-    /* Tabs */
-    .tab-bar { display: flex; gap: 0; margin-bottom: 6px; border-bottom: 2px solid #f0f0f0; flex-shrink: 0; }
-    .tab-item { padding: 5px 20px; font-size: 13px; font-weight: 500; color: rgba(0,0,0,.45); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; user-select: none; }
-    .tab-item:hover { color: #1677ff; }
-    .tab-item.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 600; }
-    .tab-panel { display: none; flex: 1; min-height: 0; }
-    .tab-panel.active { display: flex; flex-direction: column; }
+    /* Table */
+    .table-wrapper { flex: 1; overflow-y: auto; border-radius: 8px; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
+    .data-table thead { position: sticky; top: 0; z-index: 2; }
+    .data-table th { background: #fafafa; padding: 8px 10px; text-align: center; font-weight: 600; border-bottom: 1px solid #f0f0f0; white-space: nowrap; font-size: 12px; color: rgba(0,0,0,.65); }
+    .data-table td { padding: 7px 10px; border-bottom: 1px solid #f5f5f5; text-align: center; white-space: nowrap; }
+    .data-table tbody tr { cursor: pointer; transition: background .15s; }
+    .data-table tbody tr:hover { background: #e6f4ff; }
+    .data-table .name-cell { color: #1677ff; font-weight: 500; cursor: pointer; }
+    .data-table .name-cell:hover { text-decoration: underline; }
+    .score-bold { font-weight: 700; }
+    .score-green { color: #52c41a; }
+    .score-blue { color: #1677ff; }
+    .score-orange { color: #fa8c16; }
+    .score-red { color: #ff4d4f; }
+    .formula-note { font-size: 11px; color: rgba(0,0,0,.35); padding: 6px 0 0; flex-shrink: 0; }
 
-    /* Teacher Card Grid */
-    .teacher-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex: 1; min-height: 0; align-content: start; overflow: auto; }
-    .teacher-card { background: #fff; border-radius: 8px; border: 1px solid #f0f0f0; padding: 8px 10px; cursor: pointer; transition: all .25s; position: relative; overflow: hidden; }
-    .teacher-card:hover { border-color: #1677ff; box-shadow: 0 4px 12px rgba(22,119,255,.12); transform: translateY(-1px); }
-    .teacher-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-    .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
-    .teacher-info { flex: 1; }
-    .teacher-name { font-size: 13px; font-weight: 600; color: rgba(0,0,0,.85); margin-bottom: 0; }
-    .teacher-meta { font-size: 11px; color: rgba(0,0,0,.45); }
-    .teacher-card-mid { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-    .mini-radar { width: 80px; height: 58px; flex-shrink: 0; }
-    .score-block { text-align: center; flex: 1; }
-    .score-number { font-size: 22px; font-weight: 700; color: #1677ff; line-height: 1.1; }
-    .score-label { font-size: 11px; color: rgba(0,0,0,.45); margin-top: 1px; }
-    .teacher-card-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 2px; }
-    .view-detail-btn { padding: 2px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; border: 1px solid #1677ff; background: #fff; color: #1677ff; transition: all .2s; }
-    .view-detail-btn:hover { background: #1677ff; color: #fff; }
-
-    /* Detail Page */
-    .detail-layout { display: grid; grid-template-columns: 280px 1fr 360px; gap: 16px; }
-    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #1677ff; cursor: pointer; margin-bottom: 12px; padding: 4px 0; }
+    /* Detail View */
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #1677ff; cursor: pointer; margin-bottom: 8px; padding: 4px 0; flex-shrink: 0; }
     .back-btn:hover { text-decoration: underline; }
-    .profile-card { text-align: center; }
-    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: #fff; margin: 0 auto 12px; border: 3px solid #e6f0ff; }
-    .profile-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
-    .profile-id { font-size: 13px; color: rgba(0,0,0,.45); margin-bottom: 16px; }
+    .detail-layout { display: grid; grid-template-columns: 280px 1fr 1fr; gap: 12px; flex: 1; min-height: 0; overflow: hidden; }
+    .detail-col { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow-y: auto; }
+    .profile-card { text-align: center; padding: 16px 12px; }
+    .profile-avatar { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; color: #fff; margin: 0 auto 10px; border: 3px solid #e6f0ff; background: #1677ff; }
+    .profile-name { font-size: 17px; font-weight: 600; margin-bottom: 2px; }
+    .profile-dept { font-size: 13px; color: rgba(0,0,0,.45); margin-bottom: 12px; }
     .info-list { list-style: none; text-align: left; }
-    .info-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+    .info-list li { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
     .info-list li .lbl { color: rgba(0,0,0,.45); }
     .info-list li .val { color: rgba(0,0,0,.85); font-weight: 500; }
-    .big-score { text-align: center; padding: 12px 0; }
-    .big-score .number { font-size: 48px; font-weight: 700; color: #1677ff; }
-    .big-score .rank { font-size: 14px; color: rgba(0,0,0,.45); margin-top: 4px; }
-    .big-score .level { display: inline-block; margin-top: 8px; padding: 4px 16px; border-radius: 20px; font-size: 14px; }
-    .level-excellent { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
-    .level-good { background: #e6f7ff; color: #1677ff; border: 1px solid #91d5ff; }
-    .level-pass { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+    .gauge-box { height: 180px; }
+    .add-score-text { text-align: center; font-size: 13px; color: #fa8c16; font-weight: 500; margin-top: -4px; }
+    .chart-box { min-height: 180px; }
+    .dim-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 13px; }
+    .dim-bar-label { width: 60px; flex-shrink: 0; color: rgba(0,0,0,.65); text-align: right; }
+    .dim-bar-track { flex: 1; height: 20px; background: #f5f5f5; border-radius: 4px; overflow: hidden; position: relative; }
+    .dim-bar-fill { height: 100%; border-radius: 4px; transition: width .5s; }
+    .dim-bar-text { width: 130px; flex-shrink: 0; font-size: 12px; color: rgba(0,0,0,.55); text-align: left; }
 
-    .dim-card { margin-bottom: 12px; }
-    .dim-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .dim-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,.85); }
-    .dim-weight { font-size: 12px; color: rgba(0,0,0,.45); }
-    .dim-stat { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; }
-    .dim-stat .ds-label { color: rgba(0,0,0,.45); min-width: 120px; }
-    .dim-stat .ds-value { font-weight: 600; color: rgba(0,0,0,.85); }
-    .progress-bar { height: 8px; background: #f0f0f0; border-radius: 4px; flex: 1; overflow: hidden; }
-    .progress-fill { height: 100%; border-radius: 4px; background: #1677ff; }
-    .review-item { padding: 10px 12px; background: #fafafa; border-radius: 6px; margin-bottom: 8px; font-size: 13px; color: rgba(0,0,0,.65); border-left: 3px solid #1677ff; }
-    .review-item .ri-score { color: #fa8c16; font-weight: 600; }
-    .research-table { width: 100%; font-size: 13px; border-collapse: collapse; }
-    .research-table th { background: #fafafa; padding: 8px 10px; text-align: left; font-weight: 600; border-bottom: 1px solid #f0f0f0; }
-    .research-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
+    /* Grouped horizontal bars for sub-dimensions */
+    .sub-dim-group { margin-bottom: 10px; }
+    .sub-dim-group-name { font-size: 12px; font-weight: 600; color: rgba(0,0,0,.75); margin-bottom: 4px; }
+    .sub-bar-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; font-size: 11px; }
+    .sub-bar-label { width: 48px; flex-shrink: 0; color: rgba(0,0,0,.45); text-align: right; }
+    .sub-bar-track { flex: 1; height: 14px; background: #f5f5f5; border-radius: 3px; overflow: hidden; }
+    .sub-bar-fill { height: 100%; border-radius: 3px; }
+    .sub-bar-val { width: 40px; font-size: 11px; color: rgba(0,0,0,.55); }
 
-    /* Overview Section */
-    .overview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; flex-shrink: 0; }
-    .overview-kpi { text-align: center; padding: 6px 6px; }
-    .kpi-value { font-size: 20px; font-weight: 700; color: #1677ff; line-height: 1.1; }
-    .kpi-label { font-size: 11px; color: rgba(0,0,0,.45); margin-top: 2px; }
-    .kpi-trend { font-size: 11px; margin-top: 1px; }
-    .kpi-trend.up { color: #52c41a; }
-    .kpi-trend.down { color: #ff4d4f; }
-    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0; flex: 1; min-height: 0; }
-    .chart-box { height: 100%; min-height: 120px; }
-    .charts-row > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; flex-shrink: 1; }
-    .charts-row > .card > .chart-box { flex: 1; min-height: 0; }
-    .section-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: rgba(0,0,0,.85); display: flex; align-items: center; gap: 8px; }
-    .section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #1677ff; border-radius: 2px; }
-
-    /* Weight Modal */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-    .modal { background: #fff; border-radius: 12px; width: 480px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
-    .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
-    .weight-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .weight-label { width: 80px; font-size: 14px; color: rgba(0,0,0,.65); }
-    .weight-slider { flex: 1; -webkit-appearance: none; height: 6px; border-radius: 3px; background: #f0f0f0; outline: none; }
-    .weight-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #1677ff; cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
-    .weight-value { width: 50px; text-align: right; font-size: 14px; font-weight: 600; color: #1677ff; }
-    .weight-total { text-align: center; font-size: 14px; margin: 12px 0; padding: 8px; border-radius: 6px; }
-    .weight-total.ok { background: #f6ffed; color: #52c41a; }
-    .weight-total.err { background: #fff2f0; color: #ff4d4f; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+    .hidden { display: none !important; }
 
     /* Xiaoan FAB */
     .xiaoan-fab {
@@ -153,7 +112,6 @@
     .xiaoan-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 950; opacity: 0; pointer-events: none; transition: opacity .3s; }
     .xiaoan-overlay.open { opacity: 1; pointer-events: all; }
 
-    /* Xiaoan Panel Wrapper */
     .xiaoan-wrapper {
       position: fixed; bottom: 40px; right: 28px; z-index: 960;
       display: flex; align-items: flex-end; gap: 0;
@@ -162,7 +120,6 @@
     }
     .xiaoan-wrapper.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: all; }
 
-    /* Left half-body image */
     .xiaoan-avatar-side {
       width: 160px; flex-shrink: 0; align-self: flex-end;
       pointer-events: none; position: relative; z-index: 1;
@@ -170,7 +127,6 @@
     }
     .xiaoan-avatar-side img { width: 100%; display: block; filter: drop-shadow(2px 2px 8px rgba(0,0,0,.10)); }
 
-    /* Right panel */
     .xiaoan-panel {
       width: 560px; background: #fff; border-radius: 16px;
       box-shadow: 0 12px 40px rgba(0,0,0,.12); overflow: hidden;
@@ -192,7 +148,6 @@
     }
     .xiaoan-panel-close:hover { background: #ffe6e6; color: #ff4d4f; }
 
-    /* Sound wave bar */
     .xa-wave-bar { display: flex; gap: 2px; align-items: flex-end; height: 16px; margin-left: 8px; }
     .xa-wave-bar.active .xa-wave-line { animation: xaWave .6s ease-in-out infinite alternate; }
     .xa-wave-line { width: 2px; background: #1677ff; border-radius: 1px; height: 4px; }
@@ -206,13 +161,11 @@
       100% { height: 16px; }
     }
 
-    /* Chat body */
     .xiaoan-chat-body {
       flex: 1; overflow-y: auto; padding: 16px 20px; min-height: 280px; max-height: 420px;
       display: flex; flex-direction: column; gap: 12px;
     }
 
-    /* Message bubbles */
     .xa-msg { max-width: 100%; animation: xaMsgIn .3s ease; }
     @keyframes xaMsgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .xa-msg-system {
@@ -230,7 +183,6 @@
     .xa-typing-cursor { display: inline-block; width: 2px; height: 14px; background: #1677ff; margin-left: 2px; vertical-align: middle; animation: xaBlink 1s step-end infinite; }
     @keyframes xaBlink { 50% { opacity: 0; } }
 
-    /* Quick action chips */
     .xa-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 20px; border-top: 1px solid #f5f5f5; }
     .xa-chip {
       padding: 6px 14px; border-radius: 16px; font-size: 12px;
@@ -239,7 +191,6 @@
     }
     .xa-chip:hover { background: #1677ff; color: #fff; border-color: #1677ff; }
 
-    /* Input bar */
     .xa-input-bar {
       display: flex; align-items: center; gap: 8px; padding: 12px 16px;
       border-top: 1px solid #f0f0f0; background: #fff;
@@ -264,8 +215,6 @@
     }
     .xa-send-btn:hover { background: #4096ff; }
     .xa-send-btn svg { fill: #fff; width: 16px; height: 16px; }
-
-    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -273,120 +222,52 @@
 <!-- Header -->
 <div class="header">
   <div class="breadcrumb">
-    <a href="#">首页</a> / <a href="#">实训技能评价分析</a> / 教学质量分析
+    <a href="../">Demo</a> / <a href="#">实训技能评价分析</a> / 教学质量分析
   </div>
 </div>
 
-<!-- List View -->
-<div class="content" id="listView">
+<!-- ===== View 1: Overview ===== -->
+<div class="content" id="overviewView">
   <div class="page-title-row">
-    <div class="page-title">教学质量分析</div>
-    <button class="btn" onclick="openWeightModal()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="6" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="12" cy="18" r="2"/></svg>
-      权重配置
-    </button>
+    <div class="page-title">教学质量分析 - 整体概览</div>
   </div>
 
-  <!-- Filter Bar -->
-  <div class="card" style="padding: 6px 12px; margin-bottom: 6px;">
-    <div class="filter-bar" style="margin-bottom:0;">
-      <input class="form-input" id="searchName" placeholder="搜索教师姓名..." oninput="filterTeachers()">
-      <select class="form-select" id="filterDept" onchange="filterTeachers()">
-        <option value="">全部部门</option>
-        <option value="客运一车间">客运一车间</option>
-        <option value="客运二车间">客运二车间</option>
-        <option value="安全科">安全科</option>
-        <option value="培训中心">培训中心</option>
-      </select>
-      <select class="form-select" id="filterPost" onchange="filterTeachers()">
-        <option value="">全部岗位</option>
-        <option value="高级讲师">高级讲师</option>
-        <option value="讲师">讲师</option>
-        <option value="助理讲师">助理讲师</option>
-        <option value="实训指导员">实训指导员</option>
-      </select>
-    </div>
-  </div>
+  <!-- KPI Cards -->
+  <div class="kpi-row" id="kpiRow"></div>
 
-  <!-- Tabs -->
-  <div class="tab-bar">
-    <div class="tab-item active" onclick="switchTab('overview')">整体概览</div>
-    <div class="tab-item" onclick="switchTab('teachers')">教师分析</div>
-  </div>
-
-  <!-- Tab 1: Overview -->
-  <div class="tab-panel active" id="tabOverview">
-    <div class="overview-grid" id="overviewKpis"></div>
-    <div class="charts-row" style="margin-bottom: 8px;">
-      <div class="card" style="margin-bottom:0;">
-        <div class="section-title">四维能力全站均值</div>
-        <div class="chart-box" id="chartDimAvg"></div>
-      </div>
-      <div class="card" style="margin-bottom:0;">
-        <div class="section-title">部门教学质量对比</div>
-        <div class="chart-box" id="chartDeptCompare"></div>
-      </div>
+  <!-- Teacher Table -->
+  <div class="card" style="flex:1; display:flex; flex-direction:column; min-height:0; margin-bottom:0; padding-bottom:6px;">
+    <div class="card-title">教师评估列表 <span class="card-subtitle">数据来源: evaqualityteachassessList | 点击教师姓名查看详情</span></div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>年度</th>
+            <th>教师姓名</th>
+            <th>教师类型</th>
+            <th>单位</th>
+            <th>随堂听课</th>
+            <th>教学检查</th>
+            <th>学员评价</th>
+            <th>三项合计</th>
+            <th>加分</th>
+            <th>总分</th>
+          </tr>
+        </thead>
+        <tbody id="teacherTableBody"></tbody>
+      </table>
     </div>
-    <div class="charts-row">
-      <div class="card" style="margin-bottom:0;">
-        <div class="section-title">教师综合评分分布</div>
-        <div class="chart-box" id="chartScoreDist"></div>
-      </div>
-      <div class="card" style="margin-bottom:0;">
-        <div class="section-title">全站教学质量趋势</div>
-        <div class="chart-box" id="chartTrend"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tab 2: Teacher Grid -->
-  <div class="tab-panel" id="tabTeachers">
-    <div style="margin-bottom:4px;">
-      <div class="section-title">教师个人分析 <span style="font-size:11px;font-weight:400;color:rgba(0,0,0,.45);margin-left:8px;">点击卡片查看详情</span></div>
-    </div>
-    <div class="teacher-grid" id="teacherGrid"></div>
+    <div class="formula-note">总分 = 随堂听课 + 教学检查 + 学员评价 + 加分项</div>
   </div>
 </div>
 
-<!-- Detail View -->
+<!-- ===== View 2: Teacher Detail ===== -->
 <div class="content hidden" id="detailView">
-  <div class="back-btn" onclick="showList()">
+  <div class="back-btn" onclick="showOverview()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1677ff" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-    返回教师列表
+    返回概览
   </div>
   <div class="detail-layout" id="detailContent"></div>
-</div>
-
-<!-- Weight Modal -->
-<div class="modal-overlay" id="weightModal">
-  <div class="modal">
-    <div class="modal-title">评价权重配置</div>
-    <div class="weight-row">
-      <span class="weight-label">教学效果</span>
-      <input type="range" class="weight-slider" id="w1" min="0" max="100" value="40" oninput="updateWeights()">
-      <span class="weight-value" id="w1v">40%</span>
-    </div>
-    <div class="weight-row">
-      <span class="weight-label">学员反馈</span>
-      <input type="range" class="weight-slider" id="w2" min="0" max="100" value="25" oninput="updateWeights()">
-      <span class="weight-value" id="w2v">25%</span>
-    </div>
-    <div class="weight-row">
-      <span class="weight-label">职业素养</span>
-      <input type="range" class="weight-slider" id="w3" min="0" max="100" value="20" oninput="updateWeights()">
-      <span class="weight-value" id="w3v">20%</span>
-    </div>
-    <div class="weight-row">
-      <span class="weight-label">教研成果</span>
-      <input type="range" class="weight-slider" id="w4" min="0" max="100" value="15" oninput="updateWeights()">
-      <span class="weight-value" id="w4v">15%</span>
-    </div>
-    <div class="weight-total ok" id="weightTotal">合计：100%</div>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeWeightModal()">取消</button>
-      <button class="btn btn-primary" id="weightSaveBtn" onclick="saveWeights()">保存</button>
-    </div>
-  </div>
 </div>
 
 <!-- Xiaoan FAB -->
@@ -400,7 +281,7 @@
 <!-- Xiaoan Overlay -->
 <div class="xiaoan-overlay" id="xiaoanOverlay" onclick="closeXiaoan()"></div>
 
-<!-- Xiaoan Wrapper (avatar + panel) -->
+<!-- Xiaoan Wrapper -->
 <div class="xiaoan-wrapper" id="xiaoanWrapper">
   <div class="xiaoan-avatar-side">
     <img src="xiaoan.png" alt="小安">
@@ -409,8 +290,8 @@
     <div class="xiaoan-panel-header" id="xiaoanPanelHeader">
       <div class="xa-dot"></div>
       <div class="xa-info">
-        <div class="xa-name">小安 · 智能分析</div>
-        <div class="xa-sub">教学质量数据洞察</div>
+        <div class="xa-name">小安 - 智能分析</div>
+        <div class="xa-sub">教学质量分析数据洞察</div>
       </div>
       <div class="xa-wave-bar" id="xaWaveBar">
         <div class="xa-wave-line"></div><div class="xa-wave-line"></div><div class="xa-wave-line"></div><div class="xa-wave-line"></div><div class="xa-wave-line"></div>
@@ -420,7 +301,7 @@
     <div class="xiaoan-chat-body" id="xiaoanChatBody"></div>
     <div class="xa-chips" id="xiaoanChips"></div>
     <div class="xa-input-bar">
-      <input class="xa-input" id="xiaoanInput" placeholder="输入问题，分析教学数据..." onkeydown="if(event.key==='Enter')sendXiaoanMsg()">
+      <input class="xa-input" id="xiaoanInput" placeholder="输入问题，分析教学质量数据..." onkeydown="if(event.key==='Enter')sendXiaoanMsg()">
       <button class="xa-mic-btn" id="xiaoanMic" onclick="xiaoanVoice()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(0,0,0,.45)"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
       </button>
@@ -432,435 +313,406 @@
 </div>
 
 <script>
-// ===== Tab Switching =====
-let currentTab = 'overview';
-function switchTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
-  if (tab === 'overview') {
-    document.querySelector('.tab-item:nth-child(1)').classList.add('active');
-    document.getElementById('tabOverview').classList.add('active');
-    // Resize charts after tab switch
-    setTimeout(() => { overviewCharts.forEach(c => { if (c && !c.isDisposed()) c.resize(); }); }, 50);
-  } else {
-    document.querySelector('.tab-item:nth-child(2)').classList.add('active');
-    document.getElementById('tabTeachers').classList.add('active');
-    renderList();
-  }
-}
+// ===== Mock Data (using REAL API field names) =====
 
-// ===== Mock Data =====
-const COLORS = ['#1677ff','#52c41a','#fa8c16','#722ed1','#eb2f96','#13c2c2','#2f54eb','#faad14','#f5222d'];
-const teachers = [
-  { id:'T001', name:'王建国', dept:'培训中心', post:'高级讲师', years:12, courses:8, avatar:'#1677ff',
-    dims: { teach:91.2, feedback:88.5, profess:95.0, research:82.0 },
-    passRate:94.5, progress:14.2, satisfaction:4.7, attitude:4.8, quality:4.6, interact:4.7,
-    attendance:99.2, reviews:['讲解细致，理论联系实际，收获很大','课堂节奏好，重点突出','教学方法灵活，案例丰富'],
-    profItems:[{n:'教学责任心',s:96},{n:'职业道德',s:94},{n:'团队协作',s:93}],
-    researches:[{n:'铁路客运安全培训体系研究',t:'论文',d:'2025-03',s:'已发表'},{n:'实训考核标准化方案',t:'标准',d:'2025-06',s:'已通过'},{n:'VR应急演练课件开发',t:'课件',d:'2025-08',s:'开发中'},{n:'客运服务质量提升研究',t:'课题',d:'2025-01',s:'已结题'}],
-    trends:[88,90,92,93,94.5] },
-  { id:'T002', name:'李明辉', dept:'客运一车间', post:'讲师', years:8, courses:6, avatar:'#52c41a',
-    dims: { teach:85.6, feedback:90.2, profess:88.0, research:72.5 },
-    passRate:91.2, progress:11.5, satisfaction:4.6, attitude:4.7, quality:4.5, interact:4.8,
-    attendance:97.8, reviews:['互动性强，课堂氛围好','善于引导学员思考','实操指导耐心细致'],
-    profItems:[{n:'教学责任心',s:90},{n:'职业道德',s:88},{n:'团队协作',s:86}],
-    researches:[{n:'客运服务礼仪培训手册',t:'教材',d:'2025-05',s:'已出版'},{n:'智能化培训系统应用',t:'论文',d:'2025-09',s:'审稿中'},{n:'应急处置模拟训练方案',t:'方案',d:'2025-07',s:'已通过'}],
-    trends:[83,84,86,88,91.2] },
-  { id:'T003', name:'张晓红', dept:'安全科', post:'高级讲师', years:15, courses:10, avatar:'#fa8c16',
-    dims: { teach:93.8, feedback:86.0, profess:96.5, research:88.0 },
-    passRate:96.1, progress:15.8, satisfaction:4.5, attitude:4.6, quality:4.5, interact:4.3,
-    attendance:99.5, reviews:['专业功底深厚，安全知识讲解到位','案例分析深入，有实战价值','课程体系完整'],
-    profItems:[{n:'教学责任心',s:97},{n:'职业道德',s:96},{n:'团队协作',s:95}],
-    researches:[{n:'铁路安全应急预案研究',t:'课题',d:'2024-12',s:'已结题'},{n:'安全生产标准化培训方案',t:'标准',d:'2025-04',s:'已通过'},{n:'事故案例教学法研究',t:'论文',d:'2025-06',s:'已发表'},{n:'安全VR仿真课件',t:'课件',d:'2025-10',s:'开发中'},{n:'安全管理能力评估体系',t:'标准',d:'2025-02',s:'已通过'}],
-    trends:[90,91,93,95,96.1] },
-  { id:'T004', name:'陈伟', dept:'客运二车间', post:'实训指导员', years:5, courses:7, avatar:'#722ed1',
-    dims: { teach:78.5, feedback:82.0, profess:85.0, research:60.0 },
-    passRate:86.3, progress:9.8, satisfaction:4.3, attitude:4.4, quality:4.2, interact:4.3,
-    attendance:96.5, reviews:['实操演示规范，容易理解','讲解速度适中','希望增加更多案例'],
-    profItems:[{n:'教学责任心',s:86},{n:'职业道德',s:84},{n:'团队协作',s:85}],
-    researches:[{n:'客运实训操作规程',t:'规程',d:'2025-08',s:'编写中'}],
-    trends:[80,82,84,85,86.3] },
-  { id:'T005', name:'刘丽娟', dept:'培训中心', post:'讲师', years:6, courses:5, avatar:'#eb2f96',
-    dims: { teach:82.0, feedback:91.5, profess:87.0, research:68.0 },
-    passRate:89.5, progress:10.2, satisfaction:4.8, attitude:4.9, quality:4.7, interact:4.8,
-    attendance:98.0, reviews:['授课风格亲切，学员参与度高','善于运用多媒体教学','课后答疑认真负责'],
-    profItems:[{n:'教学责任心',s:88},{n:'职业道德',s:87},{n:'团队协作',s:90}],
-    researches:[{n:'混合式教学模式探索',t:'论文',d:'2025-07',s:'审稿中'},{n:'在线培训课程设计',t:'课件',d:'2025-04',s:'已上线'},{n:'学员学习行为分析',t:'课题',d:'2025-09',s:'进行中'}],
-    trends:[84,85,87,88,89.5] },
-  { id:'T006', name:'赵国强', dept:'客运一车间', post:'高级讲师', years:18, courses:9, avatar:'#13c2c2',
-    dims: { teach:90.0, feedback:84.0, profess:94.0, research:90.5 },
-    passRate:93.2, progress:13.1, satisfaction:4.4, attitude:4.5, quality:4.4, interact:4.2,
-    attendance:99.0, reviews:['经验丰富，教学内容实用','理论讲解透彻','互动环节可以再多些'],
-    profItems:[{n:'教学责任心',s:95},{n:'职业道德',s:94},{n:'团队协作',s:92}],
-    researches:[{n:'铁路客运服务标准研究',t:'标准',d:'2024-11',s:'已通过'},{n:'高铁乘务培训创新',t:'论文',d:'2025-03',s:'已发表'},{n:'培训效果评估模型',t:'课题',d:'2025-06',s:'已结题'},{n:'实训基地建设方案',t:'方案',d:'2025-01',s:'已通过'}],
-    trends:[87,89,90,92,93.2] },
-  { id:'T007', name:'孙雪梅', dept:'安全科', post:'讲师', years:7, courses:6, avatar:'#2f54eb',
-    dims: { teach:84.0, feedback:87.5, profess:90.0, research:65.0 },
-    passRate:90.0, progress:11.0, satisfaction:4.5, attitude:4.6, quality:4.5, interact:4.4,
-    attendance:97.5, reviews:['安全知识讲解清晰','案例生动有趣','教学认真负责'],
-    profItems:[{n:'教学责任心',s:91},{n:'职业道德',s:90},{n:'团队协作',s:88}],
-    researches:[{n:'安全培训课件开发',t:'课件',d:'2025-05',s:'已上线'},{n:'安全意识培养方法',t:'论文',d:'2025-10',s:'写作中'}],
-    trends:[82,84,86,88,90.0] },
-  { id:'T008', name:'周明', dept:'客运二车间', post:'助理讲师', years:3, courses:4, avatar:'#faad14',
-    dims: { teach:72.0, feedback:78.5, profess:80.0, research:45.0 },
-    passRate:82.5, progress:8.5, satisfaction:4.1, attitude:4.2, quality:4.0, interact:4.1,
-    attendance:95.0, reviews:['教学态度认真','基础知识讲解到位','需要更多实践经验'],
-    profItems:[{n:'教学责任心',s:82},{n:'职业道德',s:80},{n:'团队协作',s:78}],
-    researches:[{n:'新员工培训方案优化',t:'方案',d:'2025-09',s:'编写中'}],
-    trends:[75,76,78,80,82.5] },
-  { id:'T009', name:'吴晓燕', dept:'培训中心', post:'实训指导员', years:4, courses:5, avatar:'#f5222d',
-    dims: { teach:76.0, feedback:85.0, profess:82.0, research:55.0 },
-    passRate:85.0, progress:9.0, satisfaction:4.4, attitude:4.5, quality:4.3, interact:4.4,
-    attendance:96.8, reviews:['实操指导认真','对学员很有耐心','课堂管理良好'],
-    profItems:[{n:'教学责任心',s:84},{n:'职业道德',s:82},{n:'团队协作',s:85}],
-    researches:[{n:'实训操作视频教程',t:'课件',d:'2025-06',s:'已上线'},{n:'实训安全管理规范',t:'规程',d:'2025-08',s:'编写中'}],
-    trends:[78,80,82,83,85.0] }
+// evaQualityTeachTitle
+const kpiData = { classCount: 8, countNum: 15, avgScore: 82.3, maxScore: 95.5, minScore: 68.2 };
+
+// evaqualityteachassessList
+const teacherRows = [
+  { yearStr: "2025", teachName: "张明远", teacherTypeName: "专职教师", s3: "培训中心", inClassLecturesScore: 28.5, teachCheckScore: 26.8, studentScore: 24.2, threeTotalScore: 79.5, addScore: 5.0, totalScore: 84.5 },
+  { yearStr: "2025", teachName: "李晓红", teacherTypeName: "兼职教师", s3: "检修车间", inClassLecturesScore: 30.0, teachCheckScore: 29.5, studentScore: 27.0, threeTotalScore: 86.5, addScore: 9.0, totalScore: 95.5 },
+  { yearStr: "2025", teachName: "王建国", teacherTypeName: "专职教师", s3: "培训中心", inClassLecturesScore: 29.0, teachCheckScore: 28.0, studentScore: 25.5, threeTotalScore: 82.5, addScore: 6.0, totalScore: 88.5 },
+  { yearStr: "2025", teachName: "赵丽娟", teacherTypeName: "兼职教师", s3: "客运车间", inClassLecturesScore: 25.0, teachCheckScore: 23.5, studentScore: 22.0, threeTotalScore: 70.5, addScore: 3.0, totalScore: 73.5 },
+  { yearStr: "2025", teachName: "陈伟", teacherTypeName: "专职教师", s3: "培训中心", inClassLecturesScore: 31.0, teachCheckScore: 30.0, studentScore: 26.5, threeTotalScore: 87.5, addScore: 4.0, totalScore: 91.5 },
+  { yearStr: "2025", teachName: "刘国强", teacherTypeName: "兼职教师", s3: "机务段", inClassLecturesScore: 22.5, teachCheckScore: 24.0, studentScore: 21.7, threeTotalScore: 68.2, addScore: 0.0, totalScore: 68.2 },
+  { yearStr: "2025", teachName: "孙雪梅", teacherTypeName: "专职教师", s3: "安全科", inClassLecturesScore: 27.5, teachCheckScore: 27.0, studentScore: 25.0, threeTotalScore: 79.5, addScore: 7.5, totalScore: 87.0 },
+  { yearStr: "2025", teachName: "周明", teacherTypeName: "兼职教师", s3: "车辆段", inClassLecturesScore: 26.0, teachCheckScore: 25.5, studentScore: 23.0, threeTotalScore: 74.5, addScore: 2.0, totalScore: 76.5 },
+  { yearStr: "2025", teachName: "吴晓燕", teacherTypeName: "专职教师", s3: "培训中心", inClassLecturesScore: 28.0, teachCheckScore: 26.5, studentScore: 24.8, threeTotalScore: 79.3, addScore: 3.5, totalScore: 82.8 },
+  { yearStr: "2025", teachName: "郑浩然", teacherTypeName: "兼职教师", s3: "电务段", inClassLecturesScore: 24.5, teachCheckScore: 25.0, studentScore: 22.5, threeTotalScore: 72.0, addScore: 1.0, totalScore: 73.0 }
 ];
 
-let weights = { teach: 40, feedback: 25, profess: 20, research: 15 };
-let currentTeacher = null;
+// Per-teacher detail data
+const teacherDetailMap = {
+  "张明远": {
+    userTree: { workName: "张明远", companyName: "沈阳客运段", deptName: "培训中心", level: "高级讲师", entryTime: "2018-03-15", education: "本科" },
+    evaluate: { evaluateTotal: 84.5, addScore: 5.0, teachEvaluateList: [
+      { name: "随堂听课", average: 28.5, fullMarks: 35, ratio: "81.4%" },
+      { name: "教学检查", average: 26.8, fullMarks: 35, ratio: "76.6%" },
+      { name: "学员评价", average: 24.2, fullMarks: 30, ratio: "80.7%" }
+    ]},
+    passRate: [78.5, 82.3, 85.1, 79.8, 88.2, 91.5, 87.3, 90.1, 88.7, 85.4, 92.1, 89.5],
+    studentEval: { teachSituationData: { avgTotal: 85.2, teachSituationMap: [{ name: "优秀", value: 42 }, { name: "良好", value: 35 }, { name: "一般", value: 18 }, { name: "较差", value: 5 }] }, studentEvaluateSubData: [
+      { groupName: "教学能力", subitemExcellentRate: 45.2, subitemFineRate: 32.1, subitemCommonlyRate: 18.5, subitemPassRate: 4.2 },
+      { groupName: "教学内容", subitemExcellentRate: 38.5, subitemFineRate: 35.8, subitemCommonlyRate: 20.3, subitemPassRate: 5.4 },
+      { groupName: "课件使用", subitemExcellentRate: 52.1, subitemFineRate: 28.9, subitemCommonlyRate: 15.2, subitemPassRate: 3.8 }
+    ]}
+  },
+  "李晓红": {
+    userTree: { workName: "李晓红", companyName: "沈阳客运段", deptName: "检修车间", level: "技师", entryTime: "2015-07-20", education: "大专" },
+    evaluate: { evaluateTotal: 95.5, addScore: 9.0, teachEvaluateList: [
+      { name: "随堂听课", average: 30.0, fullMarks: 35, ratio: "85.7%" },
+      { name: "教学检查", average: 29.5, fullMarks: 35, ratio: "84.3%" },
+      { name: "学员评价", average: 27.0, fullMarks: 30, ratio: "90.0%" }
+    ]},
+    passRate: [82.1, 85.6, 88.3, 90.1, 91.5, 93.2, 92.0, 94.5, 93.8, 95.1, 96.0, 94.8],
+    studentEval: { teachSituationData: { avgTotal: 91.5, teachSituationMap: [{ name: "优秀", value: 58 }, { name: "良好", value: 28 }, { name: "一般", value: 11 }, { name: "较差", value: 3 }] }, studentEvaluateSubData: [
+      { groupName: "教学能力", subitemExcellentRate: 62.5, subitemFineRate: 25.3, subitemCommonlyRate: 10.1, subitemPassRate: 2.1 },
+      { groupName: "教学内容", subitemExcellentRate: 55.8, subitemFineRate: 30.2, subitemCommonlyRate: 11.5, subitemPassRate: 2.5 },
+      { groupName: "课件使用", subitemExcellentRate: 48.3, subitemFineRate: 33.1, subitemCommonlyRate: 14.8, subitemPassRate: 3.8 }
+    ]}
+  },
+  "王建国": {
+    userTree: { workName: "王建国", companyName: "沈阳客运段", deptName: "培训中心", level: "高级讲师", entryTime: "2012-09-01", education: "硕士" },
+    evaluate: { evaluateTotal: 88.5, addScore: 6.0, teachEvaluateList: [
+      { name: "随堂听课", average: 29.0, fullMarks: 35, ratio: "82.9%" },
+      { name: "教学检查", average: 28.0, fullMarks: 35, ratio: "80.0%" },
+      { name: "学员评价", average: 25.5, fullMarks: 30, ratio: "85.0%" }
+    ]},
+    passRate: [80.2, 83.5, 86.0, 84.2, 87.5, 89.0, 88.5, 91.2, 90.0, 88.3, 93.5, 91.0],
+    studentEval: { teachSituationData: { avgTotal: 87.8, teachSituationMap: [{ name: "优秀", value: 48 }, { name: "良好", value: 32 }, { name: "一般", value: 15 }, { name: "较差", value: 5 }] }, studentEvaluateSubData: [
+      { groupName: "教学能力", subitemExcellentRate: 50.1, subitemFineRate: 30.5, subitemCommonlyRate: 15.2, subitemPassRate: 4.2 },
+      { groupName: "教学内容", subitemExcellentRate: 45.3, subitemFineRate: 32.0, subitemCommonlyRate: 17.5, subitemPassRate: 5.2 },
+      { groupName: "课件使用", subitemExcellentRate: 42.8, subitemFineRate: 35.2, subitemCommonlyRate: 18.0, subitemPassRate: 4.0 }
+    ]}
+  },
+  "赵丽娟": {
+    userTree: { workName: "赵丽娟", companyName: "沈阳客运段", deptName: "客运车间", level: "助理讲师", entryTime: "2021-03-10", education: "本科" },
+    evaluate: { evaluateTotal: 73.5, addScore: 3.0, teachEvaluateList: [
+      { name: "随堂听课", average: 25.0, fullMarks: 35, ratio: "71.4%" },
+      { name: "教学检查", average: 23.5, fullMarks: 35, ratio: "67.1%" },
+      { name: "学员评价", average: 22.0, fullMarks: 30, ratio: "73.3%" }
+    ]},
+    passRate: [65.2, 68.5, 70.1, 72.3, 75.0, 73.8, 76.5, 78.2, 77.0, 79.5, 80.1, 78.8],
+    studentEval: { teachSituationData: { avgTotal: 72.5, teachSituationMap: [{ name: "优秀", value: 18 }, { name: "良好", value: 35 }, { name: "一般", value: 32 }, { name: "较差", value: 15 }] }, studentEvaluateSubData: [
+      { groupName: "教学能力", subitemExcellentRate: 22.5, subitemFineRate: 35.8, subitemCommonlyRate: 30.2, subitemPassRate: 11.5 },
+      { groupName: "教学内容", subitemExcellentRate: 20.1, subitemFineRate: 33.5, subitemCommonlyRate: 32.8, subitemPassRate: 13.6 },
+      { groupName: "课件使用", subitemExcellentRate: 25.3, subitemFineRate: 30.2, subitemCommonlyRate: 28.5, subitemPassRate: 16.0 }
+    ]}
+  },
+  "陈伟": {
+    userTree: { workName: "陈伟", companyName: "沈阳客运段", deptName: "培训中心", level: "讲师", entryTime: "2016-08-20", education: "本科" },
+    evaluate: { evaluateTotal: 91.5, addScore: 4.0, teachEvaluateList: [
+      { name: "随堂听课", average: 31.0, fullMarks: 35, ratio: "88.6%" },
+      { name: "教学检查", average: 30.0, fullMarks: 35, ratio: "85.7%" },
+      { name: "学员评价", average: 26.5, fullMarks: 30, ratio: "88.3%" }
+    ]},
+    passRate: [85.0, 87.2, 89.5, 88.0, 90.3, 92.8, 91.5, 93.0, 92.5, 94.1, 95.0, 93.5],
+    studentEval: { teachSituationData: { avgTotal: 90.0, teachSituationMap: [{ name: "优秀", value: 55 }, { name: "良好", value: 30 }, { name: "一般", value: 12 }, { name: "较差", value: 3 }] }, studentEvaluateSubData: [
+      { groupName: "教学能力", subitemExcellentRate: 58.2, subitemFineRate: 28.5, subitemCommonlyRate: 10.8, subitemPassRate: 2.5 },
+      { groupName: "教学内容", subitemExcellentRate: 52.0, subitemFineRate: 31.5, subitemCommonlyRate: 13.0, subitemPassRate: 3.5 },
+      { groupName: "课件使用", subitemExcellentRate: 55.5, subitemFineRate: 27.8, subitemCommonlyRate: 12.5, subitemPassRate: 4.2 }
+    ]}
+  },
+  "刘国强": {
+    userTree: { workName: "刘国强", companyName: "沈阳客运段", deptName: "机务段", level: "助理讲师", entryTime: "2022-01-05", education: "大专" },
+    evaluate: { evaluateTotal: 68.2, addScore: 0.0, teachEvaluateList: [
+      { name: "随堂听课", average: 22.5, fullMarks: 35, ratio: "64.3%" },
+      { name: "教学检查", average: 24.0, fullMarks: 35, ratio: "68.6%" },
+      { name: "学员评价", average: 21.7, fullMarks: 30, ratio: "72.3%" }
+    ]},
+    passRate: [60.5, 62.3, 65.0, 63.8, 67.2, 70.0, 68.5, 71.3, 69.8, 72.5, 74.0, 71.8],
+    studentEval: { teachSituationData: { avgTotal: 68.0, teachSituationMap: [{ name: "优秀", value: 12 }, { name: "良好", value: 28 }, { name: "一般", value: 38 }, { name: "较差", value: 22 }] }, studentEvaluateSubData: [
+      { groupName: "教学能力", subitemExcellentRate: 15.2, subitemFineRate: 28.5, subitemCommonlyRate: 35.8, subitemPassRate: 20.5 },
+      { groupName: "教学内容", subitemExcellentRate: 12.8, subitemFineRate: 30.2, subitemCommonlyRate: 33.5, subitemPassRate: 23.5 },
+      { groupName: "课件使用", subitemExcellentRate: 18.5, subitemFineRate: 25.0, subitemCommonlyRate: 32.0, subitemPassRate: 24.5 }
+    ]}
+  },
+  "孙雪梅": {
+    userTree: { workName: "孙雪梅", companyName: "沈阳客运段", deptName: "安全科", level: "讲师", entryTime: "2017-04-12", education: "本科" },
+    evaluate: { evaluateTotal: 87.0, addScore: 7.5, teachEvaluateList: [
+      { name: "随堂听课", average: 27.5, fullMarks: 35, ratio: "78.6%" },
+      { name: "教学检查", average: 27.0, fullMarks: 35, ratio: "77.1%" },
+      { name: "学员评价", average: 25.0, fullMarks: 30, ratio: "83.3%" }
+    ]},
+    passRate: [76.0, 78.5, 81.2, 80.0, 83.5, 86.0, 84.8, 87.5, 86.2, 88.0, 90.5, 88.2],
+    studentEval: { teachSituationData: { avgTotal: 84.5, teachSituationMap: [{ name: "优秀", value: 40 }, { name: "良好", value: 35 }, { name: "一般", value: 20 }, { name: "较差", value: 5 }] }, studentEvaluateSubData: [
+      { groupName: "教学能力", subitemExcellentRate: 42.8, subitemFineRate: 33.5, subitemCommonlyRate: 18.5, subitemPassRate: 5.2 },
+      { groupName: "教学内容", subitemExcellentRate: 38.0, subitemFineRate: 36.2, subitemCommonlyRate: 20.0, subitemPassRate: 5.8 },
+      { groupName: "课件使用", subitemExcellentRate: 45.5, subitemFineRate: 30.0, subitemCommonlyRate: 18.8, subitemPassRate: 5.7 }
+    ]}
+  },
+  "周明": {
+    userTree: { workName: "周明", companyName: "沈阳客运段", deptName: "车辆段", level: "助理讲师", entryTime: "2020-06-18", education: "本科" },
+    evaluate: { evaluateTotal: 76.5, addScore: 2.0, teachEvaluateList: [
+      { name: "随堂听课", average: 26.0, fullMarks: 35, ratio: "74.3%" },
+      { name: "教学检查", average: 25.5, fullMarks: 35, ratio: "72.9%" },
+      { name: "学员评价", average: 23.0, fullMarks: 30, ratio: "76.7%" }
+    ]},
+    passRate: [70.2, 72.5, 74.0, 73.2, 76.5, 78.0, 77.2, 80.1, 79.0, 81.5, 83.0, 80.8],
+    studentEval: { teachSituationData: { avgTotal: 76.0, teachSituationMap: [{ name: "优秀", value: 22 }, { name: "良好", value: 38 }, { name: "一般", value: 28 }, { name: "较差", value: 12 }] }, studentEvaluateSubData: [
+      { groupName: "教学能力", subitemExcellentRate: 28.5, subitemFineRate: 35.2, subitemCommonlyRate: 25.8, subitemPassRate: 10.5 },
+      { groupName: "教学内容", subitemExcellentRate: 25.0, subitemFineRate: 38.0, subitemCommonlyRate: 27.5, subitemPassRate: 9.5 },
+      { groupName: "课件使用", subitemExcellentRate: 30.2, subitemFineRate: 32.5, subitemCommonlyRate: 26.0, subitemPassRate: 11.3 }
+    ]}
+  },
+  "吴晓燕": {
+    userTree: { workName: "吴晓燕", companyName: "沈阳客运段", deptName: "培训中心", level: "实训指导员", entryTime: "2019-11-08", education: "本科" },
+    evaluate: { evaluateTotal: 82.8, addScore: 3.5, teachEvaluateList: [
+      { name: "随堂听课", average: 28.0, fullMarks: 35, ratio: "80.0%" },
+      { name: "教学检查", average: 26.5, fullMarks: 35, ratio: "75.7%" },
+      { name: "学员评价", average: 24.8, fullMarks: 30, ratio: "82.7%" }
+    ]},
+    passRate: [75.0, 77.8, 80.5, 79.0, 82.5, 85.0, 83.8, 86.2, 85.0, 87.0, 89.5, 87.2],
+    studentEval: { teachSituationData: { avgTotal: 82.0, teachSituationMap: [{ name: "优秀", value: 35 }, { name: "良好", value: 38 }, { name: "一般", value: 20 }, { name: "较差", value: 7 }] }, studentEvaluateSubData: [
+      { groupName: "教学能力", subitemExcellentRate: 38.5, subitemFineRate: 35.0, subitemCommonlyRate: 20.2, subitemPassRate: 6.3 },
+      { groupName: "教学内容", subitemExcellentRate: 35.2, subitemFineRate: 37.5, subitemCommonlyRate: 21.0, subitemPassRate: 6.3 },
+      { groupName: "课件使用", subitemExcellentRate: 40.0, subitemFineRate: 32.8, subitemCommonlyRate: 19.5, subitemPassRate: 7.7 }
+    ]}
+  },
+  "郑浩然": {
+    userTree: { workName: "郑浩然", companyName: "沈阳客运段", deptName: "电务段", level: "助理讲师", entryTime: "2023-02-28", education: "大专" },
+    evaluate: { evaluateTotal: 73.0, addScore: 1.0, teachEvaluateList: [
+      { name: "随堂听课", average: 24.5, fullMarks: 35, ratio: "70.0%" },
+      { name: "教学检查", average: 25.0, fullMarks: 35, ratio: "71.4%" },
+      { name: "学员评价", average: 22.5, fullMarks: 30, ratio: "75.0%" }
+    ]},
+    passRate: [62.0, 64.5, 67.2, 66.0, 69.5, 72.0, 70.8, 73.5, 72.0, 75.0, 77.5, 74.8],
+    studentEval: { teachSituationData: { avgTotal: 71.0, teachSituationMap: [{ name: "优秀", value: 15 }, { name: "良好", value: 30 }, { name: "一般", value: 35 }, { name: "较差", value: 20 }] }, studentEvaluateSubData: [
+      { groupName: "教学能力", subitemExcellentRate: 18.5, subitemFineRate: 30.2, subitemCommonlyRate: 33.8, subitemPassRate: 17.5 },
+      { groupName: "教学内容", subitemExcellentRate: 15.8, subitemFineRate: 32.0, subitemCommonlyRate: 35.2, subitemPassRate: 17.0 },
+      { groupName: "课件使用", subitemExcellentRate: 20.2, subitemFineRate: 28.5, subitemCommonlyRate: 31.8, subitemPassRate: 19.5 }
+    ]}
+  }
+};
 
-function calcScore(t) {
-  return +(t.dims.teach * weights.teach / 100 + t.dims.feedback * weights.feedback / 100 + t.dims.profess * weights.profess / 100 + t.dims.research * weights.research / 100).toFixed(1);
+let currentTeacherName = null;
+
+// ===== Score Color Helper =====
+function scoreClass(v) {
+  if (v >= 90) return 'score-green';
+  if (v >= 75) return 'score-blue';
+  if (v >= 60) return 'score-orange';
+  return 'score-red';
 }
 
-function getLevel(score) {
-  if (score >= 85) return { text: '优秀', cls: 'tag-green', lcls: 'level-excellent' };
-  if (score >= 70) return { text: '良好', cls: 'tag-blue', lcls: 'level-good' };
-  return { text: '合格', cls: 'tag-orange', lcls: 'level-pass' };
-}
+// ===== Render Overview =====
+function renderOverview() {
+  // KPI Cards
+  const kpis = [
+    { label: '评估班级数', value: kpiData.classCount, unit: '个', field: 'classCount' },
+    { label: '参评教师人数', value: kpiData.countNum, unit: '人', field: 'countNum' },
+    { label: '平均评估分', value: kpiData.avgScore, unit: '分', field: 'avgScore' },
+    { label: '最高分', value: kpiData.maxScore, unit: '分', field: 'maxScore' },
+    { label: '最低分', value: kpiData.minScore, unit: '分', field: 'minScore' }
+  ];
+  document.getElementById('kpiRow').innerHTML = kpis.map(k => `
+    <div class="kpi-card">
+      <div class="kpi-value">${k.value}<span class="unit">${k.unit}</span></div>
+      <div class="kpi-label">${k.label}</div>
+    </div>
+  `).join('');
 
-function getRank(t) {
-  const scores = teachers.map(x => calcScore(x)).sort((a,b) => b - a);
-  return scores.indexOf(calcScore(t)) + 1;
-}
-
-// ===== Render List =====
-function renderList() {
-  const grid = document.getElementById('teacherGrid');
-  const search = document.getElementById('searchName').value.trim().toLowerCase();
-  const dept = document.getElementById('filterDept').value;
-  const post = document.getElementById('filterPost').value;
-
-  let filtered = teachers.filter(t => {
-    if (search && !t.name.toLowerCase().includes(search)) return false;
-    if (dept && t.dept !== dept) return false;
-    if (post && t.post !== post) return false;
-    return true;
-  });
-
-  grid.innerHTML = filtered.map(t => {
-    const score = calcScore(t);
-    const level = getLevel(score);
-    return `
-      <div class="teacher-card" onclick="showDetail('${t.id}')">
-        <div class="teacher-card-top">
-          <div class="avatar" style="background:${t.avatar}">${t.name[0]}</div>
-          <div class="teacher-info">
-            <div class="teacher-name">${t.name}</div>
-            <div class="teacher-meta">${t.id} | ${t.dept} | ${t.post}</div>
-          </div>
-        </div>
-        <div class="teacher-card-mid">
-          <div class="mini-radar" id="mini-${t.id}"></div>
-          <div class="score-block">
-            <div class="score-number">${score}</div>
-            <div class="score-label">综合评分</div>
-          </div>
-          <span class="tag ${level.cls}">${level.text}</span>
-        </div>
-        <div class="teacher-card-bottom">
-          <span style="font-size:11px;color:rgba(0,0,0,.45);">入职${t.years}年 | 本期${t.courses}门课</span>
-          <button class="view-detail-btn" onclick="event.stopPropagation();showDetail('${t.id}')">查看详情</button>
-        </div>
-      </div>`;
-  }).join('');
-
-  // Render mini radars
-  filtered.forEach(t => {
-    const el = document.getElementById('mini-' + t.id);
-    if (!el) return;
-    const chart = echarts.init(el);
-    chart.setOption({
-      radar: {
-        indicator: [
-          { name: '', max: 100 }, { name: '', max: 100 },
-          { name: '', max: 100 }, { name: '', max: 100 }
-        ],
-        radius: '70%', center: ['50%','50%'],
-        axisLine: { lineStyle: { color: 'rgba(0,0,0,.08)' } },
-        splitLine: { lineStyle: { color: 'rgba(0,0,0,.06)' } },
-        splitArea: { show: false }
-      },
-      series: [{ type: 'radar', symbol: 'none', lineStyle: { width: 2, color: '#1677ff' },
-        areaStyle: { color: 'rgba(22,119,255,.15)' },
-        data: [{ value: [t.dims.teach, t.dims.feedback, t.dims.profess, t.dims.research] }]
-      }]
-    });
-  });
-}
-
-function filterTeachers() {
-  if (currentTab === 'teachers') renderList();
+  // Teacher Table
+  const tbody = document.getElementById('teacherTableBody');
+  tbody.innerHTML = teacherRows.map(r => `
+    <tr onclick="showDetail('${r.teachName}')">
+      <td>${r.yearStr}</td>
+      <td class="name-cell">${r.teachName}</td>
+      <td>${r.teacherTypeName}</td>
+      <td>${r.s3}</td>
+      <td class="${scoreClass(r.inClassLecturesScore / 35 * 100)}">${r.inClassLecturesScore}</td>
+      <td class="${scoreClass(r.teachCheckScore / 35 * 100)}">${r.teachCheckScore}</td>
+      <td class="${scoreClass(r.studentScore / 30 * 100)}">${r.studentScore}</td>
+      <td>${r.threeTotalScore}</td>
+      <td style="color:#fa8c16">${r.addScore > 0 ? '+' + r.addScore : '-'}</td>
+      <td class="score-bold ${scoreClass(r.totalScore)}">${r.totalScore}</td>
+    </tr>
+  `).join('');
 }
 
 // ===== Detail View =====
-function showDetail(id) {
-  currentTeacher = teachers.find(t => t.id === id);
-  if (!currentTeacher) return;
-  const t = currentTeacher;
-  const score = calcScore(t);
-  const level = getLevel(score);
-  const rank = getRank(t);
+function showDetail(name) {
+  const detail = teacherDetailMap[name];
+  if (!detail) return;
+  currentTeacherName = name;
 
-  document.getElementById('listView').classList.add('hidden');
+  document.getElementById('overviewView').classList.add('hidden');
   document.getElementById('detailView').classList.remove('hidden');
 
-  const detail = document.getElementById('detailContent');
-  detail.innerHTML = `
-    <!-- Left: Profile -->
-    <div>
+  const u = detail.userTree;
+  const ev = detail.evaluate;
+  const entryYear = new Date(u.entryTime).getFullYear();
+  const years = new Date().getFullYear() - entryYear;
+
+  const container = document.getElementById('detailContent');
+  container.innerHTML = `
+    <!-- Left Column: Profile + Gauge -->
+    <div class="detail-col">
       <div class="card profile-card">
-        <div class="profile-avatar" style="background:${t.avatar}">${t.name[0]}</div>
-        <div class="profile-name">${t.name}</div>
-        <div class="profile-id">${t.id}</div>
+        <div class="profile-avatar">${u.workName[0]}</div>
+        <div class="profile-name">${u.workName}</div>
+        <div class="profile-dept">${u.companyName} - ${u.deptName}</div>
         <ul class="info-list">
-          <li><span class="lbl">部门</span><span class="val">${t.dept}</span></li>
-          <li><span class="lbl">岗位</span><span class="val">${t.post}</span></li>
-          <li><span class="lbl">入职年限</span><span class="val">${t.years}年</span></li>
-          <li><span class="lbl">本期授课数</span><span class="val">${t.courses}门</span></li>
-          <li><span class="lbl">出勤率</span><span class="val">${t.attendance}%</span></li>
+          <li><span class="lbl">职务/级别</span><span class="val">${u.level}</span></li>
+          <li><span class="lbl">入职时间</span><span class="val">${u.entryTime}</span></li>
+          <li><span class="lbl">入职年限</span><span class="val">${years}年</span></li>
+          <li><span class="lbl">学历</span><span class="val">${u.education}</span></li>
         </ul>
       </div>
-    </div>
-
-    <!-- Middle: Radar + Score -->
-    <div>
-      <div class="card" style="margin-bottom:16px;">
-        <div class="card-title">四维能力雷达图</div>
-        <div id="mainRadar" style="height:300px;"></div>
-      </div>
       <div class="card">
-        <div class="big-score">
-          <div class="number">${score}</div>
-          <div class="rank">全站排名 第${rank}/${teachers.length}名</div>
-          <div class="level ${level.lcls}">${level.text}</div>
-        </div>
+        <div class="card-title">教学质量评估总分 <span class="card-subtitle">数据来源: getTeachQualityEvaluate</span></div>
+        <div class="gauge-box" id="gaugeChart"></div>
+        <div class="add-score-text">+${ev.addScore} 加分</div>
       </div>
     </div>
 
-    <!-- Right: Dimension Details -->
-    <div>
-      <!-- 1. Teaching Effect -->
-      <div class="card dim-card">
-        <div class="dim-header">
-          <span class="dim-title">教学效果</span>
-          <span class="dim-weight">权重 ${weights.teach}%</span>
-        </div>
-        <div class="dim-stat">
-          <span class="ds-label">考试平均通过率</span>
-          <span class="ds-value" style="color:#52c41a">${t.passRate}%</span>
-        </div>
-        <div class="dim-stat">
-          <span class="ds-label">学员平均进步</span>
-          <span class="ds-value" style="color:#1677ff">+${t.progress}分</span>
-        </div>
-        <div id="trendChart" style="height:120px;margin-top:8px;"></div>
+    <!-- Middle Column: Dimension bars + Pass rate trend -->
+    <div class="detail-col">
+      <div class="card" style="flex-shrink:0;">
+        <div class="card-title">评估维度明细 <span class="card-subtitle">数据来源: getTeachQualityEvaluate</span></div>
+        <div id="dimBars" style="padding:8px 0;"></div>
       </div>
-
-      <!-- 2. Student Feedback -->
-      <div class="card dim-card">
-        <div class="dim-header">
-          <span class="dim-title">学员反馈</span>
-          <span class="dim-weight">权重 ${weights.feedback}%</span>
-        </div>
-        <div class="dim-stat">
-          <span class="ds-label">综合满意度</span>
-          <span class="ds-value">${t.satisfaction}/5.0</span>
-        </div>
-        <div style="margin:8px 0;">
-          <div class="dim-stat"><span class="ds-label">教学态度</span><div class="progress-bar"><div class="progress-fill" style="width:${t.attitude*20}%;background:#52c41a"></div></div><span style="font-size:13px;font-weight:600;width:40px;text-align:right;">${t.attitude}</span></div>
-          <div class="dim-stat"><span class="ds-label">内容质量</span><div class="progress-bar"><div class="progress-fill" style="width:${t.quality*20}%;background:#1677ff"></div></div><span style="font-size:13px;font-weight:600;width:40px;text-align:right;">${t.quality}</span></div>
-          <div class="dim-stat"><span class="ds-label">互动效果</span><div class="progress-bar"><div class="progress-fill" style="width:${t.interact*20}%;background:#722ed1"></div></div><span style="font-size:13px;font-weight:600;width:40px;text-align:right;">${t.interact}</span></div>
-        </div>
-        <div style="margin-top:8px;">
-          ${t.reviews.map(r => `<div class="review-item">"${r}"</div>`).join('')}
-        </div>
+      <div class="card" style="flex:1; min-height:0; display:flex; flex-direction:column;">
+        <div class="card-title">授课班级通过率趋势 <span class="card-subtitle">数据来源: getTeachClassPassRate</span></div>
+        <div id="passRateChart" style="flex:1; min-height:180px;"></div>
       </div>
+    </div>
 
-      <!-- 3. Professional Quality -->
-      <div class="card dim-card">
-        <div class="dim-header">
-          <span class="dim-title">职业素养</span>
-          <span class="dim-weight">权重 ${weights.profess}%</span>
-        </div>
-        <div class="dim-stat">
-          <span class="ds-label">出勤率</span>
-          <span class="ds-value" style="color:#52c41a">${t.attendance}%</span>
-        </div>
-        ${t.profItems.map(p => `
-          <div class="dim-stat">
-            <span class="ds-label">${p.n}</span>
-            <div class="progress-bar"><div class="progress-fill" style="width:${p.s}%;background:#13c2c2"></div></div>
-            <span style="font-size:13px;font-weight:600;width:40px;text-align:right;">${p.s}</span>
-          </div>
-        `).join('')}
+    <!-- Right Column: Donut + Sub-dimension bars -->
+    <div class="detail-col">
+      <div class="card" style="flex-shrink:0;">
+        <div class="card-title">学员测评-教学情况分布 <span class="card-subtitle">数据来源: getStudentEvaluateData</span></div>
+        <div id="donutChart" style="height:220px;"></div>
       </div>
-
-      <!-- 4. Research -->
-      <div class="card dim-card">
-        <div class="dim-header">
-          <span class="dim-title">教研成果</span>
-          <span class="dim-weight">权重 ${weights.research}%</span>
-        </div>
-        <table class="research-table">
-          <thead><tr><th>成果名称</th><th>类型</th><th>日期</th><th>状态</th></tr></thead>
-          <tbody>
-            ${t.researches.map(r => {
-              let tagCls = 'tag-green';
-              if (r.s.includes('中') || r.s.includes('写')) tagCls = 'tag-orange';
-              if (r.s.includes('审')) tagCls = 'tag-blue';
-              return `<tr><td>${r.n}</td><td>${r.t}</td><td>${r.d}</td><td><span class="tag ${tagCls}">${r.s}</span></td></tr>`;
-            }).join('')}
-          </tbody>
-        </table>
+      <div class="card" style="flex:1; min-height:0; display:flex; flex-direction:column; overflow-y:auto;">
+        <div class="card-title">学员测评-子维度评价率 <span class="card-subtitle">数据来源: getStudentEvaluateData</span></div>
+        <div id="subDimBars" style="padding:8px 0; flex:1;"></div>
       </div>
     </div>
   `;
 
-  // Render main radar
+  // Render dimension bars
+  const dimBarsEl = document.getElementById('dimBars');
+  dimBarsEl.innerHTML = ev.teachEvaluateList.map(d => {
+    const pct = (d.average / d.fullMarks * 100).toFixed(1);
+    const color = pct >= 85 ? '#52c41a' : pct >= 75 ? '#1677ff' : pct >= 60 ? '#fa8c16' : '#ff4d4f';
+    return `
+      <div class="dim-bar-row">
+        <div class="dim-bar-label">${d.name}</div>
+        <div class="dim-bar-track">
+          <div class="dim-bar-fill" style="width:${pct}%; background:${color}"></div>
+        </div>
+        <div class="dim-bar-text">${d.average}/${d.fullMarks} (${d.ratio})</div>
+      </div>`;
+  }).join('');
+
+  // Render sub-dimension bars
+  const subColors = { subitemExcellentRate: '#0578b9', subitemFineRate: '#40d285', subitemCommonlyRate: '#fdcc00', subitemPassRate: '#f86a01' };
+  const subLabels = { subitemExcellentRate: '优秀率', subitemFineRate: '良好率', subitemCommonlyRate: '一般率', subitemPassRate: '合格率' };
+  const subDimEl = document.getElementById('subDimBars');
+  subDimEl.innerHTML = detail.studentEval.studentEvaluateSubData.map(g => {
+    const bars = ['subitemExcellentRate', 'subitemFineRate', 'subitemCommonlyRate', 'subitemPassRate'].map(k => `
+      <div class="sub-bar-row">
+        <div class="sub-bar-label">${subLabels[k]}</div>
+        <div class="sub-bar-track">
+          <div class="sub-bar-fill" style="width:${g[k]}%; background:${subColors[k]}"></div>
+        </div>
+        <div class="sub-bar-val">${g[k]}%</div>
+      </div>`).join('');
+    return `<div class="sub-dim-group"><div class="sub-dim-group-name">${g.groupName}</div>${bars}</div>`;
+  }).join('');
+
+  // Render ECharts
   setTimeout(() => {
-    const radarEl = document.getElementById('mainRadar');
-    if (radarEl) {
-      const radarChart = echarts.init(radarEl);
-      radarChart.setOption({
-        tooltip: { trigger: 'item' },
-        radar: {
-          indicator: [
-            { name: '教学效果', max: 100 },
-            { name: '学员反馈', max: 100 },
-            { name: '职业素养', max: 100 },
-            { name: '教研成果', max: 100 }
-          ],
-          radius: '65%',
-          axisName: { color: 'rgba(0,0,0,.65)', fontSize: 13 },
-          axisLine: { lineStyle: { color: 'rgba(0,0,0,.1)' } },
-          splitLine: { lineStyle: { color: 'rgba(0,0,0,.08)' } },
-          splitArea: { areaStyle: { color: ['rgba(22,119,255,.02)','rgba(22,119,255,.04)'] } }
-        },
+    // Gauge chart
+    const gaugeEl = document.getElementById('gaugeChart');
+    if (gaugeEl) {
+      const gc = echarts.init(gaugeEl);
+      gc.setOption({
         series: [{
-          type: 'radar',
-          symbol: 'circle', symbolSize: 6,
-          lineStyle: { width: 2, color: '#1677ff' },
-          areaStyle: { color: 'rgba(22,119,255,.18)' },
-          itemStyle: { color: '#1677ff' },
-          data: [{ value: [t.dims.teach, t.dims.feedback, t.dims.profess, t.dims.research], name: t.name }]
+          type: 'gauge',
+          startAngle: 200, endAngle: -20,
+          min: 0, max: 100,
+          pointer: { show: true, length: '60%', width: 4, itemStyle: { color: '#1677ff' } },
+          axisLine: { lineStyle: { width: 16, color: [[0.6, '#ff4d4f'], [0.75, '#fa8c16'], [0.9, '#1677ff'], [1, '#52c41a']] } },
+          axisTick: { show: false },
+          splitLine: { show: false },
+          axisLabel: { show: false },
+          detail: { formatter: '{value}', fontSize: 28, fontWeight: 700, color: '#1677ff', offsetCenter: [0, '60%'] },
+          title: { show: true, offsetCenter: [0, '80%'], fontSize: 12, color: 'rgba(0,0,0,.45)' },
+          data: [{ value: ev.evaluateTotal, name: '总分' }]
         }]
       });
     }
 
-    // Trend chart
-    const trendEl = document.getElementById('trendChart');
-    if (trendEl) {
-      const trendChart = echarts.init(trendEl);
-      trendChart.setOption({
-        tooltip: { trigger: 'axis' },
-        grid: { top: 10, right: 10, bottom: 20, left: 40 },
-        xAxis: { type: 'category', data: ['第1期','第2期','第3期','第4期','第5期'], axisLine: { lineStyle: { color: '#e0e0e0' } }, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
-        yAxis: { type: 'value', min: 60, max: 100, splitLine: { lineStyle: { color: '#f0f0f0' } }, axisLabel: { color: 'rgba(0,0,0,.45)', fontSize: 11 } },
-        series: [{ type: 'line', data: t.trends, smooth: true, lineStyle: { color: '#1677ff', width: 2 }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(22,119,255,.2)' }, { offset: 1, color: 'rgba(22,119,255,.02)' }] } }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 6 }]
+    // Pass rate line chart
+    const prEl = document.getElementById('passRateChart');
+    if (prEl) {
+      const pc = echarts.init(prEl);
+      const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+      pc.setOption({
+        tooltip: { trigger: 'axis', formatter: '{b}: {c}%' },
+        grid: { top: 15, right: 15, bottom: 25, left: 40 },
+        xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, axisLine: { lineStyle: { color: '#e0e0e0' } } },
+        yAxis: { type: 'value', min: 0, max: 100, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)', formatter: '{value}%' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+        series: [{
+          type: 'line', data: detail.passRate, smooth: true,
+          lineStyle: { color: '#1677ff', width: 2 },
+          areaStyle: { color: { type: 'linear', x:0,y:0,x2:0,y2:1, colorStops:[{offset:0,color:'rgba(22,119,255,.18)'},{offset:1,color:'rgba(22,119,255,.02)'}] } },
+          itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 5
+        }]
       });
     }
-  }, 100);
 
-  // Close xiaoan if open so it refreshes context on next open
+    // Donut chart
+    const donutEl = document.getElementById('donutChart');
+    if (donutEl) {
+      const dc = echarts.init(donutEl);
+      const sitData = detail.studentEval.teachSituationData;
+      const colorMap = { '优秀': '#0578b9', '良好': '#40d285', '一般': '#fdcc00', '较差': '#f86a01' };
+      dc.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+        legend: { bottom: 0, itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 11 } },
+        graphic: [
+          { type: 'text', left: 'center', top: '38%', style: { text: sitData.avgTotal, fontSize: 26, fontWeight: 700, fill: '#1677ff', textAlign: 'center' } },
+          { type: 'text', left: 'center', top: '52%', style: { text: '分', fontSize: 12, fill: 'rgba(0,0,0,.45)', textAlign: 'center' } }
+        ],
+        series: [{
+          type: 'pie', radius: ['45%', '68%'], center: ['50%', '45%'],
+          label: { show: false },
+          data: sitData.teachSituationMap.map(d => ({ value: d.value, name: d.name, itemStyle: { color: colorMap[d.name] || '#999' } }))
+        }]
+      });
+    }
+  }, 80);
+
   if (xiaoanOpen) closeXiaoan();
 }
 
-function showList() {
+function showOverview() {
   document.getElementById('detailView').classList.add('hidden');
-  document.getElementById('listView').classList.remove('hidden');
-  currentTeacher = null;
+  document.getElementById('overviewView').classList.remove('hidden');
+  currentTeacherName = null;
   if (xiaoanOpen) closeXiaoan();
-  // Switch to teachers tab when returning
-  switchTab('teachers');
 }
 
-// ===== Weight Modal =====
-function openWeightModal() {
-  document.getElementById('w1').value = weights.teach;
-  document.getElementById('w2').value = weights.feedback;
-  document.getElementById('w3').value = weights.profess;
-  document.getElementById('w4').value = weights.research;
-  updateWeights();
-  document.getElementById('weightModal').classList.add('open');
-}
-function closeWeightModal() { document.getElementById('weightModal').classList.remove('open'); }
-function updateWeights() {
-  const v1 = +document.getElementById('w1').value;
-  const v2 = +document.getElementById('w2').value;
-  const v3 = +document.getElementById('w3').value;
-  const v4 = +document.getElementById('w4').value;
-  document.getElementById('w1v').textContent = v1 + '%';
-  document.getElementById('w2v').textContent = v2 + '%';
-  document.getElementById('w3v').textContent = v3 + '%';
-  document.getElementById('w4v').textContent = v4 + '%';
-  const total = v1 + v2 + v3 + v4;
-  const totalEl = document.getElementById('weightTotal');
-  const saveBtn = document.getElementById('weightSaveBtn');
-  if (total === 100) {
-    totalEl.className = 'weight-total ok';
-    totalEl.textContent = '合计：100%';
-    saveBtn.disabled = false;
-    saveBtn.style.opacity = '1';
-  } else {
-    totalEl.className = 'weight-total err';
-    totalEl.textContent = `合计：${total}%（需等于100%）`;
-    saveBtn.disabled = true;
-    saveBtn.style.opacity = '.5';
-  }
-}
-function saveWeights() {
-  const v1 = +document.getElementById('w1').value;
-  const v2 = +document.getElementById('w2').value;
-  const v3 = +document.getElementById('w3').value;
-  const v4 = +document.getElementById('w4').value;
-  if (v1 + v2 + v3 + v4 !== 100) return;
-  weights = { teach: v1, feedback: v2, profess: v3, research: v4 };
-  closeWeightModal();
-  if (currentTeacher) showDetail(currentTeacher.id);
-  else { renderOverview(); if (currentTab === 'teachers') renderList(); }
-}
-
-// ===== Xiaoan Conversational Digital Human =====
+// ===== Xiaoan Chat =====
 let xiaoanOpen = false;
 let xiaoanChartInstances = [];
-let xiaoanDragState = null;
-let xiaoanHistory243 = [];
-const DEEPSEEK_KEY_243 = 'sk-6420a1c0196149ecac72720513863fd0';
-const DEEPSEEK_URL_243 = 'https://api.deepseek.com/chat/completions';
+let xiaoanHistory = [];
+const DEEPSEEK_KEY = 'sk-6420a1c0196149ecac72720513863fd0';
+const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 
-function xiaoan243CollectData() {
-  let ctx = '当前查看：' + (currentTab === 'overview' ? '整体概览' : '教师分析') + '\n\n';
-  ctx += '## 权重配置\n教学效果' + weights.teach + '%，学员反馈' + weights.feedback + '%，职业素养' + weights.profess + '%，教研成果' + weights.research + '%\n\n';
-  ctx += '## 全部教师数据\n';
-  teachers.forEach(t => {
-    const s = calcScore(t);
-    ctx += t.name + '（' + t.dept + '，' + t.post + '，教龄' + t.years + '年）：综合' + s + '分\n';
-    ctx += '  教学效果' + t.dims.teach + '，学员反馈' + t.dims.feedback + '，职业素养' + t.dims.profess + '，教研成果' + t.dims.research + '\n';
-    ctx += '  学员通过率' + t.passRate + '%，进步提升' + t.progress + '%，满意度' + t.satisfaction + '\n';
-    ctx += '  近5期趋势：' + t.trends.join('→') + '\n';
-    ctx += '  教研：' + t.researches.map(r => r.n + '(' + r.s + ')').join('、') + '\n';
+function collectDataContext() {
+  let ctx = '当前页面：教学质量分析\n\n';
+  ctx += '## KPI概况\n评估班级数:' + kpiData.classCount + '，参评教师:' + kpiData.countNum + '，平均分:' + kpiData.avgScore + '，最高:' + kpiData.maxScore + '，最低:' + kpiData.minScore + '\n\n';
+  ctx += '## 教师评估列表\n';
+  teacherRows.forEach(r => {
+    ctx += r.teachName + '(' + r.teacherTypeName + ',' + r.s3 + ')：随堂听课' + r.inClassLecturesScore + '，教学检查' + r.teachCheckScore + '，学员评价' + r.studentScore + '，三项合计' + r.threeTotalScore + '，加分' + r.addScore + '，总分' + r.totalScore + '\n';
   });
-  if (currentTeacher) {
-    ctx += '\n## 当前选中教师：' + currentTeacher.name + '\n';
-    ctx += '学员评价：' + currentTeacher.reviews.join('；') + '\n';
+  if (currentTeacherName && teacherDetailMap[currentTeacherName]) {
+    const d = teacherDetailMap[currentTeacherName];
+    ctx += '\n## 当前查看教师：' + currentTeacherName + '\n';
+    ctx += '评估总分：' + d.evaluate.evaluateTotal + '，加分：' + d.evaluate.addScore + '\n';
+    d.evaluate.teachEvaluateList.forEach(e => { ctx += e.name + '：' + e.average + '/' + e.fullMarks + '(' + e.ratio + ')\n'; });
+    const sit = d.studentEval.teachSituationData;
+    ctx += '学员评价均分：' + sit.avgTotal + '，分布：' + sit.teachSituationMap.map(s => s.name + ':' + s.value).join('，') + '\n';
   }
   return ctx;
 }
 
-// --- FAB drag support ---
+// FAB drag
 let xiaoanFabDragged = false;
 (function() {
   const fab = document.getElementById('xiaoanFab');
@@ -889,10 +741,7 @@ let xiaoanFabDragged = false;
   });
 })();
 
-function xiaoanFabClick(e) {
-  if (xiaoanFabDragged) return;
-  openXiaoan();
-}
+function xiaoanFabClick(e) { if (!xiaoanFabDragged) openXiaoan(); }
 
 function openXiaoan() {
   if (xiaoanOpen) return;
@@ -900,7 +749,6 @@ function openXiaoan() {
   document.getElementById('xiaoanOverlay').classList.add('open');
   document.getElementById('xiaoanWrapper').classList.add('open');
   document.getElementById('xiaoanFab').style.display = 'none';
-  // Clear and show proactive insight
   const body = document.getElementById('xiaoanChatBody');
   body.innerHTML = '';
   xiaoanChartInstances = [];
@@ -913,12 +761,11 @@ function closeXiaoan() {
   document.getElementById('xiaoanOverlay').classList.remove('open');
   document.getElementById('xiaoanWrapper').classList.remove('open');
   document.getElementById('xiaoanFab').style.display = '';
-  // Destroy chart instances
   xiaoanChartInstances.forEach(c => { try { c.dispose(); } catch(e){} });
   xiaoanChartInstances = [];
 }
 
-// --- Panel header drag ---
+// Panel header drag
 (function() {
   const header = document.getElementById('xiaoanPanelHeader');
   const wrapper = document.getElementById('xiaoanWrapper');
@@ -945,47 +792,28 @@ function closeXiaoan() {
   });
 })();
 
-// --- Proactive insight ---
 function showProactiveInsight() {
   let text;
-  if (currentTeacher) {
-    const t = currentTeacher;
-    const score = calcScore(t);
-    const dims = [
-      { name: '教学效果', val: t.dims.teach },
-      { name: '学员反馈', val: t.dims.feedback },
-      { name: '职业素养', val: t.dims.profess },
-      { name: '教研成果', val: t.dims.research }
-    ];
-    const sorted = [...dims].sort((a,b) => b.val - a.val);
-    text = `我注意到您正在查看<span class="xa-highlight">${t.name}</span>老师的数据。综合评分<span class="xa-highlight">${score}分</span>，其中<span class="xa-highlight">${sorted[0].name}</span>表现突出（${sorted[0].val}分），<span class="xa-highlight">${sorted[3].name}</span>有提升空间（${sorted[3].val}分）。您可以问我更详细的分析。`;
+  if (currentTeacherName && teacherDetailMap[currentTeacherName]) {
+    const d = teacherDetailMap[currentTeacherName];
+    const row = teacherRows.find(r => r.teachName === currentTeacherName);
+    text = `您正在查看<span class="xa-highlight">${currentTeacherName}</span>老师的教学质量详情。总分<span class="xa-highlight">${d.evaluate.evaluateTotal}分</span>`;
+    if (row) text += `，其中随堂听课${row.inClassLecturesScore}分、教学检查${row.teachCheckScore}分、学员评价${row.studentScore}分`;
+    text += `。有什么需要深入分析的吗？`;
   } else {
-    const allScores = teachers.map(t => ({ name: t.name, score: calcScore(t) }));
-    const avg = +(allScores.reduce((s,x) => s + x.score, 0) / allScores.length).toFixed(1);
-    const lowest = allScores.sort((a,b) => a.score - b.score)[0];
-    text = `根据当前数据，全站<span class="xa-highlight">${teachers.length}位</span>教师，平均综合评分<span class="xa-highlight">${avg}分</span>。<span class="xa-highlight">${lowest.name}</span>老师评分最低（${lowest.score}分），建议重点关注。`;
+    const sorted = [...teacherRows].sort((a,b) => b.totalScore - a.totalScore);
+    text = `当前共<span class="xa-highlight">${kpiData.countNum}位</span>教师参评，平均分<span class="xa-highlight">${kpiData.avgScore}</span>。最高分<span class="xa-highlight">${sorted[0].teachName}（${sorted[0].totalScore}分）</span>，最低分<span class="xa-highlight">${sorted[sorted.length-1].teachName}（${sorted[sorted.length-1].totalScore}分）</span>。您想了解什么？`;
   }
   addSystemMsg(text);
 }
 
-// --- Chat message helpers ---
-function addSystemMsg(html, chartConfig) {
+function addSystemMsg(html) {
   const body = document.getElementById('xiaoanChatBody');
   const div = document.createElement('div');
   div.className = 'xa-msg';
-  let chartHtml = chartConfig ? `<div class="xa-msg-chart" id="xa-chart-${Date.now()}"></div>` : '';
-  div.innerHTML = `<div class="xa-msg-system">${html}${chartHtml}</div>`;
+  div.innerHTML = `<div class="xa-msg-system">${html}</div>`;
   body.appendChild(div);
   body.scrollTop = body.scrollHeight;
-
-  if (chartConfig) {
-    const chartEl = div.querySelector('.xa-msg-chart');
-    setTimeout(() => {
-      const chart = echarts.init(chartEl);
-      chart.setOption(chartConfig);
-      xiaoanChartInstances.push(chart);
-    }, 50);
-  }
 }
 
 function addUserMsg(text) {
@@ -997,73 +825,7 @@ function addUserMsg(text) {
   body.scrollTop = body.scrollHeight;
 }
 
-function typeSystemMsg(html, chartConfig) {
-  const body = document.getElementById('xiaoanChatBody');
-  const div = document.createElement('div');
-  div.className = 'xa-msg';
-  const msgDiv = document.createElement('div');
-  msgDiv.className = 'xa-msg-system';
-  div.appendChild(msgDiv);
-  body.appendChild(div);
-
-  // Strip tags for typing, then show full HTML
-  const plainText = html.replace(/<[^>]+>/g, '');
-  let i = 0;
-  msgDiv.innerHTML = '<span class="xa-typing-cursor"></span>';
-  const interval = setInterval(() => {
-    i += 2;
-    if (i >= plainText.length) {
-      clearInterval(interval);
-      let chartHtml = chartConfig ? `<div class="xa-msg-chart" id="xa-chart-${Date.now()}"></div>` : '';
-      msgDiv.innerHTML = html + chartHtml;
-      body.scrollTop = body.scrollHeight;
-      if (chartConfig) {
-        const chartEl = msgDiv.querySelector('.xa-msg-chart');
-        setTimeout(() => {
-          const chart = echarts.init(chartEl);
-          chart.setOption(chartConfig);
-          xiaoanChartInstances.push(chart);
-        }, 50);
-      }
-      // Stop wave
-      document.getElementById('xaWaveBar').classList.remove('active');
-    } else {
-      msgDiv.innerHTML = plainText.substring(0, i) + '<span class="xa-typing-cursor"></span>';
-      body.scrollTop = body.scrollHeight;
-    }
-  }, 30);
-
-  // Start wave animation during typing
-  document.getElementById('xaWaveBar').classList.add('active');
-}
-
-// --- Update chips based on context ---
-function updateChips() {
-  const container = document.getElementById('xiaoanChips');
-  let chips;
-  if (currentTeacher) {
-    const name = currentTeacher.name;
-    chips = [
-      { label: `分析${name}的优劣势`, action: () => runAnalysis('strengths') },
-      { label: '和其他教师对比', action: () => runAnalysis('comparison') },
-      { label: '生成评估建议', action: () => runAnalysis('suggestion') },
-      { label: '趋势分析', action: () => runAnalysis('trend') }
-    ];
-  } else {
-    chips = [
-      { label: '教学效果最好的教师', action: () => runAnalysis('best') },
-      { label: '哪位教师需要关注', action: () => runAnalysis('attention') },
-      { label: '部门教学质量概况', action: () => runAnalysis('dept') }
-    ];
-  }
-  container.innerHTML = chips.map((c, i) =>
-    `<div class="xa-chip" onclick="document.querySelectorAll('.xa-chip')[${i}].__action()">${c.label}</div>`
-  ).join('');
-  container.querySelectorAll('.xa-chip').forEach((el, i) => { el.__action = chips[i].action; });
-}
-
-// --- DeepSeek Streaming for 2.4.3 ---
-function addStreamMsg243() {
+function addStreamMsg() {
   const body = document.getElementById('xiaoanChatBody');
   const div = document.createElement('div');
   div.className = 'xa-msg';
@@ -1074,16 +836,17 @@ function addStreamMsg243() {
   return document.getElementById(id);
 }
 
-async function callDeepSeek243(userMsg, textEl) {
-  xiaoanHistory243.push({ role: 'user', content: userMsg });
-  const sysPrompt = '你是"小安"，沈阳客运段职培基地的智能培训分析助手（教学质量分析模块）。你基于以下真实教学质量数据回答问题。\n\n' +
-    '要求：1.必须基于提供的真实数据，不要编造 2.包含具体数字和百分比 3.分析教师优劣势和发展趋势 4.给出具体可操作的建议 5.回答简洁，200字以内 6.中文回答\n\n' +
-    xiaoan243CollectData();
-  const msgs = [{ role: 'system', content: sysPrompt }, ...xiaoanHistory243.slice(-6)];
+async function callDeepSeek(userMsg, textEl) {
+  xiaoanHistory.push({ role: 'user', content: userMsg });
+  const sysPrompt = '你是"小安"，沈阳客运段职培基地的智能培训分析助手（教学质量分析模块）。基于以下真实教学质量数据回答问题。\n\n' +
+    '要求：1.必须基于提供的真实数据 2.包含具体数字 3.分析教师优劣势 4.给出具体建议 5.回答简洁200字以内 6.中文回答\n\n' +
+    collectDataContext();
+  const msgs = [{ role: 'system', content: sysPrompt }, ...xiaoanHistory.slice(-6)];
+  document.getElementById('xaWaveBar').classList.add('active');
   try {
-    const resp = await fetch(DEEPSEEK_URL_243, {
+    const resp = await fetch(DEEPSEEK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + DEEPSEEK_KEY_243 },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + DEEPSEEK_KEY },
       body: JSON.stringify({ model: 'deepseek-chat', messages: msgs, stream: true, max_tokens: 800, temperature: 0.7 })
     });
     if (!resp.ok) throw new Error('API ' + resp.status);
@@ -1106,24 +869,23 @@ async function callDeepSeek243(userMsg, textEl) {
         } catch(e) {}
       }
     }
-    xiaoanHistory243.push({ role: 'assistant', content: full });
+    xiaoanHistory.push({ role: 'assistant', content: full });
   } catch(err) {
     textEl.textContent = '网络异常，请稍后再试。(' + err.message + ')';
   }
+  document.getElementById('xaWaveBar').classList.remove('active');
 }
 
-// --- Send message ---
 function sendXiaoanMsg() {
   const input = document.getElementById('xiaoanInput');
   const text = input.value.trim();
   if (!text) return;
   input.value = '';
   addUserMsg(text);
-  const textEl = addStreamMsg243();
-  callDeepSeek243(text, textEl);
+  const textEl = addStreamMsg();
+  callDeepSeek(text, textEl);
 }
 
-// --- Voice simulation ---
 function xiaoanVoice() {
   const mic = document.getElementById('xiaoanMic');
   if (mic.classList.contains('recording')) return;
@@ -1131,433 +893,40 @@ function xiaoanVoice() {
   setTimeout(() => {
     mic.classList.remove('recording');
     const input = document.getElementById('xiaoanInput');
-    // Pick a preset question
-    if (currentTeacher) {
-      input.value = `分析${currentTeacher.name}的优劣势`;
-    } else {
-      input.value = '教学效果最好的教师';
-    }
+    input.value = currentTeacherName ? `分析${currentTeacherName}的教学优劣势` : '哪位教师评分最高？分析原因';
     sendXiaoanMsg();
   }, 2000);
 }
 
-// ===== Analysis Functions =====
-function runAnalysis(type, extra) {
-  const labelMap = {
-    best: '教学效果最好的教师有哪些？分析他们的特点',
-    attention: '哪位教师需要重点关注？分析原因',
-    dept: '各部门教学质量概况如何？',
-    strengths: currentTeacher ? '分析' + currentTeacher.name + '的优势和劣势' : '分析教师优劣势',
-    comparison: currentTeacher ? currentTeacher.name + '和其他教师相比怎么样？' : '教师对比分析',
-    suggestion: currentTeacher ? '给' + currentTeacher.name + '生成评估建议' : '生成评估建议',
-    trend: currentTeacher ? '分析' + currentTeacher.name + '的趋势变化' : '趋势分析',
-    dimDive: extra ? '详细分析' + ({teach:'教学效果',feedback:'学员反馈',profess:'职业素养',research:'教研成果'}[extra] || extra) + '维度' : '维度分析'
-  };
-  const query = labelMap[type] || type;
-  addUserMsg(query);
-  const textEl = addStreamMsg243();
-  callDeepSeek243(query, textEl);
-}
-
-const analysisHandlers = {
-  best: function() {
-    const sorted = [...teachers].sort((a,b) => calcScore(b) - calcScore(a));
-    const top3 = sorted.slice(0, 3);
-    let text = '根据当前数据，<span class="xa-highlight">教学效果综合评分前三</span>的教师：<br>';
-    top3.forEach((t, i) => {
-      const s = calcScore(t);
-      const lv = getLevel(s);
-      text += `${i+1}. <span class="xa-highlight">${t.name}</span>（${t.dept}）${s}分 - ${lv.text}<br>`;
-    });
-    const avg = +(teachers.reduce((s,t) => s + calcScore(t), 0) / teachers.length).toFixed(1);
-    text += `<br>全站平均分 ${avg} 分，${top3[0].name}老师以 ${calcScore(top3[0])} 分领先。`;
-
-    const chart = {
-      tooltip: { trigger: 'axis' },
-      grid: { top: 20, right: 20, bottom: 30, left: 80 },
-      xAxis: { type: 'value', min: 60, max: 100 },
-      yAxis: { type: 'category', data: sorted.map(t => t.name).reverse() },
-      series: [{ type: 'bar', data: sorted.map(t => calcScore(t)).reverse(),
-        itemStyle: { color: function(p) { return p.dataIndex >= sorted.length - 3 ? '#1677ff' : '#d9d9d9'; }, borderRadius: [0,4,4,0] },
-        label: { show: true, position: 'right', fontSize: 11 }
-      }]
-    };
-    return { text, chart };
-  },
-
-  attention: function() {
-    const needAtt = teachers.filter(t => {
-      const s = calcScore(t);
-      const trend = t.trends;
-      const declining = trend[4] < trend[2]; // latest < mid
-      return s < 80 || declining;
-    }).sort((a,b) => calcScore(a) - calcScore(b));
-
-    let text = '根据当前数据，以下教师<span class="xa-highlight">需要重点关注</span>：<br>';
-    if (needAtt.length === 0) {
-      text = '根据当前数据，所有教师综合评分均在80分以上且趋势向好，暂无需要特别关注的教师。';
-      return { text };
-    }
-    needAtt.forEach(t => {
-      const s = calcScore(t);
-      const trend = t.trends;
-      const dir = trend[4] > trend[0] ? '上升' : trend[4] < trend[0] ? '下降' : '持平';
-      const dims = [
-        { name: '教学效果', val: t.dims.teach },
-        { name: '学员反馈', val: t.dims.feedback },
-        { name: '职业素养', val: t.dims.profess },
-        { name: '教研成果', val: t.dims.research }
-      ];
-      const weakest = dims.sort((a,b) => a.val - b.val)[0];
-      text += `<span class="xa-highlight">${t.name}</span>（${t.dept}）：${s}分，趋势${dir}，最弱项为${weakest.name}（${weakest.val}分）<br>`;
-    });
-    return { text };
-  },
-
-  dept: function() {
-    const depts = {};
-    teachers.forEach(t => {
-      if (!depts[t.dept]) depts[t.dept] = [];
-      depts[t.dept].push(t);
-    });
-    let text = '根据当前数据，各<span class="xa-highlight">部门教学质量概况</span>：<br>';
-    const deptNames = Object.keys(depts);
-    const deptAvgs = deptNames.map(d => {
-      const avg = +(depts[d].reduce((s,t) => s + calcScore(t), 0) / depts[d].length).toFixed(1);
-      const best = depts[d].sort((a,b) => calcScore(b) - calcScore(a))[0];
-      text += `<span class="xa-highlight">${d}</span>：${depts[d].length}人，均分 ${avg}，标杆 ${best.name}（${calcScore(best)}分）<br>`;
-      return avg;
-    });
-    const topDept = deptNames[deptAvgs.indexOf(Math.max(...deptAvgs))];
-    text += `<br><span class="xa-highlight">${topDept}</span>整体教学质量最优。`;
-
-    const chart = {
-      tooltip: { trigger: 'axis' },
-      grid: { top: 20, right: 20, bottom: 30, left: 80 },
-      xAxis: { type: 'value', min: 60, max: 100 },
-      yAxis: { type: 'category', data: deptNames },
-      series: [{ type: 'bar', data: deptAvgs,
-        itemStyle: { color: '#1677ff', borderRadius: [0,4,4,0] },
-        label: { show: true, position: 'right', fontSize: 11 }
-      }]
-    };
-    return { text, chart };
-  },
-
-  strengths: function() {
-    const t = currentTeacher;
-    if (!t) return { text: '请先进入教师详情页再使用此功能。' };
-    const score = calcScore(t);
-    const dims = [
-      { name: '教学效果', val: t.dims.teach, key: 'teach' },
-      { name: '学员反馈', val: t.dims.feedback, key: 'feedback' },
-      { name: '职业素养', val: t.dims.profess, key: 'profess' },
-      { name: '教研成果', val: t.dims.research, key: 'research' }
+function updateChips() {
+  const container = document.getElementById('xiaoanChips');
+  let chips;
+  if (currentTeacherName) {
+    chips = [
+      { label: `分析${currentTeacherName}的优劣势`, q: `详细分析${currentTeacherName}的教学质量各维度优势和不足` },
+      { label: '和其他教师对比', q: `${currentTeacherName}和其他教师相比，各维度得分如何？` },
+      { label: '提升建议', q: `给${currentTeacherName}生成教学质量提升建议` }
     ];
-    const sorted = [...dims].sort((a,b) => b.val - a.val);
-    // Compute avg across all teachers per dimension
-    const avgDims = {};
-    dims.forEach(d => {
-      avgDims[d.key] = +(teachers.reduce((s,x) => s + x.dims[d.key], 0) / teachers.length).toFixed(1);
-    });
-
-    let text = `根据当前数据，<span class="xa-highlight">${t.name}</span>老师四维分析：<br>`;
-    sorted.forEach(d => {
-      const diff = (d.val - avgDims[d.key]).toFixed(1);
-      const dir = diff > 0 ? `高于均值${diff}分` : `低于均值${Math.abs(diff)}分`;
-      text += `${d.name}：<span class="xa-highlight">${d.val}分</span>（全站均值${avgDims[d.key]}，${dir}）<br>`;
-    });
-    text += `<br>优势领域：<span class="xa-highlight">${sorted[0].name}</span>；提升空间：<span class="xa-highlight">${sorted[3].name}</span>。`;
-
-    const chart = {
-      tooltip: {},
-      radar: {
-        indicator: dims.map(d => ({ name: d.name, max: 100 })),
-        radius: '60%',
-        axisName: { color: 'rgba(0,0,0,.65)', fontSize: 11 },
-        splitArea: { areaStyle: { color: ['rgba(22,119,255,.02)','rgba(22,119,255,.05)'] } }
-      },
-      series: [{
-        type: 'radar',
-        data: [
-          { value: dims.map(d => d.val), name: t.name, lineStyle: { color: '#1677ff', width: 2 }, areaStyle: { color: 'rgba(22,119,255,.2)' }, itemStyle: { color: '#1677ff' } },
-          { value: dims.map(d => avgDims[d.key]), name: '全站均值', lineStyle: { color: '#fa8c16', width: 1, type: 'dashed' }, itemStyle: { color: '#fa8c16' } }
-        ]
-      }],
-      legend: { bottom: 0, data: [t.name, '全站均值'], textStyle: { fontSize: 11 } }
-    };
-    return { text, chart };
-  },
-
-  comparison: function() {
-    const t = currentTeacher;
-    if (!t) return { text: '请先进入教师详情页再使用此功能。' };
-    const sameDept = teachers.filter(x => x.dept === t.dept);
-    const deptAvg = +(sameDept.reduce((s,x) => s + calcScore(x), 0) / sameDept.length).toFixed(1);
-    const allSorted = [...teachers].sort((a,b) => calcScore(b) - calcScore(a));
-    const topTeacher = allSorted[0];
-    const score = calcScore(t);
-    const topScore = calcScore(topTeacher);
-
-    let text = `根据当前数据，<span class="xa-highlight">${t.name}</span>与其他教师对比：<br>`;
-    text += `综合评分 <span class="xa-highlight">${score}</span> 分，排名第 ${getRank(t)}/${teachers.length}<br>`;
-    text += `部门（${t.dept}）均分：${deptAvg}，${score > deptAvg ? '高于' : '低于'}均值 ${Math.abs(score - deptAvg).toFixed(1)} 分<br>`;
-    text += `全站标杆 ${topTeacher.name}：${topScore} 分`;
-    if (t.id !== topTeacher.id) {
-      text += `，差距 ${(topScore - score).toFixed(1)} 分`;
-    }
-
-    const dimNames = ['教学效果','学员反馈','职业素养','教研成果'];
-    const dimKeys = ['teach','feedback','profess','research'];
-    const chart = {
-      tooltip: { trigger: 'axis' },
-      legend: { bottom: 0, data: [t.name, '部门均值', topTeacher.name], textStyle: { fontSize: 11 } },
-      grid: { top: 10, right: 20, bottom: 40, left: 60 },
-      xAxis: { type: 'category', data: dimNames, axisLabel: { fontSize: 11 } },
-      yAxis: { type: 'value', min: 40, max: 100 },
-      series: [
-        { name: t.name, type: 'bar', data: dimKeys.map(k => t.dims[k]), itemStyle: { color: '#1677ff' }, barGap: '10%' },
-        { name: '部门均值', type: 'bar', data: dimKeys.map(k => +(sameDept.reduce((s,x) => s + x.dims[k], 0) / sameDept.length).toFixed(1)), itemStyle: { color: '#52c41a' } },
-        { name: topTeacher.name, type: 'bar', data: dimKeys.map(k => topTeacher.dims[k]), itemStyle: { color: '#fa8c16' } }
-      ]
-    };
-    return { text, chart };
-  },
-
-  suggestion: function() {
-    const t = currentTeacher;
-    if (!t) return { text: '请先进入教师详情页再使用此功能。' };
-    const score = calcScore(t);
-    const dims = [
-      { name: '教学效果', val: t.dims.teach, key: 'teach' },
-      { name: '学员反馈', val: t.dims.feedback, key: 'feedback' },
-      { name: '职业素养', val: t.dims.profess, key: 'profess' },
-      { name: '教研成果', val: t.dims.research, key: 'research' }
+  } else {
+    chips = [
+      { label: '谁的评分最高？', q: '教学质量评估中哪位教师总分最高？分析其优势' },
+      { label: '哪位教师需要关注？', q: '哪位教师总分最低，需要重点关注和提升？' },
+      { label: '各单位对比分析', q: '各单位教师的教学质量评估情况对比分析' }
     ];
-    const sorted = [...dims].sort((a,b) => a.val - b.val);
-
-    let text = `根据当前数据，为<span class="xa-highlight">${t.name}</span>老师生成评估建议：<br><br>`;
-    text += `<b>综合评价</b>：${score}分（${getLevel(score).text}），全站排名第${getRank(t)}名。<br><br>`;
-    text += `<b>重点提升方向</b>：<br>`;
-
-    const suggestions = {
-      teach: `教学效果（${t.dims.teach}分）：建议优化教学设计，加强重难点实操练习，关注学员平均进步幅度，提升考试通过率。`,
-      feedback: `学员反馈（${t.dims.feedback}分）：建议增强课堂互动，采用案例教学、小组讨论等方式提升学员参与感和满意度。`,
-      profess: `职业素养（${t.dims.profess}分）：建议保持高出勤率，积极参与教研活动，加强职业道德和团队协作意识。`,
-      research: `教研成果（${t.dims.research}分）：建议增加论文发表和课题申报，参与教材编写和标准制定，提升学术产出。`
-    };
-
-    // Show bottom 2 suggestions
-    sorted.slice(0, 2).forEach(d => {
-      text += `- ${suggestions[d.key]}<br>`;
-    });
-
-    text += `<br><b>保持优势</b>：${sorted[3].name}（${sorted[3].val}分）表现突出，继续保持并发挥示范作用。`;
-    return { text };
-  },
-
-  trend: function() {
-    const t = currentTeacher;
-    if (!t) return { text: '请先进入教师详情页再使用此功能。' };
-    const trends = t.trends;
-    const diff = (trends[4] - trends[0]).toFixed(1);
-    const direction = diff > 0 ? '上升' : diff < 0 ? '下降' : '持平';
-    const avgGrowth = ((trends[4] - trends[0]) / 4).toFixed(1);
-
-    let text = `根据当前数据，<span class="xa-highlight">${t.name}</span>老师近5期评分趋势分析：<br>`;
-    text += `起始分 ${trends[0]} -> 最新分 <span class="xa-highlight">${trends[4]}</span>，整体<span class="xa-highlight">${direction}</span> ${Math.abs(diff)} 分<br>`;
-    text += `期均增长 ${avgGrowth} 分/期<br>`;
-    if (diff > 5) text += `持续进步明显，教学能力稳步提升。`;
-    else if (diff > 0) text += `呈缓慢上升趋势，建议加大提升力度。`;
-    else if (diff < 0) text += `<span class="xa-highlight">呈下降趋势，需要重点关注并分析原因。</span>`;
-    else text += `评分稳定，可适当设定更高目标。`;
-
-    // Also show overall avg trend for comparison
-    const avgTrends = [0,1,2,3,4].map(i => +(teachers.reduce((s,x) => s + x.trends[i], 0) / teachers.length).toFixed(1));
-
-    const chart = {
-      tooltip: { trigger: 'axis' },
-      legend: { bottom: 0, data: [t.name, '全站均值'], textStyle: { fontSize: 11 } },
-      grid: { top: 10, right: 20, bottom: 40, left: 40 },
-      xAxis: { type: 'category', data: ['第1期','第2期','第3期','第4期','第5期'], axisLabel: { fontSize: 11 } },
-      yAxis: { type: 'value', min: 60, max: 100 },
-      series: [
-        { name: t.name, type: 'line', data: trends, smooth: true, lineStyle: { color: '#1677ff', width: 2 }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 6, areaStyle: { color: { type: 'linear', x:0,y:0,x2:0,y2:1, colorStops:[{offset:0,color:'rgba(22,119,255,.2)'},{offset:1,color:'rgba(22,119,255,.02)'}] } } },
-        { name: '全站均值', type: 'line', data: avgTrends, smooth: true, lineStyle: { color: '#fa8c16', width: 1, type: 'dashed' }, itemStyle: { color: '#fa8c16' }, symbol: 'none' }
-      ]
-    };
-    return { text, chart };
-  },
-
-  dimDive: function(dimKey) {
-    const t = currentTeacher;
-    if (!t) return { text: '请先进入教师详情页再使用此功能。' };
-    const dimMap = { teach: '教学效果', feedback: '学员反馈', profess: '职业素养', research: '教研成果' };
-    const dimName = dimMap[dimKey] || '教学效果';
-    const dimVal = t.dims[dimKey];
-    const avg = +(teachers.reduce((s,x) => s + x.dims[dimKey], 0) / teachers.length).toFixed(1);
-    const rank = [...teachers].sort((a,b) => b.dims[dimKey] - a.dims[dimKey]).findIndex(x => x.id === t.id) + 1;
-
-    let text = `根据当前数据，<span class="xa-highlight">${t.name}</span>的<span class="xa-highlight">${dimName}</span>维度深度分析：<br>`;
-    text += `得分 <span class="xa-highlight">${dimVal}</span> 分，全站排名第 ${rank}/${teachers.length}<br>`;
-    text += `全站均值 ${avg} 分，${dimVal > avg ? '高于' : '低于'}均值 ${Math.abs(dimVal - avg).toFixed(1)} 分<br>`;
-
-    if (dimKey === 'teach') {
-      text += `<br>考试通过率：${t.passRate}%，学员平均进步：+${t.progress}分`;
-    } else if (dimKey === 'feedback') {
-      text += `<br>满意度：${t.satisfaction}/5.0，教学态度：${t.attitude}，内容质量：${t.quality}，互动效果：${t.interact}`;
-    } else if (dimKey === 'profess') {
-      text += `<br>出勤率：${t.attendance}%`;
-      t.profItems.forEach(p => { text += `，${p.n}：${p.s}分`; });
-    } else if (dimKey === 'research') {
-      text += `<br>教研成果${t.researches.length}项：`;
-      t.researches.forEach(r => { text += `${r.n}（${r.s}）、`; });
-      text = text.replace(/、$/, '');
-    }
-
-    // Bar chart: all teachers on this dimension
-    const sorted = [...teachers].sort((a,b) => b.dims[dimKey] - a.dims[dimKey]);
-    const chart = {
-      tooltip: { trigger: 'axis' },
-      grid: { top: 10, right: 20, bottom: 30, left: 80 },
-      xAxis: { type: 'value', min: 40, max: 100 },
-      yAxis: { type: 'category', data: sorted.map(x => x.name).reverse() },
-      series: [{ type: 'bar', data: sorted.map(x => x.dims[dimKey]).reverse(),
-        itemStyle: { color: function(p) { return sorted[sorted.length - 1 - p.dataIndex].id === t.id ? '#1677ff' : '#d9d9d9'; }, borderRadius: [0,4,4,0] },
-        label: { show: true, position: 'right', fontSize: 11 }
-      }]
-    };
-    return { text, chart };
   }
-};
-
-// ===== Overview Charts =====
-let overviewCharts = [];
-function renderOverview() {
-  overviewCharts.forEach(c => { try { c.dispose(); } catch(e){} });
-  overviewCharts = [];
-
-  const scores = teachers.map(t => ({ name: t.name, score: calcScore(t) }));
-  const avgScore = +(scores.reduce((s,x) => s + x.score, 0) / scores.length).toFixed(1);
-  const excellent = scores.filter(x => x.score >= 85).length;
-  const avgPassRate = +(teachers.reduce((s,t) => s + t.passRate, 0) / teachers.length).toFixed(1);
-  const avgSatisfaction = +(teachers.reduce((s,t) => s + t.satisfaction, 0) / teachers.length).toFixed(1);
-
-  // KPI cards
-  document.getElementById('overviewKpis').innerHTML = [
-    { label: '教师总数', value: teachers.length, unit: '人', trend: '', up: true },
-    { label: '平均综合评分', value: avgScore, unit: '分', trend: '+2.3 较上期', up: true },
-    { label: '优秀教师占比', value: Math.round(excellent / teachers.length * 100), unit: '%', trend: excellent + '/' + teachers.length + ' 达优秀', up: true },
-    { label: '平均学员满意度', value: avgSatisfaction, unit: '', trend: avgPassRate + '% 平均通过率', up: true },
-  ].map(k => `<div class="card overview-kpi">
-    <div class="kpi-value">${k.value}<span style="font-size:13px;font-weight:400;color:rgba(0,0,0,.45);margin-left:3px">${k.unit}</span></div>
-    <div class="kpi-label">${k.label}</div>
-    <div class="kpi-trend ${k.up ? 'up' : 'down'}">${k.up ? '&#9650;' : '&#9660;'} ${k.trend}</div>
-  </div>`).join('');
-
-  // Chart 1: Four-dimension average radar
-  const dimAvg = {
-    teach: +(teachers.reduce((s,t) => s + t.dims.teach, 0) / teachers.length).toFixed(1),
-    feedback: +(teachers.reduce((s,t) => s + t.dims.feedback, 0) / teachers.length).toFixed(1),
-    profess: +(teachers.reduce((s,t) => s + t.dims.profess, 0) / teachers.length).toFixed(1),
-    research: +(teachers.reduce((s,t) => s + t.dims.research, 0) / teachers.length).toFixed(1),
-  };
-  const dimMax = teachers.reduce((m, t) => ({
-    teach: Math.max(m.teach, t.dims.teach), feedback: Math.max(m.feedback, t.dims.feedback),
-    profess: Math.max(m.profess, t.dims.profess), research: Math.max(m.research, t.dims.research)
-  }), { teach: 0, feedback: 0, profess: 0, research: 0 });
-  const c1 = echarts.init(document.getElementById('chartDimAvg'));
-  c1.setOption({
-    radar: { indicator: [
-      { name: '教学效果('+weights.teach+'%)', max: 100 }, { name: '学员反馈('+weights.feedback+'%)', max: 100 },
-      { name: '职业素养('+weights.profess+'%)', max: 100 }, { name: '教研成果('+weights.research+'%)', max: 100 }
-    ], radius: '60%' },
-    legend: { bottom: 0, data: ['全站均值','最高水平'] },
-    series: [{ type: 'radar', data: [
-      { value: [dimAvg.teach, dimAvg.feedback, dimAvg.profess, dimAvg.research], name: '全站均值', areaStyle: { color: 'rgba(22,119,255,.15)' }, lineStyle: { color: '#1677ff' }, itemStyle: { color: '#1677ff' } },
-      { value: [dimMax.teach, dimMax.feedback, dimMax.profess, dimMax.research], name: '最高水平', lineStyle: { color: '#52c41a', type: 'dashed' }, itemStyle: { color: '#52c41a' } }
-    ] }],
-    tooltip: {}
+  container.innerHTML = chips.map((c, i) =>
+    `<div class="xa-chip" data-idx="${i}">${c.label}</div>`
+  ).join('');
+  container.querySelectorAll('.xa-chip').forEach((el, i) => {
+    el.addEventListener('click', () => {
+      addUserMsg(chips[i].label);
+      const textEl = addStreamMsg();
+      callDeepSeek(chips[i].q, textEl);
+    });
   });
-  overviewCharts.push(c1);
-
-  // Chart 2: Department comparison grouped bar
-  const depts = [...new Set(teachers.map(t => t.dept))];
-  const deptData = depts.map(d => {
-    const dt = teachers.filter(t => t.dept === d);
-    return {
-      name: d, count: dt.length,
-      score: +(dt.reduce((s,t) => s + calcScore(t), 0) / dt.length).toFixed(1),
-      pass: +(dt.reduce((s,t) => s + t.passRate, 0) / dt.length).toFixed(1)
-    };
-  });
-  const c2 = echarts.init(document.getElementById('chartDeptCompare'));
-  c2.setOption({
-    tooltip: { trigger: 'axis' },
-    legend: { bottom: 0 },
-    grid: { left: 50, right: 20, top: 20, bottom: 40 },
-    xAxis: { type: 'category', data: deptData.map(d => d.name), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' } },
-    yAxis: [
-      { type: 'value', name: '评分', min: 60, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
-      { type: 'value', name: '通过率%', min: 60, max: 100, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { show: false } }
-    ],
-    series: [
-      { name: '综合评分', type: 'bar', data: deptData.map(d => d.score), itemStyle: { color: '#1677ff', borderRadius: [4,4,0,0] }, barMaxWidth: 28 },
-      { name: '通过率', type: 'line', yAxisIndex: 1, data: deptData.map(d => d.pass), itemStyle: { color: '#52c41a' }, lineStyle: { color: '#52c41a' }, symbol: 'circle', symbolSize: 6 }
-    ]
-  });
-  overviewCharts.push(c2);
-
-  // Chart 3: Score distribution
-  const bins = [
-    { range: '<70', min: 0, max: 70 }, { range: '70-75', min: 70, max: 75 },
-    { range: '75-80', min: 75, max: 80 }, { range: '80-85', min: 80, max: 85 },
-    { range: '85-90', min: 85, max: 90 }, { range: '>=90', min: 90, max: 200 }
-  ];
-  const binCounts = bins.map(b => scores.filter(s => s.score >= b.min && s.score < b.max).length);
-  const c3 = echarts.init(document.getElementById('chartScoreDist'));
-  c3.setOption({
-    tooltip: { trigger: 'axis', formatter: '{b}: {c} 人' },
-    grid: { left: 40, right: 20, top: 20, bottom: 30 },
-    xAxis: { type: 'category', data: bins.map(b => b.range), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' } },
-    yAxis: { type: 'value', minInterval: 1, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
-    series: [{ type: 'bar', data: binCounts, itemStyle: {
-      color: (p) => ['#ff4d4f','#fa8c16','#faad14','#1677ff','#52c41a','#13c2c2'][p.dataIndex],
-      borderRadius: [4,4,0,0]
-    }, barMaxWidth: 36, label: { show: true, position: 'top', fontSize: 11, color: 'rgba(0,0,0,.65)' } }]
-  });
-  overviewCharts.push(c3);
-
-  // Chart 4: Overall trend (average score across periods)
-  const periods = ['2025 Q1','2025 Q2','2025 Q3','2025 Q4','2026 Q1'];
-  const trendAvg = periods.map((_, i) => {
-    const avg = teachers.reduce((s,t) => s + t.trends[i], 0) / teachers.length;
-    return +avg.toFixed(1);
-  });
-  const trendMax = periods.map((_, i) => Math.max(...teachers.map(t => t.trends[i])));
-  const trendMin = periods.map((_, i) => Math.min(...teachers.map(t => t.trends[i])));
-  const c4 = echarts.init(document.getElementById('chartTrend'));
-  c4.setOption({
-    tooltip: { trigger: 'axis' },
-    legend: { bottom: 0 },
-    grid: { left: 45, right: 20, top: 20, bottom: 40 },
-    xAxis: { type: 'category', data: periods, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.65)' } },
-    yAxis: { type: 'value', min: 60, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
-    series: [
-      { name: '全站均值', type: 'line', data: trendAvg, smooth: true, lineStyle: { color: '#1677ff', width: 3 }, itemStyle: { color: '#1677ff' }, symbol: 'circle', symbolSize: 6,
-        areaStyle: { color: { type: 'linear', x:0,y:0,x2:0,y2:1, colorStops: [{offset:0,color:'rgba(22,119,255,.15)'},{offset:1,color:'rgba(22,119,255,.02)'}] } } },
-      { name: '最高分', type: 'line', data: trendMax, lineStyle: { color: '#52c41a', type: 'dashed', width: 1 }, itemStyle: { color: '#52c41a' }, symbol: 'none' },
-      { name: '最低分', type: 'line', data: trendMin, lineStyle: { color: '#ff4d4f', type: 'dashed', width: 1 }, itemStyle: { color: '#ff4d4f' }, symbol: 'none' }
-    ]
-  });
-  overviewCharts.push(c4);
 }
 
-window.addEventListener('resize', function() {
-  overviewCharts.forEach(c => { if (c && !c.isDisposed()) c.resize(); });
-});
-
-// Init
+// ===== Init =====
 renderOverview();
 </script>
 </body>
