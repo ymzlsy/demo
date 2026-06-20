@@ -283,6 +283,63 @@
 
     /* Workshop selector bar */
     .ws-selector-bar { display: flex; gap: 10px; align-items: center; flex-shrink: 0; margin-bottom: 6px; }
+
+    /* Chart Info Modal */
+    .chart-info-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; border-radius: 50%; border: 1px solid #d9d9d9;
+      background: #fafafa; color: rgba(0,0,0,.45); font-size: 10px; font-weight: 700;
+      cursor: pointer; margin-left: auto; flex-shrink: 0; transition: all .2s;
+      font-style: italic; font-family: Georgia, serif; line-height: 1;
+    }
+    .chart-info-btn:hover { border-color: #1677ff; color: #1677ff; background: #f0f5ff; }
+    .chart-info-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.45); z-index: 1100;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .chart-info-overlay.active { opacity: 1; pointer-events: auto; }
+    .chart-info-modal {
+      background: #fff; border-radius: 12px; width: 580px; max-height: 80vh;
+      box-shadow: 0 12px 48px rgba(0,0,0,.15); overflow: hidden;
+      transform: translateY(20px) scale(0.95); transition: transform .25s cubic-bezier(.4,0,.2,1);
+    }
+    .chart-info-overlay.active .chart-info-modal { transform: translateY(0) scale(1); }
+    .chart-info-header {
+      padding: 16px 20px; background: linear-gradient(135deg, #1677ff 0%, #4096ff 100%);
+      color: #fff; display: flex; align-items: center; justify-content: space-between;
+    }
+    .chart-info-header h3 { font-size: 15px; font-weight: 600; margin: 0; }
+    .chart-info-close {
+      width: 28px; height: 28px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,.2); color: #fff; font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .chart-info-close:hover { background: rgba(255,255,255,.35); }
+    .chart-info-body { padding: 16px 20px; overflow-y: auto; max-height: calc(80vh - 56px); }
+    .chart-info-section { margin-bottom: 14px; }
+    .chart-info-section:last-child { margin-bottom: 0; }
+    .chart-info-label {
+      font-size: 11px; color: rgba(0,0,0,.45); font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 4px;
+    }
+    .chart-info-value {
+      font-size: 13px; color: rgba(0,0,0,.85); line-height: 1.6;
+      background: #fafafa; border-radius: 6px; padding: 8px 12px;
+      border: 1px solid #f0f0f0; word-break: break-all;
+    }
+    .chart-info-value code {
+      background: #e6f7ff; color: #1677ff; padding: 1px 4px; border-radius: 3px;
+      font-size: 12px; font-family: 'SF Mono', Monaco, monospace;
+    }
+    .chart-info-confidence {
+      display: inline-block; padding: 2px 10px; border-radius: 10px;
+      font-size: 12px; font-weight: 600;
+    }
+    .conf-100 { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+    .conf-need { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+    .conf-partial { background: #e6f7ff; color: #1677ff; border: 1px solid #91d5ff; }
   </style>
 </head>
 <body>
@@ -314,7 +371,7 @@
         <div class="station-left-top">
           <!-- Skill Mastery grouped bar -->
           <div class="card">
-            <div class="card-title">技能掌握情况分析<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按岗位聚合技能掌握等级</span></div>
+            <div class="card-title">技能掌握情况分析<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按岗位聚合技能掌握等级</span><span class="chart-info-btn" onclick="showChartInfo('station-skill-mastery')">i</span></div>
             <div style="margin-bottom:4px;flex-shrink:0;">
               <select class="form-select" id="stationJobSelect" onchange="renderStationSkillChart()" style="font-size:11px;padding:2px 8px;">
                 <option value="全部岗位">全部岗位</option>
@@ -328,7 +385,7 @@
           </div>
           <!-- Annual Plan Gauges -->
           <div class="card">
-            <div class="card-title">年度计划内培训班进度<span class="card-subtitle" style="color:#fa8c16">需后端开发: 年度计划完成率聚合</span></div>
+            <div class="card-title">年度计划内培训班进度<span class="card-subtitle" style="color:#fa8c16">需后端开发: 年度计划完成率聚合</span><span class="chart-info-btn" onclick="showChartInfo('station-annual-plan')">i</span></div>
             <div class="gauge-row" id="gaugeRow">
               <div class="gauge-item">
                 <div class="gauge-ring"><svg viewBox="0 0 100 100"><circle class="gauge-bg" cx="50" cy="50" r="42"/><circle class="gauge-fill" cx="50" cy="50" r="42" stroke="#1677ff" stroke-dasharray="263.9" stroke-dashoffset="155.7"/></svg><div class="gauge-val">41%</div></div>
@@ -348,7 +405,7 @@
         <!-- Bottom: Station Training Analysis -->
         <div class="station-left-bottom">
           <div class="card">
-            <div class="card-title">各车站培训情况分析<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按车站聚合培训参与和技能评价</span></div>
+            <div class="card-title">各车站培训情况分析<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按车站聚合培训参与和技能评价</span><span class="chart-info-btn" onclick="showChartInfo('station-participation')">i</span></div>
             <div class="dual-chart">
               <div id="chartStationParticipation" style="min-height:0;"></div>
               <div id="chartStationEval" style="min-height:0;"></div>
@@ -359,7 +416,7 @@
       <!-- Right 1/3: Scrolling plan table -->
       <div class="station-right">
         <div class="card">
-          <div class="card-title">培训办班计划提醒<span class="card-subtitle" style="color:#52c41a">现有API: getTrainPlanData</span></div>
+          <div class="card-title">培训办班计划提醒<span class="card-subtitle" style="color:#52c41a">现有API: getTrainPlanData</span><span class="chart-info-btn" onclick="showChartInfo('station-train-plan')">i</span></div>
           <div class="station-table-wrap" id="stationPlanTable"></div>
         </div>
       </div>
@@ -372,7 +429,7 @@
       <div class="workshop-top">
         <!-- Basic Info -->
         <div class="card">
-          <div class="card-title">基本信息<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按车间聚合职工/班组统计</span></div>
+          <div class="card-title">基本信息<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按车间聚合职工/班组统计</span><span class="chart-info-btn" onclick="showChartInfo('workshop-basic-info')">i</span></div>
           <div class="basic-info-row">
             <div class="basic-info-stats">
               <div class="basic-info-stat"><div class="bi-val">25</div><div class="bi-lbl">职工总数</div></div>
@@ -383,12 +440,12 @@
         </div>
         <!-- Radar -->
         <div class="card">
-          <div class="card-title">六维能力雷达图<span class="card-subtitle" style="color:#fa8c16">需后端开发: 车间级六维能力聚合</span></div>
+          <div class="card-title">六维能力雷达图<span class="card-subtitle" style="color:#fa8c16">需后端开发: 车间级六维能力聚合</span><span class="chart-info-btn" onclick="showChartInfo('workshop-radar')">i</span></div>
           <div id="chartWorkshopRadar" class="chart-box"></div>
         </div>
         <!-- Ranking -->
         <div class="card">
-          <div class="card-title">优秀班组<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按班组聚合综合评分排名</span></div>
+          <div class="card-title">优秀班组<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按班组聚合综合评分排名</span><span class="chart-info-btn" onclick="showChartInfo('workshop-ranking')">i</span></div>
           <div class="ranking-dual">
             <div class="ranking-col">
               <div class="ranking-col-title">综合评分排名</div>
@@ -404,7 +461,7 @@
       <div class="workshop-bottom">
         <!-- Module Mastery Stacked Bar -->
         <div class="card">
-          <div class="card-title">模块科目掌握情况<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按车间聚合模块科目掌握等级</span></div>
+          <div class="card-title">模块科目掌握情况<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按车间聚合模块科目掌握等级</span><span class="chart-info-btn" onclick="showChartInfo('workshop-module')">i</span></div>
           <div class="sub-tab-bar" id="wsModuleSubTabs">
             <div class="sub-tab-item active" onclick="switchWsModuleTab(0,this)">安全知识</div>
             <div class="sub-tab-item" onclick="switchWsModuleTab(1,this)">理论知识</div>
@@ -415,7 +472,7 @@
         </div>
         <!-- Weak Modules Table -->
         <div class="card">
-          <div class="card-title">薄弱技能模块<span class="card-subtitle" style="color:#fa8c16">需后端开发: 车间级薄弱模块聚合</span></div>
+          <div class="card-title">薄弱技能模块<span class="card-subtitle" style="color:#fa8c16">需后端开发: 车间级薄弱模块聚合</span><span class="chart-info-btn" onclick="showChartInfo('workshop-weak')">i</span></div>
           <div class="weak-table-wrap" id="wsWeakTable"></div>
         </div>
       </div>
@@ -444,7 +501,7 @@
       <div class="workshop-top">
         <!-- Basic Info -->
         <div class="card">
-          <div class="card-title">基本信息<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级职工统计</span></div>
+          <div class="card-title">基本信息<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级职工统计</span><span class="chart-info-btn" onclick="showChartInfo('team-basic-info')">i</span></div>
           <div class="basic-info-row">
             <div class="basic-info-stats" id="teamBasicStats">
               <div class="basic-info-stat"><div class="bi-val">5</div><div class="bi-lbl">职工总数</div></div>
@@ -454,12 +511,12 @@
         </div>
         <!-- Radar -->
         <div class="card">
-          <div class="card-title">六维能力雷达图<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级六维能力聚合</span></div>
+          <div class="card-title">六维能力雷达图<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级六维能力聚合</span><span class="chart-info-btn" onclick="showChartInfo('team-radar')">i</span></div>
           <div id="chartTeamRadar" class="chart-box"></div>
         </div>
         <!-- Ranking -->
         <div class="card">
-          <div class="card-title">优秀职工<span class="card-subtitle" style="color:#fa8c16">部分可用: getStudentScoreRank</span></div>
+          <div class="card-title">优秀职工<span class="card-subtitle" style="color:#fa8c16">部分可用: getStudentScoreRank</span><span class="chart-info-btn" onclick="showChartInfo('team-ranking')">i</span></div>
           <div class="ranking-dual">
             <div class="ranking-col">
               <div class="ranking-col-title">综合评分排名</div>
@@ -475,7 +532,7 @@
       <div class="workshop-bottom">
         <!-- Module Mastery Stacked Bar -->
         <div class="card">
-          <div class="card-title">模块科目掌握情况<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级模块科目掌握等级</span></div>
+          <div class="card-title">模块科目掌握情况<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级模块科目掌握等级</span><span class="chart-info-btn" onclick="showChartInfo('team-module')">i</span></div>
           <div class="sub-tab-bar" id="teamModuleSubTabs">
             <div class="sub-tab-item active" onclick="switchTeamModuleTab(0,this)">安全知识</div>
             <div class="sub-tab-item" onclick="switchTeamModuleTab(1,this)">理论知识</div>
@@ -486,7 +543,7 @@
         </div>
         <!-- Weak Modules Table -->
         <div class="card">
-          <div class="card-title">薄弱技能模块<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级薄弱模块聚合</span></div>
+          <div class="card-title">薄弱技能模块<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级薄弱模块聚合</span><span class="chart-info-btn" onclick="showChartInfo('team-weak')">i</span></div>
           <div class="weak-table-wrap" id="teamWeakTable"></div>
         </div>
       </div>
@@ -516,15 +573,15 @@
     <!-- Chart Row 1: 3 charts -->
     <div class="chart-row chart-row-3" style="margin-bottom:8px;">
       <div class="card">
-        <div class="card-title">考试人数统计<span class="card-subtitle">数据来源: getStuNumAnalyse API</span></div>
+        <div class="card-title">考试人数统计<span class="card-subtitle">数据来源: getStuNumAnalyse API</span><span class="chart-info-btn" onclick="showChartInfo('exam-participant-pie')">i</span></div>
         <div id="chartStuNum" class="chart-box"></div>
       </div>
       <div class="card">
-        <div class="card-title">成绩等级占比<span class="card-subtitle">数据来源: getScoreLevel API</span></div>
+        <div class="card-title">成绩等级占比<span class="card-subtitle">数据来源: getScoreLevel API</span><span class="chart-info-btn" onclick="showChartInfo('score-level-bar')">i</span></div>
         <div id="chartScoreLevel" class="chart-box"></div>
       </div>
       <div class="card">
-        <div class="card-title">成绩分布曲线<span class="card-subtitle">数据来源: scoreDistribution API</span></div>
+        <div class="card-title">成绩分布曲线<span class="card-subtitle">数据来源: scoreDistribution API</span><span class="chart-info-btn" onclick="showChartInfo('score-distribution-line')">i</span></div>
         <div id="chartScoreDist" class="chart-box"></div>
       </div>
     </div>
@@ -532,15 +589,15 @@
     <!-- Chart Row 2: 3 charts -->
     <div class="chart-row chart-row-3">
       <div class="card">
-        <div class="card-title">成绩排行榜<span class="card-subtitle">数据来源: getScoreOrder API</span></div>
+        <div class="card-title">成绩排行榜<span class="card-subtitle">数据来源: getScoreOrder API</span><span class="chart-info-btn" onclick="showChartInfo('score-ranking-bar')">i</span></div>
         <div id="chartScoreOrder" class="chart-box"></div>
       </div>
       <div class="card">
-        <div class="card-title">薄弱项分析<span class="card-subtitle">数据来源: getWeak API</span></div>
+        <div class="card-title">薄弱项分析<span class="card-subtitle">数据来源: getWeak API</span><span class="chart-info-btn" onclick="showChartInfo('weak-analysis')">i</span></div>
         <div id="chartWeak" class="chart-box" style="padding:4px 8px;overflow-y:auto;"></div>
       </div>
       <div class="card">
-        <div class="card-title">班级排名对比<span class="card-subtitle">数据来源: getClassRank API</span></div>
+        <div class="card-title">班级排名对比<span class="card-subtitle">数据来源: getClassRank API</span><span class="chart-info-btn" onclick="showChartInfo('class-ranking-bar')">i</span></div>
         <div id="chartClassRank" class="chart-box"></div>
       </div>
     </div>
@@ -565,7 +622,7 @@
       <!-- Left sidebar: Student info -->
       <div class="personal-left">
         <div class="card" style="flex-shrink:0;">
-          <div class="card-title">学员信息<span class="card-subtitle">数据来源: getStudentInfo API</span></div>
+          <div class="card-title">学员信息<span class="card-subtitle">数据来源: getStudentInfo API</span><span class="chart-info-btn" onclick="showChartInfo('person-basic-info')">i</span></div>
           <div class="avatar-placeholder" id="studentAvatar">王</div>
           <ul class="info-list" id="studentInfoList"></ul>
         </div>
@@ -579,15 +636,15 @@
         <!-- Middle row: radar + 2 donuts -->
         <div class="chart-row chart-row-3" style="margin-bottom:8px;">
           <div class="card">
-            <div class="card-title">个人技能雷达图<span class="card-subtitle">数据来源: getTypeScore API</span></div>
+            <div class="card-title">个人技能雷达图<span class="card-subtitle">数据来源: getTypeScore API</span><span class="chart-info-btn" onclick="showChartInfo('person-skill-radar')">i</span></div>
             <div id="chartPersonRadar" class="chart-box"></div>
           </div>
           <div class="card">
-            <div class="card-title">能力项统计<span class="card-subtitle">数据来源: getAbilityItemStatAnalyze API</span></div>
+            <div class="card-title">能力项统计<span class="card-subtitle">数据来源: getAbilityItemStatAnalyze API</span><span class="chart-info-btn" onclick="showChartInfo('person-ability-pie')">i</span></div>
             <div id="chartAbility" class="chart-box"></div>
           </div>
           <div class="card">
-            <div class="card-title">考核项统计<span class="card-subtitle">数据来源: getAppraiseInfo API</span></div>
+            <div class="card-title">考核项统计<span class="card-subtitle">数据来源: getAppraiseInfo API</span><span class="chart-info-btn" onclick="showChartInfo('person-assessment-pie')">i</span></div>
             <div id="chartAppraise" class="chart-box"></div>
           </div>
         </div>
@@ -595,15 +652,15 @@
         <!-- Bottom row: scatter + trend + table -->
         <div class="chart-row chart-row-3">
           <div class="card">
-            <div class="card-title">成绩散点分布图<span class="card-subtitle">数据来源: getStudentScoreScatter API</span></div>
+            <div class="card-title">成绩散点分布图<span class="card-subtitle">数据来源: getStudentScoreScatter API</span><span class="chart-info-btn" onclick="showChartInfo('person-scatter')">i</span></div>
             <div id="chartScatter" class="chart-box"></div>
           </div>
           <div class="card">
-            <div class="card-title">个人成绩趋势<span class="card-subtitle">数据来源: getPersonalGrade API</span></div>
+            <div class="card-title">个人成绩趋势<span class="card-subtitle">数据来源: getPersonalGrade API</span><span class="chart-info-btn" onclick="showChartInfo('person-trend')">i</span></div>
             <div id="chartPersonTrend" class="chart-box"></div>
           </div>
           <div class="card" style="overflow-y:auto;">
-            <div class="card-title">考试记录列表<span class="card-subtitle">数据来源: getExamList API</span></div>
+            <div class="card-title">考试记录列表<span class="card-subtitle">数据来源: getExamList API</span><span class="chart-info-btn" onclick="showChartInfo('person-exam-history')">i</span></div>
             <div id="examTable" style="flex:1;overflow-y:auto;"></div>
           </div>
         </div>
@@ -641,7 +698,207 @@
   </div>
 </div>
 
+<!-- Chart Info Modal -->
+<div class="chart-info-overlay" id="chartInfoOverlay" onclick="if(event.target===this)closeChartInfo()">
+  <div class="chart-info-modal">
+    <div class="chart-info-header">
+      <h3 id="chartInfoTitle"></h3>
+      <button class="chart-info-close" onclick="closeChartInfo()">&times;</button>
+    </div>
+    <div class="chart-info-body" id="chartInfoBody"></div>
+  </div>
+</div>
+
 <script>
+// ========== Chart Info Data ==========
+var chartInfoData = {
+  'station-skill-mastery': {
+    name: '技能掌握情况分析', type: '分组柱状图 (grouped bar)', area: '站段总览',
+    api: '需后端开发', path: '需后端开发: 按岗位聚合技能掌握等级',
+    fields: '按岗位分组的掌握等级人数', meaning: '不熟练/独立工作/能够培训和指导他人',
+    formula: '分组柱状图 支持岗位下拉筛选', confidence: '需后端开发'
+  },
+  'station-annual-plan': {
+    name: '年度计划内培训班进度', type: 'SVG环形仪表盘 (gauge)', area: '站段总览',
+    api: '需后端开发', path: '需后端开发: 年度计划完成率聚合',
+    fields: '培训期数/培训人数/培训人天数完成百分比', meaning: '3个环形仪表盘展示完成率',
+    formula: 'SVG环形图 stroke-dashoffset计算', confidence: '需后端开发'
+  },
+  'station-train-plan': {
+    name: '培训办班计划提醒', type: '数据表格 (table)', area: '站段总览',
+    api: 'getTrainPlanData', path: '/analyse/panoramacontrol/trainplanstate',
+    fields: 'rows[].trainClass; rows[].trainLesson; rows[].trainDate; rows[].trainPlace; rows[].executingState',
+    meaning: '培训项目名称; 课程名; 培训日期; 地点; 执行状态',
+    formula: '表格直接展示', confidence: '100%'
+  },
+  'station-participation': {
+    name: '各车站培训情况分析', type: '双分组柱状图 (dual grouped bar)', area: '站段总览',
+    api: '需后端开发', path: '需后端开发: 按车站聚合培训参与和技能评价',
+    fields: '参培人数; 未参培人数; 优秀; 潜力 按车站', meaning: '左侧:参培情况 右侧:技能评价',
+    formula: '双分组柱状图', confidence: '需后端开发'
+  },
+  'workshop-basic-info': {
+    name: '基本信息', type: '数字卡片+环形饼图', area: '车间维度',
+    api: '需后端开发', path: '需后端开发: 按车间聚合职工/班组统计',
+    fields: '职工总数; 班组数量; 初级工/中级工/高级工/特级工人数', meaning: '数字卡片+环形饼图',
+    formula: '饼图显示技能等级分布', confidence: '需后端开发'
+  },
+  'workshop-radar': {
+    name: '六维能力雷达图', type: '雷达图 (radar)', area: '车间维度',
+    api: '需后端开发', path: '需后端开发: 车间级六维能力聚合(参考个人级getTypeScore)',
+    fields: '安全知识/知识理论/实作技能/两违信息/证书信息/资质认证', meaning: '6维度得分(0-100)',
+    formula: '雷达图', confidence: '需后端开发'
+  },
+  'workshop-ranking': {
+    name: '优秀班组', type: '双列水平柱状图 (horizontal bar)', area: '车间维度',
+    api: '需后端开发', path: '需后端开发: 按班组聚合综合评分排名(参考getClassRank)',
+    fields: '班组名; 综合评分; 技能达标率', meaning: '双列水平柱状图',
+    formula: '按分数降序排列', confidence: '需后端开发'
+  },
+  'workshop-module': {
+    name: '模块科目掌握情况', type: '堆叠柱状图 (stacked bar)', area: '车间维度',
+    api: '需后端开发', path: '需后端开发: 按车间聚合模块科目掌握等级',
+    fields: '优秀/良好/一般/未掌握人数 按科目项', meaning: '堆叠柱状图',
+    formula: '支持子Tab切换(安全知识/理论知识/实作技能/两违信息)', confidence: '需后端开发'
+  },
+  'workshop-weak': {
+    name: '薄弱技能模块', type: '表格+占比条 (table)', area: '车间维度',
+    api: '需后端开发', path: '需后端开发: 车间级薄弱模块聚合(参考getWeakAnalysis)',
+    fields: '技能模块; 已掌握人数; 一般人数; 占比', meaning: '表格+占比条',
+    formula: '按占比降序', confidence: '需后端开发'
+  },
+  'team-basic-info': {
+    name: '基本信息', type: '数字卡片+环形饼图', area: '班组维度',
+    api: '需后端开发', path: '需后端开发: 班组级职工统计',
+    fields: '职工总数; 技能等级分布', meaning: '数字卡片+环形饼图',
+    formula: '支持车间+班组选择器', confidence: '需后端开发'
+  },
+  'team-radar': {
+    name: '六维能力雷达图', type: '雷达图 (radar)', area: '班组维度',
+    api: '需后端开发', path: '需后端开发: 班组级六维能力聚合',
+    fields: '同车间维度6维度', meaning: '雷达图',
+    formula: '数据随选择器变化', confidence: '需后端开发'
+  },
+  'team-ranking': {
+    name: '优秀职工', type: '双列水平柱状图 (horizontal bar)', area: '班组维度',
+    api: '部分可用: getStudentScoreRank', path: '/analyse/examAnalysis/getScoreOrder + 需按班组过滤',
+    fields: '综合评分排名(优秀职工); 关键职工标记', meaning: '双列水平柱状图',
+    formula: '可部分复用getScoreOrder接口', confidence: '部分可用'
+  },
+  'team-module': {
+    name: '模块科目掌握情况', type: '堆叠柱状图 (stacked bar)', area: '班组维度',
+    api: '需后端开发', path: '需后端开发: 班组级模块科目掌握等级',
+    fields: '同车间维度', meaning: '堆叠柱状图 支持子Tab',
+    formula: '数据随选择器变化', confidence: '需后端开发'
+  },
+  'team-weak': {
+    name: '薄弱技能模块', type: '表格+占比条 (table)', area: '班组维度',
+    api: '需后端开发', path: '需后端开发: 班组级薄弱模块聚合',
+    fields: '同车间维度', meaning: '表格+占比条',
+    formula: '数据随选择器变化', confidence: '需后端开发'
+  },
+  'exam-participant-pie': {
+    name: '考试人数统计', type: '环形饼图 (donut pie)', area: '考试维度分析',
+    api: 'getStuNumAnalyse', path: '/analyse/train/getStuNumAnalyse/{examId}',
+    fields: 'data[].name; data[].num; data[].value', meaning: '分类名(参考/未参考/缺考); 人数; 占比百分比',
+    formula: '中心总数 = sum(data[].num)', confidence: '100%'
+  },
+  'score-level-bar': {
+    name: '成绩等级占比', type: '水平柱状图 (horizontal bar)', area: '考试维度分析',
+    api: 'getScoreLevel', path: '/analyse/examAnalysis/getScoreLevel',
+    fields: 'highScore; fineScore; passScore; notPassScore', meaning: '高分率; 优良率; 合格率; 不合格率(均为百分比)',
+    formula: '直接展示百分比 X轴=[高分率 优良率 合格率 不合格率]', confidence: '100%'
+  },
+  'score-distribution-line': {
+    name: '成绩分布曲线', type: '多线折线图 (multi-line)', area: '考试维度分析',
+    api: 'scoreDistribution', path: '/analyse/train/scoreDistribution',
+    fields: 'data[0](分数段标签); data[1][].className; data[1][].nums', meaning: '分数段区间(0-10到90-100); 班级名; 各分数段人数数组',
+    formula: '多线图 每班一条线 需先调getClassesAnalyse获取classIds', confidence: '100%'
+  },
+  'score-ranking-bar': {
+    name: '成绩排行榜', type: '水平柱状图 (horizontal bar)', area: '考试维度分析',
+    api: 'getScoreOrder', path: '/analyse/examAnalysis/getScoreOrder',
+    fields: 'rankData[].nickName; rankData[].rankNo; rankData[].userScore', meaning: '学员姓名; 排名序号; 成绩分数',
+    formula: '按userScore降序排列 dataZoom自动滚动(8秒间隔)', confidence: '100%'
+  },
+  'weak-analysis': {
+    name: '薄弱项分析', type: '进度条列表 (progress bar)', area: '考试维度分析',
+    api: 'getWeakAnalysis', path: '/analyse/examAnalysis/getWeak',
+    fields: 'weakData[].taskName; weakData[].subtractScoreRate', meaning: '任务/题目名称; 失分人数占比',
+    formula: 'parseFloat(subtractScoreRate)作为进度条宽度 按失分率降序 >50%红色 >30%橙色 其余蓝色', confidence: '100%'
+  },
+  'class-ranking-bar': {
+    name: '班级排名对比', type: '分组柱状图 (grouped bar)', area: '考试维度分析',
+    api: 'getClassRank', path: '/analyse/train/getClassRank/{examId}',
+    fields: 'data[].className; data[].avgScore; data[].passRate', meaning: '班级名称; 班级平均分; 班级合格率',
+    formula: '分组柱状图 两个系列: avgScore和passRate', confidence: '100%'
+  },
+  'person-basic-info': {
+    name: '学员信息', type: '信息卡片 (info card)', area: '个人分析',
+    api: 'getStudentInfo', path: 'system/student/skill/getStudentInfo',
+    fields: 'name; standardPhoto; workName; companyName; deptName; level; entryTime; education',
+    meaning: '姓名; 标准照片URL; 岗位; 工作单位; 车间/部门; 技能等级; 入职时间; 文化程度',
+    formula: '直接字段展示', confidence: '100%'
+  },
+  'person-skill-radar': {
+    name: '个人技能雷达图', type: '雷达图 (radar)', area: '个人分析',
+    api: 'getTypeScore', path: 'system/student/skill/getTypeScore',
+    fields: 'data[].typeName; data[].typeScore', meaning: '技能维度名称; 该维度得分(0-100)',
+    formula: '雷达图(>=3项)或仪表盘(<3项) 平均分=sum(typeScore)/count', confidence: '100%'
+  },
+  'person-ability-pie': {
+    name: '能力项统计', type: '环形饼图 (donut pie)', area: '个人分析',
+    api: 'getAbilityItemStatAnalyze', path: '/system/student/skill/getAbilityItemStatAnalyze',
+    fields: 'abilityLevelTotal[].key; abilityLevelTotal[].value', meaning: '能力等级名(优秀/良好/一般/不合格); 该等级数量',
+    formula: '中心总数=sum(value) 环形饼图', confidence: '100%'
+  },
+  'person-assessment-pie': {
+    name: '考核项统计', type: '环形饼图 (donut pie)', area: '个人分析',
+    api: 'getAppraiseInfo', path: '/system/student/skill/getAppraiseInfo',
+    fields: 'data[].key; data[].value', meaning: '考核等级名; 该等级数量',
+    formula: '中心总数=sum(value) 环形饼图', confidence: '100%'
+  },
+  'person-scatter': {
+    name: '成绩散点分布图', type: '散点图 (scatter)', area: '个人分析',
+    api: 'getStudentScoreScatter', path: '/system/student/skill/getStudentScoreScatter',
+    fields: 'data[][0]; data[][1]; data[][2]; data[][3]', meaning: '考试名称; 日期; 成绩; 类型(1=练习 其他=考试)',
+    formula: '时间轴散点图 颜色: <60红 60-80黄 >=80绿', confidence: '100%'
+  },
+  'person-trend': {
+    name: '个人成绩趋势', type: '折线图 (line)', area: '个人分析',
+    api: 'getPersonalGrade', path: '/analyse/detail/personalGrade',
+    fields: 'data[].examName; data[].score; data[].examTime', meaning: '考试名称; 成绩; 考试时间',
+    formula: '单线折线图 smooth+面积填充', confidence: '100%'
+  },
+  'person-exam-history': {
+    name: '考试记录列表', type: '数据表格 (table)', area: '个人分析',
+    api: 'getExamList', path: '/analyse/detail/examList',
+    fields: 'rows[].examName; rows[].score; rows[].examTime; rows[].examType',
+    meaning: '考试名称; 成绩; 考试时间; 考试类型',
+    formula: '等级标签: >=90优秀(绿) >=75良好(蓝) >=60一般(橙) <60不合格(红)', confidence: '100%'
+  }
+};
+
+function showChartInfo(id) {
+  var d = chartInfoData[id];
+  if (!d) return;
+  document.getElementById('chartInfoTitle').textContent = d.name;
+  var confClass = d.confidence === '100%' ? 'conf-100' : d.confidence === '部分可用' ? 'conf-partial' : 'conf-need';
+  var html = '<div class="chart-info-section"><div class="chart-info-label">置信度</div><div><span class="chart-info-confidence ' + confClass + '">' + d.confidence + '</span></div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">图表类型</div><div class="chart-info-value">' + d.type + '</div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">所在区域</div><div class="chart-info-value">' + d.area + '</div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">API 接口</div><div class="chart-info-value"><code>' + d.api + '</code></div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">API 路径</div><div class="chart-info-value"><code>' + d.path + '</code></div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">响应字段</div><div class="chart-info-value">' + d.fields + '</div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">字段含义</div><div class="chart-info-value">' + d.meaning + '</div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">计算公式 / 映射逻辑</div><div class="chart-info-value">' + d.formula + '</div></div>';
+  document.getElementById('chartInfoBody').innerHTML = html;
+  document.getElementById('chartInfoOverlay').classList.add('active');
+}
+function closeChartInfo() {
+  document.getElementById('chartInfoOverlay').classList.remove('active');
+}
+
 // ========== Tab Switching ==========
 var currentTab = 0;
 function switchTab(idx, el) {

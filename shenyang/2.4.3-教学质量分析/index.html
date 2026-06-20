@@ -215,6 +215,63 @@
     }
     .xa-send-btn:hover { background: #4096ff; }
     .xa-send-btn svg { fill: #fff; width: 16px; height: 16px; }
+
+    /* Chart Info Modal */
+    .chart-info-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; border-radius: 50%; border: 1px solid #d9d9d9;
+      background: #fafafa; color: rgba(0,0,0,.45); font-size: 10px; font-weight: 700;
+      cursor: pointer; margin-left: auto; flex-shrink: 0; transition: all .2s;
+      font-style: italic; font-family: Georgia, serif; line-height: 1;
+    }
+    .chart-info-btn:hover { border-color: #1677ff; color: #1677ff; background: #f0f5ff; }
+    .chart-info-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.45); z-index: 1100;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .chart-info-overlay.active { opacity: 1; pointer-events: auto; }
+    .chart-info-modal {
+      background: #fff; border-radius: 12px; width: 580px; max-height: 80vh;
+      box-shadow: 0 12px 48px rgba(0,0,0,.15); overflow: hidden;
+      transform: translateY(20px) scale(0.95); transition: transform .25s cubic-bezier(.4,0,.2,1);
+    }
+    .chart-info-overlay.active .chart-info-modal { transform: translateY(0) scale(1); }
+    .chart-info-header {
+      padding: 16px 20px; background: linear-gradient(135deg, #1677ff 0%, #4096ff 100%);
+      color: #fff; display: flex; align-items: center; justify-content: space-between;
+    }
+    .chart-info-header h3 { font-size: 15px; font-weight: 600; margin: 0; }
+    .chart-info-close {
+      width: 28px; height: 28px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,.2); color: #fff; font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .chart-info-close:hover { background: rgba(255,255,255,.35); }
+    .chart-info-body { padding: 16px 20px; overflow-y: auto; max-height: calc(80vh - 56px); }
+    .chart-info-section { margin-bottom: 14px; }
+    .chart-info-section:last-child { margin-bottom: 0; }
+    .chart-info-label {
+      font-size: 11px; color: rgba(0,0,0,.45); font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 4px;
+    }
+    .chart-info-value {
+      font-size: 13px; color: rgba(0,0,0,.85); line-height: 1.6;
+      background: #fafafa; border-radius: 6px; padding: 8px 12px;
+      border: 1px solid #f0f0f0; word-break: break-all;
+    }
+    .chart-info-value code {
+      background: #e6f7ff; color: #1677ff; padding: 1px 4px; border-radius: 3px;
+      font-size: 12px; font-family: 'SF Mono', Monaco, monospace;
+    }
+    .chart-info-confidence {
+      display: inline-block; padding: 2px 10px; border-radius: 10px;
+      font-size: 12px; font-weight: 600;
+    }
+    .conf-100 { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+    .conf-need { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+    .conf-partial { background: #e6f7ff; color: #1677ff; border: 1px solid #91d5ff; }
   </style>
 </head>
 <body>
@@ -237,7 +294,7 @@
 
   <!-- Teacher Table -->
   <div class="card" style="flex:1; display:flex; flex-direction:column; min-height:0; margin-bottom:0; padding-bottom:6px;">
-    <div class="card-title">教师评估列表 <span class="card-subtitle">数据来源: evaqualityteachassessList | 点击教师姓名查看详情</span></div>
+    <div class="card-title">教师评估列表 <span class="card-subtitle">数据来源: evaqualityteachassessList | 点击教师姓名查看详情</span><span class="chart-info-btn" onclick="showChartInfo('quality-table')">i</span></div>
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
@@ -312,7 +369,91 @@
   </div>
 </div>
 
+<!-- Chart Info Modal -->
+<div class="chart-info-overlay" id="chartInfoOverlay" onclick="if(event.target===this)closeChartInfo()">
+  <div class="chart-info-modal">
+    <div class="chart-info-header">
+      <h3 id="chartInfoTitle"></h3>
+      <button class="chart-info-close" onclick="closeChartInfo()">&times;</button>
+    </div>
+    <div class="chart-info-body" id="chartInfoBody"></div>
+  </div>
+</div>
+
 <script>
+// ========== Chart Info Data ==========
+var chartInfoData = {
+  'quality-overview': {
+    name: '教学质量评估概况', type: 'KPI数字卡片', area: '教学质量分析 - 整体概览',
+    api: 'evaQualityTeachTitle', path: '/testmag/evaqualityteachassess/evaQualityTeachTitle',
+    fields: 'classCount; avgScore; maxScore; minScore; countNum',
+    meaning: '评估班级数; 平均评估分; 最高分; 最低分; 参评教师人数',
+    formula: '直接展示5个数值卡片', confidence: '100%'
+  },
+  'quality-table': {
+    name: '教师教学质量评估列表', type: '数据表格 (table)', area: '教学质量分析 - 整体概览',
+    api: 'evaqualityteachassessList', path: '/testmag/evaqualityteachassess/evaqualityteachassessList',
+    fields: 'yearStr; teachName; teacherTypeName; s3; inClassLecturesScore; teachCheckScore; studentScore; threeTotalScore; addScore; totalScore',
+    meaning: '年度; 教师姓名; 类型; 单位; 随堂听课得分; 教学检查得分; 学员评价得分; 三项合计; 加分项; 总分',
+    formula: 'totalScore = threeTotalScore + addScore', confidence: '100%'
+  },
+  'quality-gauge': {
+    name: '教学质量评估总分', type: '仪表盘 (gauge)', area: '教学质量分析 - 教师详情',
+    api: 'getTeachQualityEvaluate', path: '/screen/teacher/appraise/getTeachQualityEvaluate?userId={userId}&year={year}',
+    fields: 'evaluateTotal; addScore',
+    meaning: '评估总分(0-100); 加分项',
+    formula: '仪表盘中心值=evaluateTotal 下方标注addScore', confidence: '100%'
+  },
+  'quality-dimensions': {
+    name: '评估维度明细', type: '水平条形图 (horizontal bar)', area: '教学质量分析 - 教师详情',
+    api: 'getTeachQualityEvaluate', path: '/screen/teacher/appraise/getTeachQualityEvaluate?userId={userId}&year={year}',
+    fields: 'teachEvaluateList[].name; [].average; [].fullMarks; [].ratio',
+    meaning: '维度名; 实际得分; 满分; 得分率',
+    formula: '水平条形图 填充宽度=average/fullMarks*100%', confidence: '100%'
+  },
+  'pass-rate-trend': {
+    name: '授课班级通过率趋势', type: '折线图 (line)', area: '教学质量分析 - 教师详情',
+    api: 'getTeachClassPassRate', path: '/screen/teacher/appraise/getTeachClassPassRate?userId={userId}&year={year}',
+    fields: '返回12个数值的数组(1-12月通过率)',
+    meaning: '每月通过率百分比',
+    formula: '折线图 X轴=1-12月 smooth+面积填充', confidence: '100%'
+  },
+  'student-eval-pie': {
+    name: '学员测评-教学情况分布', type: '环形饼图 (donut pie)', area: '教学质量分析 - 教师详情',
+    api: 'getStudentEvaluateData', path: '/screen/teacher/appraise/getStudentEvaluateData?userId={userId}&year={year}&classId={classId}',
+    fields: 'teachSituationMap[].name; [].value; avgTotal',
+    meaning: '评价等级(优秀/良好/一般/较差); 占比; 平均总分',
+    formula: '环形饼图 中心=avgTotal+分', confidence: '100%'
+  },
+  'student-eval-bar': {
+    name: '学员测评-子维度评价率', type: '分组条形图 (grouped bar)', area: '教学质量分析 - 教师详情',
+    api: 'getStudentEvaluateData', path: '/screen/teacher/appraise/getStudentEvaluateData?userId={userId}&year={year}&classId={classId}',
+    fields: 'studentEvaluateSubData[].groupName; subitemExcellentRate; subitemFineRate; subitemCommonlyRate; subitemPassRate',
+    meaning: '子维度名; 优秀率; 良好率; 一般率; 合格率',
+    formula: '分组条形图 每组4条', confidence: '100%'
+  }
+};
+
+function showChartInfo(id) {
+  var d = chartInfoData[id];
+  if (!d) return;
+  document.getElementById('chartInfoTitle').textContent = d.name;
+  var confClass = d.confidence === '100%' ? 'conf-100' : d.confidence === '部分可用' ? 'conf-partial' : 'conf-need';
+  var html = '<div class="chart-info-section"><div class="chart-info-label">置信度</div><div><span class="chart-info-confidence ' + confClass + '">' + d.confidence + '</span></div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">图表类型</div><div class="chart-info-value">' + d.type + '</div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">所在区域</div><div class="chart-info-value">' + d.area + '</div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">API 接口</div><div class="chart-info-value"><code>' + d.api + '</code></div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">API 路径</div><div class="chart-info-value"><code>' + d.path + '</code></div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">响应字段</div><div class="chart-info-value">' + d.fields + '</div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">字段含义</div><div class="chart-info-value">' + d.meaning + '</div></div>';
+  html += '<div class="chart-info-section"><div class="chart-info-label">计算公式 / 映射逻辑</div><div class="chart-info-value">' + d.formula + '</div></div>';
+  document.getElementById('chartInfoBody').innerHTML = html;
+  document.getElementById('chartInfoOverlay').classList.add('active');
+}
+function closeChartInfo() {
+  document.getElementById('chartInfoOverlay').classList.remove('active');
+}
+
 // ===== Mock Data (using REAL API field names) =====
 
 // evaQualityTeachTitle
@@ -551,7 +692,7 @@ function showDetail(name) {
         </ul>
       </div>
       <div class="card">
-        <div class="card-title">教学质量评估总分 <span class="card-subtitle">数据来源: getTeachQualityEvaluate</span></div>
+        <div class="card-title">教学质量评估总分 <span class="card-subtitle">数据来源: getTeachQualityEvaluate</span><span class="chart-info-btn" onclick="showChartInfo('quality-gauge')">i</span></div>
         <div class="gauge-box" id="gaugeChart"></div>
         <div class="add-score-text">+${ev.addScore} 加分</div>
       </div>
@@ -560,11 +701,11 @@ function showDetail(name) {
     <!-- Middle Column: Dimension bars + Pass rate trend -->
     <div class="detail-col">
       <div class="card" style="flex-shrink:0;">
-        <div class="card-title">评估维度明细 <span class="card-subtitle">数据来源: getTeachQualityEvaluate</span></div>
+        <div class="card-title">评估维度明细 <span class="card-subtitle">数据来源: getTeachQualityEvaluate</span><span class="chart-info-btn" onclick="showChartInfo('quality-dimensions')">i</span></div>
         <div id="dimBars" style="padding:8px 0;"></div>
       </div>
       <div class="card" style="flex:1; min-height:0; display:flex; flex-direction:column;">
-        <div class="card-title">授课班级通过率趋势 <span class="card-subtitle">数据来源: getTeachClassPassRate</span></div>
+        <div class="card-title">授课班级通过率趋势 <span class="card-subtitle">数据来源: getTeachClassPassRate</span><span class="chart-info-btn" onclick="showChartInfo('pass-rate-trend')">i</span></div>
         <div id="passRateChart" style="flex:1; min-height:180px;"></div>
       </div>
     </div>
@@ -572,11 +713,11 @@ function showDetail(name) {
     <!-- Right Column: Donut + Sub-dimension bars -->
     <div class="detail-col">
       <div class="card" style="flex-shrink:0;">
-        <div class="card-title">学员测评-教学情况分布 <span class="card-subtitle">数据来源: getStudentEvaluateData</span></div>
+        <div class="card-title">学员测评-教学情况分布 <span class="card-subtitle">数据来源: getStudentEvaluateData</span><span class="chart-info-btn" onclick="showChartInfo('student-eval-pie')">i</span></div>
         <div id="donutChart" style="height:220px;"></div>
       </div>
       <div class="card" style="flex:1; min-height:0; display:flex; flex-direction:column; overflow-y:auto;">
-        <div class="card-title">学员测评-子维度评价率 <span class="card-subtitle">数据来源: getStudentEvaluateData</span></div>
+        <div class="card-title">学员测评-子维度评价率 <span class="card-subtitle">数据来源: getStudentEvaluateData</span><span class="chart-info-btn" onclick="showChartInfo('student-eval-bar')">i</span></div>
         <div id="subDimBars" style="padding:8px 0; flex:1;"></div>
       </div>
     </div>
