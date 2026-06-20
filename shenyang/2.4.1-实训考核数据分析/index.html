@@ -253,16 +253,16 @@
 
     /* ========== Tab 1/2: Workshop/Team Layout ========== */
     .workshop-layout { display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; overflow: hidden; }
-    .workshop-top { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; flex-shrink: 0; height: 200px; }
+    .workshop-top { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; flex-shrink: 0; height: 260px; }
     .workshop-top > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
     .workshop-bottom { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; flex: 1; min-height: 0; }
     .workshop-bottom > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
 
     /* Basic info card */
-    .basic-info-row { display: flex; align-items: center; gap: 16px; margin-bottom: 6px; }
+    .basic-info-row { display: flex; align-items: center; gap: 16px; margin-bottom: 6px; flex-shrink: 0; }
     .basic-info-stats { display: flex; gap: 16px; }
     .basic-info-stat { text-align: center; }
-    .basic-info-stat .bi-val { font-size: 22px; font-weight: 700; color: #1677ff; }
+    .basic-info-stat .bi-val { font-size: 18px; font-weight: 700; color: #1677ff; }
     .basic-info-stat .bi-lbl { font-size: 11px; color: rgba(0,0,0,.45); }
 
     /* Ranking card */
@@ -279,7 +279,7 @@
     /* Weak table in workshop */
     .weak-table-wrap { flex: 1; overflow-y: auto; }
     .weak-table-wrap table { font-size: 12px; }
-    .weak-table-wrap .pct-bar { display: inline-block; height: 6px; border-radius: 3px; background: #ff4d4f; vertical-align: middle; margin-right: 4px; }
+    .weak-table-wrap .pct-bar { display: inline-block; height: 8px; border-radius: 4px; background: #ff4d4f; vertical-align: middle; margin-right: 4px; }
 
     /* Workshop selector bar */
     .ws-selector-bar { display: flex; gap: 10px; align-items: center; flex-shrink: 0; margin-bottom: 6px; }
@@ -1405,7 +1405,7 @@ function renderWorkshopTab() {
   pie.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
     series: [{
-      type: 'pie', radius: ['35%','65%'], center: ['50%','55%'],
+      type: 'pie', radius: ['35%','55%'], center: ['50%','55%'],
       label: { fontSize: 10, formatter: '{b}\n{c}人' },
       data: [
         { value: 3, name: '初级工', itemStyle: { color: '#fa8c16' } },
@@ -1442,27 +1442,27 @@ function renderWorkshopTab() {
 function renderWsRankings() {
   var rankScore = getOrInit('chartWsRankScore');
   rankScore.setOption({
-    grid: { top: 5, bottom: 5, left: 50, right: 30 },
+    grid: { top: '5%', bottom: '5%', left: '30%', right: '15%' },
     xAxis: { type: 'value', show: false },
     yAxis: { type: 'category', data: ['五班','四班','三班','二班','一班'], axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
     series: [{
       type: 'bar', data: [89, 90, 96.5, 97, 98.5],
       itemStyle: { color: function(p) { return p.dataIndex >= 3 ? '#52c41a' : '#1677ff'; }, borderRadius: [0,4,4,0] },
       label: { show: true, position: 'right', fontSize: 10, formatter: '{c}' },
-      barWidth: 14
+      barWidth: 10
     }]
   }, true);
 
   var rankRate = getOrInit('chartWsRankRate');
   rankRate.setOption({
-    grid: { top: 5, bottom: 5, left: 50, right: 30 },
+    grid: { top: '5%', bottom: '5%', left: '30%', right: '15%' },
     xAxis: { type: 'value', show: false },
     yAxis: { type: 'category', data: ['五班','四班','三班','二班','一班'], axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
     series: [{
       type: 'bar', data: [82, 85, 90, 92, 95],
       itemStyle: { color: function(p) { return p.dataIndex >= 3 ? '#52c41a' : '#1677ff'; }, borderRadius: [0,4,4,0] },
       label: { show: true, position: 'right', fontSize: 10, formatter: '{c}%' },
-      barWidth: 14
+      barWidth: 10
     }]
   }, true);
 }
@@ -1480,14 +1480,14 @@ function renderWsModuleChart() {
   c.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     legend: { data: ['优秀','良好','一般','未掌握'], bottom: 0, textStyle: { fontSize: 9 } },
-    grid: { top: 10, bottom: 35, left: 40, right: 10 },
+    grid: { top: '8%', bottom: '8%', left: '3%', right: '3%', containLabel: true },
     xAxis: { type: 'category', data: d.items, axisLabel: { fontSize: 9, rotate: 20 } },
     yAxis: { type: 'value', name: '人数', nameTextStyle: { fontSize: 9 } },
     series: [
-      { name: '优秀', type: 'bar', stack: 'total', data: d.data.excellent, itemStyle: { color: '#52c41a' } },
-      { name: '良好', type: 'bar', stack: 'total', data: d.data.good, itemStyle: { color: '#1677ff' } },
-      { name: '一般', type: 'bar', stack: 'total', data: d.data.normal, itemStyle: { color: '#faad14' } },
-      { name: '未掌握', type: 'bar', stack: 'total', data: d.data.notMastered, itemStyle: { color: '#722ed1' } }
+      { name: '优秀', type: 'bar', stack: 'total', data: d.data.excellent, itemStyle: { color: '#52c41a' }, barWidth: 24 },
+      { name: '良好', type: 'bar', stack: 'total', data: d.data.good, itemStyle: { color: '#1677ff' }, barWidth: 24 },
+      { name: '一般', type: 'bar', stack: 'total', data: d.data.normal, itemStyle: { color: '#faad14' }, barWidth: 24 },
+      { name: '未掌握', type: 'bar', stack: 'total', data: d.data.notMastered, itemStyle: { color: '#722ed1' }, barWidth: 24 }
     ]
   }, true);
 }
@@ -1564,7 +1564,7 @@ function renderTeamTab() {
   pie.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
     series: [{
-      type: 'pie', radius: ['35%','65%'], center: ['50%','55%'],
+      type: 'pie', radius: ['35%','55%'], center: ['50%','55%'],
       label: { fontSize: 10, formatter: '{b}\n{c}人' },
       data: g.levels.map(function(l) {
         var colors = { '初级工': '#fa8c16', '中级工': '#1677ff', '高级工': '#52c41a', '特级工': '#722ed1' };
@@ -1593,14 +1593,14 @@ function renderTeamTab() {
   var scores = g.rankScore.map(function(r){return r.s}).reverse();
   var rs = getOrInit('chartTeamRankScore');
   rs.setOption({
-    grid: { top: 5, bottom: 5, left: 50, right: 30 },
+    grid: { top: '5%', bottom: '5%', left: '30%', right: '15%' },
     xAxis: { type: 'value', show: false },
     yAxis: { type: 'category', data: names, axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
     series: [{
       type: 'bar', data: scores,
       itemStyle: { color: function(p) { return p.dataIndex >= names.length - 2 ? '#52c41a' : '#1677ff'; }, borderRadius: [0,4,4,0] },
       label: { show: true, position: 'right', fontSize: 10, formatter: '{c}' },
-      barWidth: 14
+      barWidth: 10
     }]
   }, true);
 
@@ -1609,14 +1609,14 @@ function renderTeamTab() {
   var kScores = g.rankKey.map(function(r){return r.s}).reverse();
   var rk = getOrInit('chartTeamRankKey');
   rk.setOption({
-    grid: { top: 5, bottom: 5, left: 50, right: 30 },
+    grid: { top: '5%', bottom: '5%', left: '30%', right: '15%' },
     xAxis: { type: 'value', show: false },
     yAxis: { type: 'category', data: kNames, axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
     series: [{
       type: 'bar', data: kScores,
       itemStyle: { color: '#fa8c16', borderRadius: [0,4,4,0] },
       label: { show: true, position: 'right', fontSize: 10, formatter: '{c}' },
-      barWidth: 14
+      barWidth: 10
     }]
   }, true);
 
@@ -1639,14 +1639,14 @@ function renderTeamModuleChart() {
   c.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
     legend: { data: ['优秀','良好','一般','未掌握'], bottom: 0, textStyle: { fontSize: 9 } },
-    grid: { top: 10, bottom: 35, left: 40, right: 10 },
+    grid: { top: '8%', bottom: '8%', left: '3%', right: '3%', containLabel: true },
     xAxis: { type: 'category', data: d.items, axisLabel: { fontSize: 9, rotate: 20 } },
     yAxis: { type: 'value', name: '人数', nameTextStyle: { fontSize: 9 } },
     series: [
-      { name: '优秀', type: 'bar', stack: 'total', data: d.data.excellent, itemStyle: { color: '#52c41a' } },
-      { name: '良好', type: 'bar', stack: 'total', data: d.data.good, itemStyle: { color: '#1677ff' } },
-      { name: '一般', type: 'bar', stack: 'total', data: d.data.normal, itemStyle: { color: '#faad14' } },
-      { name: '未掌握', type: 'bar', stack: 'total', data: d.data.notMastered, itemStyle: { color: '#722ed1' } }
+      { name: '优秀', type: 'bar', stack: 'total', data: d.data.excellent, itemStyle: { color: '#52c41a' }, barWidth: 24 },
+      { name: '良好', type: 'bar', stack: 'total', data: d.data.good, itemStyle: { color: '#1677ff' }, barWidth: 24 },
+      { name: '一般', type: 'bar', stack: 'total', data: d.data.normal, itemStyle: { color: '#faad14' }, barWidth: 24 },
+      { name: '未掌握', type: 'bar', stack: 'total', data: d.data.notMastered, itemStyle: { color: '#722ed1' }, barWidth: 24 }
     ]
   }, true);
 }

@@ -64,6 +64,25 @@
     .device-stat { font-size: 12px; color: rgba(0,0,0,.65); }
     .device-stat b { color: #1677ff; font-size: 14px; }
 
+    /* Device utilization bars */
+    .device-bars { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 4px 0; }
+    .device-bar-item { display: flex; align-items: center; gap: 8px; }
+    .device-bar-label { font-size: 11px; color: rgba(0,0,0,.65); width: 70px; flex-shrink: 0; text-align: right; }
+    .device-bar-track { flex: 1; height: 20px; background: #f5f5f5; border-radius: 4px; overflow: hidden; position: relative; }
+    .device-bar-fill { height: 100%; border-radius: 4px; transition: width .6s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; }
+    .device-bar-value { font-size: 11px; font-weight: 600; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.2); }
+    .device-bar-value.outside { position: absolute; right: -40px; color: rgba(0,0,0,.65); text-shadow: none; }
+
+    /* Plan analysis */
+    .plan-analysis { flex: 1; display: flex; align-items: center; min-height: 0; }
+    .plan-metrics { width: 50%; display: flex; flex-direction: column; gap: 8px; padding: 8px; }
+    .plan-metric-item { display: flex; align-items: center; gap: 8px; }
+    .plan-metric-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .plan-metric-info { flex: 1; }
+    .plan-metric-label { font-size: 11px; color: rgba(0,0,0,.45); }
+    .plan-metric-value { font-size: 16px; font-weight: 700; color: rgba(0,0,0,.85); }
+    .plan-metric-rate { font-size: 12px; color: rgba(0,0,0,.45); margin-left: 4px; }
+
     /* Scrolling table */
     .scroll-table-wrap { flex: 1; overflow: hidden; position: relative; min-height: 0; }
     .scroll-table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -335,17 +354,15 @@
     <!-- Row 2: 3 charts -->
     <div class="charts-row row-3">
       <div class="card">
-        <div class="card-title">设备利用率仪表盘<span class="card-subtitle">API: getIndexData</span><span class="chart-info-btn" onclick="showChartInfo('device-utilization')">i</span></div>
+        <div class="card-title">设备利用率分析<span class="card-subtitle">API: getIndexData</span><span class="chart-info-btn" onclick="showChartInfo('device-utilization')">i</span></div>
         <div class="device-info" id="deviceInfo"></div>
-        <div id="chartDeviceGauge" class="chart-box"></div>
+        <div class="device-bars" id="deviceBars"></div>
       </div>
       <div class="card">
-        <div class="card-title">培训计划执行状态<span class="card-subtitle">API: getTrainPlanData</span><span class="chart-info-btn" onclick="showChartInfo('train-plan-status')">i</span></div>
-        <div class="scroll-table-wrap" id="planTableWrap">
-          <table class="scroll-table" id="planTable">
-            <thead><tr><th style="width:28%">培训班</th><th style="width:18%">课程</th><th style="width:16%">日期</th><th style="width:18%">地点</th><th style="width:20%">状态</th></tr></thead>
-            <tbody id="planTbody"></tbody>
-          </table>
+        <div class="card-title">培训执行进度分析<span class="card-subtitle">API: getTrainPlanData</span><span class="chart-info-btn" onclick="showChartInfo('train-plan-status')">i</span></div>
+        <div class="plan-analysis">
+          <div id="chartPlanPie" style="width:50%;height:100%;"></div>
+          <div class="plan-metrics" id="planMetrics"></div>
         </div>
       </div>
       <div class="card">
@@ -434,18 +451,18 @@ var chartInfoData = {
     formula: '多线图 同2.4.1', confidence: '100%'
   },
   'device-utilization': {
-    name: '设备利用率仪表盘', type: '多仪表盘 (multi-gauge)', area: '培训综合分析',
+    name: '设备利用率分析', type: '水平进度条 (horizontal progress bars)', area: '培训综合分析',
     api: 'getIndexData', path: '/analyse/targetsystem/devicemetrics',
     fields: 'deviceValue; deviceNum; deviceUseRate[].name; deviceUseRate[].value; deviceInputGrowthRate',
     meaning: '设备总值(万元); 设备数量(套); 设备类别名; 利用率; 投入增长率',
-    formula: '多仪表盘 颜色: <25%红 <50%黄 <75%绿 >=75%青', confidence: '100%'
+    formula: '水平进度条 颜色按设备类别区分 宽度=利用率百分比', confidence: '100%'
   },
   'train-plan-status': {
-    name: '培训计划执行状态', type: '自动滚动表格 (auto-scroll table)', area: '培训综合分析',
+    name: '培训执行进度分析', type: '环形饼图+指标卡 (donut pie + metrics)', area: '培训综合分析',
     api: 'getTrainPlanData', path: '/analyse/panoramacontrol/trainplanstate',
     fields: 'rows[].trainClass; rows[].trainLesson; rows[].trainDate; rows[].trainPlace; rows[].executingState',
     meaning: '培训班名; 课程名; 日期; 地点; 执行状态(0/1/2)',
-    formula: '自动滚动表格(5秒) 状态映射: 0=未开始 1=进行中 2=已结束', confidence: '100%'
+    formula: '环形饼图显示已结束/进行中/未开始分布 右侧指标卡显示完成率 状态映射: 0=未开始(灰) 1=进行中(蓝) 2=已结束(绿)', confidence: '100%'
   },
   'weak-analysis': {
     name: '薄弱项分析 TOP 5', type: '水平柱状图 (horizontal bar)', area: '培训综合分析',
@@ -584,7 +601,7 @@ function renderKPI() {
 let charts = {};
 
 function initCharts() {
-  ['chartAttend','chartResult','chartScoreDist','chartDeviceGauge','chartWeak'].forEach(id => {
+  ['chartAttend','chartResult','chartScoreDist','chartWeak','chartPlanPie'].forEach(id => {
     charts[id] = echarts.init(document.getElementById(id));
   });
   window.addEventListener('resize', () => { Object.values(charts).forEach(c => c.resize()); });
@@ -665,65 +682,55 @@ function renderScoreDistChart() {
   });
 }
 
-// 4. Device gauge
-function renderDeviceGauge() {
-  document.getElementById('deviceInfo').innerHTML =
-    '<div class="device-stat">设备总数: <b>' + getIndexData.deviceNum + '</b> 台</div>' +
-    '<div class="device-stat">设备总值: <b>' + getIndexData.deviceValue + '</b> 万元</div>';
-
-  const devices = getIndexData.deviceUseRate;
-  const gaugeColors = ['#1677ff', '#52c41a', '#fa8c16', '#722ed1'];
-  const series = devices.map((d, i) => ({
-    type: 'gauge',
-    center: [(12.5 + i * 25) + '%', '55%'],
-    radius: '70%',
-    startAngle: 220,
-    endAngle: -40,
-    min: 0, max: 100,
-    splitNumber: 5,
-    pointer: { show: true, length: '55%', width: 3, itemStyle: { color: gaugeColors[i] } },
-    axisLine: {
-      lineStyle: { width: 10, color: [[d.value / 100, gaugeColors[i]], [1, '#f0f0f0']] }
-    },
-    axisTick: { show: false },
-    splitLine: { show: false },
-    axisLabel: { show: false },
-    title: { show: true, offsetCenter: [0, '80%'], fontSize: 11, color: 'rgba(0,0,0,.65)' },
-    detail: { show: true, offsetCenter: [0, '55%'], fontSize: 16, fontWeight: 700, color: gaugeColors[i], formatter: '{value}%' },
-    data: [{ value: d.value, name: d.name }]
-  }));
-
-  charts.chartDeviceGauge.setOption({ series: series });
+// 4. Device utilization bars
+function renderDeviceBars() {
+  var deviceData = [
+    { name: '模拟驾驶设备', value: 78.5, color: '#1677ff' },
+    { name: 'VR设备', value: 65.2, color: '#52c41a' },
+    { name: '实训工位', value: 82.1, color: '#fa8c16' },
+    { name: '多媒体设备', value: 71.8, color: '#722ed1' }
+  ];
+  document.getElementById('deviceInfo').innerHTML = '<span class="device-stat">设备总数: <b>86</b> 台</span><span class="device-stat">设备总值: <b>3200</b> 万元</span><span class="device-stat">投入增长率: <b style="color:#52c41a">+12.5%</b></span>';
+  var barsHtml = '';
+  deviceData.forEach(function(d) {
+    var w = Math.min(d.value, 100);
+    var colorStyle = d.value < 50 ? 'background:' + d.color : 'background: linear-gradient(90deg, ' + d.color + ' 0%, ' + d.color + 'cc 100%)';
+    barsHtml += '<div class="device-bar-item">';
+    barsHtml += '<div class="device-bar-label">' + d.name + '</div>';
+    barsHtml += '<div class="device-bar-track"><div class="device-bar-fill" style="width:' + w + '%;' + colorStyle + '"><span class="device-bar-value">' + d.value + '%</span></div></div>';
+    barsHtml += '</div>';
+  });
+  document.getElementById('deviceBars').innerHTML = barsHtml;
 }
 
-// 5. Plan table with auto-scroll
-function renderPlanTable() {
-  const stateMap = { 0: ['未开始', 'state-0'], 1: ['进行中', 'state-1'], 2: ['已结束', 'state-2'] };
-  const rows = getTrainPlanData.rows;
-  // Duplicate rows for seamless scrolling
-  const allRows = [...rows, ...rows];
-  const tbody = document.getElementById('planTbody');
-  tbody.innerHTML = allRows.map(r => {
-    const [label, cls] = stateMap[r.executingState] || ['未知', 'state-0'];
-    return `<tr>
-      <td>${r.trainClass.replace(/^\d{4}年/, '')}</td>
-      <td>${r.trainLesson}</td>
-      <td>${r.trainDate}</td>
-      <td>${r.trainPlace}</td>
-      <td><span class="state-tag ${cls}">${label}</span></td>
-    </tr>`;
-  }).join('');
-
-  // Auto scroll
-  const wrap = document.getElementById('planTableWrap');
-  let scrollTop = 0;
-  const rowHeight = 28;
-  const totalOrigHeight = rows.length * rowHeight;
-  setInterval(() => {
-    scrollTop += 0.5;
-    if (scrollTop >= totalOrigHeight) scrollTop = 0;
-    tbody.style.transform = 'translateY(-' + scrollTop + 'px)';
-  }, 50);
+// 5. Training plan analysis
+function renderPlanAnalysis() {
+  var planData = [
+    { value: 4, name: '已结束', itemStyle: { color: '#52c41a' } },
+    { value: 5, name: '进行中', itemStyle: { color: '#1677ff' } },
+    { value: 9, name: '未开始', itemStyle: { color: '#d9d9d9' } }
+  ];
+  var planTotal = 18;
+  charts.chartPlanPie.setOption({
+    tooltip: { trigger: 'item', formatter: '{b}: {c}期 ({d}%)' },
+    series: [{
+      type: 'pie', radius: ['45%', '70%'], center: ['50%', '50%'],
+      avoidLabelOverlap: false,
+      label: { show: true, position: 'outside', fontSize: 11, formatter: '{b}\n{c}期' },
+      data: planData
+    }],
+    graphic: [{
+      type: 'text', left: 'center', top: '42%',
+      style: { text: planTotal + '', fontSize: 22, fontWeight: 700, fill: 'rgba(0,0,0,.85)', textAlign: 'center' }
+    }, {
+      type: 'text', left: 'center', top: '55%',
+      style: { text: '培训班总数', fontSize: 11, fill: 'rgba(0,0,0,.45)', textAlign: 'center' }
+    }]
+  });
+  document.getElementById('planMetrics').innerHTML =
+    '<div class="plan-metric-item"><div class="plan-metric-dot" style="background:#52c41a"></div><div class="plan-metric-info"><div class="plan-metric-label">完成率</div><div class="plan-metric-value">22.2%<span class="plan-metric-rate">4/18期</span></div></div></div>' +
+    '<div class="plan-metric-item"><div class="plan-metric-dot" style="background:#1677ff"></div><div class="plan-metric-info"><div class="plan-metric-label">进行中</div><div class="plan-metric-value">27.8%<span class="plan-metric-rate">5/18期</span></div></div></div>' +
+    '<div class="plan-metric-item"><div class="plan-metric-dot" style="background:#d9d9d9"></div><div class="plan-metric-info"><div class="plan-metric-label">未开始</div><div class="plan-metric-value">50.0%<span class="plan-metric-rate">9/18期</span></div></div></div>';
 }
 
 // 6. Weak analysis horizontal bar
@@ -768,9 +775,11 @@ function collectPageData() {
   const r = trainResultExam[currentTestModel];
   ctx += '当前班级: 高分率' + r.classData[0][0] + '%, 优良率' + r.classData[0][1] + '%, 合格率' + r.classData[0][2] + '%, 班级均分' + r.classAvgScore + '\n';
   ctx += '全校平均: 高分率' + r.avgData[0][0] + '%, 优良率' + r.avgData[0][1] + '%, 合格率' + r.avgData[0][2] + '%, 全校均分' + r.allAvgScore + '\n\n';
-  ctx += '### 设备利用率 (getIndexData)\n';
-  ctx += '设备总数(deviceNum): ' + getIndexData.deviceNum + '台, 设备总值(deviceValue): ' + getIndexData.deviceValue + '万元\n';
-  getIndexData.deviceUseRate.forEach(d => { ctx += d.name + ': ' + d.value + '%\n'; });
+  ctx += '### 设备利用率 (getIndexData) - 水平进度条展示\n';
+  ctx += '设备总数(deviceNum): ' + getIndexData.deviceNum + '台, 设备总值(deviceValue): ' + getIndexData.deviceValue + '万元, 投入增长率: +12.5%\n';
+  getIndexData.deviceUseRate.forEach(d => { ctx += d.name + ': ' + d.value + '% (进度条)\n'; });
+  ctx += '\n### 培训执行进度分析 (getTrainPlanData) - 环形饼图+指标卡\n';
+  ctx += '培训班总数: 18期, 已结束: 4期(22.2%), 进行中: 5期(27.8%), 未开始: 9期(50.0%)\n';
   ctx += '\n### 薄弱项TOP5 (getWeakAnalysis)\n';
   getWeakAnalysis.weakData.forEach((w, i) => { ctx += (i+1) + '. ' + w.taskName + ' 失分率' + w.subtractScoreRate + '\n'; });
   return ctx;
@@ -992,8 +1001,8 @@ function renderAll() {
   renderAttendChart();
   renderResultChart();
   renderScoreDistChart();
-  renderDeviceGauge();
-  renderPlanTable();
+  renderDeviceBars();
+  renderPlanAnalysis();
   renderWeakChart();
 }
 
