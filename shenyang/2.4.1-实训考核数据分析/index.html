@@ -224,6 +224,65 @@
     .xa-warn { color: #fa8c16; font-weight: 600; }
     .xa-danger { color: #ff4d4f; font-weight: 600; }
     .xa-good { color: #52c41a; font-weight: 600; }
+
+    /* ========== Tab 0: Station Overview Layout ========== */
+    .station-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; flex: 1; min-height: 0; overflow: hidden; }
+    .station-left { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: hidden; }
+    .station-left-top { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; min-height: 0; }
+    .station-left-top > .card, .station-left-bottom > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .station-left-bottom { flex: 1; min-height: 0; display: flex; }
+    .station-left-bottom > .card { flex: 1; }
+    .station-right { display: flex; }
+    .station-right > .card { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .station-table-wrap { flex: 1; overflow-y: auto; }
+    .station-table-wrap table td, .station-table-wrap table th { font-size: 11px; padding: 3px 6px; white-space: nowrap; }
+
+    /* Gauge container */
+    .gauge-row { display: flex; justify-content: space-around; align-items: center; flex: 1; min-height: 0; }
+    .gauge-item { text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; }
+    .gauge-ring { position: relative; width: 90px; height: 90px; }
+    .gauge-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .gauge-ring .gauge-bg { fill: none; stroke: #f0f0f0; stroke-width: 8; }
+    .gauge-ring .gauge-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset .6s ease; }
+    .gauge-val { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; font-weight: 700; color: rgba(0,0,0,.85); }
+    .gauge-label { font-size: 11px; color: rgba(0,0,0,.45); margin-top: 4px; }
+
+    /* Sub-chart side by side */
+    .dual-chart { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 1; min-height: 0; }
+    .dual-chart > div { min-height: 0; }
+
+    /* ========== Tab 1/2: Workshop/Team Layout ========== */
+    .workshop-layout { display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; overflow: hidden; }
+    .workshop-top { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; flex-shrink: 0; height: 200px; }
+    .workshop-top > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .workshop-bottom { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; flex: 1; min-height: 0; }
+    .workshop-bottom > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+    /* Basic info card */
+    .basic-info-row { display: flex; align-items: center; gap: 16px; margin-bottom: 6px; }
+    .basic-info-stats { display: flex; gap: 16px; }
+    .basic-info-stat { text-align: center; }
+    .basic-info-stat .bi-val { font-size: 22px; font-weight: 700; color: #1677ff; }
+    .basic-info-stat .bi-lbl { font-size: 11px; color: rgba(0,0,0,.45); }
+
+    /* Ranking card */
+    .ranking-dual { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; min-height: 0; }
+    .ranking-col { display: flex; flex-direction: column; min-height: 0; }
+    .ranking-col-title { font-size: 11px; font-weight: 600; color: rgba(0,0,0,.65); margin-bottom: 4px; text-align: center; }
+
+    /* Sub-tabs for stacked bar */
+    .sub-tab-bar { display: flex; gap: 2px; margin-bottom: 4px; flex-shrink: 0; }
+    .sub-tab-item { padding: 3px 10px; cursor: pointer; font-size: 11px; color: rgba(0,0,0,.55); border-radius: 4px; transition: all .2s; background: #fafafa; }
+    .sub-tab-item:hover { color: #1677ff; background: #f0f5ff; }
+    .sub-tab-item.active { color: #fff; background: #1677ff; }
+
+    /* Weak table in workshop */
+    .weak-table-wrap { flex: 1; overflow-y: auto; }
+    .weak-table-wrap table { font-size: 12px; }
+    .weak-table-wrap .pct-bar { display: inline-block; height: 6px; border-radius: 3px; background: #ff4d4f; vertical-align: middle; margin-right: 4px; }
+
+    /* Workshop selector bar */
+    .ws-selector-bar { display: flex; gap: 10px; align-items: center; flex-shrink: 0; margin-bottom: 6px; }
   </style>
 </head>
 <body>
@@ -239,13 +298,203 @@
   <!-- Tab bar -->
   <div class="card" style="padding: 0 12px; margin-bottom: 6px; flex-shrink: 0;">
     <div class="tab-bar" style="margin-bottom: 0;">
-      <div class="tab-item active" onclick="switchTab(0, this)">考试维度分析</div>
-      <div class="tab-item" onclick="switchTab(1, this)">个人分析</div>
+      <div class="tab-item active" onclick="switchTab(0, this)">站段总览</div>
+      <div class="tab-item" onclick="switchTab(1, this)">车间维度</div>
+      <div class="tab-item" onclick="switchTab(2, this)">班组维度</div>
+      <div class="tab-item" onclick="switchTab(3, this)">考试维度分析</div>
+      <div class="tab-item" onclick="switchTab(4, this)">个人分析</div>
     </div>
   </div>
 
-  <!-- ===== Tab 0: Exam-Centric Analysis ===== -->
+  <!-- ===== Tab 0: Station Overview ===== -->
   <div id="tab-0" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
+    <div class="station-layout">
+      <!-- Left 2/3 -->
+      <div class="station-left">
+        <div class="station-left-top">
+          <!-- Skill Mastery grouped bar -->
+          <div class="card">
+            <div class="card-title">技能掌握情况分析<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按岗位聚合技能掌握等级</span></div>
+            <div style="margin-bottom:4px;flex-shrink:0;">
+              <select class="form-select" id="stationJobSelect" onchange="renderStationSkillChart()" style="font-size:11px;padding:2px 8px;">
+                <option value="全部岗位">全部岗位</option>
+                <option value="客运值班员">客运值班员</option>
+                <option value="售票员">售票员</option>
+                <option value="安检员">安检员</option>
+                <option value="客运员">客运员</option>
+              </select>
+            </div>
+            <div id="chartStationSkill" class="chart-box"></div>
+          </div>
+          <!-- Annual Plan Gauges -->
+          <div class="card">
+            <div class="card-title">年度计划内培训班进度<span class="card-subtitle" style="color:#fa8c16">需后端开发: 年度计划完成率聚合</span></div>
+            <div class="gauge-row" id="gaugeRow">
+              <div class="gauge-item">
+                <div class="gauge-ring"><svg viewBox="0 0 100 100"><circle class="gauge-bg" cx="50" cy="50" r="42"/><circle class="gauge-fill" cx="50" cy="50" r="42" stroke="#1677ff" stroke-dasharray="263.9" stroke-dashoffset="155.7"/></svg><div class="gauge-val">41%</div></div>
+                <div class="gauge-label">培训期数</div>
+              </div>
+              <div class="gauge-item">
+                <div class="gauge-ring"><svg viewBox="0 0 100 100"><circle class="gauge-bg" cx="50" cy="50" r="42"/><circle class="gauge-fill" cx="50" cy="50" r="42" stroke="#52c41a" stroke-dasharray="263.9" stroke-dashoffset="145.1"/></svg><div class="gauge-val">45%</div></div>
+                <div class="gauge-label">培训人数</div>
+              </div>
+              <div class="gauge-item">
+                <div class="gauge-ring"><svg viewBox="0 0 100 100"><circle class="gauge-bg" cx="50" cy="50" r="42"/><circle class="gauge-fill" cx="50" cy="50" r="42" stroke="#fa8c16" stroke-dasharray="263.9" stroke-dashoffset="134.6"/></svg><div class="gauge-val">49%</div></div>
+                <div class="gauge-label">培训人天数</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Bottom: Station Training Analysis -->
+        <div class="station-left-bottom">
+          <div class="card">
+            <div class="card-title">各车站培训情况分析<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按车站聚合培训参与和技能评价</span></div>
+            <div class="dual-chart">
+              <div id="chartStationParticipation" style="min-height:0;"></div>
+              <div id="chartStationEval" style="min-height:0;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Right 1/3: Scrolling plan table -->
+      <div class="station-right">
+        <div class="card">
+          <div class="card-title">培训办班计划提醒<span class="card-subtitle" style="color:#52c41a">现有API: getTrainPlanData</span></div>
+          <div class="station-table-wrap" id="stationPlanTable"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Tab 1: Workshop Analysis ===== -->
+  <div id="tab-1" class="hidden" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
+    <div class="workshop-layout">
+      <div class="workshop-top">
+        <!-- Basic Info -->
+        <div class="card">
+          <div class="card-title">基本信息<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按车间聚合职工/班组统计</span></div>
+          <div class="basic-info-row">
+            <div class="basic-info-stats">
+              <div class="basic-info-stat"><div class="bi-val">25</div><div class="bi-lbl">职工总数</div></div>
+              <div class="basic-info-stat"><div class="bi-val">5</div><div class="bi-lbl">班组数量</div></div>
+            </div>
+          </div>
+          <div id="chartWorkshopPie" class="chart-box"></div>
+        </div>
+        <!-- Radar -->
+        <div class="card">
+          <div class="card-title">六维能力雷达图<span class="card-subtitle" style="color:#fa8c16">需后端开发: 车间级六维能力聚合</span></div>
+          <div id="chartWorkshopRadar" class="chart-box"></div>
+        </div>
+        <!-- Ranking -->
+        <div class="card">
+          <div class="card-title">优秀班组<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按班组聚合综合评分排名</span></div>
+          <div class="ranking-dual">
+            <div class="ranking-col">
+              <div class="ranking-col-title">综合评分排名</div>
+              <div id="chartWsRankScore" class="chart-box"></div>
+            </div>
+            <div class="ranking-col">
+              <div class="ranking-col-title">技能达标率排名</div>
+              <div id="chartWsRankRate" class="chart-box"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="workshop-bottom">
+        <!-- Module Mastery Stacked Bar -->
+        <div class="card">
+          <div class="card-title">模块科目掌握情况<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按车间聚合模块科目掌握等级</span></div>
+          <div class="sub-tab-bar" id="wsModuleSubTabs">
+            <div class="sub-tab-item active" onclick="switchWsModuleTab(0,this)">安全知识</div>
+            <div class="sub-tab-item" onclick="switchWsModuleTab(1,this)">理论知识</div>
+            <div class="sub-tab-item" onclick="switchWsModuleTab(2,this)">实作技能</div>
+            <div class="sub-tab-item" onclick="switchWsModuleTab(3,this)">两违信息</div>
+          </div>
+          <div id="chartWsModuleStack" class="chart-box"></div>
+        </div>
+        <!-- Weak Modules Table -->
+        <div class="card">
+          <div class="card-title">薄弱技能模块<span class="card-subtitle" style="color:#fa8c16">需后端开发: 车间级薄弱模块聚合</span></div>
+          <div class="weak-table-wrap" id="wsWeakTable"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Tab 2: Team Analysis ===== -->
+  <div id="tab-2" class="hidden" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
+    <div class="card ws-selector-bar" style="padding:6px 12px;">
+      <span style="font-size:13px;color:rgba(0,0,0,.65);font-weight:500;">选择车间：</span>
+      <select class="form-select" id="teamWsSelect" onchange="onTeamWsChange()" style="font-size:12px;padding:3px 8px;">
+        <option value="0">客运一车间</option>
+        <option value="1">客运二车间</option>
+        <option value="2">客运三车间</option>
+      </select>
+      <span style="font-size:13px;color:rgba(0,0,0,.65);font-weight:500;margin-left:12px;">选择班组：</span>
+      <select class="form-select" id="teamGroupSelect" onchange="renderTeamTab()" style="font-size:12px;padding:3px 8px;">
+        <option value="0">一班</option>
+        <option value="1">二班</option>
+        <option value="2">三班</option>
+        <option value="3">四班</option>
+        <option value="4">五班</option>
+      </select>
+    </div>
+    <div class="workshop-layout">
+      <div class="workshop-top">
+        <!-- Basic Info -->
+        <div class="card">
+          <div class="card-title">基本信息<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级职工统计</span></div>
+          <div class="basic-info-row">
+            <div class="basic-info-stats" id="teamBasicStats">
+              <div class="basic-info-stat"><div class="bi-val">5</div><div class="bi-lbl">职工总数</div></div>
+            </div>
+          </div>
+          <div id="chartTeamPie" class="chart-box"></div>
+        </div>
+        <!-- Radar -->
+        <div class="card">
+          <div class="card-title">六维能力雷达图<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级六维能力聚合</span></div>
+          <div id="chartTeamRadar" class="chart-box"></div>
+        </div>
+        <!-- Ranking -->
+        <div class="card">
+          <div class="card-title">优秀职工<span class="card-subtitle" style="color:#fa8c16">部分可用: getStudentScoreRank</span></div>
+          <div class="ranking-dual">
+            <div class="ranking-col">
+              <div class="ranking-col-title">综合评分排名</div>
+              <div id="chartTeamRankScore" class="chart-box"></div>
+            </div>
+            <div class="ranking-col">
+              <div class="ranking-col-title">关键职工</div>
+              <div id="chartTeamRankKey" class="chart-box"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="workshop-bottom">
+        <!-- Module Mastery Stacked Bar -->
+        <div class="card">
+          <div class="card-title">模块科目掌握情况<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级模块科目掌握等级</span></div>
+          <div class="sub-tab-bar" id="teamModuleSubTabs">
+            <div class="sub-tab-item active" onclick="switchTeamModuleTab(0,this)">安全知识</div>
+            <div class="sub-tab-item" onclick="switchTeamModuleTab(1,this)">理论知识</div>
+            <div class="sub-tab-item" onclick="switchTeamModuleTab(2,this)">实作技能</div>
+            <div class="sub-tab-item" onclick="switchTeamModuleTab(3,this)">两违信息</div>
+          </div>
+          <div id="chartTeamModuleStack" class="chart-box"></div>
+        </div>
+        <!-- Weak Modules Table -->
+        <div class="card">
+          <div class="card-title">薄弱技能模块<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级薄弱模块聚合</span></div>
+          <div class="weak-table-wrap" id="teamWeakTable"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Tab 3: Exam-Centric Analysis ===== -->
+  <div id="tab-3" class="hidden" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
     <!-- Exam selector -->
     <div class="card" style="padding:6px 12px;margin-bottom:6px;flex-shrink:0;">
       <div class="filter-bar">
@@ -297,8 +546,8 @@
     </div>
   </div>
 
-  <!-- ===== Tab 1: Personal Analysis ===== -->
-  <div id="tab-1" class="hidden" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
+  <!-- ===== Tab 4: Personal Analysis ===== -->
+  <div id="tab-4" class="hidden" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
     <!-- Student selector -->
     <div class="card" style="padding:6px 12px;margin-bottom:6px;flex-shrink:0;">
       <div class="filter-bar">
@@ -399,10 +648,14 @@ function switchTab(idx, el) {
   currentTab = idx;
   document.querySelectorAll('.tab-bar .tab-item').forEach(function(t) { t.classList.remove('active'); });
   if (el) el.classList.add('active');
-  document.getElementById('tab-0').classList.toggle('hidden', idx !== 0);
-  document.getElementById('tab-1').classList.toggle('hidden', idx !== 1);
-  if (idx === 0) renderExamTab();
-  if (idx === 1) renderPersonalTab();
+  for (var i = 0; i <= 4; i++) {
+    document.getElementById('tab-' + i).classList.toggle('hidden', idx !== i);
+  }
+  if (idx === 0) renderStationTab();
+  if (idx === 1) renderWorkshopTab();
+  if (idx === 2) renderTeamTab();
+  if (idx === 3) renderExamTab();
+  if (idx === 4) renderPersonalTab();
 }
 
 // ========== Mock Data: Exam Dimension ==========
@@ -783,7 +1036,374 @@ function getOrInit(id) {
   return charts[id];
 }
 
-// ========== Tab 0: Exam Analysis ==========
+// ========== Tab 0: Station Overview ==========
+var stationSkillData = {
+  '全部岗位': { roles: ['调车长','连结员','客运值班员','售票员','安检员','客运员'], data: [[8,15,3],[12,10,5],[6,18,2],[4,20,1],[10,12,4],[7,16,3]] },
+  '客运值班员': { roles: ['客运值班员'], data: [[6,18,2]] },
+  '售票员': { roles: ['售票员'], data: [[4,20,1]] },
+  '安检员': { roles: ['安检员'], data: [[10,12,4]] },
+  '客运员': { roles: ['客运员'], data: [[7,16,3]] }
+};
+
+var stationTrainData = [
+  ['沈阳站','沈阳北站','沈阳南站','苏家屯站','长春站','吉林站'],
+  { participated: [42,38,45,28,35,32], notParticipated: [8,12,5,12,15,18] },
+  { excellent: [20,16,22,12,15,14], potential: [22,22,23,16,20,18] }
+];
+
+var stationPlanRows = [
+  { name: '2026年第三季度安全规程培训', dept: '沈阳站', month: '2026-07', target: '客运值班员', count: 45 },
+  { name: '应急处置实操强化培训', dept: '沈阳北站', month: '2026-07', target: '全员', count: 80 },
+  { name: '新员工入职岗位培训', dept: '客运处', month: '2026-08', target: '新入职员工', count: 25 },
+  { name: '暑运专项服务技能培训', dept: '沈阳站', month: '2026-07', target: '客运员', count: 60 },
+  { name: '设备操作技能复训', dept: '苏家屯站', month: '2026-08', target: '安检员', count: 35 },
+  { name: '班组长管理能力提升培训', dept: '客运处', month: '2026-09', target: '班组长', count: 20 },
+  { name: '年度技能竞赛备赛集训', dept: '沈阳北站', month: '2026-09', target: '选拔选手', count: 15 },
+  { name: '冬季防寒防冻专项培训', dept: '长春站', month: '2026-10', target: '全员', count: 55 }
+];
+
+function renderStationTab() {
+  renderStationSkillChart();
+  renderStationParticipation();
+  renderStationPlanTable();
+}
+
+function renderStationSkillChart() {
+  var sel = document.getElementById('stationJobSelect').value;
+  var d = stationSkillData[sel];
+  var c = getOrInit('chartStationSkill');
+  c.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['不熟练','独立工作','能够培训和指导他人'], bottom: 0, textStyle: { fontSize: 10 } },
+    grid: { top: 10, bottom: 40, left: 50, right: 10 },
+    xAxis: { type: 'category', data: d.roles, axisLabel: { fontSize: 10, rotate: d.roles.length > 3 ? 20 : 0 } },
+    yAxis: { type: 'value', name: '人数', nameTextStyle: { fontSize: 10 } },
+    series: [
+      { name: '不熟练', type: 'bar', data: d.data.map(function(v){return v[0]}), itemStyle: { color: '#ff4d4f' }, barGap: '10%' },
+      { name: '独立工作', type: 'bar', data: d.data.map(function(v){return v[1]}), itemStyle: { color: '#52c41a' } },
+      { name: '能够培训和指导他人', type: 'bar', data: d.data.map(function(v){return v[2]}), itemStyle: { color: '#237804' } }
+    ]
+  }, true);
+}
+
+function renderStationParticipation() {
+  var c1 = getOrInit('chartStationParticipation');
+  c1.setOption({
+    title: { text: '各车站参培情况', textStyle: { fontSize: 11, fontWeight: 500 }, top: 0 },
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['参培人数','未参培人数'], bottom: 0, textStyle: { fontSize: 9 } },
+    grid: { top: 30, bottom: 35, left: 40, right: 10 },
+    xAxis: { type: 'category', data: stationTrainData[0], axisLabel: { fontSize: 9, rotate: 20 } },
+    yAxis: { type: 'value', axisLabel: { fontSize: 9 } },
+    series: [
+      { name: '参培人数', type: 'bar', data: stationTrainData[1].participated, itemStyle: { color: '#1677ff' } },
+      { name: '未参培人数', type: 'bar', data: stationTrainData[1].notParticipated, itemStyle: { color: '#fa8c16' } }
+    ]
+  }, true);
+
+  var c2 = getOrInit('chartStationEval');
+  c2.setOption({
+    title: { text: '技能评价', textStyle: { fontSize: 11, fontWeight: 500 }, top: 0 },
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['优秀','潜力'], bottom: 0, textStyle: { fontSize: 9 } },
+    grid: { top: 30, bottom: 35, left: 40, right: 10 },
+    xAxis: { type: 'category', data: stationTrainData[0], axisLabel: { fontSize: 9, rotate: 20 } },
+    yAxis: { type: 'value', axisLabel: { fontSize: 9 } },
+    series: [
+      { name: '优秀', type: 'bar', data: stationTrainData[2].excellent, itemStyle: { color: '#52c41a' } },
+      { name: '潜力', type: 'bar', data: stationTrainData[2].potential, itemStyle: { color: '#1677ff' } }
+    ]
+  }, true);
+}
+
+function renderStationPlanTable() {
+  var html = '<table><thead><tr><th>培训项目名称</th><th>主办部门</th><th>计划月份</th><th>培训对象</th><th>计划人数</th></tr></thead><tbody>';
+  stationPlanRows.forEach(function(r) {
+    html += '<tr><td>' + r.name + '</td><td>' + r.dept + '</td><td>' + r.month + '</td><td>' + r.target + '</td><td>' + r.count + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('stationPlanTable').innerHTML = html;
+}
+
+// ========== Tab 1: Workshop Analysis ==========
+var wsModuleTabIdx = 0;
+var wsModuleData = [
+  { name: '安全知识', items: ['行经道口','集装箱调车','接触网安全','防护信号','联控用语','应急处置'], data: { excellent: [8,6,10,5,7,4], good: [10,8,7,9,8,6], normal: [5,7,4,8,6,10], notMastered: [2,4,4,3,4,5] } },
+  { name: '理论知识', items: ['规章制度','行车组织','信号规则','调度命令','货运知识','客运规程'], data: { excellent: [10,7,8,6,5,9], good: [8,9,7,10,8,7], normal: [4,6,6,5,8,6], notMastered: [3,3,4,4,4,3] } },
+  { name: '实作技能', items: ['道岔操作','信号操控','车辆连挂','制动试验','列检作业','调车作业'], data: { excellent: [6,8,5,7,4,6], good: [9,7,10,8,9,8], normal: [7,6,6,5,8,7], notMastered: [3,4,4,5,4,4] } },
+  { name: '两违信息', items: ['违章作业','违规操作','脱岗漏岗','未按规程','未戴防护','其他违规'], data: { excellent: [12,10,14,8,11,13], good: [6,8,5,9,7,5], normal: [5,4,3,6,4,4], notMastered: [2,3,3,2,3,3] } }
+];
+var wsWeakRows = [
+  { module: '应急处置操作', mastered: 12, normal: 13, pct: 52.0 },
+  { module: '信号确认流程', mastered: 14, normal: 11, pct: 44.0 },
+  { module: '设备故障判断', mastered: 15, normal: 10, pct: 40.0 },
+  { module: '安全防护措施', mastered: 16, normal: 9, pct: 36.0 },
+  { module: '规章条文理解', mastered: 18, normal: 7, pct: 28.0 },
+  { module: '作业标准执行', mastered: 20, normal: 5, pct: 20.0 }
+];
+
+function renderWorkshopTab() {
+  // Pie: skill level distribution
+  var pie = getOrInit('chartWorkshopPie');
+  pie.setOption({
+    tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
+    series: [{
+      type: 'pie', radius: ['35%','65%'], center: ['50%','55%'],
+      label: { fontSize: 10, formatter: '{b}\n{c}人' },
+      data: [
+        { value: 3, name: '初级工', itemStyle: { color: '#fa8c16' } },
+        { value: 10, name: '中级工', itemStyle: { color: '#1677ff' } },
+        { value: 8, name: '高级工', itemStyle: { color: '#52c41a' } },
+        { value: 4, name: '特级工', itemStyle: { color: '#722ed1' } }
+      ]
+    }]
+  }, true);
+
+  // Radar: 6-dimension
+  var radar = getOrInit('chartWorkshopRadar');
+  radar.setOption({
+    radar: {
+      indicator: [
+        { name: '安全知识', max: 100 }, { name: '知识理论', max: 100 },
+        { name: '实作技能', max: 100 }, { name: '两违信息', max: 100 },
+        { name: '证书信息', max: 100 }, { name: '资质认证', max: 100 }
+      ],
+      radius: '60%', nameGap: 8,
+      name: { textStyle: { fontSize: 10 } }
+    },
+    series: [{ type: 'radar', data: [{ value: [65, 85, 55, 30, 35, 60], name: '车间能力', areaStyle: { opacity: 0.3 } }], itemStyle: { color: '#1677ff' } }]
+  }, true);
+
+  // Rankings
+  renderWsRankings();
+  // Stacked bar
+  renderWsModuleChart();
+  // Weak table
+  renderWsWeakTable();
+}
+
+function renderWsRankings() {
+  var rankScore = getOrInit('chartWsRankScore');
+  rankScore.setOption({
+    grid: { top: 5, bottom: 5, left: 50, right: 30 },
+    xAxis: { type: 'value', show: false },
+    yAxis: { type: 'category', data: ['五班','四班','三班','二班','一班'], axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
+    series: [{
+      type: 'bar', data: [89, 90, 96.5, 97, 98.5],
+      itemStyle: { color: function(p) { return p.dataIndex >= 3 ? '#52c41a' : '#1677ff'; }, borderRadius: [0,4,4,0] },
+      label: { show: true, position: 'right', fontSize: 10, formatter: '{c}' },
+      barWidth: 14
+    }]
+  }, true);
+
+  var rankRate = getOrInit('chartWsRankRate');
+  rankRate.setOption({
+    grid: { top: 5, bottom: 5, left: 50, right: 30 },
+    xAxis: { type: 'value', show: false },
+    yAxis: { type: 'category', data: ['五班','四班','三班','二班','一班'], axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
+    series: [{
+      type: 'bar', data: [82, 85, 90, 92, 95],
+      itemStyle: { color: function(p) { return p.dataIndex >= 3 ? '#52c41a' : '#1677ff'; }, borderRadius: [0,4,4,0] },
+      label: { show: true, position: 'right', fontSize: 10, formatter: '{c}%' },
+      barWidth: 14
+    }]
+  }, true);
+}
+
+function switchWsModuleTab(idx, el) {
+  wsModuleTabIdx = idx;
+  document.querySelectorAll('#wsModuleSubTabs .sub-tab-item').forEach(function(t) { t.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  renderWsModuleChart();
+}
+
+function renderWsModuleChart() {
+  var d = wsModuleData[wsModuleTabIdx];
+  var c = getOrInit('chartWsModuleStack');
+  c.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: { data: ['优秀','良好','一般','未掌握'], bottom: 0, textStyle: { fontSize: 9 } },
+    grid: { top: 10, bottom: 35, left: 40, right: 10 },
+    xAxis: { type: 'category', data: d.items, axisLabel: { fontSize: 9, rotate: 20 } },
+    yAxis: { type: 'value', name: '人数', nameTextStyle: { fontSize: 9 } },
+    series: [
+      { name: '优秀', type: 'bar', stack: 'total', data: d.data.excellent, itemStyle: { color: '#52c41a' } },
+      { name: '良好', type: 'bar', stack: 'total', data: d.data.good, itemStyle: { color: '#1677ff' } },
+      { name: '一般', type: 'bar', stack: 'total', data: d.data.normal, itemStyle: { color: '#faad14' } },
+      { name: '未掌握', type: 'bar', stack: 'total', data: d.data.notMastered, itemStyle: { color: '#722ed1' } }
+    ]
+  }, true);
+}
+
+function renderWsWeakTable() {
+  var html = '<table><thead><tr><th>技能模块</th><th>已掌握人数</th><th>一般人数</th><th>占比</th></tr></thead><tbody>';
+  wsWeakRows.forEach(function(r) {
+    html += '<tr><td>' + r.module + '</td><td>' + r.mastered + '</td><td>' + r.normal + '</td><td><span class="pct-bar" style="width:' + r.pct + 'px;"></span>' + r.pct.toFixed(1) + '%</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('wsWeakTable').innerHTML = html;
+}
+
+// ========== Tab 2: Team Analysis ==========
+var teamModuleTabIdx = 0;
+var teamData = [
+  { ws: '客运一车间', groups: [
+    { name: '一班', count: 5, levels: [{v:0,n:'初级工'},{v:2,n:'中级工'},{v:2,n:'高级工'},{v:1,n:'特级工'}], radar: [70,80,60,40,45,55], rankScore: [{ n:'王建国',s:96 },{ n:'李晓明',s:92 },{ n:'张文慧',s:88 },{ n:'陈志强',s:85 },{ n:'刘海燕',s:82 }], rankKey: [{ n:'王建国',s:96 },{ n:'张文慧',s:88 }] },
+    { name: '二班', count: 5, levels: [{v:1,n:'初级工'},{v:2,n:'中级工'},{v:1,n:'高级工'},{v:1,n:'特级工'}], radar: [60,75,50,35,40,50], rankScore: [{ n:'赵永刚',s:94 },{ n:'孙丽华',s:90 },{ n:'周明辉',s:86 },{ n:'吴秀英',s:83 },{ n:'郑大伟',s:80 }], rankKey: [{ n:'赵永刚',s:94 },{ n:'孙丽华',s:90 }] },
+    { name: '三班', count: 5, levels: [{v:1,n:'初级工'},{v:3,n:'中级工'},{v:1,n:'高级工'},{v:0,n:'特级工'}], radar: [55,70,65,25,30,45], rankScore: [{ n:'马超',s:91 },{ n:'黄丽',s:87 },{ n:'徐伟',s:84 },{ n:'何芳',s:81 },{ n:'杨光',s:78 }], rankKey: [{ n:'马超',s:91 }] },
+    { name: '四班', count: 5, levels: [{v:0,n:'初级工'},{v:1,n:'中级工'},{v:3,n:'高级工'},{v:1,n:'特级工'}], radar: [75,90,70,45,50,65], rankScore: [{ n:'高明',s:98 },{ n:'林静',s:95 },{ n:'钱进',s:91 },{ n:'宋华',s:87 },{ n:'田野',s:84 }], rankKey: [{ n:'高明',s:98 },{ n:'林静',s:95 }] },
+    { name: '五班', count: 5, levels: [{v:1,n:'初级工'},{v:2,n:'中级工'},{v:1,n:'高级工'},{v:1,n:'特级工'}], radar: [58,72,48,32,38,52], rankScore: [{ n:'梁山',s:89 },{ n:'冯雪',s:86 },{ n:'曹杰',s:83 },{ n:'丁伟',s:80 },{ n:'姜涛',s:77 }], rankKey: [{ n:'梁山',s:89 }] }
+  ]},
+  { ws: '客运二车间', groups: [
+    { name: '一班', count: 4, levels: [{v:1,n:'初级工'},{v:1,n:'中级工'},{v:1,n:'高级工'},{v:1,n:'特级工'}], radar: [62,78,52,38,42,48], rankScore: [{ n:'朱明',s:93 },{ n:'秦峰',s:89 },{ n:'许芳',s:85 },{ n:'罗刚',s:81 }], rankKey: [{ n:'朱明',s:93 }] },
+    { name: '二班', count: 5, levels: [{v:0,n:'初级工'},{v:2,n:'中级工'},{v:2,n:'高级工'},{v:1,n:'特级工'}], radar: [68,82,58,42,46,56], rankScore: [{ n:'沈洋',s:95 },{ n:'韩冰',s:91 },{ n:'邓辉',s:87 },{ n:'蒋敏',s:84 },{ n:'余刚',s:80 }], rankKey: [{ n:'沈洋',s:95 },{ n:'韩冰',s:91 }] },
+    { name: '三班', count: 5, levels: [{v:1,n:'初级工'},{v:2,n:'中级工'},{v:1,n:'高级工'},{v:1,n:'特级工'}], radar: [55,68,45,28,35,42], rankScore: [{ n:'潘亮',s:88 },{ n:'彭芳',s:84 },{ n:'董明',s:80 },{ n:'萧峰',s:77 },{ n:'吕娜',s:74 }], rankKey: [{ n:'潘亮',s:88 }] },
+    { name: '四班', count: 5, levels: [{v:0,n:'初级工'},{v:3,n:'中级工'},{v:1,n:'高级工'},{v:1,n:'特级工'}], radar: [72,85,62,40,48,58], rankScore: [{ n:'苏伟',s:97 },{ n:'贾静',s:93 },{ n:'魏强',s:89 },{ n:'方亮',s:85 },{ n:'石磊',s:82 }], rankKey: [{ n:'苏伟',s:97 },{ n:'贾静',s:93 }] },
+    { name: '五班', count: 4, levels: [{v:1,n:'初级工'},{v:1,n:'中级工'},{v:2,n:'高级工'},{v:0,n:'特级工'}], radar: [50,65,42,30,32,40], rankScore: [{ n:'陆鑫',s:86 },{ n:'侯倩',s:82 },{ n:'孟凡',s:79 },{ n:'龚超',s:75 }], rankKey: [{ n:'陆鑫',s:86 }] }
+  ]},
+  { ws: '客运三车间', groups: [
+    { name: '一班', count: 5, levels: [{v:0,n:'初级工'},{v:2,n:'中级工'},{v:2,n:'高级工'},{v:1,n:'特级工'}], radar: [70,83,55,35,40,52], rankScore: [{ n:'程明',s:94 },{ n:'任静',s:90 },{ n:'姚强',s:86 },{ n:'谭华',s:83 },{ n:'范伟',s:79 }], rankKey: [{ n:'程明',s:94 },{ n:'任静',s:90 }] },
+    { name: '二班', count: 5, levels: [{v:1,n:'初级工'},{v:1,n:'中级工'},{v:2,n:'高级工'},{v:1,n:'特级工'}], radar: [65,78,50,32,38,48], rankScore: [{ n:'蔡阳',s:91 },{ n:'汪丽',s:87 },{ n:'文杰',s:84 },{ n:'于芳',s:80 },{ n:'覃浩',s:76 }], rankKey: [{ n:'蔡阳',s:91 }] },
+    { name: '三班', count: 4, levels: [{v:0,n:'初级工'},{v:2,n:'中级工'},{v:1,n:'高级工'},{v:1,n:'特级工'}], radar: [60,72,48,28,34,44], rankScore: [{ n:'向东',s:88 },{ n:'丰收',s:84 },{ n:'郭靖',s:81 },{ n:'唐明',s:77 }], rankKey: [{ n:'向东',s:88 }] },
+    { name: '四班', count: 5, levels: [{v:1,n:'初级工'},{v:2,n:'中级工'},{v:1,n:'高级工'},{v:1,n:'特级工'}], radar: [68,80,58,38,44,54], rankScore: [{ n:'曾峰',s:96 },{ n:'冉静',s:92 },{ n:'严磊',s:88 },{ n:'温华',s:84 },{ n:'倪刚',s:80 }], rankKey: [{ n:'曾峰',s:96 },{ n:'冉静',s:92 }] },
+    { name: '五班', count: 5, levels: [{v:0,n:'初级工'},{v:3,n:'中级工'},{v:1,n:'高级工'},{v:1,n:'特级工'}], radar: [58,68,45,25,30,42], rankScore: [{ n:'祝伟',s:85 },{ n:'尚芳',s:82 },{ n:'胡亮',s:78 },{ n:'段超',s:75 },{ n:'焦敏',s:72 }], rankKey: [{ n:'祝伟',s:85 }] }
+  ]}
+];
+var teamModuleData = [
+  { name: '安全知识', items: ['行经道口','集装箱调车','接触网安全','防护信号','联控用语'], data: { excellent: [2,1,2,1,1], good: [1,2,1,2,2], normal: [1,1,1,1,1], notMastered: [1,1,1,1,1] } },
+  { name: '理论知识', items: ['规章制度','行车组织','信号规则','调度命令','客运规程'], data: { excellent: [2,1,2,1,2], good: [2,2,1,2,1], normal: [1,1,1,1,1], notMastered: [0,1,1,1,1] } },
+  { name: '实作技能', items: ['道岔操作','信号操控','车辆连挂','制动试验','调车作业'], data: { excellent: [1,2,1,1,1], good: [2,1,2,2,2], normal: [1,1,1,1,1], notMastered: [1,1,1,1,1] } },
+  { name: '两违信息', items: ['违章作业','违规操作','脱岗漏岗','未按规程','未戴防护'], data: { excellent: [3,2,3,2,3], good: [1,2,1,2,1], normal: [1,1,0,1,0], notMastered: [0,0,1,0,1] } }
+];
+var teamWeakRows = [
+  { module: '应急处置操作', mastered: 2, normal: 3, pct: 60.0 },
+  { module: '信号确认流程', mastered: 3, normal: 2, pct: 40.0 },
+  { module: '设备故障判断', mastered: 3, normal: 2, pct: 40.0 },
+  { module: '安全防护措施', mastered: 4, normal: 1, pct: 20.0 }
+];
+
+function onTeamWsChange() {
+  var wsIdx = parseInt(document.getElementById('teamWsSelect').value);
+  var sel = document.getElementById('teamGroupSelect');
+  var groups = teamData[wsIdx].groups;
+  sel.innerHTML = '';
+  groups.forEach(function(g, i) {
+    sel.innerHTML += '<option value="' + i + '">' + g.name + '</option>';
+  });
+  renderTeamTab();
+}
+
+function renderTeamTab() {
+  var wsIdx = parseInt(document.getElementById('teamWsSelect').value);
+  var gIdx = parseInt(document.getElementById('teamGroupSelect').value);
+  var g = teamData[wsIdx].groups[gIdx];
+
+  // Basic stats
+  document.getElementById('teamBasicStats').innerHTML =
+    '<div class="basic-info-stat"><div class="bi-val">' + g.count + '</div><div class="bi-lbl">职工总数</div></div>';
+
+  // Pie
+  var pie = getOrInit('chartTeamPie');
+  pie.setOption({
+    tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
+    series: [{
+      type: 'pie', radius: ['35%','65%'], center: ['50%','55%'],
+      label: { fontSize: 10, formatter: '{b}\n{c}人' },
+      data: g.levels.map(function(l) {
+        var colors = { '初级工': '#fa8c16', '中级工': '#1677ff', '高级工': '#52c41a', '特级工': '#722ed1' };
+        return { value: l.v, name: l.n, itemStyle: { color: colors[l.n] } };
+      })
+    }]
+  }, true);
+
+  // Radar
+  var radar = getOrInit('chartTeamRadar');
+  radar.setOption({
+    radar: {
+      indicator: [
+        { name: '安全知识', max: 100 }, { name: '知识理论', max: 100 },
+        { name: '实作技能', max: 100 }, { name: '两违信息', max: 100 },
+        { name: '证书信息', max: 100 }, { name: '资质认证', max: 100 }
+      ],
+      radius: '60%', nameGap: 8,
+      name: { textStyle: { fontSize: 10 } }
+    },
+    series: [{ type: 'radar', data: [{ value: g.radar, name: g.name + '能力', areaStyle: { opacity: 0.3 } }], itemStyle: { color: '#1677ff' } }]
+  }, true);
+
+  // Rankings - Score
+  var names = g.rankScore.map(function(r){return r.n}).reverse();
+  var scores = g.rankScore.map(function(r){return r.s}).reverse();
+  var rs = getOrInit('chartTeamRankScore');
+  rs.setOption({
+    grid: { top: 5, bottom: 5, left: 50, right: 30 },
+    xAxis: { type: 'value', show: false },
+    yAxis: { type: 'category', data: names, axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
+    series: [{
+      type: 'bar', data: scores,
+      itemStyle: { color: function(p) { return p.dataIndex >= names.length - 2 ? '#52c41a' : '#1677ff'; }, borderRadius: [0,4,4,0] },
+      label: { show: true, position: 'right', fontSize: 10, formatter: '{c}' },
+      barWidth: 14
+    }]
+  }, true);
+
+  // Rankings - Key workers
+  var kNames = g.rankKey.map(function(r){return r.n}).reverse();
+  var kScores = g.rankKey.map(function(r){return r.s}).reverse();
+  var rk = getOrInit('chartTeamRankKey');
+  rk.setOption({
+    grid: { top: 5, bottom: 5, left: 50, right: 30 },
+    xAxis: { type: 'value', show: false },
+    yAxis: { type: 'category', data: kNames, axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
+    series: [{
+      type: 'bar', data: kScores,
+      itemStyle: { color: '#fa8c16', borderRadius: [0,4,4,0] },
+      label: { show: true, position: 'right', fontSize: 10, formatter: '{c}' },
+      barWidth: 14
+    }]
+  }, true);
+
+  // Module stacked bar
+  renderTeamModuleChart();
+  // Weak table
+  renderTeamWeakTable();
+}
+
+function switchTeamModuleTab(idx, el) {
+  teamModuleTabIdx = idx;
+  document.querySelectorAll('#teamModuleSubTabs .sub-tab-item').forEach(function(t) { t.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  renderTeamModuleChart();
+}
+
+function renderTeamModuleChart() {
+  var d = teamModuleData[teamModuleTabIdx];
+  var c = getOrInit('chartTeamModuleStack');
+  c.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: { data: ['优秀','良好','一般','未掌握'], bottom: 0, textStyle: { fontSize: 9 } },
+    grid: { top: 10, bottom: 35, left: 40, right: 10 },
+    xAxis: { type: 'category', data: d.items, axisLabel: { fontSize: 9, rotate: 20 } },
+    yAxis: { type: 'value', name: '人数', nameTextStyle: { fontSize: 9 } },
+    series: [
+      { name: '优秀', type: 'bar', stack: 'total', data: d.data.excellent, itemStyle: { color: '#52c41a' } },
+      { name: '良好', type: 'bar', stack: 'total', data: d.data.good, itemStyle: { color: '#1677ff' } },
+      { name: '一般', type: 'bar', stack: 'total', data: d.data.normal, itemStyle: { color: '#faad14' } },
+      { name: '未掌握', type: 'bar', stack: 'total', data: d.data.notMastered, itemStyle: { color: '#722ed1' } }
+    ]
+  }, true);
+}
+
+function renderTeamWeakTable() {
+  var html = '<table><thead><tr><th>技能模块</th><th>已掌握人数</th><th>一般人数</th><th>占比</th></tr></thead><tbody>';
+  teamWeakRows.forEach(function(r) {
+    html += '<tr><td>' + r.module + '</td><td>' + r.mastered + '</td><td>' + r.normal + '</td><td><span class="pct-bar" style="width:' + r.pct + 'px;"></span>' + r.pct.toFixed(1) + '%</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('teamWeakTable').innerHTML = html;
+}
+
+// ========== Tab 3: Exam Analysis ==========
 function onExamChange() { renderExamTab(); }
 
 function renderExamTab() {
@@ -1058,7 +1678,7 @@ function renderPersonalTab() {
 
 // ========== Init ==========
 window.onload = function() {
-  renderExamTab();
+  renderStationTab();
   window.addEventListener('resize', function() {
     Object.keys(charts).forEach(function(k) { if (charts[k]) charts[k].resize(); });
   });
@@ -1073,8 +1693,23 @@ var DEEPSEEK_KEY = 'sk-6420a1c0196149ecac72720513863fd0';
 var DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 
 function xiaoanCollectData() {
-  var data = '当前查看Tab：' + (currentTab === 0 ? '考试维度分析' : '个人分析') + '\n\n';
+  var tabNames = ['站段总览', '车间维度', '班组维度', '考试维度分析', '个人分析'];
+  var data = '当前查看Tab：' + tabNames[currentTab] + '\n\n';
   if (currentTab === 0) {
+    data += '## 站段总览\n';
+    data += '技能掌握: 不熟练/独立工作/能够培训指导 按岗位分布\n';
+    data += '年度培训进度: 培训期数41%, 培训人数45%, 培训人天数49%\n';
+    data += '各车站培训参与和技能评价数据\n';
+  } else if (currentTab === 1) {
+    data += '## 车间维度\n';
+    data += '职工25人, 班组5个\n';
+    data += '六维能力: 安全知识65, 知识理论85, 实作技能55, 两违信息30, 证书信息35, 资质认证60\n';
+    data += '模块科目掌握情况和薄弱技能模块数据\n';
+  } else if (currentTab === 2) {
+    data += '## 班组维度\n';
+    data += '当前选择班组的职工统计、六维能力、优秀职工排名\n';
+    data += '模块科目掌握情况和薄弱技能模块数据\n';
+  } else if (currentTab === 3) {
     var idx = parseInt(document.getElementById('examSelector').value);
     var d = examMockData[idx];
     data += '## 当前考试: ' + d.examName + '\n';
@@ -1233,6 +1868,9 @@ function xiaoanClose() {
 // --- Chips ---
 function xiaoanUpdateChips() {
   var chipsByTab = [
+    ['技能掌握情况分析', '年度培训进度解读', '各车站培训对比', '培训计划提醒'],
+    ['车间六维能力分析', '薄弱技能模块解读', '班组排名对比', '培训改进建议'],
+    ['班组能力短板分析', '优秀职工表现', '模块掌握对比', '关键职工培养建议'],
     ['本次考试薄弱项分析', '成绩排行解读', '各班级对比分析', '不合格率分析'],
     ['个人能力短板', '考试趋势解读', '培训改进建议', '综合评价']
   ];
@@ -1313,6 +1951,15 @@ function xiaoanStopSoundWave() { document.getElementById('xaSoundWave').classLis
 function xiaoanShowProactiveInsight() {
   var text = '';
   if (currentTab === 0) {
+    text = '您好！我是小安，您的智能分析助手。当前查看<span class="xa-highlight">站段总览</span>。<br><br>' +
+      '年度培训计划进度：培训期数完成 <span class="xa-warn">41%</span>，培训人数 <span class="xa-warn">45%</span>，培训人天数 <span class="xa-warn">49%</span>，整体进度偏慢，建议加快下半年培训安排。';
+  } else if (currentTab === 1) {
+    text = '您好！当前查看<span class="xa-highlight">车间维度</span>分析。<br><br>' +
+      '车间共 <span class="xa-highlight">25</span> 名职工、<span class="xa-highlight">5</span> 个班组。六维能力中 <span class="xa-danger">两违信息</span> 得分最低（<span class="xa-danger">30</span> 分），<span class="xa-danger">证书信息</span> 仅 <span class="xa-danger">35</span> 分，建议重点提升。';
+  } else if (currentTab === 2) {
+    text = '您好！当前查看<span class="xa-highlight">班组维度</span>分析。<br><br>' +
+      '可通过选择车间和班组查看具体班组的能力画像、优秀职工排名和薄弱技能模块，帮助精准定位培训需求。';
+  } else if (currentTab === 3) {
     var idx = parseInt(document.getElementById('examSelector').value);
     var d = examMockData[idx];
     var h = d.readHeader;
