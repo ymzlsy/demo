@@ -258,6 +258,14 @@
     .workshop-bottom { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; flex: 1; min-height: 0; }
     .workshop-bottom > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
 
+    /* Workshop/Team middle row for comparison chart */
+    .workshop-middle { margin-bottom: 8px; flex-shrink: 0; height: 180px; }
+    .workshop-middle > .card { height: 100%; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
+    /* Station bottom 3-col layout */
+    .station-left-bottom-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .station-left-bottom-grid > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+
     /* Basic info card */
     .basic-info-row { display: flex; align-items: center; gap: 16px; margin-bottom: 6px; flex-shrink: 0; }
     .basic-info-stats { display: flex; gap: 16px; }
@@ -400,14 +408,18 @@
             </div>
           </div>
         </div>
-        <!-- Bottom: Station Training Analysis -->
-        <div class="station-left-bottom">
+        <!-- Bottom: Station Training Analysis + Monthly Trend -->
+        <div class="station-left-bottom-grid">
           <div class="card">
             <div class="card-title">各车站培训情况分析<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按车站聚合培训参与和技能评价</span><span class="chart-info-btn" onclick="showChartInfo('station-participation')">i</span></div>
             <div class="dual-chart">
               <div id="chartStationParticipation" style="min-height:0;"></div>
               <div id="chartStationEval" style="min-height:0;"></div>
             </div>
+          </div>
+          <div class="card">
+            <div class="card-title">月度参培趋势<span class="card-subtitle" style="color:#fa8c16">需后端开发: 按月聚合参培人数趋势</span><span class="chart-info-btn" onclick="showChartInfo('station-monthly-trend')">i</span></div>
+            <div id="chartStationMonthly" class="chart-box"></div>
           </div>
         </div>
       </div>
@@ -454,6 +466,12 @@
               <div id="chartWsRankRate" class="chart-box"></div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="workshop-middle">
+        <div class="card">
+          <div class="card-title">车间综合能力横向对比<span class="card-subtitle" style="color:#fa8c16">需后端开发: 多车间六维能力对比</span><span class="chart-info-btn" onclick="showChartInfo('workshop-comparison')">i</span></div>
+          <div id="chartWsComparison" class="chart-box"></div>
         </div>
       </div>
       <div class="workshop-bottom">
@@ -525,6 +543,12 @@
               <div id="chartTeamRankKey" class="chart-box"></div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="workshop-middle">
+        <div class="card">
+          <div class="card-title">班组成员能力分布<span class="card-subtitle" style="color:#fa8c16">需后端开发: 个人理论vs实操得分</span><span class="chart-info-btn" onclick="showChartInfo('team-member-scatter')">i</span></div>
+          <div id="chartTeamScatter" class="chart-box"></div>
         </div>
       </div>
       <div class="workshop-bottom">
@@ -731,9 +755,9 @@ var chartInfoData = {
     api: 'getTrainPlanData', path: '/analyse/panoramacontrol/trainplanstate',
     fields: 'rows[].trainClass; rows[].trainDate; rows[].trainPlace; rows[].executingState',
     meaning: '培训项目名称; 培训日期; 地点; 执行状态',
-    formula: '计算每个培训计划距今天数 = (trainDate - today) / 86400000, 按日期排序, 颜色: 已过期=绿色, ≤14天=橙色, >14天=灰色',
+    formula: '计算每个培训计划距今天数 = (trainDate - today) / 86400000, 按日期排序, 颜色渐变: 已过期=绿色, ≤7天=红色, 8-14天=橙色, 15-30天=蓝色, 31-60天=浅蓝, >60天=浅绿',
     confidence: '100%',
-    detail: '展示各培训计划距今天数的倒计时：\n• 绿色柱：培训已过期/已结束\n• 橙色柱：距开始 ≤ 14天（即将开始，需关注）\n• 灰色柱：距开始 > 14天（暂无紧迫性）\n\n鼠标悬停显示：培训名称、日期、培训对象、计划人数\n数据按培训日期升序排列',
+    detail: '展示各培训计划距今天数的倒计时：\n• 绿色柱：培训已过期/已结束\n• 红色柱：距开始 ≤ 7天（紧急）\n• 橙色柱：距开始 8-14天（即将开始）\n• 蓝色柱：距开始 15-30天（中期）\n• 浅蓝色柱：距开始 31-60天（从容准备）\n• 浅绿色柱：距开始 > 60天（远期安全）\n\n鼠标悬停显示：培训名称、日期、培训对象、计划人数\n数据按培训日期升序排列',
     source: '全景管控 → 培训计划状态（/analyse/panoramacontrol/trainplanstate）\nexecutingState: 0=未开始, 1=进行中, 2=已结束'
   },
   'station-participation': {
@@ -929,6 +953,36 @@ var chartInfoData = {
     formula: '等级标签: >=90优秀(绿) >=75良好(蓝) >=60一般(橙) <60不合格(红)', confidence: '100%',
     detail: '考试记录表格，等级标签颜色规则：\n• 优秀(绿色)：成绩 ≥ 90分\n• 良好(蓝色)：成绩 75-89分\n• 一般(橙色)：成绩 60-74分\n• 不合格(红色)：成绩 < 60分\n\n列字段：考试名称、成绩、考试时间、考试类型',
     source: '数据分析 → 个人详情（/analyse/detail/examList）\n返回 rows[].examName + score + examTime + examType'
+  },
+  'station-monthly-trend': {
+    name: '月度参培趋势', type: '面积图+折线图 (area+line)', area: '站段总览',
+    api: '需后端开发', path: '需后端开发: 按月聚合参培人数和班次',
+    fields: 'months[].month; months[].participantCount; months[].classCount',
+    meaning: '月份; 当月参培总人数; 当月开班次数',
+    formula: '参培人数=该月至少参加1次培训的职工去重计数; 班次=该月开班总数',
+    confidence: '需后端开发',
+    detail: '月度参培趋势双轴图：\n• 左Y轴(面积图)：每月参培人数，统计该月至少参加1次培训的职工数（去重）\n• 右Y轴(折线图)：每月培训班次数\n• X轴：1-12月\n\n用途：观察全年培训节奏，识别培训淡旺季，评估培训资源投入是否均匀\n\n聚合逻辑：从培训班记录表按月分组，JOIN学员签到表去重计数',
+    source: '需后端开发聚合接口\n基础数据：培训班记录表(trainClass) + 学员签到表(attendance)\n按月GROUP BY统计'
+  },
+  'workshop-comparison': {
+    name: '车间综合能力横向对比', type: '分组柱状图 (grouped bar)', area: '车间维度',
+    api: '需后端开发', path: '需后端开发: 多车间六维能力聚合对比',
+    fields: 'workshops[].name; workshops[].dimensions[].typeName; workshops[].dimensions[].avgScore',
+    meaning: '车间名称; 能力维度名; 该车间该维度平均分',
+    formula: '每个车间每个维度取所有职工该维度得分的算术平均值，横向对比',
+    confidence: '需后端开发',
+    detail: '车间综合能力横向对比：\n• 将所有车间的六维能力放在同一张图上对比\n• 每个维度分组显示各车间的平均分\n• 便于管理层快速识别哪个车间在哪些维度存在短板\n\n数据来源同车间雷达图（getTypeScore聚合），但展示形式更适合精确数值对比\n雷达图适合看整体形状，柱状图适合比较具体数值差异',
+    source: '需后端开发聚合接口\n参考个人级接口：system/student/skill/getTypeScore\n按车间分组取平均'
+  },
+  'team-member-scatter': {
+    name: '班组成员能力分布', type: '散点图 (scatter)', area: '班组维度',
+    api: '需后端开发', path: '需后端开发: 班组成员理论vs实操得分',
+    fields: 'members[].name; members[].theoryScore; members[].practiceScore; members[].overallScore',
+    meaning: '姓名; 理论知识得分; 实作技能得分; 综合得分',
+    formula: '理论知识得分=该成员理论类考核加权平均分; 实作技能得分=实操类考核加权平均分; 综合得分=六维加权总分',
+    confidence: '需后端开发',
+    detail: '班组成员能力分布散点图：\n• X轴：理论知识得分（0-100）\n• Y轴：实作技能得分（0-100）\n• 气泡大小：综合得分越高越大\n• 颜色：综合>=80绿色, >=60蓝色, <60红色\n• 灰色虚线：60分及格线（理论+实操双及格线划分四象限）\n\n四象限解读：\n• 右上（双高）：全面发展型，可培养为培训师\n• 左上（实操强理论弱）：动手能力强但知识储备不足，需加强理论培训\n• 右下（理论强实操弱）：知识扎实但操作薄弱，需增加实操练习\n• 左下（双低）：重点关注对象，需一对一辅导',
+    source: '需后端开发聚合接口\n参考个人级接口：system/student/skill/getTypeScore（取理论+实操维度）'
   }
 };
 
@@ -1382,6 +1436,7 @@ function renderStationTab() {
   renderStationSkillChart();
   renderStationParticipation();
   renderStationPlanChart();
+  renderStationMonthlyChart();
 }
 
 function renderStationSkillChart() {
@@ -1395,9 +1450,9 @@ function renderStationSkillChart() {
     xAxis: { type: 'category', data: d.roles, axisLabel: { fontSize: 10, rotate: d.roles.length > 3 ? 20 : 0 } },
     yAxis: { type: 'value', name: '人数', nameTextStyle: { fontSize: 10 } },
     series: [
-      { name: '不熟练', type: 'bar', data: d.data.map(function(v){return v[0]}), itemStyle: { color: '#ff4d4f' }, barGap: '10%' },
-      { name: '独立工作', type: 'bar', data: d.data.map(function(v){return v[1]}), itemStyle: { color: '#52c41a' } },
-      { name: '能够培训和指导他人', type: 'bar', data: d.data.map(function(v){return v[2]}), itemStyle: { color: '#237804' } }
+      { name: '不熟练', type: 'bar', data: d.data.map(function(v){return v[0]}), itemStyle: { color: '#ff7875' }, barGap: '10%', barWidth: 20 },
+      { name: '独立工作', type: 'bar', data: d.data.map(function(v){return v[1]}), itemStyle: { color: '#73d13d' }, barWidth: 20 },
+      { name: '能够培训和指导他人', type: 'bar', data: d.data.map(function(v){return v[2]}), itemStyle: { color: '#389e0d' }, barWidth: 20 }
     ]
   }, true);
 }
@@ -1412,8 +1467,8 @@ function renderStationParticipation() {
     xAxis: { type: 'category', data: stationTrainData[0], axisLabel: { fontSize: 9, rotate: 20 } },
     yAxis: { type: 'value', axisLabel: { fontSize: 9 } },
     series: [
-      { name: '参培人数', type: 'bar', data: stationTrainData[1].participated, itemStyle: { color: '#1677ff' } },
-      { name: '未参培人数', type: 'bar', data: stationTrainData[1].notParticipated, itemStyle: { color: '#fa8c16' } }
+      { name: '参培人数', type: 'bar', data: stationTrainData[1].participated, itemStyle: { color: '#4096ff' }, barWidth: 20 },
+      { name: '未参培人数', type: 'bar', data: stationTrainData[1].notParticipated, itemStyle: { color: '#ffa940' }, barWidth: 20 }
     ]
   }, true);
 
@@ -1426,8 +1481,8 @@ function renderStationParticipation() {
     xAxis: { type: 'category', data: stationTrainData[0], axisLabel: { fontSize: 9, rotate: 20 } },
     yAxis: { type: 'value', axisLabel: { fontSize: 9 } },
     series: [
-      { name: '优秀', type: 'bar', data: stationTrainData[2].excellent, itemStyle: { color: '#52c41a' } },
-      { name: '潜力', type: 'bar', data: stationTrainData[2].potential, itemStyle: { color: '#1677ff' } }
+      { name: '优秀', type: 'bar', data: stationTrainData[2].excellent, itemStyle: { color: '#73d13d' }, barWidth: 20 },
+      { name: '潜力', type: 'bar', data: stationTrainData[2].potential, itemStyle: { color: '#4096ff' }, barWidth: 20 }
     ]
   }, true);
 }
@@ -1456,13 +1511,22 @@ function renderStationPlanChart() {
       colors.push('#52c41a');
       labels.push('已过' + Math.abs(diffDays) + '天');
     } else if (diffDays === 0) {
-      colors.push('#1677ff');
+      colors.push('#ff4d4f');
       labels.push('今天');
+    } else if (diffDays <= 7) {
+      colors.push('#ff4d4f');
+      labels.push('还有' + diffDays + '天');
     } else if (diffDays <= 14) {
       colors.push('#fa8c16');
       labels.push('还有' + diffDays + '天');
+    } else if (diffDays <= 30) {
+      colors.push('#4096ff');
+      labels.push('还有' + diffDays + '天');
+    } else if (diffDays <= 60) {
+      colors.push('#69b1ff');
+      labels.push('还有' + diffDays + '天');
     } else {
-      colors.push('#d9d9d9');
+      colors.push('#95de64');
       labels.push('还有' + diffDays + '天');
     }
   });
@@ -1504,7 +1568,7 @@ function renderStationPlanChart() {
       data: values.map(function(v, i) {
         return { value: v, itemStyle: { color: colors[i], borderRadius: [0, 3, 3, 0] } };
       }),
-      barWidth: 14,
+      barWidth: 20,
       label: {
         show: true,
         position: 'right',
@@ -1542,13 +1606,13 @@ function renderWorkshopTab() {
   pie.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
     series: [{
-      type: 'pie', radius: ['35%','55%'], center: ['50%','55%'],
+      type: 'pie', radius: ['38%','60%'], center: ['50%','55%'],
       label: { fontSize: 10, formatter: '{b}\n{c}人' },
       data: [
-        { value: 3, name: '初级工', itemStyle: { color: '#fa8c16' } },
-        { value: 10, name: '中级工', itemStyle: { color: '#1677ff' } },
-        { value: 8, name: '高级工', itemStyle: { color: '#52c41a' } },
-        { value: 4, name: '特级工', itemStyle: { color: '#722ed1' } }
+        { value: 3, name: '初级工', itemStyle: { color: '#ffa940' } },
+        { value: 10, name: '中级工', itemStyle: { color: '#4096ff' } },
+        { value: 8, name: '高级工', itemStyle: { color: '#73d13d' } },
+        { value: 4, name: '特级工', itemStyle: { color: '#9254de' } }
       ]
     }]
   }, true);
@@ -1562,14 +1626,16 @@ function renderWorkshopTab() {
         { name: '实作技能', max: 100 }, { name: '两违信息', max: 100 },
         { name: '证书信息', max: 100 }, { name: '资质认证', max: 100 }
       ],
-      radius: '60%', nameGap: 8,
+      radius: '70%', nameGap: 8,
       name: { textStyle: { fontSize: 10 } }
     },
-    series: [{ type: 'radar', data: [{ value: [65, 85, 55, 30, 35, 60], name: '车间能力', areaStyle: { opacity: 0.3 } }], itemStyle: { color: '#1677ff' } }]
+    series: [{ type: 'radar', data: [{ value: [65, 85, 55, 30, 35, 60], name: '车间能力', areaStyle: { opacity: 0.3 } }], itemStyle: { color: '#4096ff' }, lineStyle: { width: 3 } }]
   }, true);
 
   // Rankings
   renderWsRankings();
+  // Comparison
+  renderWsComparisonChart();
   // Stacked bar
   renderWsModuleChart();
   // Weak table
@@ -1584,9 +1650,9 @@ function renderWsRankings() {
     yAxis: { type: 'category', data: ['五班','四班','三班','二班','一班'], axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
     series: [{
       type: 'bar', data: [89, 90, 96.5, 97, 98.5],
-      itemStyle: { color: function(p) { return p.dataIndex >= 3 ? '#52c41a' : '#1677ff'; }, borderRadius: [0,4,4,0] },
+      itemStyle: { color: function(p) { return p.dataIndex >= 3 ? '#73d13d' : '#4096ff'; }, borderRadius: [0,4,4,0] },
       label: { show: true, position: 'right', fontSize: 10, formatter: '{c}' },
-      barWidth: 10
+      barWidth: 14
     }]
   }, true);
 
@@ -1597,9 +1663,9 @@ function renderWsRankings() {
     yAxis: { type: 'category', data: ['五班','四班','三班','二班','一班'], axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
     series: [{
       type: 'bar', data: [82, 85, 90, 92, 95],
-      itemStyle: { color: function(p) { return p.dataIndex >= 3 ? '#52c41a' : '#1677ff'; }, borderRadius: [0,4,4,0] },
+      itemStyle: { color: function(p) { return p.dataIndex >= 3 ? '#73d13d' : '#4096ff'; }, borderRadius: [0,4,4,0] },
       label: { show: true, position: 'right', fontSize: 10, formatter: '{c}%' },
-      barWidth: 10
+      barWidth: 14
     }]
   }, true);
 }
@@ -1621,10 +1687,10 @@ function renderWsModuleChart() {
     xAxis: { type: 'category', data: d.items, axisLabel: { fontSize: 9, rotate: 20 } },
     yAxis: { type: 'value', name: '人数', nameTextStyle: { fontSize: 9 } },
     series: [
-      { name: '优秀', type: 'bar', stack: 'total', data: d.data.excellent, itemStyle: { color: '#52c41a' }, barWidth: 24 },
-      { name: '良好', type: 'bar', stack: 'total', data: d.data.good, itemStyle: { color: '#1677ff' }, barWidth: 24 },
-      { name: '一般', type: 'bar', stack: 'total', data: d.data.normal, itemStyle: { color: '#faad14' }, barWidth: 24 },
-      { name: '未掌握', type: 'bar', stack: 'total', data: d.data.notMastered, itemStyle: { color: '#722ed1' }, barWidth: 24 }
+      { name: '优秀', type: 'bar', stack: 'total', data: d.data.excellent, itemStyle: { color: '#73d13d' }, barWidth: 32 },
+      { name: '良好', type: 'bar', stack: 'total', data: d.data.good, itemStyle: { color: '#4096ff' }, barWidth: 32 },
+      { name: '一般', type: 'bar', stack: 'total', data: d.data.normal, itemStyle: { color: '#ffa940' }, barWidth: 32 },
+      { name: '未掌握', type: 'bar', stack: 'total', data: d.data.notMastered, itemStyle: { color: '#9254de' }, barWidth: 32 }
     ]
   }, true);
 }
@@ -1639,7 +1705,7 @@ function renderWsWeakChart() {
     grid: { left: '3%', right: '14%', top: '4%', bottom: '4%', containLabel: true },
     xAxis: { type: 'value', max: 60, axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.45)', formatter: '{value}%' }, splitLine: { lineStyle: { type: 'dashed', color: '#f0f0f0' } }, axisLine: { show: false } },
     yAxis: { type: 'category', data: sorted.map(function(r) { return r.module; }), axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.65)' }, axisLine: { show: false }, axisTick: { show: false } },
-    series: [{ type: 'bar', data: sorted.map(function(r) { return { value: r.pct, itemStyle: { color: r.pct > 40 ? '#ff4d4f' : r.pct > 30 ? '#fa8c16' : '#1677ff', borderRadius: [0, 3, 3, 0] } }; }), barWidth: 14, label: { show: true, position: 'right', fontSize: 10, color: 'rgba(0,0,0,.65)', formatter: function(p) { return p.value.toFixed(1) + '%'; } } }]
+    series: [{ type: 'bar', data: sorted.map(function(r) { return { value: r.pct, itemStyle: { color: r.pct > 40 ? '#ff7875' : r.pct > 30 ? '#ffa940' : '#4096ff', borderRadius: [0, 3, 3, 0] } }; }), barWidth: 20, label: { show: true, position: 'right', fontSize: 10, color: 'rgba(0,0,0,.65)', formatter: function(p) { return p.value.toFixed(1) + '%'; } } }]
   });
 }
 
@@ -1706,10 +1772,10 @@ function renderTeamTab() {
   pie.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
     series: [{
-      type: 'pie', radius: ['35%','55%'], center: ['50%','55%'],
+      type: 'pie', radius: ['38%','60%'], center: ['50%','55%'],
       label: { fontSize: 10, formatter: '{b}\n{c}人' },
       data: g.levels.map(function(l) {
-        var colors = { '初级工': '#fa8c16', '中级工': '#1677ff', '高级工': '#52c41a', '特级工': '#722ed1' };
+        var colors = { '初级工': '#ffa940', '中级工': '#4096ff', '高级工': '#73d13d', '特级工': '#9254de' };
         return { value: l.v, name: l.n, itemStyle: { color: colors[l.n] } };
       })
     }]
@@ -1724,10 +1790,10 @@ function renderTeamTab() {
         { name: '实作技能', max: 100 }, { name: '两违信息', max: 100 },
         { name: '证书信息', max: 100 }, { name: '资质认证', max: 100 }
       ],
-      radius: '60%', nameGap: 8,
+      radius: '70%', nameGap: 8,
       name: { textStyle: { fontSize: 10 } }
     },
-    series: [{ type: 'radar', data: [{ value: g.radar, name: g.name + '能力', areaStyle: { opacity: 0.3 } }], itemStyle: { color: '#1677ff' } }]
+    series: [{ type: 'radar', data: [{ value: g.radar, name: g.name + '能力', areaStyle: { opacity: 0.3 } }], itemStyle: { color: '#4096ff' }, lineStyle: { width: 3 } }]
   }, true);
 
   // Rankings - Score
@@ -1740,9 +1806,9 @@ function renderTeamTab() {
     yAxis: { type: 'category', data: names, axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
     series: [{
       type: 'bar', data: scores,
-      itemStyle: { color: function(p) { return p.dataIndex >= names.length - 2 ? '#52c41a' : '#1677ff'; }, borderRadius: [0,4,4,0] },
+      itemStyle: { color: function(p) { return p.dataIndex >= names.length - 2 ? '#73d13d' : '#4096ff'; }, borderRadius: [0,4,4,0] },
       label: { show: true, position: 'right', fontSize: 10, formatter: '{c}' },
-      barWidth: 10
+      barWidth: 14
     }]
   }, true);
 
@@ -1756,12 +1822,14 @@ function renderTeamTab() {
     yAxis: { type: 'category', data: kNames, axisLabel: { fontSize: 10 }, axisTick: { show: false }, axisLine: { show: false } },
     series: [{
       type: 'bar', data: kScores,
-      itemStyle: { color: '#fa8c16', borderRadius: [0,4,4,0] },
+      itemStyle: { color: '#ffa940', borderRadius: [0,4,4,0] },
       label: { show: true, position: 'right', fontSize: 10, formatter: '{c}' },
-      barWidth: 10
+      barWidth: 14
     }]
   }, true);
 
+  // Team scatter
+  renderTeamScatterChart();
   // Module stacked bar
   renderTeamModuleChart();
   // Weak table
@@ -1785,10 +1853,10 @@ function renderTeamModuleChart() {
     xAxis: { type: 'category', data: d.items, axisLabel: { fontSize: 9, rotate: 20 } },
     yAxis: { type: 'value', name: '人数', nameTextStyle: { fontSize: 9 } },
     series: [
-      { name: '优秀', type: 'bar', stack: 'total', data: d.data.excellent, itemStyle: { color: '#52c41a' }, barWidth: 24 },
-      { name: '良好', type: 'bar', stack: 'total', data: d.data.good, itemStyle: { color: '#1677ff' }, barWidth: 24 },
-      { name: '一般', type: 'bar', stack: 'total', data: d.data.normal, itemStyle: { color: '#faad14' }, barWidth: 24 },
-      { name: '未掌握', type: 'bar', stack: 'total', data: d.data.notMastered, itemStyle: { color: '#722ed1' }, barWidth: 24 }
+      { name: '优秀', type: 'bar', stack: 'total', data: d.data.excellent, itemStyle: { color: '#73d13d' }, barWidth: 32 },
+      { name: '良好', type: 'bar', stack: 'total', data: d.data.good, itemStyle: { color: '#4096ff' }, barWidth: 32 },
+      { name: '一般', type: 'bar', stack: 'total', data: d.data.normal, itemStyle: { color: '#ffa940' }, barWidth: 32 },
+      { name: '未掌握', type: 'bar', stack: 'total', data: d.data.notMastered, itemStyle: { color: '#9254de' }, barWidth: 32 }
     ]
   }, true);
 }
@@ -1803,7 +1871,7 @@ function renderTeamWeakChart() {
     grid: { left: '3%', right: '14%', top: '4%', bottom: '4%', containLabel: true },
     xAxis: { type: 'value', max: 60, axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.45)', formatter: '{value}%' }, splitLine: { lineStyle: { type: 'dashed', color: '#f0f0f0' } }, axisLine: { show: false } },
     yAxis: { type: 'category', data: sorted.map(function(r) { return r.module; }), axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.65)' }, axisLine: { show: false }, axisTick: { show: false } },
-    series: [{ type: 'bar', data: sorted.map(function(r) { return { value: r.pct, itemStyle: { color: r.pct > 40 ? '#ff4d4f' : r.pct > 30 ? '#fa8c16' : '#1677ff', borderRadius: [0, 3, 3, 0] } }; }), barWidth: 14, label: { show: true, position: 'right', fontSize: 10, color: 'rgba(0,0,0,.65)', formatter: function(p) { return p.value.toFixed(1) + '%'; } } }]
+    series: [{ type: 'bar', data: sorted.map(function(r) { return { value: r.pct, itemStyle: { color: r.pct > 40 ? '#ff7875' : r.pct > 30 ? '#ffa940' : '#4096ff', borderRadius: [0, 3, 3, 0] } }; }), barWidth: 20, label: { show: true, position: 'right', fontSize: 10, color: 'rgba(0,0,0,.65)', formatter: function(p) { return p.value.toFixed(1) + '%'; } } }]
   });
 }
 
@@ -1833,9 +1901,9 @@ function renderExamTab() {
   c1.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
     legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 11 } },
-    color: ['#1677ff', '#faad14', '#ff4d4f'],
+    color: ['#4096ff', '#ffa940', '#ff7875'],
     series: [{
-      type: 'pie', radius: ['40%', '65%'], center: ['38%', '50%'],
+      type: 'pie', radius: ['42%', '68%'], center: ['38%', '50%'],
       data: d.getStuNumAnalyse.map(function(item) {
         return { value: item.num, name: item.name + ' (' + item.value + '%)' };
       }),
@@ -1853,12 +1921,12 @@ function renderExamTab() {
     xAxis: { type: 'value', max: 60, axisLabel: { formatter: '{value}%', fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     yAxis: { type: 'category', data: ['不合格率', '合格率', '优良率', '高分率'], axisLabel: { fontSize: 11 } },
     series: [{
-      type: 'bar', barWidth: 20,
+      type: 'bar', barWidth: 26,
       data: [
-        { value: sl.notPassScore, itemStyle: { color: '#ff4d4f', borderRadius: [0,4,4,0] } },
-        { value: sl.passScore, itemStyle: { color: '#faad14', borderRadius: [0,4,4,0] } },
-        { value: sl.fineScore, itemStyle: { color: '#1677ff', borderRadius: [0,4,4,0] } },
-        { value: sl.highScore, itemStyle: { color: '#52c41a', borderRadius: [0,4,4,0] } }
+        { value: sl.notPassScore, itemStyle: { color: '#ff7875', borderRadius: [0,4,4,0] } },
+        { value: sl.passScore, itemStyle: { color: '#ffa940', borderRadius: [0,4,4,0] } },
+        { value: sl.fineScore, itemStyle: { color: '#4096ff', borderRadius: [0,4,4,0] } },
+        { value: sl.highScore, itemStyle: { color: '#73d13d', borderRadius: [0,4,4,0] } }
       ],
       label: { show: true, position: 'right', fontSize: 11, formatter: '{c}%' }
     }]
@@ -1867,13 +1935,14 @@ function renderExamTab() {
   // 3. Score distribution multi-line
   var c3 = getOrInit('chartScoreDist');
   var xLabels = d.scoreDistribution[0];
-  var colors = ['#1677ff', '#52c41a', '#fa8c16', '#722ed1'];
+  var colors = ['#4096ff', '#73d13d', '#ffa940', '#9254de'];
   var distSeries = d.scoreDistribution[1].map(function(cls, i) {
     return {
       name: cls.className, type: 'line', data: cls.nums,
-      smooth: true, lineStyle: { width: 2, color: colors[i] },
+      smooth: true, lineStyle: { width: 3, color: colors[i] },
       itemStyle: { color: colors[i] },
-      areaStyle: { color: 'rgba(' + (i===0?'22,119,255':i===1?'82,196,26':'250,173,20') + ',0.06)' }
+      symbolSize: 6,
+      areaStyle: { color: 'rgba(' + (i===0?'64,150,255':i===1?'115,209,61':'255,169,64') + ',0.08)' }
     };
   });
   c3.setOption({
@@ -1894,9 +1963,9 @@ function renderExamTab() {
     xAxis: { type: 'value', min: Math.max(0, Math.min.apply(null, rankData.map(function(r){return r.userScore;})) - 10), axisLabel: { fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     yAxis: { type: 'category', data: rankData.map(function(r) { return r.nickName; }), axisLabel: { fontSize: 10 } },
     series: [{
-      type: 'bar', barWidth: 16,
+      type: 'bar', barWidth: 22,
       data: rankData.map(function(r) {
-        var c = r.userScore >= 90 ? '#52c41a' : r.userScore >= 80 ? '#1677ff' : r.userScore >= 60 ? '#faad14' : '#ff4d4f';
+        var c = r.userScore >= 90 ? '#73d13d' : r.userScore >= 80 ? '#4096ff' : r.userScore >= 60 ? '#ffa940' : '#ff7875';
         return { value: r.userScore, itemStyle: { color: c, borderRadius: [0,4,4,0] } };
       }),
       label: { show: true, position: 'right', fontSize: 10, formatter: '{c}分' }
@@ -1907,7 +1976,7 @@ function renderExamTab() {
   var weakHtml = '<ul class="weak-list">';
   d.getWeak.weakData.forEach(function(w) {
     var pct = parseFloat(w.subtractScoreRate);
-    var color = pct >= 40 ? '#ff4d4f' : pct >= 25 ? '#fa8c16' : '#1677ff';
+    var color = pct >= 40 ? '#ff7875' : pct >= 25 ? '#ffa940' : '#4096ff';
     weakHtml += '<li class="weak-item">' +
       '<div class="w-header"><span class="w-name">' + w.taskName + '</span><span class="w-rate">' + w.subtractScoreRate + '</span></div>' +
       '<div class="weak-bar"><div class="weak-bar-fill" style="width:' + pct + '%;background:' + color + ';"></div></div>' +
@@ -1927,15 +1996,15 @@ function renderExamTab() {
     xAxis: { type: 'value', max: 100, axisLabel: { fontSize: 10 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [
       {
-        name: '平均分', type: 'bar', barWidth: 14,
+        name: '平均分', type: 'bar', barWidth: 20,
         data: d.getClassRank.map(function(c) { return c.avgScore; }),
-        itemStyle: { color: '#1677ff', borderRadius: [0,4,4,0] },
+        itemStyle: { color: '#4096ff', borderRadius: [0,4,4,0] },
         label: { show: true, position: 'right', fontSize: 10, formatter: '{c}分' }
       },
       {
-        name: '合格率', type: 'bar', barWidth: 14,
+        name: '合格率', type: 'bar', barWidth: 20,
         data: d.getClassRank.map(function(c) { return c.passRate; }),
-        itemStyle: { color: '#52c41a', borderRadius: [0,4,4,0] },
+        itemStyle: { color: '#73d13d', borderRadius: [0,4,4,0] },
         label: { show: true, position: 'right', fontSize: 10, formatter: '{c}%' }
       }
     ]
@@ -1988,25 +2057,25 @@ function renderPersonalTab() {
   var radarIndicator = d.getTypeScore.map(function(t) { return { name: t.typeName, max: 100 }; });
   var radarValues = d.getTypeScore.map(function(t) { return t.typeScore; });
   cr.setOption({
-    color: ['#1677ff'],
+    color: ['#4096ff'],
     radar: {
-      indicator: radarIndicator, shape: 'polygon', splitNumber: 4, radius: '60%',
+      indicator: radarIndicator, shape: 'polygon', splitNumber: 4, radius: '70%',
       axisName: { color: 'rgba(0,0,0,.65)', fontSize: 10 },
       splitLine: { lineStyle: { color: '#e8e8e8' } },
       splitArea: { areaStyle: { color: ['#fff', '#fafafa'] } },
       axisLine: { lineStyle: { color: '#d9d9d9' } }
     },
-    series: [{ type: 'radar', data: [{ value: radarValues, areaStyle: { color: 'rgba(22,119,255,.15)' }, lineStyle: { width: 2 } }] }]
+    series: [{ type: 'radar', data: [{ value: radarValues, areaStyle: { color: 'rgba(64,150,255,.15)' }, lineStyle: { width: 3 } }] }]
   }, true);
 
   // Ability donut
   var ca = getOrInit('chartAbility');
-  var abilityColors = { '优秀': '#52c41a', '良好': '#1677ff', '一般': '#faad14', '不合格': '#ff4d4f' };
+  var abilityColors = { '优秀': '#73d13d', '良好': '#4096ff', '一般': '#ffa940', '不合格': '#ff7875' };
   ca.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c}项 ({d}%)' },
     legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 11 } },
     series: [{
-      type: 'pie', radius: ['38%', '62%'], center: ['35%', '50%'],
+      type: 'pie', radius: ['40%', '66%'], center: ['35%', '50%'],
       data: d.getAbilityItemStatAnalyze.abilityLevelTotal.map(function(item) {
         return { value: item.value, name: item.key, itemStyle: { color: abilityColors[item.key] } };
       }),
@@ -2021,7 +2090,7 @@ function renderPersonalTab() {
     tooltip: { trigger: 'item', formatter: '{b}: {c}项 ({d}%)' },
     legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 11 } },
     series: [{
-      type: 'pie', radius: ['38%', '62%'], center: ['35%', '50%'],
+      type: 'pie', radius: ['40%', '66%'], center: ['35%', '50%'],
       data: d.getAppraiseInfo.map(function(item) {
         return { value: item.value, name: item.key, itemStyle: { color: abilityColors[item.key] } };
       }),
@@ -2033,11 +2102,11 @@ function renderPersonalTab() {
   // Scatter
   var cs = getOrInit('chartScatter');
   var scatterData = d.getStudentScoreScatter;
-  var typeColors = ['#fa8c16', '#1677ff']; // 0=实操, 1=理论
+  var typeColors = ['#ffa940', '#4096ff']; // 0=实操, 1=理论
   var typeNames = ['实操', '理论'];
   var scatterSeries = [0, 1].map(function(t) {
     return {
-      name: typeNames[t], type: 'scatter', symbolSize: 10,
+      name: typeNames[t], type: 'scatter', symbolSize: 14,
       data: scatterData.filter(function(s) { return s[3] === t; }).map(function(s) {
         return { value: [s[1], s[2]], name: s[0] };
       }),
@@ -2062,10 +2131,11 @@ function renderPersonalTab() {
     yAxis: { type: 'value', min: 60, max: 100, axisLabel: { fontSize: 9 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
     series: [{
       type: 'line', data: d.getPersonalGrade.map(function(g) { return g.score; }),
-      smooth: true, lineStyle: { color: '#1677ff', width: 2 },
-      areaStyle: { color: 'rgba(22,119,255,.08)' },
-      itemStyle: { color: '#1677ff' },
-      markLine: { data: [{ type: 'average', name: '平均' }], lineStyle: { color: '#faad14', type: 'dashed' }, label: { fontSize: 10 } }
+      smooth: true, lineStyle: { color: '#4096ff', width: 3 },
+      areaStyle: { color: 'rgba(64,150,255,.08)' },
+      itemStyle: { color: '#4096ff' },
+      symbolSize: 6,
+      markLine: { data: [{ type: 'average', name: '平均' }], lineStyle: { color: '#ffa940', type: 'dashed' }, label: { fontSize: 10 } }
     }]
   }, true);
 
@@ -2078,6 +2148,119 @@ function renderPersonalTab() {
   });
   tHtml += '</tbody></table>';
   document.getElementById('examTable').innerHTML = tHtml;
+}
+
+// ========== New Charts: Station Monthly Trend ==========
+function renderStationMonthlyChart() {
+  var chart = getOrInit('chartStationMonthly');
+  var months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  var participants = [120, 95, 135, 110, 145, 160, 88, 72, 150, 140, 125, 105];
+  var classes = [8, 6, 10, 7, 11, 12, 5, 4, 11, 10, 9, 7];
+  chart.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+    legend: { data: ['参培人数', '培训班次'], top: 2, right: 10, textStyle: { fontSize: 10 } },
+    grid: { left: 45, right: 45, top: 30, bottom: 24 },
+    xAxis: { type: 'category', data: months, axisLabel: { fontSize: 10 }, boundaryGap: false },
+    yAxis: [
+      { type: 'value', name: '人数', nameTextStyle: { fontSize: 9 }, axisLabel: { fontSize: 9 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+      { type: 'value', name: '班次', nameTextStyle: { fontSize: 9 }, axisLabel: { fontSize: 9 }, splitLine: { show: false } }
+    ],
+    series: [
+      {
+        name: '参培人数', type: 'line', data: participants, smooth: true,
+        lineStyle: { width: 3, color: '#4096ff' },
+        itemStyle: { color: '#4096ff' }, symbolSize: 6,
+        areaStyle: {
+          color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [{ offset: 0, color: 'rgba(64,150,255,0.25)' }, { offset: 1, color: 'rgba(64,150,255,0.02)' }]
+          }
+        }
+      },
+      {
+        name: '培训班次', type: 'line', yAxisIndex: 1, data: classes, smooth: true,
+        lineStyle: { width: 3, color: '#73d13d' },
+        itemStyle: { color: '#73d13d' }, symbolSize: 6
+      }
+    ]
+  }, true);
+}
+
+// ========== New Charts: Workshop Comparison ==========
+function renderWsComparisonChart() {
+  var chart = getOrInit('chartWsComparison');
+  var dimensions = ['安全知识', '知识理论', '实作技能', '两违信息', '证书信息', '资质认证'];
+  // Average radar values per workshop from wsData
+  var ws1Avg = [63.6, 77.4, 58.6, 35.4, 40.6, 53.4];
+  var ws2Avg = [61.4, 75.6, 51.8, 35.6, 40.6, 48.8];
+  var ws3Avg = [64.2, 76.2, 51.2, 31.6, 37.2, 48.0];
+  chart.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: { data: ['客运一车间', '客运二车间', '客运三车间'], top: 2, right: 10, textStyle: { fontSize: 10 } },
+    grid: { left: '3%', right: '8%', top: 30, bottom: '3%', containLabel: true },
+    yAxis: { type: 'category', data: dimensions, axisLabel: { fontSize: 10 }, axisLine: { show: false }, axisTick: { show: false } },
+    xAxis: { type: 'value', max: 100, axisLabel: { fontSize: 9 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [
+      { name: '客运一车间', type: 'bar', data: ws1Avg, itemStyle: { color: '#4096ff', borderRadius: [0,3,3,0] }, barWidth: 8 },
+      { name: '客运二车间', type: 'bar', data: ws2Avg, itemStyle: { color: '#73d13d', borderRadius: [0,3,3,0] }, barWidth: 8 },
+      { name: '客运三车间', type: 'bar', data: ws3Avg, itemStyle: { color: '#ffa940', borderRadius: [0,3,3,0] }, barWidth: 8 }
+    ]
+  }, true);
+}
+
+// ========== New Charts: Team Member Scatter ==========
+function renderTeamScatterChart() {
+  var wsIdx = parseInt(document.getElementById('teamWsSelect').value);
+  var gIdx = parseInt(document.getElementById('teamGroupSelect').value);
+  var g = teamData[wsIdx].groups[gIdx];
+  // Generate theory (index 1 in radar=知识理论) and practice (index 2=实作技能) scores per member
+  var scatterData = [];
+  var greenData = [], blueData = [], redData = [];
+  g.rankScore.forEach(function(member, i) {
+    // Derive theory/practice from radar with per-member variation
+    var baseTheory = g.radar[1] + (i % 2 === 0 ? 5 : -5) + Math.round((member.s - 85) * 0.5);
+    var basePractice = g.radar[2] + (i % 2 === 0 ? -3 : 8) + Math.round((member.s - 85) * 0.4);
+    var theory = Math.max(30, Math.min(100, baseTheory));
+    var practice = Math.max(30, Math.min(100, basePractice));
+    var overall = member.s;
+    var size = Math.max(12, Math.min(28, overall / 4));
+    var item = { value: [theory, practice], name: member.n, symbolSize: size };
+    if (overall >= 80) greenData.push(item);
+    else if (overall >= 60) blueData.push(item);
+    else redData.push(item);
+  });
+  var chart = getOrInit('chartTeamScatter');
+  chart.setOption({
+    tooltip: { trigger: 'item', formatter: function(p) { return p.name + '<br/>理论: ' + p.value[0] + '分<br/>实操: ' + p.value[1] + '分'; } },
+    legend: { data: ['综合>=80', '综合>=60', '综合<60'], top: 2, right: 10, textStyle: { fontSize: 10 } },
+    grid: { left: 45, right: 16, top: 30, bottom: 30 },
+    xAxis: { type: 'value', name: '理论知识', nameTextStyle: { fontSize: 9 }, min: 30, max: 100, axisLabel: { fontSize: 9 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    yAxis: { type: 'value', name: '实作技能', nameTextStyle: { fontSize: 9 }, min: 30, max: 100, axisLabel: { fontSize: 9 }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+    series: [
+      { name: '综合>=80', type: 'scatter', data: greenData, itemStyle: { color: '#73d13d' },
+        label: { show: true, formatter: function(p) { return p.name; }, fontSize: 9, position: 'top' } },
+      { name: '综合>=60', type: 'scatter', data: blueData, itemStyle: { color: '#4096ff' },
+        label: { show: true, formatter: function(p) { return p.name; }, fontSize: 9, position: 'top' } },
+      { name: '综合<60', type: 'scatter', data: redData, itemStyle: { color: '#ff7875' },
+        label: { show: true, formatter: function(p) { return p.name; }, fontSize: 9, position: 'top' } }
+    ],
+    graphic: [
+      { type: 'line', shape: { x1: 0, y1: 0, x2: 0, y2: 0 }, style: { stroke: '#d9d9d9', lineDash: [4, 4] },
+        $action: 'merge' }
+    ]
+  }, true);
+  // Add reference lines via markLine
+  chart.setOption({
+    series: [{
+      markLine: {
+        silent: true, symbol: 'none',
+        lineStyle: { color: '#d9d9d9', type: 'dashed', width: 1 },
+        data: [
+          { xAxis: 60, label: { formatter: '及格线', fontSize: 9, color: 'rgba(0,0,0,.35)' } },
+          { yAxis: 60, label: { formatter: '及格线', fontSize: 9, color: 'rgba(0,0,0,.35)' } }
+        ]
+      }
+    }]
+  });
 }
 
 // ========== Init ==========
@@ -2108,14 +2291,17 @@ function xiaoanCollectData() {
     data += '年度培训进度: 培训期数41%, 培训人数45%, 培训人天数49%\n';
     data += '各车站培训参与和技能评价数据\n';
     data += '培训计划倒计时: 8个培训计划按距今天数排列，最近的是应急处置实操强化培训(7月8日)还有17天，最远的是冬季防寒防冻专项培训(10月1日)\n';
+    data += '月度参培趋势: 全年参培人数呈波动上升趋势，6月最高(160人/12班次)，8月最低(72人/4班次为暑期淡季)\n';
   } else if (currentTab === 1) {
     data += '## 车间维度\n';
     data += '职工25人, 班组5个\n';
     data += '六维能力: 安全知识65, 知识理论85, 实作技能55, 两违信息30, 证书信息35, 资质认证60\n';
     data += '模块科目掌握情况和薄弱技能模块数据\n';
+    data += '车间综合能力横向对比: 客运一车间整体最强，客运三车间两违信息和证书信息维度最弱\n';
   } else if (currentTab === 2) {
     data += '## 班组维度\n';
     data += '当前选择班组的职工统计、六维能力、优秀职工排名\n';
+    data += '班组成员能力分布: 散点图展示理论vs实操得分，60分及格线划分四象限\n';
     data += '模块科目掌握情况和薄弱技能模块数据\n';
   } else if (currentTab === 3) {
     var idx = parseInt(document.getElementById('examSelector').value);
