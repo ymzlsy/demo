@@ -276,10 +276,8 @@
     .sub-tab-item:hover { color: #1677ff; background: #f0f5ff; }
     .sub-tab-item.active { color: #fff; background: #1677ff; }
 
-    /* Weak table in workshop */
-    .weak-table-wrap { flex: 1; overflow-y: auto; }
-    .weak-table-wrap table { font-size: 12px; }
-    .weak-table-wrap .pct-bar { display: inline-block; height: 8px; border-radius: 4px; background: #ff4d4f; vertical-align: middle; margin-right: 4px; }
+    /* Weak chart in workshop */
+    .weak-chart-wrap { flex: 1; min-height: 0; }
 
     /* Workshop selector bar */
     .ws-selector-bar { display: flex; gap: 10px; align-items: center; flex-shrink: 0; margin-bottom: 6px; }
@@ -473,7 +471,7 @@
         <!-- Weak Modules Table -->
         <div class="card">
           <div class="card-title">薄弱技能模块<span class="card-subtitle" style="color:#fa8c16">需后端开发: 车间级薄弱模块聚合</span><span class="chart-info-btn" onclick="showChartInfo('workshop-weak')">i</span></div>
-          <div class="weak-table-wrap" id="wsWeakTable"></div>
+          <div class="weak-chart-wrap" id="chartWsWeak"></div>
         </div>
       </div>
     </div>
@@ -544,7 +542,7 @@
         <!-- Weak Modules Table -->
         <div class="card">
           <div class="card-title">薄弱技能模块<span class="card-subtitle" style="color:#fa8c16">需后端开发: 班组级薄弱模块聚合</span><span class="chart-info-btn" onclick="showChartInfo('team-weak')">i</span></div>
-          <div class="weak-table-wrap" id="teamWeakTable"></div>
+          <div class="weak-chart-wrap" id="chartTeamWeak"></div>
         </div>
       </div>
     </div>
@@ -1575,7 +1573,7 @@ function renderWorkshopTab() {
   // Stacked bar
   renderWsModuleChart();
   // Weak table
-  renderWsWeakTable();
+  renderWsWeakChart();
 }
 
 function renderWsRankings() {
@@ -1631,13 +1629,18 @@ function renderWsModuleChart() {
   }, true);
 }
 
-function renderWsWeakTable() {
-  var html = '<table><thead><tr><th>技能模块</th><th>已掌握人数</th><th>一般人数</th><th>占比</th></tr></thead><tbody>';
-  wsWeakRows.forEach(function(r) {
-    html += '<tr><td>' + r.module + '</td><td>' + r.mastered + '</td><td>' + r.normal + '</td><td><span class="pct-bar" style="width:' + r.pct + 'px;"></span>' + r.pct.toFixed(1) + '%</td></tr>';
+function renderWsWeakChart() {
+  if (window._wsWeakChart) window._wsWeakChart.dispose();
+  var chart = echarts.init(document.getElementById('chartWsWeak'));
+  window._wsWeakChart = chart;
+  var sorted = wsWeakRows.slice().sort(function(a, b) { return a.pct - b.pct; });
+  chart.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { var d = sorted[p[0].dataIndex]; return d.module + '<br/>已掌握: ' + d.mastered + '人<br/>一般: ' + d.normal + '人<br/>薄弱占比: ' + d.pct.toFixed(1) + '%'; } },
+    grid: { left: '3%', right: '14%', top: '4%', bottom: '4%', containLabel: true },
+    xAxis: { type: 'value', max: 60, axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.45)', formatter: '{value}%' }, splitLine: { lineStyle: { type: 'dashed', color: '#f0f0f0' } }, axisLine: { show: false } },
+    yAxis: { type: 'category', data: sorted.map(function(r) { return r.module; }), axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.65)' }, axisLine: { show: false }, axisTick: { show: false } },
+    series: [{ type: 'bar', data: sorted.map(function(r) { return { value: r.pct, itemStyle: { color: r.pct > 40 ? '#ff4d4f' : r.pct > 30 ? '#fa8c16' : '#1677ff', borderRadius: [0, 3, 3, 0] } }; }), barWidth: 14, label: { show: true, position: 'right', fontSize: 10, color: 'rgba(0,0,0,.65)', formatter: function(p) { return p.value.toFixed(1) + '%'; } } }]
   });
-  html += '</tbody></table>';
-  document.getElementById('wsWeakTable').innerHTML = html;
 }
 
 // ========== Tab 2: Team Analysis ==========
@@ -1762,7 +1765,7 @@ function renderTeamTab() {
   // Module stacked bar
   renderTeamModuleChart();
   // Weak table
-  renderTeamWeakTable();
+  renderTeamWeakChart();
 }
 
 function switchTeamModuleTab(idx, el) {
@@ -1790,13 +1793,18 @@ function renderTeamModuleChart() {
   }, true);
 }
 
-function renderTeamWeakTable() {
-  var html = '<table><thead><tr><th>技能模块</th><th>已掌握人数</th><th>一般人数</th><th>占比</th></tr></thead><tbody>';
-  teamWeakRows.forEach(function(r) {
-    html += '<tr><td>' + r.module + '</td><td>' + r.mastered + '</td><td>' + r.normal + '</td><td><span class="pct-bar" style="width:' + r.pct + 'px;"></span>' + r.pct.toFixed(1) + '%</td></tr>';
+function renderTeamWeakChart() {
+  if (window._teamWeakChart) window._teamWeakChart.dispose();
+  var chart = echarts.init(document.getElementById('chartTeamWeak'));
+  window._teamWeakChart = chart;
+  var sorted = teamWeakRows.slice().sort(function(a, b) { return a.pct - b.pct; });
+  chart.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) { var d = sorted[p[0].dataIndex]; return d.module + '<br/>已掌握: ' + d.mastered + '人<br/>一般: ' + d.normal + '人<br/>薄弱占比: ' + d.pct.toFixed(1) + '%'; } },
+    grid: { left: '3%', right: '14%', top: '4%', bottom: '4%', containLabel: true },
+    xAxis: { type: 'value', max: 60, axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.45)', formatter: '{value}%' }, splitLine: { lineStyle: { type: 'dashed', color: '#f0f0f0' } }, axisLine: { show: false } },
+    yAxis: { type: 'category', data: sorted.map(function(r) { return r.module; }), axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.65)' }, axisLine: { show: false }, axisTick: { show: false } },
+    series: [{ type: 'bar', data: sorted.map(function(r) { return { value: r.pct, itemStyle: { color: r.pct > 40 ? '#ff4d4f' : r.pct > 30 ? '#fa8c16' : '#1677ff', borderRadius: [0, 3, 3, 0] } }; }), barWidth: 14, label: { show: true, position: 'right', fontSize: 10, color: 'rgba(0,0,0,.65)', formatter: function(p) { return p.value.toFixed(1) + '%'; } } }]
   });
-  html += '</tbody></table>';
-  document.getElementById('teamWeakTable').innerHTML = html;
 }
 
 // ========== Tab 3: Exam Analysis ==========
@@ -2078,6 +2086,8 @@ window.onload = function() {
   window.addEventListener('resize', function() {
     Object.keys(charts).forEach(function(k) { if (charts[k]) charts[k].resize(); });
     if (window._stationPlanChart) window._stationPlanChart.resize();
+    if (window._wsWeakChart) window._wsWeakChart.resize();
+    if (window._teamWeakChart) window._teamWeakChart.resize();
   });
 };
 
