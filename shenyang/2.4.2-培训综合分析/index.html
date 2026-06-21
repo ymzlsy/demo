@@ -434,42 +434,54 @@ var chartInfoData = {
     api: 'getTrainAttendRatio', path: '/screen/train/class/screen/getTrainAttendRatio?classId={id}',
     fields: 'trainClassPersonNum; trainClassAttendRatio',
     meaning: '班级总人数; 出勤率百分比',
-    formula: '先调getClassList获取班级列表 每班调一次获取出勤率 <80%橙色 >=80%蓝色', confidence: '100%'
+    formula: '先调getClassList获取班级列表 每班调一次获取出勤率 <80%橙色 >=80%蓝色', confidence: '100%',
+    detail: '每个培训班的出勤率计算：\n• 出勤率(trainClassAttendRatio) = 实际出勤人次 / 应出勤人次 × 100%\n• 应出勤人次 = 班级总人数(trainClassPersonNum) × 培训天数\n\n颜色规则：\n• 蓝色：出勤率 ≥ 80%（正常）\n• 橙色：出勤率 < 80%（需关注）\n\n调用流程：先调 getClassList 获取培训班列表，再逐班调用获取出勤率',
+    source: '培训管理 → 培训班详情（/screen/train/class/screen/getTrainAttendRatio?classId={id}）\n前置接口：getClassList 获取班级列表'
   },
   'class-score-comparison': {
     name: '培训班成绩对比', type: '分组柱状图 (grouped bar)', area: '培训综合分析',
     api: 'getTrainResultExam', path: '/screen/teacher/getTrainResult?classId={classId}&testModel={testModel}',
     fields: 'classData[0][highRate fineRate passRate]; avgData[0][...]; classAvgScore; allAvgScore',
     meaning: '班级高分率/优良率/合格率; 整体同上; 班级均分; 整体均分',
-    formula: '分组柱状图 X轴=[高分率 优良率 合格率] 两系列:班级vs整体 支持testModel切换', confidence: '100%'
+    formula: '分组柱状图 X轴=[高分率 优良率 合格率] 两系列:班级vs整体 支持testModel切换', confidence: '100%',
+    detail: '班级与整体的三率对比：\n• 高分率(highRate)：成绩 ≥ 90分的学员占比\n• 优良率(fineRate)：成绩 ≥ 75分的学员占比\n• 合格率(passRate)：成绩 ≥ 60分的学员占比\n\n两组柱子：蓝色=当前班级，浅蓝=全校整体\n下方标注：班级均分(classAvgScore) vs 整体均分(allAvgScore)\n\n支持 testModel 切换：\n• 0=理论考试\n• 1=实作考试',
+    source: '教师评价 → 培训成果（/screen/teacher/getTrainResult?classId={classId}&testModel={testModel}）'
   },
   'score-distribution': {
     name: '成绩分布曲线', type: '多线折线图 (multi-line)', area: '培训综合分析',
     api: 'scoreDistribution', path: '/analyse/train/scoreDistribution',
     fields: 'data[0]; data[1][].className; data[1][].nums',
     meaning: '分数段区间; 班级名; 各段人数',
-    formula: '多线图 同2.4.1', confidence: '100%'
+    formula: '多线图 同2.4.1', confidence: '100%',
+    detail: 'X轴为10分一档的分数段：0-10, 10-20, ..., 90-100\n每条折线代表一个班级，Y轴为该分数段的学员人数\n\n调用流程：\n1. 先调 getClassesAnalyse 获取班级列表和classIds\n2. 将classIds传入 scoreDistribution\n3. 返回 data[0]=分数段标签, data[1]=各班数据\n\n用途：对比各班成绩分布形态，正态分布为理想状态',
+    source: '数据分析 → 考试分析（/analyse/train/scoreDistribution）\n前置接口：/analyse/train/getClassesAnalyse'
   },
   'device-utilization': {
     name: '设备利用率分析', type: '水平进度条 (horizontal progress bars)', area: '培训综合分析',
     api: 'getIndexData', path: '/analyse/targetsystem/devicemetrics',
     fields: 'deviceValue; deviceNum; deviceUseRate[].name; deviceUseRate[].value; deviceInputGrowthRate',
     meaning: '设备总值(万元); 设备数量(套); 设备类别名; 利用率; 投入增长率',
-    formula: '水平进度条 颜色按设备类别区分 宽度=利用率百分比', confidence: '100%'
+    formula: '水平进度条 颜色按设备类别区分 宽度=利用率百分比', confidence: '100%',
+    detail: '设备利用率按类别展示：\n• 利用率(deviceUseRate[].value) = 设备实际使用时长 / 设备理论可用时长 × 100%\n• 每类设备一条进度条\n\n顶部汇总：\n• 设备总数(deviceNum)：在册设备套数\n• 设备总值(deviceValue)：设备采购总价值（万元）\n• 投入增长率(deviceInputGrowthRate)：较上期设备投入增长百分比',
+    source: '设备管理 → 设备指标（/analyse/targetsystem/devicemetrics）'
   },
   'train-plan-status': {
     name: '培训执行进度分析', type: '环形饼图+指标卡 (donut pie + metrics)', area: '培训综合分析',
     api: 'getTrainPlanData', path: '/analyse/panoramacontrol/trainplanstate',
     fields: 'rows[].trainClass; rows[].trainLesson; rows[].trainDate; rows[].trainPlace; rows[].executingState',
     meaning: '培训班名; 课程名; 日期; 地点; 执行状态(0/1/2)',
-    formula: '环形饼图显示已结束/进行中/未开始分布 右侧指标卡显示完成率 状态映射: 0=未开始(灰) 1=进行中(蓝) 2=已结束(绿)', confidence: '100%'
+    formula: '环形饼图显示已结束/进行中/未开始分布 右侧指标卡显示完成率 状态映射: 0=未开始(灰) 1=进行中(蓝) 2=已结束(绿)', confidence: '100%',
+    detail: '培训执行进度分析（环形饼图+指标卡）：\n\n饼图三个扇区：\n• 已结束(绿色)：executingState = 2\n• 进行中(蓝色)：executingState = 1\n• 未开始(灰色)：executingState = 0\n\n右侧指标卡：\n• 完成率 = 已结束数 / 总数 × 100%\n• 进行中占比 = 进行中数 / 总数 × 100%\n• 未开始占比 = 未开始数 / 总数 × 100%\n\n中心数字 = 培训班总数',
+    source: '全景管控 → 培训计划状态（/analyse/panoramacontrol/trainplanstate）\n返回 rows[].executingState: 0=未开始, 1=进行中, 2=已结束'
   },
   'weak-analysis': {
     name: '薄弱项分析 TOP 5', type: '水平柱状图 (horizontal bar)', area: '培训综合分析',
     api: 'getWeakAnalysis', path: '/analyse/examAnalysis/getWeak',
     fields: 'weakData[].taskName; weakData[].subtractScoreRate',
     meaning: '任务名称; 失分人数占比',
-    formula: '水平柱状图TOP5 按失分率降序 红色渐变', confidence: '100%'
+    formula: '水平柱状图TOP5 按失分率降序 红色渐变', confidence: '100%',
+    detail: '薄弱项TOP5识别：\n• 失分人数占比(subtractScoreRate) = 该题目失分学员数 / 参考总人数 × 100%\n• 按失分率降序排列，取前5项\n• 红色渐变柱状图，越长越薄弱\n\n用途：快速识别全校最薄弱的考核知识点，针对性安排补训',
+    source: '数据分析 → 考试分析（/analyse/examAnalysis/getWeak）\n返回 weakData[].taskName(题目名) + subtractScoreRate(失分占比)'
   }
 };
 
@@ -486,6 +498,12 @@ function showChartInfo(id) {
   html += '<div class="chart-info-section"><div class="chart-info-label">响应字段</div><div class="chart-info-value">' + d.fields + '</div></div>';
   html += '<div class="chart-info-section"><div class="chart-info-label">字段含义</div><div class="chart-info-value">' + d.meaning + '</div></div>';
   html += '<div class="chart-info-section"><div class="chart-info-label">计算公式 / 映射逻辑</div><div class="chart-info-value">' + d.formula + '</div></div>';
+  if (d.detail) {
+    html += '<div class="chart-info-section"><div class="chart-info-label">详细说明</div><div class="chart-info-value" style="white-space:pre-line;line-height:1.8">' + d.detail + '</div></div>';
+  }
+  if (d.source) {
+    html += '<div class="chart-info-section"><div class="chart-info-label">数据来源页面</div><div class="chart-info-value"><code style="white-space:pre-line">' + d.source + '</code></div></div>';
+  }
   document.getElementById('chartInfoBody').innerHTML = html;
   document.getElementById('chartInfoOverlay').classList.add('active');
 }

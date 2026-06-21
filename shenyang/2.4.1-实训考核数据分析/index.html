@@ -416,8 +416,8 @@
       <!-- Right 1/3: Scrolling plan table -->
       <div class="station-right">
         <div class="card">
-          <div class="card-title">培训办班计划提醒<span class="card-subtitle" style="color:#52c41a">现有API: getTrainPlanData</span><span class="chart-info-btn" onclick="showChartInfo('station-train-plan')">i</span></div>
-          <div class="station-table-wrap" id="stationPlanTable"></div>
+          <div class="card-title">培训计划倒计时<span class="card-subtitle" style="color:#52c41a">现有API: getTrainPlanData</span><span class="chart-info-btn" onclick="showChartInfo('station-train-plan')">i</span></div>
+          <div id="chartStationPlan" class="chart-box"></div>
         </div>
       </div>
     </div>
@@ -716,166 +716,221 @@ var chartInfoData = {
     name: '技能掌握情况分析', type: '分组柱状图 (grouped bar)', area: '站段总览',
     api: '需后端开发', path: '需后端开发: 按岗位聚合技能掌握等级',
     fields: '按岗位分组的掌握等级人数', meaning: '不熟练/独立工作/能够培训和指导他人',
-    formula: '分组柱状图 支持岗位下拉筛选', confidence: '需后端开发'
+    formula: '分组柱状图 支持岗位下拉筛选', confidence: '需后端开发',
+    detail: '分级标准（基于个人技能画像评定）：\n• 不熟练：该岗位技能评定得分 < 60分，或未完成对应岗位的必修实训课程\n• 独立工作：得分 60-85分，已通过该岗位基础技能考核\n• 能够培训和指导他人：得分 > 85分，且持有该岗位高级技能证书\n\n聚合逻辑：按岗位(workName字段)分组，统计各掌握等级的人数\n筛选器：下拉选择岗位，默认"全部岗位"显示汇总',
+    source: '个人技能画像 → 技能评定模块（system/student/skill/getTypeScore）\n岗位字段取自 system/student/skill/getStudentInfo 的 workName'
   },
   'station-annual-plan': {
     name: '年度计划内培训班进度', type: 'SVG环形仪表盘 (gauge)', area: '站段总览',
     api: '需后端开发', path: '需后端开发: 年度计划完成率聚合',
     fields: '培训期数/培训人数/培训人天数完成百分比', meaning: '3个环形仪表盘展示完成率',
-    formula: 'SVG环形图 stroke-dashoffset计算', confidence: '需后端开发'
+    formula: 'SVG环形图 stroke-dashoffset计算', confidence: '需后端开发',
+    detail: '三个环形仪表盘分别展示：\n• 培训期数完成率 = 已完成培训班次数 / 年度计划总班次 × 100%\n• 培训人数完成率 = 实际参训总人数 / 年度计划培训人数 × 100%\n• 培训人天数完成率 = 实际培训总人天 / 年度计划人天数 × 100%\n\n人天数计算：每人参加1天培训 = 1人天\n数据周期：按自然年度统计',
+    source: '需后端开发聚合接口\n基础数据来源：年度培训计划表 + 培训班实际执行记录'
   },
   'station-train-plan': {
-    name: '培训办班计划提醒', type: '数据表格 (table)', area: '站段总览',
+    name: '培训计划倒计时', type: '水平柱状图 (horizontal bar)', area: '站段总览',
     api: 'getTrainPlanData', path: '/analyse/panoramacontrol/trainplanstate',
-    fields: 'rows[].trainClass; rows[].trainLesson; rows[].trainDate; rows[].trainPlace; rows[].executingState',
-    meaning: '培训项目名称; 课程名; 培训日期; 地点; 执行状态',
-    formula: '表格直接展示', confidence: '100%'
+    fields: 'rows[].trainClass; rows[].trainDate; rows[].trainPlace; rows[].executingState',
+    meaning: '培训项目名称; 培训日期; 地点; 执行状态',
+    formula: '计算每个培训计划距今天数 = (trainDate - today) / 86400000, 按日期排序, 颜色: 已过期=绿色, ≤14天=橙色, >14天=灰色',
+    confidence: '100%',
+    detail: '展示各培训计划距今天数的倒计时：\n• 绿色柱：培训已过期/已结束\n• 橙色柱：距开始 ≤ 14天（即将开始，需关注）\n• 灰色柱：距开始 > 14天（暂无紧迫性）\n\n鼠标悬停显示：培训名称、日期、培训对象、计划人数\n数据按培训日期升序排列',
+    source: '全景管控 → 培训计划状态（/analyse/panoramacontrol/trainplanstate）\nexecutingState: 0=未开始, 1=进行中, 2=已结束'
   },
   'station-participation': {
     name: '各车站培训情况分析', type: '双分组柱状图 (dual grouped bar)', area: '站段总览',
     api: '需后端开发', path: '需后端开发: 按车站聚合培训参与和技能评价',
     fields: '参培人数; 未参培人数; 优秀; 潜力 按车站', meaning: '左侧:参培情况 右侧:技能评价',
-    formula: '双分组柱状图', confidence: '需后端开发'
+    formula: '双分组柱状图', confidence: '需后端开发',
+    detail: '左图-各车站参培情况：\n• 参培人数：该车站在统计周期内至少参加1次培训的职工数\n• 未参培人数：该车站在编职工总数 - 参培人数\n\n右图-技能评价：\n• 优秀：该车站技能评定平均分 ≥ 85分的职工数\n• 潜力：该车站技能评定平均分 < 60分，需重点关注的职工数\n\n两张图共用X轴（车站名称），便于横向对比各站培训覆盖和技能水平',
+    source: '需后端开发聚合接口\n基础数据：培训记录表（按车站分组统计）+ 个人技能评定分数'
   },
   'workshop-basic-info': {
     name: '基本信息', type: '数字卡片+环形饼图', area: '车间维度',
     api: '需后端开发', path: '需后端开发: 按车间聚合职工/班组统计',
     fields: '职工总数; 班组数量; 初级工/中级工/高级工/特级工人数', meaning: '数字卡片+环形饼图',
-    formula: '饼图显示技能等级分布', confidence: '需后端开发'
+    formula: '饼图显示技能等级分布', confidence: '需后端开发',
+    detail: '技能等级分布（饼图）基于职工档案中的技能等级字段：\n• 初级工：取得初级职业资格证书\n• 中级工：取得中级职业资格证书\n• 高级工：取得高级职业资格证书\n• 特级工：取得技师/高级技师资格证书\n\n数字卡片：\n• 职工总数 = 该车间在编职工数量\n• 班组数量 = 该车间下属班组数',
+    source: '需后端开发聚合接口\n基础数据：职工档案表的 level 字段（技能等级）+ 组织架构表（车间-班组关系）'
   },
   'workshop-radar': {
     name: '六维能力雷达图', type: '雷达图 (radar)', area: '车间维度',
     api: '需后端开发', path: '需后端开发: 车间级六维能力聚合(参考个人级getTypeScore)',
     fields: '安全知识/知识理论/实作技能/两违信息/证书信息/资质认证', meaning: '6维度得分(0-100)',
-    formula: '雷达图', confidence: '需后端开发'
+    formula: '雷达图', confidence: '需后端开发',
+    detail: '六维能力模型（每维0-100分）：\n• 安全知识(20%)：安全规程考试平均分\n• 知识理论(20%)：理论考试平均分\n• 实作技能(20%)：实操考核平均分\n• 两违信息(15%)：违章违纪扣分（满分100，每次扣分递减）\n• 证书信息(10%)：持证完整度（已持证数/应持证数×100）\n• 资质认证(15%)：资质有效率（有效资质数/应持资质数×100）\n\n车间维度 = 该车间所有职工各维度的算术平均值\n参考接口结构：个人级 system/student/skill/getTypeScore',
+    source: '需后端开发聚合接口\n参考个人级接口：system/student/skill/getTypeScore（返回 typeName + typeScore）'
   },
   'workshop-ranking': {
     name: '优秀班组', type: '双列水平柱状图 (horizontal bar)', area: '车间维度',
     api: '需后端开发', path: '需后端开发: 按班组聚合综合评分排名(参考getClassRank)',
     fields: '班组名; 综合评分; 技能达标率', meaning: '双列水平柱状图',
-    formula: '按分数降序排列', confidence: '需后端开发'
+    formula: '按分数降序排列', confidence: '需后端开发',
+    detail: '左列-综合评分排名：\n• 综合评分 = 六维能力加权总分（满分100）\n• 按班组汇总所有职工综合评分的平均值\n• 降序排列，最优班组在最上方\n\n右列-技能达标率排名：\n• 技能达标率 = 该班组中综合评分 ≥ 60分的职工数 / 班组总人数 × 100%\n• 达标线为60分（可配置）',
+    source: '需后端开发聚合接口\n参考班级排名接口：/analyse/train/getClassRank（返回 className + avgScore + passRate）'
   },
   'workshop-module': {
     name: '模块科目掌握情况', type: '堆叠柱状图 (stacked bar)', area: '车间维度',
     api: '需后端开发', path: '需后端开发: 按车间聚合模块科目掌握等级',
     fields: '优秀/良好/一般/未掌握人数 按科目项', meaning: '堆叠柱状图',
-    formula: '支持子Tab切换(安全知识/理论知识/实作技能/两违信息)', confidence: '需后端开发'
+    formula: '支持子Tab切换(安全知识/理论知识/实作技能/两违信息)', confidence: '需后端开发',
+    detail: '堆叠柱状图展示各科目项的掌握等级分布：\n• 优秀(绿)：该科目考核得分 ≥ 85分\n• 良好(蓝)：得分 70-84分\n• 一般(橙)：得分 60-69分\n• 未掌握(紫)：得分 < 60分\n\n四个子Tab对应四大技能模块：\n• 安全知识：安全规程、应急处置等\n• 理论知识：业务规章、操作规范等\n• 实作技能：设备操作、故障处理等\n• 两违信息：违章违纪记录相关\n\n每个科目项的柱子总高度 = 该车间总人数',
+    source: '需后端开发聚合接口\n基础数据：各科目考核成绩表（按车间+科目分组统计各等级人数）'
   },
   'workshop-weak': {
     name: '薄弱技能模块', type: '表格+占比条 (table)', area: '车间维度',
     api: '需后端开发', path: '需后端开发: 车间级薄弱模块聚合(参考getWeakAnalysis)',
     fields: '技能模块; 已掌握人数; 一般人数; 占比', meaning: '表格+占比条',
-    formula: '按占比降序', confidence: '需后端开发'
+    formula: '按占比降序', confidence: '需后端开发',
+    detail: '薄弱技能模块识别逻辑：\n• 占比 = 一般人数 / (已掌握人数 + 一般人数) × 100%\n• 一般人数：该模块考核得分 < 70分的职工数\n• 已掌握人数：该模块考核得分 ≥ 70分的职工数\n• 按占比降序排列，占比越高越薄弱\n• 红色进度条宽度 = 占比百分比\n\n用途：识别车间最需要加强培训的技能模块',
+    source: '需后端开发聚合接口\n参考个人级薄弱项接口：/analyse/examAnalysis/getWeak（返回 taskName + subtractScoreRate）'
   },
   'team-basic-info': {
     name: '基本信息', type: '数字卡片+环形饼图', area: '班组维度',
     api: '需后端开发', path: '需后端开发: 班组级职工统计',
     fields: '职工总数; 技能等级分布', meaning: '数字卡片+环形饼图',
-    formula: '支持车间+班组选择器', confidence: '需后端开发'
+    formula: '支持车间+班组选择器', confidence: '需后端开发',
+    detail: '与车间基本信息结构相同，数据粒度为班组级别\n• 职工总数 = 所选班组的在编职工数\n• 技能等级饼图 = 该班组职工的等级分布\n\n支持车间+班组两级选择器联动：\n先选车间 → 班组列表自动更新 → 选择班组后刷新所有图表',
+    source: '需后端开发聚合接口\n基础数据：职工档案表（按班组过滤）'
   },
   'team-radar': {
     name: '六维能力雷达图', type: '雷达图 (radar)', area: '班组维度',
     api: '需后端开发', path: '需后端开发: 班组级六维能力聚合',
     fields: '同车间维度6维度', meaning: '雷达图',
-    formula: '数据随选择器变化', confidence: '需后端开发'
+    formula: '数据随选择器变化', confidence: '需后端开发',
+    detail: '六维能力模型同车间维度，数据粒度为班组级别\n班组维度 = 该班组所有职工各维度的算术平均值\n数据随车间+班组选择器变化而刷新',
+    source: '需后端开发聚合接口\n参考个人级接口：system/student/skill/getTypeScore'
   },
   'team-ranking': {
     name: '优秀职工', type: '双列水平柱状图 (horizontal bar)', area: '班组维度',
     api: '部分可用: getStudentScoreRank', path: '/analyse/examAnalysis/getScoreOrder + 需按班组过滤',
     fields: '综合评分排名(优秀职工); 关键职工标记', meaning: '双列水平柱状图',
-    formula: '可部分复用getScoreOrder接口', confidence: '部分可用'
+    formula: '可部分复用getScoreOrder接口', confidence: '部分可用',
+    detail: '左列-综合评分排名（优秀职工）：\n• 取该班组内所有职工的综合评分\n• 按分数降序，展示TOP5\n\n右列-关键职工：\n• 标记该班组中持有特殊资质或担任关键岗位的职工\n• 可部分复用 getScoreOrder 接口，需增加按班组过滤参数',
+    source: '部分可用：/analyse/examAnalysis/getScoreOrder\n需增加 groupId 参数按班组过滤'
   },
   'team-module': {
     name: '模块科目掌握情况', type: '堆叠柱状图 (stacked bar)', area: '班组维度',
     api: '需后端开发', path: '需后端开发: 班组级模块科目掌握等级',
     fields: '同车间维度', meaning: '堆叠柱状图 支持子Tab',
-    formula: '数据随选择器变化', confidence: '需后端开发'
+    formula: '数据随选择器变化', confidence: '需后端开发',
+    detail: '与车间模块科目掌握情况结构相同，数据粒度为班组级别\n堆叠柱状图的每个柱子总高度 = 该班组总人数\n数据随车间+班组选择器变化而刷新',
+    source: '需后端开发聚合接口'
   },
   'team-weak': {
     name: '薄弱技能模块', type: '表格+占比条 (table)', area: '班组维度',
     api: '需后端开发', path: '需后端开发: 班组级薄弱模块聚合',
     fields: '同车间维度', meaning: '表格+占比条',
-    formula: '数据随选择器变化', confidence: '需后端开发'
+    formula: '数据随选择器变化', confidence: '需后端开发',
+    detail: '与车间薄弱技能模块结构相同，数据粒度为班组级别\n占比计算方式不变，数据随选择器变化',
+    source: '需后端开发聚合接口'
   },
   'exam-participant-pie': {
     name: '考试人数统计', type: '环形饼图 (donut pie)', area: '考试维度分析',
     api: 'getStuNumAnalyse', path: '/analyse/train/getStuNumAnalyse/{examId}',
     fields: 'data[].name; data[].num; data[].value', meaning: '分类名(参考/未参考/缺考); 人数; 占比百分比',
-    formula: '中心总数 = sum(data[].num)', confidence: '100%'
+    formula: '中心总数 = sum(data[].num)', confidence: '100%',
+    detail: '环形饼图展示考试参考情况：\n• 参考：实际参加考试的学员数\n• 未参考：有考试资格但未参加的学员数\n• 缺考：签到后未完成考试的学员数\n\n中心数字 = 三者之和（应考总人数）\n数据随顶部考试选择器变化',
+    source: '数据分析 → 考试分析（/analyse/train/getStuNumAnalyse/{examId}）\n需先通过考试列表接口获取 examId'
   },
   'score-level-bar': {
     name: '成绩等级占比', type: '水平柱状图 (horizontal bar)', area: '考试维度分析',
     api: 'getScoreLevel', path: '/analyse/examAnalysis/getScoreLevel',
     fields: 'highScore; fineScore; passScore; notPassScore', meaning: '高分率; 优良率; 合格率; 不合格率(均为百分比)',
-    formula: '直接展示百分比 X轴=[高分率 优良率 合格率 不合格率]', confidence: '100%'
+    formula: '直接展示百分比 X轴=[高分率 优良率 合格率 不合格率]', confidence: '100%',
+    detail: '四个等级的计算标准：\n• 高分率：成绩 ≥ 90分的学员占比\n• 优良率：成绩 ≥ 75分的学员占比\n• 合格率：成绩 ≥ 60分的学员占比\n• 不合格率：成绩 < 60分的学员占比\n\n注意：这四个指标不是互斥的\n高分率 ⊂ 优良率 ⊂ 合格率，不合格率 = 1 - 合格率',
+    source: '数据分析 → 考试分析（/analyse/examAnalysis/getScoreLevel）'
   },
   'score-distribution-line': {
     name: '成绩分布曲线', type: '多线折线图 (multi-line)', area: '考试维度分析',
     api: 'scoreDistribution', path: '/analyse/train/scoreDistribution',
     fields: 'data[0](分数段标签); data[1][].className; data[1][].nums', meaning: '分数段区间(0-10到90-100); 班级名; 各分数段人数数组',
-    formula: '多线图 每班一条线 需先调getClassesAnalyse获取classIds', confidence: '100%'
+    formula: '多线图 每班一条线 需先调getClassesAnalyse获取classIds', confidence: '100%',
+    detail: 'X轴为10分一档的分数段：0-10, 10-20, ..., 90-100\n每条线代表一个班级，Y轴为该分数段的学员人数\n\n调用流程：\n1. 先调 getClassesAnalyse 获取该考试的班级列表和classIds\n2. 将classIds作为参数调用 scoreDistribution\n3. 返回 data[0]=分数段标签, data[1]=各班数据\n\n用途：对比各班成绩分布差异，识别整体偏低的班级',
+    source: '数据分析 → 考试分析（/analyse/train/scoreDistribution）\n前置接口：/analyse/train/getClassesAnalyse'
   },
   'score-ranking-bar': {
     name: '成绩排行榜', type: '水平柱状图 (horizontal bar)', area: '考试维度分析',
     api: 'getScoreOrder', path: '/analyse/examAnalysis/getScoreOrder',
     fields: 'rankData[].nickName; rankData[].rankNo; rankData[].userScore', meaning: '学员姓名; 排名序号; 成绩分数',
-    formula: '按userScore降序排列 dataZoom自动滚动(8秒间隔)', confidence: '100%'
+    formula: '按userScore降序排列 dataZoom自动滚动(8秒间隔)', confidence: '100%',
+    detail: '水平柱状图展示学员成绩排行：\n• 按 userScore 降序排列\n• 柱状图带自动滚动（8秒间隔），展示完整排行\n• 使用 ECharts dataZoom 实现\n\n每条柱子标注学员姓名和分数',
+    source: '数据分析 → 考试分析（/analyse/examAnalysis/getScoreOrder）'
   },
   'weak-analysis': {
     name: '薄弱项分析', type: '进度条列表 (progress bar)', area: '考试维度分析',
     api: 'getWeakAnalysis', path: '/analyse/examAnalysis/getWeak',
     fields: 'weakData[].taskName; weakData[].subtractScoreRate', meaning: '任务/题目名称; 失分人数占比',
-    formula: 'parseFloat(subtractScoreRate)作为进度条宽度 按失分率降序 >50%红色 >30%橙色 其余蓝色', confidence: '100%'
+    formula: 'parseFloat(subtractScoreRate)作为进度条宽度 按失分率降序 >50%红色 >30%橙色 其余蓝色', confidence: '100%',
+    detail: '失分人数占比计算：\n• subtractScoreRate = 该题目/任务失分的学员数 / 参考总人数 × 100%\n• 进度条宽度 = parseFloat(subtractScoreRate)\n• 颜色规则：> 50% 红色（严重）, > 30% 橙色（需关注）, ≤ 30% 蓝色（正常）\n• 按失分率降序排列\n\n用途：识别最需要加强的考核知识点/操作项',
+    source: '数据分析 → 考试分析（/analyse/examAnalysis/getWeak）'
   },
   'class-ranking-bar': {
     name: '班级排名对比', type: '分组柱状图 (grouped bar)', area: '考试维度分析',
     api: 'getClassRank', path: '/analyse/train/getClassRank/{examId}',
     fields: 'data[].className; data[].avgScore; data[].passRate', meaning: '班级名称; 班级平均分; 班级合格率',
-    formula: '分组柱状图 两个系列: avgScore和passRate', confidence: '100%'
+    formula: '分组柱状图 两个系列: avgScore和passRate', confidence: '100%',
+    detail: '分组柱状图，每组两个柱子：\n• 平均分(avgScore)：该班级所有学员成绩的算术平均值\n• 合格率(passRate)：该班级成绩 ≥ 60分的学员占比 × 100%\n\n数据来源于单次考试，随顶部考试选择器变化',
+    source: '数据分析 → 考试分析（/analyse/train/getClassRank/{examId}）'
   },
   'person-basic-info': {
     name: '学员信息', type: '信息卡片 (info card)', area: '个人分析',
     api: 'getStudentInfo', path: 'system/student/skill/getStudentInfo',
     fields: 'name; standardPhoto; workName; companyName; deptName; level; entryTime; education',
     meaning: '姓名; 标准照片URL; 岗位; 工作单位; 车间/部门; 技能等级; 入职时间; 文化程度',
-    formula: '直接字段展示', confidence: '100%'
+    formula: '直接字段展示', confidence: '100%',
+    detail: '学员档案基本信息字段：\n• name：姓名\n• standardPhoto：证件照URL\n• workName：岗位/职名（如客运值班员、售票员）\n• companyName：工作单位\n• deptName：所属车间/部门\n• level：技能等级（初级工/中级工/高级工/技师/高级技师）\n• entryTime：入职时间\n• education：文化程度',
+    source: '个人技能画像 → 学员信息（system/student/skill/getStudentInfo）'
   },
   'person-skill-radar': {
     name: '个人技能雷达图', type: '雷达图 (radar)', area: '个人分析',
     api: 'getTypeScore', path: 'system/student/skill/getTypeScore',
     fields: 'data[].typeName; data[].typeScore', meaning: '技能维度名称; 该维度得分(0-100)',
-    formula: '雷达图(>=3项)或仪表盘(<3项) 平均分=sum(typeScore)/count', confidence: '100%'
+    formula: '雷达图(>=3项)或仪表盘(<3项) 平均分=sum(typeScore)/count', confidence: '100%',
+    detail: '六维能力雷达图（同车间/班组维度的维度定义）：\n• 每个维度 0-100 分\n• 平均分 = 所有维度得分之和 / 维度数量\n• 当维度数 < 3 时自动切换为仪表盘展示\n\n维度得分来源：\n各维度对应的考试/考核成绩加权平均\n具体权重由后台技能模型配置决定',
+    source: '个人技能画像 → 技能评定（system/student/skill/getTypeScore）\n返回 data[].typeName(维度名) + data[].typeScore(得分)'
   },
   'person-ability-pie': {
     name: '能力项统计', type: '环形饼图 (donut pie)', area: '个人分析',
     api: 'getAbilityItemStatAnalyze', path: '/system/student/skill/getAbilityItemStatAnalyze',
     fields: 'abilityLevelTotal[].key; abilityLevelTotal[].value', meaning: '能力等级名(优秀/良好/一般/不合格); 该等级数量',
-    formula: '中心总数=sum(value) 环形饼图', confidence: '100%'
+    formula: '中心总数=sum(value) 环形饼图', confidence: '100%',
+    detail: '能力项等级分布：\n• 优秀：该能力项考核得分 ≥ 85分\n• 良好：得分 70-84分\n• 一般：得分 60-69分\n• 不合格：得分 < 60分\n\n中心数字 = 所有能力项总数\n每个扇区显示该等级的能力项数量和占比',
+    source: '个人技能画像 → 能力项统计（/system/student/skill/getAbilityItemStatAnalyze）\n返回 abilityLevelTotal[].key(等级名) + value(数量)'
   },
   'person-assessment-pie': {
     name: '考核项统计', type: '环形饼图 (donut pie)', area: '个人分析',
     api: 'getAppraiseInfo', path: '/system/student/skill/getAppraiseInfo',
     fields: 'data[].key; data[].value', meaning: '考核等级名; 该等级数量',
-    formula: '中心总数=sum(value) 环形饼图', confidence: '100%'
+    formula: '中心总数=sum(value) 环形饼图', confidence: '100%',
+    detail: '考核项等级分布，与能力项统计类似：\n• 统计维度为考核项（而非能力项）\n• 等级划分标准与能力项一致\n• 中心数字 = 考核项总数',
+    source: '个人技能画像 → 考核项统计（/system/student/skill/getAppraiseInfo）\n返回 data[].key(等级名) + value(数量)'
   },
   'person-scatter': {
     name: '成绩散点分布图', type: '散点图 (scatter)', area: '个人分析',
     api: 'getStudentScoreScatter', path: '/system/student/skill/getStudentScoreScatter',
     fields: 'data[][0]; data[][1]; data[][2]; data[][3]', meaning: '考试名称; 日期; 成绩; 类型(1=练习 其他=考试)',
-    formula: '时间轴散点图 颜色: <60红 60-80黄 >=80绿', confidence: '100%'
+    formula: '时间轴散点图 颜色: <60红 60-80黄 >=80绿', confidence: '100%',
+    detail: '成绩散点图，按时间轴分布：\n• X轴：考试/练习日期\n• Y轴：成绩分数\n• 颜色：成绩 < 60 红点, 60-80 黄点, ≥ 80 绿点\n• 形状区分：type=1 为练习(方块), 其他为正式考试(圆点)\n• 支持30天/180天/360天时间范围切换\n\n用途：直观展示学员成绩波动趋势和练习频率',
+    source: '个人技能画像 → 成绩散点（/system/student/skill/getStudentScoreScatter）\n返回二维数组: [考试名, 日期, 成绩, 类型]'
   },
   'person-trend': {
     name: '个人成绩趋势', type: '折线图 (line)', area: '个人分析',
     api: 'getPersonalGrade', path: '/analyse/detail/personalGrade',
     fields: 'data[].examName; data[].score; data[].examTime', meaning: '考试名称; 成绩; 考试时间',
-    formula: '单线折线图 smooth+面积填充', confidence: '100%'
+    formula: '单线折线图 smooth+面积填充', confidence: '100%',
+    detail: '个人成绩趋势折线图：\n• X轴：考试时间(examTime)\n• Y轴：考试成绩(score)\n• 平滑曲线 + 面积填充\n• 显示每次考试名称和分数\n\n用途：追踪学员成绩进步或退步趋势',
+    source: '数据分析 → 个人详情（/analyse/detail/personalGrade）\n返回 data[].examName + score + examTime'
   },
   'person-exam-history': {
     name: '考试记录列表', type: '数据表格 (table)', area: '个人分析',
     api: 'getExamList', path: '/analyse/detail/examList',
     fields: 'rows[].examName; rows[].score; rows[].examTime; rows[].examType',
     meaning: '考试名称; 成绩; 考试时间; 考试类型',
-    formula: '等级标签: >=90优秀(绿) >=75良好(蓝) >=60一般(橙) <60不合格(红)', confidence: '100%'
+    formula: '等级标签: >=90优秀(绿) >=75良好(蓝) >=60一般(橙) <60不合格(红)', confidence: '100%',
+    detail: '考试记录表格，等级标签颜色规则：\n• 优秀(绿色)：成绩 ≥ 90分\n• 良好(蓝色)：成绩 75-89分\n• 一般(橙色)：成绩 60-74分\n• 不合格(红色)：成绩 < 60分\n\n列字段：考试名称、成绩、考试时间、考试类型',
+    source: '数据分析 → 个人详情（/analyse/detail/examList）\n返回 rows[].examName + score + examTime + examType'
   }
 };
 
@@ -892,6 +947,12 @@ function showChartInfo(id) {
   html += '<div class="chart-info-section"><div class="chart-info-label">响应字段</div><div class="chart-info-value">' + d.fields + '</div></div>';
   html += '<div class="chart-info-section"><div class="chart-info-label">字段含义</div><div class="chart-info-value">' + d.meaning + '</div></div>';
   html += '<div class="chart-info-section"><div class="chart-info-label">计算公式 / 映射逻辑</div><div class="chart-info-value">' + d.formula + '</div></div>';
+  if (d.detail) {
+    html += '<div class="chart-info-section"><div class="chart-info-label">详细说明</div><div class="chart-info-value" style="white-space:pre-line;line-height:1.8">' + d.detail + '</div></div>';
+  }
+  if (d.source) {
+    html += '<div class="chart-info-section"><div class="chart-info-label">数据来源页面</div><div class="chart-info-value"><code style="white-space:pre-line">' + d.source + '</code></div></div>';
+  }
   document.getElementById('chartInfoBody').innerHTML = html;
   document.getElementById('chartInfoOverlay').classList.add('active');
 }
@@ -1309,20 +1370,20 @@ var stationTrainData = [
 ];
 
 var stationPlanRows = [
-  { name: '2026年第三季度安全规程培训', dept: '沈阳站', month: '2026-07', target: '客运值班员', count: 45 },
-  { name: '应急处置实操强化培训', dept: '沈阳北站', month: '2026-07', target: '全员', count: 80 },
-  { name: '新员工入职岗位培训', dept: '客运处', month: '2026-08', target: '新入职员工', count: 25 },
-  { name: '暑运专项服务技能培训', dept: '沈阳站', month: '2026-07', target: '客运员', count: 60 },
-  { name: '设备操作技能复训', dept: '苏家屯站', month: '2026-08', target: '安检员', count: 35 },
-  { name: '班组长管理能力提升培训', dept: '客运处', month: '2026-09', target: '班组长', count: 20 },
-  { name: '年度技能竞赛备赛集训', dept: '沈阳北站', month: '2026-09', target: '选拔选手', count: 15 },
-  { name: '冬季防寒防冻专项培训', dept: '长春站', month: '2026-10', target: '全员', count: 55 }
+  { name: '第三季度安全规程培训', dept: '客运处', date: '2026-07-15', target: '客运值班员', count: 45, status: 0 },
+  { name: '应急处置实操强化培训', dept: '客运处', date: '2026-07-08', target: '全员', count: 80, status: 0 },
+  { name: '新员工入职岗位培训', dept: '客运处', date: '2026-08-01', target: '新入职员工', count: 25, status: 0 },
+  { name: '暑运专项服务技能培训', dept: '客运处', date: '2026-07-20', target: '客运员', count: 60, status: 0 },
+  { name: '设备操作技能复训', dept: '客运处', date: '2026-08-15', target: '安检员', count: 35, status: 0 },
+  { name: '班组长管理能力提升培训', dept: '客运处', date: '2026-09-01', target: '班组长', count: 20, status: 0 },
+  { name: '年度技能竞赛备赛集训', dept: '客运处', date: '2026-09-10', target: '选拔选手', count: 15, status: 0 },
+  { name: '冬季防寒防冻专项培训', dept: '客运处', date: '2026-10-01', target: '全员', count: 55, status: 0 }
 ];
 
 function renderStationTab() {
   renderStationSkillChart();
   renderStationParticipation();
-  renderStationPlanTable();
+  renderStationPlanChart();
 }
 
 function renderStationSkillChart() {
@@ -1373,13 +1434,91 @@ function renderStationParticipation() {
   }, true);
 }
 
-function renderStationPlanTable() {
-  var html = '<table><thead><tr><th>培训项目名称</th><th>主办部门</th><th>计划月份</th><th>培训对象</th><th>计划人数</th></tr></thead><tbody>';
-  stationPlanRows.forEach(function(r) {
-    html += '<tr><td>' + r.name + '</td><td>' + r.dept + '</td><td>' + r.month + '</td><td>' + r.target + '</td><td>' + r.count + '</td></tr>';
+function renderStationPlanChart() {
+  var chart = echarts.init(document.getElementById('chartStationPlan'));
+  var today = new Date(2026, 5, 21); // 2026-06-21 (month is 0-indexed)
+  var names = [];
+  var values = [];
+  var colors = [];
+  var labels = [];
+
+  // Sort by date ascending
+  var sorted = stationPlanRows.slice().sort(function(a, b) {
+    return new Date(a.date) - new Date(b.date);
   });
-  html += '</tbody></table>';
-  document.getElementById('stationPlanTable').innerHTML = html;
+
+  sorted.forEach(function(row) {
+    var trainDate = new Date(row.date);
+    var diffDays = Math.round((trainDate - today) / (1000 * 60 * 60 * 24));
+    var shortName = row.name.length > 10 ? row.name.substring(0, 10) + '...' : row.name;
+    names.push(shortName);
+    values.push(diffDays);
+
+    if (diffDays < 0) {
+      colors.push('#52c41a');
+      labels.push('已过' + Math.abs(diffDays) + '天');
+    } else if (diffDays === 0) {
+      colors.push('#1677ff');
+      labels.push('今天');
+    } else if (diffDays <= 14) {
+      colors.push('#fa8c16');
+      labels.push('还有' + diffDays + '天');
+    } else {
+      colors.push('#d9d9d9');
+      labels.push('还有' + diffDays + '天');
+    }
+  });
+
+  // Reverse so earliest is at top
+  names.reverse();
+  values.reverse();
+  colors.reverse();
+  labels.reverse();
+
+  chart.setOption({
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: function(params) {
+        var idx = names.length - 1 - params[0].dataIndex;
+        var row = sorted[idx];
+        return row.name + '<br/>日期: ' + row.date + '<br/>对象: ' + row.target + '<br/>人数: ' + row.count + '人<br/>' + labels[params[0].dataIndex];
+      }
+    },
+    grid: { left: '3%', right: '12%', top: '3%', bottom: '3%', containLabel: true },
+    xAxis: {
+      type: 'value',
+      name: '天',
+      nameTextStyle: { fontSize: 10, color: 'rgba(0,0,0,.45)' },
+      axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.45)' },
+      splitLine: { lineStyle: { type: 'dashed', color: '#f0f0f0' } },
+      axisLine: { show: false }
+    },
+    yAxis: {
+      type: 'category',
+      data: names,
+      axisLabel: { fontSize: 10, color: 'rgba(0,0,0,.65)', width: 80, overflow: 'truncate' },
+      axisLine: { show: false },
+      axisTick: { show: false }
+    },
+    series: [{
+      type: 'bar',
+      data: values.map(function(v, i) {
+        return { value: v, itemStyle: { color: colors[i], borderRadius: [0, 3, 3, 0] } };
+      }),
+      barWidth: 14,
+      label: {
+        show: true,
+        position: 'right',
+        fontSize: 10,
+        color: 'rgba(0,0,0,.65)',
+        formatter: function(params) { return labels[params.dataIndex]; }
+      }
+    }]
+  });
+
+  // Store for resize
+  window._stationPlanChart = chart;
 }
 
 // ========== Tab 1: Workshop Analysis ==========
@@ -1938,6 +2077,7 @@ window.onload = function() {
   renderStationTab();
   window.addEventListener('resize', function() {
     Object.keys(charts).forEach(function(k) { if (charts[k]) charts[k].resize(); });
+    if (window._stationPlanChart) window._stationPlanChart.resize();
   });
 };
 
@@ -1957,6 +2097,7 @@ function xiaoanCollectData() {
     data += '技能掌握: 不熟练/独立工作/能够培训指导 按岗位分布\n';
     data += '年度培训进度: 培训期数41%, 培训人数45%, 培训人天数49%\n';
     data += '各车站培训参与和技能评价数据\n';
+    data += '培训计划倒计时: 8个培训计划按距今天数排列，最近的是应急处置实操强化培训(7月8日)还有17天，最远的是冬季防寒防冻专项培训(10月1日)\n';
   } else if (currentTab === 1) {
     data += '## 车间维度\n';
     data += '职工25人, 班组5个\n';

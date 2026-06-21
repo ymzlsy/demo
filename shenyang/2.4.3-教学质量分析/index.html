@@ -395,42 +395,54 @@ var chartInfoData = {
     api: 'evaqualityteachassessList', path: '/testmag/evaqualityteachassess/evaqualityteachassessList',
     fields: 'yearStr; teachName; teacherTypeName; s3; inClassLecturesScore; teachCheckScore; studentScore; threeTotalScore; addScore; totalScore',
     meaning: '年度; 教师姓名; 类型; 单位; 随堂听课得分; 教学检查得分; 学员评价得分; 三项合计; 加分项; 总分',
-    formula: 'totalScore = threeTotalScore + addScore', confidence: '100%'
+    formula: 'totalScore = threeTotalScore + addScore', confidence: '100%',
+    detail: '教师教学质量评估总分计算：\n• totalScore = threeTotalScore + addScore\n• threeTotalScore = inClassLecturesScore + teachCheckScore + studentScore\n\n三项评分来源：\n• 随堂听课得分(inClassLecturesScore)：教研组随堂听课评分\n• 教学检查得分(teachCheckScore)：定期教学检查评分\n• 学员评价得分(studentScore)：学员测评问卷平均分\n\n加分项(addScore)：论文、教改项目、竞赛获奖等额外加分\n\n点击教师姓名可查看该教师详细评估数据',
+    source: '教学质量评估 → 评估列表（/testmag/evaqualityteachassess/evaqualityteachassessList）'
   },
   'quality-gauge': {
     name: '教学质量评估总分', type: '仪表盘 (gauge)', area: '教学质量分析 - 教师详情',
     api: 'getTeachQualityEvaluate', path: '/screen/teacher/appraise/getTeachQualityEvaluate?userId={userId}&year={year}',
     fields: 'evaluateTotal; addScore',
     meaning: '评估总分(0-100); 加分项',
-    formula: '仪表盘中心值=evaluateTotal 下方标注addScore', confidence: '100%'
+    formula: '仪表盘中心值=evaluateTotal 下方标注addScore', confidence: '100%',
+    detail: '教学质量评估总分仪表盘：\n• 仪表盘中心值 = evaluateTotal（0-100分）\n• 下方标注加分项 addScore\n\n评级标准：\n• ≥ 90分：优秀（绿色区间）\n• ≥ 75分：良好（蓝色区间）\n• ≥ 60分：合格（橙色区间）\n• < 60分：不合格（红色区间）',
+    source: '教师评价 → 教学质量评估（/screen/teacher/appraise/getTeachQualityEvaluate?userId={userId}&year={year}）'
   },
   'quality-dimensions': {
     name: '评估维度明细', type: '水平条形图 (horizontal bar)', area: '教学质量分析 - 教师详情',
     api: 'getTeachQualityEvaluate', path: '/screen/teacher/appraise/getTeachQualityEvaluate?userId={userId}&year={year}',
     fields: 'teachEvaluateList[].name; [].average; [].fullMarks; [].ratio',
     meaning: '维度名; 实际得分; 满分; 得分率',
-    formula: '水平条形图 填充宽度=average/fullMarks*100%', confidence: '100%'
+    formula: '水平条形图 填充宽度=average/fullMarks*100%', confidence: '100%',
+    detail: '评估维度明细展示每个评估维度的得分情况：\n• 条形图填充宽度 = average / fullMarks × 100%\n• 标注实际得分(average) / 满分(fullMarks) 和得分率(ratio)\n\n标准维度：\n• 随堂听课：评委现场评分均值\n• 教学检查：教学材料+课堂效果综合评分\n• 学员评价：学员匿名问卷评分均值',
+    source: '同上接口（/screen/teacher/appraise/getTeachQualityEvaluate）\n返回 teachEvaluateList[].name + average + fullMarks + ratio'
   },
   'pass-rate-trend': {
     name: '授课班级通过率趋势', type: '折线图 (line)', area: '教学质量分析 - 教师详情',
     api: 'getTeachClassPassRate', path: '/screen/teacher/appraise/getTeachClassPassRate?userId={userId}&year={year}',
     fields: '返回12个数值的数组(1-12月通过率)',
     meaning: '每月通过率百分比',
-    formula: '折线图 X轴=1-12月 smooth+面积填充', confidence: '100%'
+    formula: '折线图 X轴=1-12月 smooth+面积填充', confidence: '100%',
+    detail: '12个月通过率趋势折线图：\n• X轴：1-12月\n• Y轴：该教师所授班级的考试通过率（成绩 ≥ 60分的学员占比）\n• 平滑曲线 + 面积填充\n• 接口返回一个12元素数组，直接作为series.data\n\n用途：观察教师全年教学效果波动，识别下滑月份',
+    source: '教师评价 → 班级通过率（/screen/teacher/appraise/getTeachClassPassRate?userId={userId}&year={year}）'
   },
   'student-eval-pie': {
     name: '学员测评-教学情况分布', type: '环形饼图 (donut pie)', area: '教学质量分析 - 教师详情',
     api: 'getStudentEvaluateData', path: '/screen/teacher/appraise/getStudentEvaluateData?userId={userId}&year={year}&classId={classId}',
     fields: 'teachSituationMap[].name; [].value; avgTotal',
     meaning: '评价等级(优秀/良好/一般/较差); 占比; 平均总分',
-    formula: '环形饼图 中心=avgTotal+分', confidence: '100%'
+    formula: '环形饼图 中心=avgTotal+分', confidence: '100%',
+    detail: '学员对教师的教学情况评价分布：\n• 优秀：综合满意度 ≥ 90分\n• 良好：满意度 75-89分\n• 一般：满意度 60-74分\n• 较差：满意度 < 60分\n\n中心数字 = avgTotal（平均总分）\n颜色：优秀=#0578b9(蓝), 良好=#40d285(绿), 一般=#fdcc00(黄), 较差=#f86a01(橙)',
+    source: '教师评价 → 学员测评（/screen/teacher/appraise/getStudentEvaluateData?userId={userId}&year={year}&classId={classId}）\n返回 teachSituationMap[].name + value + avgTotal'
   },
   'student-eval-bar': {
     name: '学员测评-子维度评价率', type: '分组条形图 (grouped bar)', area: '教学质量分析 - 教师详情',
     api: 'getStudentEvaluateData', path: '/screen/teacher/appraise/getStudentEvaluateData?userId={userId}&year={year}&classId={classId}',
     fields: 'studentEvaluateSubData[].groupName; subitemExcellentRate; subitemFineRate; subitemCommonlyRate; subitemPassRate',
     meaning: '子维度名; 优秀率; 良好率; 一般率; 合格率',
-    formula: '分组条形图 每组4条', confidence: '100%'
+    formula: '分组条形图 每组4条', confidence: '100%',
+    detail: '学员测评子维度评价率分组条形图：\n每组4条柱子分别代表：\n• 优秀率(subitemExcellentRate)：评为优秀的学员占比\n• 良好率(subitemFineRate)：评为良好的学员占比\n• 一般率(subitemCommonlyRate)：评为一般的学员占比\n• 合格率(subitemPassRate)：评为合格的学员占比\n\n子维度包括：教学能力、教学内容、课件使用等\n数据来源同一接口的 studentEvaluateSubData 字段',
+    source: '同上接口\n返回 studentEvaluateSubData[].groupName + 各率字段'
   }
 };
 
@@ -447,6 +459,12 @@ function showChartInfo(id) {
   html += '<div class="chart-info-section"><div class="chart-info-label">响应字段</div><div class="chart-info-value">' + d.fields + '</div></div>';
   html += '<div class="chart-info-section"><div class="chart-info-label">字段含义</div><div class="chart-info-value">' + d.meaning + '</div></div>';
   html += '<div class="chart-info-section"><div class="chart-info-label">计算公式 / 映射逻辑</div><div class="chart-info-value">' + d.formula + '</div></div>';
+  if (d.detail) {
+    html += '<div class="chart-info-section"><div class="chart-info-label">详细说明</div><div class="chart-info-value" style="white-space:pre-line;line-height:1.8">' + d.detail + '</div></div>';
+  }
+  if (d.source) {
+    html += '<div class="chart-info-section"><div class="chart-info-label">数据来源页面</div><div class="chart-info-value"><code style="white-space:pre-line">' + d.source + '</code></div></div>';
+  }
   document.getElementById('chartInfoBody').innerHTML = html;
   document.getElementById('chartInfoOverlay').classList.add('active');
 }
