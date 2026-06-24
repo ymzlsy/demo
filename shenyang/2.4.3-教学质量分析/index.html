@@ -37,6 +37,11 @@
     .kpi-value .unit { font-size: 13px; font-weight: 400; color: rgba(0,0,0,.45); margin-left: 2px; }
     .kpi-label { font-size: 12px; color: rgba(0,0,0,.45); margin-top: 2px; }
 
+    /* Chart Row */
+    .chart-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 8px; flex-shrink: 0; }
+    .chart-row .card { margin-bottom: 0; }
+    .chart-container { height: 240px; }
+
     /* Table */
     .table-wrapper { flex: 1; overflow-y: auto; border-radius: 8px; }
     .data-table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
@@ -291,6 +296,22 @@
 
   <!-- KPI Cards -->
   <div class="kpi-row" id="kpiRow"></div>
+
+  <!-- Charts Row -->
+  <div class="chart-row">
+    <div class="card">
+      <div class="card-title">教师总分排名 <span class="card-subtitle">数据来源: evaqualityteachassessList</span><span class="chart-info-btn" onclick="showChartInfo('quality-table')">i</span></div>
+      <div class="chart-container" id="rankingChart"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Top5 三维度得分 <span class="card-subtitle">随堂听课 / 教学检查 / 学员评价</span></div>
+      <div class="chart-container" id="dimensionChart"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">评估等级分布 <span class="card-subtitle">按总分划分等级</span></div>
+      <div class="chart-container" id="levelChart"></div>
+    </div>
+  </div>
 
   <!-- Teacher Table -->
   <div class="card" style="flex:1; display:flex; flex-direction:column; min-height:0; margin-bottom:0; padding-bottom:6px;">
@@ -678,6 +699,83 @@ function renderOverview() {
       <td class="score-bold ${scoreClass(r.totalScore)}">${r.totalScore}</td>
     </tr>
   `).join('');
+
+  // === Overview Charts ===
+  setTimeout(() => {
+    const sorted = [...teacherRows].sort((a,b) => a.totalScore - b.totalScore);
+
+    // 1. Teacher Ranking Bar Chart
+    const rankEl = document.getElementById('rankingChart');
+    if (rankEl) {
+      const rc = echarts.init(rankEl);
+      rc.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: p => p[0].name + ': ' + p[0].value + '分' },
+        grid: { top: 8, right: 50, bottom: 8, left: 70 },
+        xAxis: { type: 'value', min: 0, max: 100, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+        yAxis: { type: 'category', data: sorted.map(r => r.teachName), axisLabel: { fontSize: 12, color: 'rgba(0,0,0,.65)' }, axisLine: { show: false }, axisTick: { show: false } },
+        series: [{
+          type: 'bar', barWidth: 16, data: sorted.map(r => ({
+            value: r.totalScore,
+            itemStyle: { color: r.totalScore >= 90 ? '#52c41a' : r.totalScore >= 80 ? '#1677ff' : r.totalScore >= 70 ? '#fa8c16' : '#ff4d4f', borderRadius: [0, 4, 4, 0] }
+          })),
+          label: { show: true, position: 'right', fontSize: 11, color: 'rgba(0,0,0,.65)', formatter: '{c}分' }
+        }]
+      });
+      window.addEventListener('resize', () => rc.resize());
+    }
+
+    // 2. Three-dimension Comparison (Grouped Bar) - Top 5
+    const dimEl = document.getElementById('dimensionChart');
+    if (dimEl) {
+      const dc = echarts.init(dimEl);
+      const top5 = [...teacherRows].sort((a,b) => b.totalScore - a.totalScore).slice(0, 5);
+      dc.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { top: 2, itemWidth: 12, itemHeight: 8, textStyle: { fontSize: 11 } },
+        grid: { top: 28, right: 15, bottom: 38, left: 40 },
+        xAxis: { type: 'category', data: top5.map(r => r.teachName), axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.55)', interval: 0 }, axisLine: { lineStyle: { color: '#e0e0e0' } } },
+        yAxis: { type: 'value', min: 0, max: 35, axisLabel: { fontSize: 11, color: 'rgba(0,0,0,.45)' }, splitLine: { lineStyle: { color: '#f5f5f5' } } },
+        series: [
+          { name: '随堂听课', type: 'bar', barWidth: 12, data: top5.map(r => r.inClassLecturesScore), itemStyle: { color: '#1677ff', borderRadius: [3,3,0,0] } },
+          { name: '教学检查', type: 'bar', barWidth: 12, data: top5.map(r => r.teachCheckScore), itemStyle: { color: '#52c41a', borderRadius: [3,3,0,0] } },
+          { name: '学员评价', type: 'bar', barWidth: 12, data: top5.map(r => r.studentScore), itemStyle: { color: '#fa8c16', borderRadius: [3,3,0,0] } }
+        ]
+      });
+      window.addEventListener('resize', () => dc.resize());
+    }
+
+    // 3. Score Level Distribution (Donut)
+    const lvlEl = document.getElementById('levelChart');
+    if (lvlEl) {
+      const lc = echarts.init(lvlEl);
+      let excellent = 0, good = 0, pass = 0, fail = 0;
+      teacherRows.forEach(r => {
+        if (r.totalScore >= 90) excellent++;
+        else if (r.totalScore >= 80) good++;
+        else if (r.totalScore >= 70) pass++;
+        else fail++;
+      });
+      lc.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
+        legend: { bottom: 0, itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 11 } },
+        graphic: [
+          { type: 'text', left: 'center', top: '28%', style: { text: teacherRows.length, fontSize: 28, fontWeight: 700, fill: '#1677ff', textAlign: 'center' } },
+          { type: 'text', left: 'center', top: '42%', style: { text: '参评教师', fontSize: 12, fill: 'rgba(0,0,0,.45)', textAlign: 'center' } }
+        ],
+        series: [{
+          type: 'pie', radius: ['38%', '58%'], center: ['50%', '38%'],
+          label: { show: false },
+          data: [
+            { value: excellent, name: '优秀(>=90)', itemStyle: { color: '#52c41a' } },
+            { value: good, name: '良好(80-89)', itemStyle: { color: '#1677ff' } },
+            { value: pass, name: '合格(70-79)', itemStyle: { color: '#fa8c16' } },
+            { value: fail, name: '不合格(<70)', itemStyle: { color: '#ff4d4f' } }
+          ].filter(d => d.value > 0)
+        }]
+      });
+      window.addEventListener('resize', () => lc.resize());
+    }
+  }, 80);
 }
 
 // ===== Detail View =====
